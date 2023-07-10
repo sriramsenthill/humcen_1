@@ -1,0 +1,13 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200%;
+    margin-top: 10%;
+    flex-direction: column;
+
+    /* Adjust the height as per your needs */
+}
+.blue{
+    color: #00ACF6;
+    }

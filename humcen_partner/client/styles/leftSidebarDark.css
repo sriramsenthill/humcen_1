@@ -1,0 +1,11 @@
+.leftsidebardark .LeftSidebarNav {
+  background-color: var(--cardBg);
+  color: white;
+  box-shadow: none;
+}
+.leftsidebardark .LeftSidebarNav .black-logo {
+  display: none;
+}
+.leftsidebardark .LeftSidebarNav .white-logo {
+  display: inline-block;
+}/*# sourceMappingURL=leftSidebarDark.css.map */

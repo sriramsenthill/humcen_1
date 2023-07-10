@@ -1,0 +1,9 @@
+.imageContainer {
+    border-radius: 10px;
+  }
+
+  .cardMediaContainer {
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 20px;
+  }
