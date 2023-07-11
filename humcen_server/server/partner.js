@@ -141,6 +141,7 @@ const PartnerSchema = new mongoose.Schema({
     type: Boolean,
   },
 
+
 });
 
 const Partner = mongoose.model('Partner', PartnerSchema, 'partner');

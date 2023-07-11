@@ -9,10 +9,12 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import styles from "@/components/Authentication/Authentication.module.css";
 import { useRouter } from "next/router";
+import KnownFields from "../KnownFields";
 
 
 const SignUpForm = () => {
   const router = useRouter();
+  const [knownFieldsValues, setKnownFieldsValues] = useState([]);
   const [formData, setFormData] = useState({
     email: "",
     first_name: "",
@@ -48,7 +50,8 @@ const SignUpForm = () => {
           email: "",
           first_name: "",
           last_name: "",
-          password: ""
+          password: "",
+          known_fields:[knownFieldsValues],
         });
       } else {
         console.error("Failed to save user data");
@@ -63,6 +66,10 @@ const SignUpForm = () => {
       ...formData,
       [event.target.name]: event.target.value
     });
+  };
+
+  const handleKnownFieldsChange = (values) => {
+    setKnownFieldsValues(values);
   };
 
 
@@ -224,6 +231,22 @@ const SignUpForm = () => {
                         value={formData.password}
                         onChange={handleChange}
                       />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography
+                        component="label"
+                        sx={{
+                          fontWeight: "500",
+                          fontSize: "14px",
+                          mb: "10px",
+                          display: "block",
+                        }}
+                      >
+                        Known Fields :
+                      </Typography>
+                      <Grid item xs={12}>
+                      <KnownFields onChange={handleKnownFieldsChange}/>
+                      </Grid>
                     </Grid>
                   </Grid>
                 </Box>
