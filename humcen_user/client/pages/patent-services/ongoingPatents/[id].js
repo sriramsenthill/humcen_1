@@ -8,22 +8,35 @@ import Card from "@mui/material/Card";
 import withAuth from "@/components/withAuth";
 import Features from "./Features";
 import BasicTabs from "./Tabs";
+import axios from "axios";
 
-const  DynamicPage = () => {
+// Create an Axios instance
+const api = axios.create({
+  baseURL: "http://localhost:3000/api",
+});
+
+
+// Add an interceptor to include the token in the request headers
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers['Authorization'] = token;
+  }
+  return config;
+});
+
+
+const DynamicPage = () => {
   const router = useRouter();
   const { id } = router.query;
 
   const [job, setJob] = useState(null); // Initialize job state as null
-  const [isComponentLoaded, setComponentLoaded] = useState(false);
 
   useEffect(() => {
     const fetchJobData = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/admin/job_order");
-        const data = await response.json();
-
-        // Find the specific job object you want to return
-        const specificJob = data.find((job) => job._id.job_no === Number(id));
+        const response = await api.get(`/job_order/${id}`);
+        const specificJob = response.data;
 
         if (specificJob) {
           setJob(specificJob);
@@ -181,6 +194,6 @@ const  DynamicPage = () => {
       </Card>
     </>
   );
-}
+};
 
 export default withAuth(DynamicPage);

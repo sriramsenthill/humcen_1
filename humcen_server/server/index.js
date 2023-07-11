@@ -169,6 +169,28 @@ app.put('/api/user/password', verifyToken, async(req, res) => {
   
 })
 
+// Define your API route for fetching job order data
+app.get("/api/job_order/:id", verifyToken, async (req, res) => {
+  // Retrieve the job order data based on the provided id
+  const { id } = req.params;
+  const userID = req.userId; // Assuming you have a userId available after verifying the token
+
+  try {
+    // Perform database query to fetch the job order data for the specific user
+    const specificJob = await JobOrder.findOne({ "_id.job_no": id, userID });
+
+    if (specificJob) {
+      // Return the specific job order data as the response
+      res.json(specificJob);
+    } else {
+      // Return an error message if no job order found with the provided id or for the specific user
+      res.status(404).json({ error: "No job found with the provided id or unauthorized access" });
+    }
+  } catch (error) {
+    console.error("Error fetching job order data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 
 //JOB_ORDER TABLE FOR SPECIFIC USER
