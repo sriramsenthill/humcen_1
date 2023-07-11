@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import RecentOrders from "@/components/Dashboard/eCommerce/RecentOrders";
+import RecentOrders from "@/components/Dashboard/eCommerce/current";
 import CompletedOrders from "@/components/Dashboard/eCommerce/CompletedOrders";
 
 function TabPanel(props) {
