@@ -68,7 +68,6 @@ export default function Inbox() {
     }
   };
 
-
   return (
     <>
       {/* Page title */}

@@ -106,7 +106,6 @@ const NewOrder = () => {
           </table>
         </Grid>
       </Card>
-      ;
     </>
   );
 };
