@@ -437,6 +437,8 @@ const latestFTOOrder = await JobOrder.findOne()
 // Increment the job_no and assign it to the new job
 const newFTONo = latestFTOOrder ? latestFTOOrder._id.job_no + 1 : 1000;
 
+freedomToOperateData._id = { job_no: newFTONo };
+
 // Create a new JobOrder instance using the received data
 const fTOOrder = new freedomToOperate(freedomToOperateData);
 
@@ -452,9 +454,21 @@ const savedFTO = await fTOOrder.save();
 
     findPartner.jobs.push(savedFTO._id.job_no);
     findPartner.is_free = false;
-    const newJobOrder = new JobOrder({_id: {
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + 7);
+    const newJobOrder = new JobOrder(
+      {_id: {
       job_no: newFTONo,
-    }, service: "Freedom To Operate", userID: userID, partnerID:findPartner.userID, country: req.body.country, domain: req.body.field}).save();
+    }, 
+    service: "Freedom To Operate",
+     userID: userID, 
+     partnerID:findPartner.userID, 
+     country: req.body.country,
+     start_date: new Date(),
+     end_date: endDate,
+     status: "In Progress",
+     budget: "To be Allocated",
+     domain: req.body.field}).save();
     
     findPartner.save().then(
     (response) => {
@@ -464,7 +478,7 @@ const savedFTO = await fTOOrder.save();
       console.log("Error in Assigning Freedom To Operate Task to the Partner")
     });
 
-    res.status(200).json(savedFTO);
+    res.status(200).send(savedFTO);
   } catch (error) {
     console.error("Error creating Freedom To Operate:", error);
     res.status(500).send("Error creating Freedom to Operate");
@@ -506,9 +520,21 @@ app.post("/api/patent_illustration", verifyToken, async (req, res) => {
     console.log(findPartner);
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findPartner.is_free = false;
-    const newJobOrder = new JobOrder({_id: {
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + 7);
+    const newJobOrder = new JobOrder(
+      {_id: {
       job_no: newJobNo,
-    }, service: "Patent Illustration", userID: userId, partnerID:findPartner.userID, domain: req.body.field}).save();
+    }, 
+    service: "Patent Illustration", 
+    userID: userId, 
+    partnerID:findPartner.userID, 
+    domain: req.body.field, 
+    start_date: new Date(), 
+    end_date: endDate,
+    country: "India",
+    status: "In Progress",
+    budget: "To be Allocated" }).save();
     
     findPartner.save().then(
       (response) => {

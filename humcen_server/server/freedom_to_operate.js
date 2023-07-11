@@ -2,9 +2,7 @@ const mongoose = require('mongoose');
 
 const freedomToOperateSchema = new mongoose.Schema({
   _id: {
-    job_no: {
-    type: Number,
-  },
+    job_no: { type: Number }
   },
   field: {
     type: String,
