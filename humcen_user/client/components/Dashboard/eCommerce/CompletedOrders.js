@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import Button from "@mui/material/Button";
 import {
   Box,
   Typography,
@@ -206,6 +208,22 @@ function CompletedOrders() {
                   >
                     {row.status}
                   </TableCell>
+                  <TableCell>
+                      <Link href={`patent-services/onGoingPatents/${row._id.job_no}`} passHref>
+                      <Button
+                    sx={{
+                      background: "#01ACF6",
+                      color: "white",
+                      borderRadius: "100px",
+                      width: "100%",
+                      height: "90%",
+                      textTransform: "none",
+                    }}
+                  >
+                        Details
+                      </Button>
+                      </Link>
+                    </TableCell>
                 </TableRow>
               ))}
             {emptyRows > 0 && (
