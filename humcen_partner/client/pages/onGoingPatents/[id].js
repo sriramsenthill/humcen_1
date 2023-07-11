@@ -5,28 +5,38 @@ import styles from "@/styles/Patents.module.css";
 import style from "@/styles/PageTitle.module.css";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
-import { Box } from "@mui/material";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import Features from "./Features";
 import withAuth from "@/components/withAuth";
+import Features from "./Features";
 import BasicTabs from "./Tabs";
+import axios from "axios";
 
- function DynamicPage() {
+// Create an Axios instance
+const api = axios.create({
+  baseURL: "http://localhost:3000/api",
+});
+
+
+// Add an interceptor to include the token in the request headers
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers['Authorization'] = token;
+  }
+  return config;
+});
+
+
+const DynamicPage = () => {
   const router = useRouter();
   const { id } = router.query;
 
   const [job, setJob] = useState(null); // Initialize job state as null
-  const [isComponentLoaded, setComponentLoaded] = useState(false);
 
   useEffect(() => {
     const fetchJobData = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/partner/job_order");
-        const data = await response.json();
-
-        // Find the specific job object you want to return
-        const specificJob = data.find((job) => job._id.job_no === Number(id));
+        const response = await api.get(`partner/jobs/${id}`);
+        const specificJob = response.data;
 
         if (specificJob) {
           setJob(specificJob);
@@ -47,8 +57,6 @@ import BasicTabs from "./Tabs";
       setJob(null);
     };
   }, [id]); // Add 'id' as a dependency
-
-  console.log(job);
 
   console.log(job);
 
@@ -79,7 +87,6 @@ import BasicTabs from "./Tabs";
     <>
       {/* Page title */}
       <div className={style.pageTitle}>
-        <h1>Ongoing Patents</h1>
         <ul>
           <li>
             <Link href="/">Dashboard</Link>
@@ -88,6 +95,7 @@ import BasicTabs from "./Tabs";
           <li>Delivery status</li>
         </ul>
       </div>
+      <h1>Ongoing Patents</h1>
       <Card
         sx={{
           boxShadow: "none",
@@ -155,11 +163,22 @@ import BasicTabs from "./Tabs";
                 <td style={{ padding: "10px" }}>{formattedStartDate}</td>
                 <td style={{ padding: "10px" }}>{status}</td>
               </tr>
+              <tr>
+                <td style={{ padding: "10px" }}></td>
+                <td style={{ padding: "10px" }}>
+                  <Link href="/">Mail</Link>
+                </td>
+                <td style={{ padding: "10px" }}>
+                  <Link href="/">Mail</Link>
+                </td>
+                <td style={{ padding: "10px" }}></td>
+                <td style={{ padding: "10px" }}></td>
+                <td style={{ padding: "10px" }}></td>
+              </tr>
             </tbody>
           </table>
         </Grid>
       </Card>
-      {/* side stepper component */}
       <Features />
       <Card
         sx={{
@@ -170,11 +189,11 @@ import BasicTabs from "./Tabs";
         }}
       >
         <Grid container spacing={2}>
-          <BasicTabs jobData={job} />
+          <BasicTabs />
         </Grid>
       </Card>
     </>
   );
-}
+};
 
 export default withAuth(DynamicPage);

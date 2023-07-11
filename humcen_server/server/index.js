@@ -1355,6 +1355,44 @@ app.post("/api/auth/partner/signin", async (req, res) => {
 });
 
 
+app.get("/api/partner/jobs/:id", verifyPartner, async (req, res) => {
+  try {
+    const userID = req.userID;
+    console.log("userID:", userID); // Check the value of userID
+
+    const jobNumber = req.params.id; // Get the job number from the URL parameter
+    console.log("jobNumber:", jobNumber); // Check the provided job number
+
+    // Fetch the partner document based on the user ID
+    const partner = await Partner.findOne({ userID: userID });
+    console.log("partner:", partner); // Check the fetched partner document
+
+    if (!partner) {
+      return res.status(404).json({ error: "Partner not found" });
+    }
+
+    // Check if the partner has access to the provided job number
+    const hasAccess = partner.jobs.includes(jobNumber);
+    if (!hasAccess) {
+      return res.status(401).json({ error: "Unauthorized access" });
+    }
+
+    // Fetch the job order details for the provided job number
+    const specificJob = await JobOrder.findOne({ "_id.job_no": jobNumber });
+    console.log("specificJob:", specificJob); // Check the fetched specific job order
+
+    if (!specificJob) {
+      return res.status(404).json({ error: "No job found with the provided job number" });
+    }
+
+    res.json(specificJob);
+  } catch (error) {
+    console.error("Error fetching job order:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
 app.get("/api/partner/job_order", verifyPartner, async (req, res) => {
   try {
     const userID = req.userID;
@@ -1381,7 +1419,6 @@ app.get("/api/partner/job_order", verifyPartner, async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 // NEW USER ID CREATION FROM PARTNER TABLE FOR USERS
 const generatePartnerID = async () => {
