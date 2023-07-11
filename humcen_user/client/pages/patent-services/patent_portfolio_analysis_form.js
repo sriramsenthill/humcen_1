@@ -46,12 +46,10 @@ const ColorButton = styled(Button)(({ theme }) => ({
 
 export default function Inbox() {
   const [domain, setDomain] = useState("");
-  const [title, setTitle] = useState("");
-  const [time, setTime] = useState("");
-  const [keyword, setKeyword] = useState("");
   const [country, setCountry] = useState("");
-  const [budget, setBudget] = useState("");
   const [files, setFiles] = useState(null);
+  const [businessObj,setBusinessObj]=useState('');
+  const [marketAndIndustry,setMarketAndIndustry]=useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const router = useRouter();
 
@@ -60,34 +58,35 @@ export default function Inbox() {
     setFiles(files);
   };
 
+  const businessObjectives=(event)=>{
+    setBusinessObj(event.target.value);
+  }
+
+  const marketAndIndustryInfo=(event)=>{
+    setMarketAndIndustry(event.target.value);
+  }
+
   const handleDomainChange = (value) => {
     setDomain(value);
   };
-  const handleKeywordChange = (event) => {
-    setKeyword(event.target.value);
-  };
 
-  const handleTitleChange = (event) => {
-    setTitle(event.target.value); // Update the title state on input change
-  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = {
       domain: domain,
-      country: country,
-      job_title: title,
-      keywords: keyword,
-      budget: budget,
-      time_of_delivery: time,
+      country:country,
+      businessObj:businessObj,
+      marketAndIndustry:marketAndIndustry,
       service_specific_files: {
         invention_details: files,
       },
     };
 
     try {
-      const response = await api.post("/job_order", formData);
+      const response = await api.post("/freedom_to_patent_portfolio_analysis", formData);
       const data = response.data;
       console.log("Form submitted successfully");
       console.log(data);
@@ -194,7 +193,7 @@ export default function Inbox() {
               InputProps={{
                 style: { borderRadius: 8 },
               }}
-              onChange={handleKeywordChange} // Provide the onChange event handler
+              onChange={businessObjectives} // Provide the onChange event handler
             />
           </Card>
           <Card
@@ -224,7 +223,7 @@ export default function Inbox() {
               InputProps={{
                 style: { borderRadius: 8 },
               }}
-              onChange={handleKeywordChange} // Provide the onChange event handler
+              onChange={marketAndIndustryInfo} // Provide the onChange event handler
             />
           </Card>
           

@@ -46,12 +46,10 @@ const ColorButton = styled(Button)(({ theme }) => ({
 
 export default function Inbox() {
   const [domain, setDomain] = useState("");
-  const [title, setTitle] = useState("");
-  const [time, setTime] = useState("");
-  const [keyword, setKeyword] = useState("");
-  const [country, setCountry] = useState("");
-  const [budget, setBudget] = useState("");
+  const [sourceLanguage, setSourceLanguage] = useState("");
+  const [targetLanguage, setTargetLanguage] = useState("");
   const [files, setFiles] = useState(null);
+  const [additionalInfo,setAdditionalInfo]=useState("")
   const [isSubmitted, setIsSubmitted] = useState(false);
   const router = useRouter();
 
@@ -63,31 +61,34 @@ export default function Inbox() {
   const handleDomainChange = (value) => {
     setDomain(value);
   };
-  const handleKeywordChange = (event) => {
-    setKeyword(event.target.value);
-  };
+  
+  const sourceLanguages=(event)=>{
+    setSourceLanguage(event.target.value);
+  }
 
-  const handleTitleChange = (event) => {
-    setTitle(event.target.value); // Update the title state on input change
-  };
+  const targetLanguages=(event)=>{
+    setTargetLanguage(event.target.value);
+  }
+
+  const additionalInformation=(event)=>{
+    setAdditionalInfo(event.target.value);
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = {
       domain: domain,
-      country: country,
-      job_title: title,
-      keywords: keyword,
-      budget: budget,
-      time_of_delivery: time,
+      sourceLanguage:sourceLanguage,
+      targetLanguage:targetLanguage,
+      additionalInfo:additionalInfo,
       service_specific_files: {
         invention_details: files,
       },
     };
 
     try {
-      const response = await api.post("/job_order", formData);
+      const response = await api.post("/patent_translation_services", formData);
       const data = response.data;
       console.log("Form submitted successfully");
       console.log(data);
@@ -164,7 +165,7 @@ export default function Inbox() {
               InputProps={{
                 style: { borderRadius: 8 },
               }}
-              onChange={handleKeywordChange} // Provide the onChange event handler
+              onChange={sourceLanguages} // Provide the onChange event handler
             />
           </Card>
           <Card
@@ -194,7 +195,7 @@ export default function Inbox() {
               InputProps={{
                 style: { borderRadius: 8 },
               }}
-              onChange={handleKeywordChange} // Provide the onChange event handler
+              onChange={targetLanguages}
             />
           </Card>
           <Card
@@ -254,7 +255,7 @@ export default function Inbox() {
               InputProps={{
                 style: { borderRadius: 8 },
               }}
-              onChange={handleKeywordChange} // Provide the onChange event handler
+              onChange={additionalInformation} // Provide the onChange event handler
             />
           </Card>
           

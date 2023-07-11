@@ -46,12 +46,11 @@ const ColorButton = styled(Button)(({ theme }) => ({
 
 export default function Inbox() {
   const [domain, setDomain] = useState("");
-  const [title, setTitle] = useState("");
-  const [time, setTime] = useState("");
+  const [focus, setFocus] = useState("");
+  const [compInfo, setCompInfo] = useState("");
+  const [geoScope, setGeoScope] = useState("");
   const [keyword, setKeyword] = useState("");
-  const [country, setCountry] = useState("");
-  const [budget, setBudget] = useState("");
-  const [files, setFiles] = useState(null);
+  const [monDuration, setMonDuration] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const router = useRouter();
 
@@ -63,33 +62,43 @@ export default function Inbox() {
   const handleDomainChange = (value) => {
     setDomain(value);
   };
+
+  const handleFocusChange = (event) => {
+    setFocus(event.target.value);
+  };
+
+  const handleCompInfoChange = (event) => {
+    setCompInfo(event.target.value);
+  };
+
+  const handleGeoScopeChange = (event) => {
+    setGeoScope(event.target.value);
+  };
+
   const handleKeywordChange = (event) => {
     setKeyword(event.target.value);
   };
 
-  const handleTitleChange = (event) => {
-    setTitle(event.target.value); // Update the title state on input change
+  const handleMonDurationChange = (event) => {
+    setMonDuration(event.target.value);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = {
-      domain: domain,
-      country: country,
-      job_title: title,
+      field: domain,
+      industry_focus: focus,
+      competitor_information: compInfo,
+      geographic_scope: geoScope,
       keywords: keyword,
-      budget: budget,
-      time_of_delivery: time,
-      service_specific_files: {
-        invention_details: files,
-      },
+      monitoring_duration: monDuration,
     };
 
     try {
-      const response = await api.post("/job_order", formData);
+      const response = await api.post("/patent_watch", formData);
       const data = response.data;
-      console.log("Form submitted successfully");
+      console.log("Patent Watch Form submitted successfully");
       console.log(data);
       setIsSubmitted(true);
     } catch (error) {
@@ -165,7 +174,7 @@ export default function Inbox() {
               InputProps={{
                 style: { borderRadius: 8 },
               }}
-              onChange={handleKeywordChange} // Provide the onChange event handler
+              onChange={handleFocusChange} // Provide the onChange event handler
             />
           </Card>
           <Card
@@ -195,7 +204,7 @@ export default function Inbox() {
               InputProps={{
                 style: { borderRadius: 8 },
               }}
-              onChange={handleKeywordChange} // Provide the onChange event handler
+              onChange={handleCompInfoChange} // Provide the onChange event handler
             />
           </Card>
           <Card
@@ -225,7 +234,7 @@ export default function Inbox() {
               InputProps={{
                 style: { borderRadius: 8 },
               }}
-              onChange={handleKeywordChange} // Provide the onChange event handler
+              onChange={handleGeoScopeChange} // Provide the onChange event handler
             />
           </Card>
           <Card
@@ -285,7 +294,7 @@ export default function Inbox() {
               InputProps={{
                 style: { borderRadius: 8 },
               }}
-              onChange={handleKeywordChange} // Provide the onChange event handler
+              onChange={handleMonDurationChange} // Provide the onChange event handler
             />
           </Card>
           <Card

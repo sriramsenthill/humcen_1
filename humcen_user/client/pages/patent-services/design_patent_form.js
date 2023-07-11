@@ -46,48 +46,49 @@ const ColorButton = styled(Button)(({ theme }) => ({
 
 export default function Inbox() {
   const [domain, setDomain] = useState("");
-  const [title, setTitle] = useState("");
-  const [time, setTime] = useState("");
-  const [keyword, setKeyword] = useState("");
+  const [patentInfo, setPatentInfo] = useState("");
+  const [commGoals, setCommGoals] = useState("");
+  const [compLandscape, setCompLandscape] = useState("");
+  const [techDescription, setTechDescription] = useState("");
   const [country, setCountry] = useState("");
-  const [budget, setBudget] = useState("");
-  const [files, setFiles] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const router = useRouter();
 
 
-  const getFiles = (files) => {
-    setFiles(files);
-  };
-
   const handleDomainChange = (value) => {
     setDomain(value);
   };
-  const handleKeywordChange = (event) => {
-    setKeyword(event.target.value);
+
+  const handlePatentInfo = (event) => {
+    setPatentInfo(event.target.value);
   };
 
-  const handleTitleChange = (event) => {
-    setTitle(event.target.value); // Update the title state on input change
+  const handleCommGoals = (event) => {
+    setCommGoals(event.target.value);
   };
+
+  const handleCompLandscape = (event) => {
+    setCompLandscape(event.target.value);
+  };
+
+  const handleTechDescription = (event) => {
+    setTechDescription(event.target.value);
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = {
-      domain: domain,
+      field: domain,
+      patent_information: patentInfo,
+      commercialization_goals: commGoals,
+      competitive_landscape: compLandscape,
+      technology_description: techDescription,
       country: country,
-      job_title: title,
-      keywords: keyword,
-      budget: budget,
-      time_of_delivery: time,
-      service_specific_files: {
-        invention_details: files,
-      },
     };
 
     try {
-      const response = await api.post("/job_order", formData);
+      const response = await api.post("/patent_licensing", formData);
       const data = response.data;
       console.log("Form submitted successfully");
       console.log(data);
@@ -165,7 +166,7 @@ export default function Inbox() {
               InputProps={{
                 style: { borderRadius: 8 },
               }}
-              onChange={handleKeywordChange} // Provide the onChange event handler
+              onChange={handlePatentInfo} // Provide the onChange event handler
             />
           </Card>
           <Card
@@ -195,7 +196,7 @@ export default function Inbox() {
               InputProps={{
                 style: { borderRadius: 8 },
               }}
-              onChange={handleKeywordChange} // Provide the onChange event handler
+              onChange={handleCommGoals} // Provide the onChange event handler
             />
           </Card>
           <Card
@@ -225,7 +226,7 @@ export default function Inbox() {
               InputProps={{
                 style: { borderRadius: 8 },
               }}
-              onChange={handleKeywordChange} // Provide the onChange event handler
+              onChange={handleCompLandscape} // Provide the onChange event handler
             />
           </Card>
           <Card
@@ -255,7 +256,7 @@ export default function Inbox() {
               InputProps={{
                 style: { borderRadius: 8 },
               }}
-              onChange={handleKeywordChange} // Provide the onChange event handler
+              onChange={handleTechDescription} // Provide the onChange event handler
             />
           </Card>
           <Card

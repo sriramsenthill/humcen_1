@@ -1,6 +1,11 @@
 const express = require("express");
 const Search = require("./search"); // Import the Patent Search Model
 const mongoose = require("mongoose");
+const patentPortfolioAnalysis = require("./patent_portfolio_analysis"); // Import Patent Portfolio Analysis Model
+const patentTranslation = require("./patent_translation_service"); // Import Patent Translation Services Mode
+const patentLicense = require("./patent_licensing"); // Import Patent Licensing and Commercialization Services Model
+const patentLandscape = require("./freedom_to_patent_landscape"); // Import Freedom to Patent Landscape Model
+const patentWatch = require("./patent_watch"); // Import Patent Watch Model
 const responseToFer = require("./response_to_fer"); // Import Response To FER Model
 const freedomToOperate = require("./freedom_to_operate"); // Import the Freedom To Operate Search Model
 const JobOrder = require("./job_order"); // Import the JobOrder model
@@ -270,6 +275,8 @@ app.post("/api/patent_filing", verifyToken, async (req, res) => {
     endDate.setDate(endDate.getDate() + 7); // Add 7 days
     jobOrderData.end_date = endDate;
     jobOrderData.status = "In Progress";
+    jobOrderData.budget = req.body.budget;
+    jobOrderData.country = req.body.country;
 
     // Fetch the latest job_no from the database
     const latestJobOrder = await JobOrder.findOne()
@@ -309,11 +316,11 @@ app.post("/api/patent_filing", verifyToken, async (req, res) => {
 // API route which saves the data obtained from Patent Search Form
 app.post("/api/patent_search", verifyToken, async (req, res) => {
   try {
-    const userID = req.userID;
+    const userId = req.userId;
     const searchData = req.body;
 
     // Set default values
-    searchData.userID = userID;
+    searchData.userID = userId;
 
     // Fetch the latest job_no from the database
     // ...
@@ -345,7 +352,15 @@ const savedSearch = await searchOrder.save();
     findPartner.is_free = false;
     const newJobOrder = new JobOrder({_id: {
       job_no: newSearchNo,
-    }, service: "Patent Search", userID: userID, partnerID:findPartner.userID, domain: req.body.field}).save();
+    }, 
+    service: "Patent Search",
+    userID: userId, 
+    partnerID:findPartner.userID,
+    start_date: new Date(),
+    end_date: endDate,
+    budget: "To be Allocated",
+    country: "NA",
+    domain: req.body.field}).save();
     findPartner.save().then(
     (response) => {
       console.log("Successfully Assigned Patent Search Task to a Partner");
@@ -364,11 +379,11 @@ const savedSearch = await searchOrder.save();
 // API route which saves the data obtained from Response to FER Form
 app.post("/api/response_to_fer", verifyToken, async (req, res) => {
   try {
-    const userID = req.userID;
+    const userId = req.userId;
     const responseToFerData = req.body;
 
     // Set default values
-    responseToFerData.userID = userID;
+    responseToFerData.userID = userId;
 
     // Fetch the latest job_no from the database
     // ...
@@ -398,9 +413,19 @@ const savedResponseToFer = await responseToFerOrder.save();
 
     findPartner.jobs.push(savedResponseToFer._id.job_no);
     findPartner.is_free = false;
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + 7);
     const newJobOrder = new JobOrder({_id: {
       job_no: newResponseToFerNo,
-    }, service: "Response To FER/Office Action", userID: userID, partnerID:findPartner.userID, country: req.body.country, domain: req.body.field}).save();
+    }, service: "Response To FER/Office Action",
+     userID: userId, 
+     partnerID:findPartner.userID, 
+     country: req.body.country, 
+     start_date: new Date(),
+     end_date: endDate,
+     status: "In Progress",
+     budget: "To be Allocated",
+     domain: req.body.field}).save();
     findPartner.save().then(
     (response) => {
       console.log("Successfully Assigned Response to FER Task to a Partner");
@@ -419,11 +444,11 @@ const savedResponseToFer = await responseToFerOrder.save();
 // API route which saves the data obtained from Freedom To Operate Form
 app.post("/api/freedom_to_operate", verifyToken, async (req, res) => {
   try {
-    const userID = req.userID;
+    const userId = req.userId;
     const freedomToOperateData = req.body;
 
     // Set default values
-    freedomToOperateData.userID = userID;
+    freedomToOperateData.userID = userId;
 
     // Fetch the latest job_no from the database
     // ...
@@ -461,7 +486,7 @@ const savedFTO = await fTOOrder.save();
       job_no: newFTONo,
     }, 
     service: "Freedom To Operate",
-     userID: userID, 
+     userID: userId, 
      partnerID:findPartner.userID, 
      country: req.body.country,
      start_date: new Date(),
@@ -478,7 +503,7 @@ const savedFTO = await fTOOrder.save();
       console.log("Error in Assigning Freedom To Operate Task to the Partner")
     });
 
-    res.status(200).send(savedFTO);
+    res.status(200).send(savedFTO._id);
   } catch (error) {
     console.error("Error creating Freedom To Operate:", error);
     res.status(500).send("Error creating Freedom to Operate");
@@ -532,7 +557,7 @@ app.post("/api/patent_illustration", verifyToken, async (req, res) => {
     domain: req.body.field, 
     start_date: new Date(), 
     end_date: endDate,
-    country: "India",
+    country: "NA",
     status: "In Progress",
     budget: "To be Allocated" }).save();
     
@@ -550,6 +575,336 @@ app.post("/api/patent_illustration", verifyToken, async (req, res) => {
     res.status(500).send("Error creating job order");
   }
 });
+
+
+// API endpoint to save the Freedom to Patent Landscape Form Data and Assign Tasks
+app.post("/api/patent_landscape", verifyToken, async (req, res) => {
+  try {
+    const userId = req.userId;
+    const patentLandscapeData = req.body;
+
+    // Set default values
+    patentLandscapeData.userID = userId;
+
+
+    // Fetch the latest job_no from the database
+    const latestJobOrder = await JobOrder.findOne()
+      .sort({ "_id.job_no": -1 })
+      .limit(1)
+      .exec();
+
+    // Increment the job_no and assign it to the new job
+    const newJobNo = latestJobOrder ? latestJobOrder._id.job_no + 1 : 1000;
+    patentLandscapeData._id = { job_no: newJobNo };
+
+    // Save the job order to the database
+    const savedJobOrder = new patentLandscape(patentLandscapeData);
+
+    // Assign the new job_no to the _id field
+    savedJobOrder._id = { job_no: newJobNo };
+
+    // Save the job order to the database
+    const savedPatentLandscape = await savedJobOrder.save();
+
+    // Finding Free Partners and Assigning Task to them
+    const findPartner = await Partner.findOne({ is_free: true });
+    console.log(findPartner);
+    findPartner.jobs.push(savedJobOrder._id.job_no);
+    findPartner.is_free = false;
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + 7);
+    const newJobOrder = new JobOrder(
+      {_id: {
+      job_no: newJobNo,
+    }, 
+    service: "Freedom to Patent Landscape", 
+    userID: userId, 
+    partnerID:findPartner.userID, 
+    domain: req.body.field, 
+    start_date: new Date(), 
+    end_date: endDate,
+    country: req.body.country,
+    status: "In Progress",
+    budget: "To be Allocated" }).save();
+    
+    findPartner.save().then(
+      (response) => {
+        console.log("Successfully Assigned Patent Landscape to a Partner");
+      }
+    ).catch((err) => {
+      console.log("Error in Assigning Patent Landscape to the Partner");
+    });
+
+    res.status(200).json(savedJobOrder._id);
+  } catch (error) {
+    console.error("Error creating job order:", error);
+    res.status(500).send("Error creating job order");
+  }
+});
+
+// API endpoint to save the Patent Watch Form Data and Assign Tasks
+app.post("/api/patent_watch", verifyToken, async (req, res) => {
+  try {
+    const userId = req.userId;
+    const patentWatchData = req.body;
+
+    // Set default values
+    patentWatchData.userID = userId;
+
+
+    // Fetch the latest job_no from the database
+    const latestJobOrder = await JobOrder.findOne()
+      .sort({ "_id.job_no": -1 })
+      .limit(1)
+      .exec();
+
+    // Increment the job_no and assign it to the new job
+    const newJobNo = latestJobOrder ? latestJobOrder._id.job_no + 1 : 1000;
+    patentWatchData._id = { job_no: newJobNo };
+
+    // Save the job order to the database
+    const savedJobOrder = new patentWatch(patentWatchData);
+
+    // Assign the new job_no to the _id field
+    savedJobOrder._id = { job_no: newJobNo };
+
+    // Save the job order to the database
+    const savedPatentWatch = await savedJobOrder.save();
+
+    // Finding Free Partners and Assigning Task to them
+    const findPartner = await Partner.findOne({ is_free: true });
+    console.log(findPartner);
+    findPartner.jobs.push(savedJobOrder._id.job_no);
+    findPartner.is_free = false;
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + 7);
+    const newJobOrder = new JobOrder(
+      {_id: {
+      job_no: newJobNo,
+    }, 
+    service: "Patent Watch", 
+    userID: userId, 
+    partnerID:findPartner.userID, 
+    domain: req.body.field, 
+    start_date: new Date(), 
+    end_date: endDate,
+    country: "NA",
+    status: "In Progress",
+    budget: "To be Allocated" }).save();
+    
+    findPartner.save().then(
+      (response) => {
+        console.log("Successfully Assigned Patent Watch to a Partner");
+      }
+    ).catch((err) => {
+      console.log("Error in Assigning Patent Watch to the Partner");
+    });
+
+    res.status(200).json(savedJobOrder._id);
+  } catch (error) {
+    console.error("Error creating job order:", error);
+    res.status(500).send("Error creating job order");
+  }
+});
+
+// API endpoint to save the Patent Licensing and Commercialization Form Data and Assign Tasks
+app.post("/api/patent_licensing", verifyToken, async (req, res) => {
+  try {
+    const userId = req.userId;
+    const patentLicenseData = req.body;
+
+    // Set default values
+    patentLicenseData.userID = userId;
+
+
+    // Fetch the latest job_no from the database
+    const latestJobOrder = await JobOrder.findOne()
+      .sort({ "_id.job_no": -1 })
+      .limit(1)
+      .exec();
+
+    // Increment the job_no and assign it to the new job
+    const newJobNo = latestJobOrder ? latestJobOrder._id.job_no + 1 : 1000;
+    patentLicenseData._id = { job_no: newJobNo };
+
+    // Save the job order to the database
+    const savedJobOrder = new patentLicense(patentLicenseData);
+
+    // Assign the new job_no to the _id field
+    savedJobOrder._id = { job_no: newJobNo };
+
+    // Save the job order to the database
+    const savedPatentLicense = await savedJobOrder.save();
+
+    // Finding Free Partners and Assigning Task to them
+    const findPartner = await Partner.findOne({ is_free: true });
+    console.log(findPartner);
+    findPartner.jobs.push(savedJobOrder._id.job_no);
+    findPartner.is_free = false;
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + 7);
+    const newJobOrder = new JobOrder(
+      {_id: {
+      job_no: newJobNo,
+    }, 
+    service: "Patent Licensing and Commercialization Services", 
+    userID: userId, 
+    partnerID:findPartner.userID, 
+    domain: req.body.field, 
+    start_date: new Date(), 
+    end_date: endDate,
+    country: req.body.country,
+    status: "In Progress",
+    budget: "To be Allocated" }).save();
+    
+    findPartner.save().then(
+      (response) => {
+        console.log("Successfully Assigned Patent Licensing and Commercialization Services Task to a Partner");
+      }
+    ).catch((err) => {
+      console.log("Error in Assigning Patent Licensing and Commercialization Services Task to the Partner");
+    });
+
+    res.status(200).json(savedJobOrder._id);
+  } catch (error) {
+    console.error("Error creating job order:", error);
+    res.status(500).send("Error creating job order");
+  }
+});
+
+// API endpoint to store data in Freedom to Patent Portfolio Analysis and to assign tasks to Partner
+app.post("/api/freedom_to_patent_portfolio_analysis", verifyToken, async (req, res) => {
+  try {
+    const userId = req.userId;
+    const patentPortfolioData = req.body;
+
+    // Set default values
+    patentPortfolioData.userID = userId;
+
+
+    // Fetch the latest job_no from the database
+    const latestJobOrder = await JobOrder.findOne()
+      .sort({ "_id.job_no": -1 })
+      .limit(1)
+      .exec();
+
+    // Increment the job_no and assign it to the new job
+    const newJobNo = latestJobOrder ? latestJobOrder._id.job_no + 1 : 1000;
+    patentPortfolioData._id = { job_no: newJobNo };
+
+    // Save the job order to the database
+    const savedJobOrder = new patentPortfolioAnalysis(patentPortfolioData);
+
+    // Assign the new job_no to the _id field
+    savedJobOrder._id = { job_no: newJobNo };
+
+    // Save the job order to the database
+    const savedPatentPortfolio = await savedJobOrder.save();
+
+    // Finding Free Partners and Assigning Task to them
+    const findPartner = await Partner.findOne({ is_free: true });
+    console.log(findPartner);
+    findPartner.jobs.push(savedJobOrder._id.job_no);
+    findPartner.is_free = false;
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + 7);
+    const newJobOrder = new JobOrder(
+      {_id: {
+      job_no: newJobNo,
+    }, 
+    service: "Patent Portfolio Analysis", 
+    userID: userId, 
+    partnerID:findPartner.userID, 
+    domain: req.body.field, 
+    start_date: new Date(), 
+    end_date: endDate,
+    country: req.body.country,
+    status: "In Progress",
+    budget: "To be Allocated" }).save();
+    
+    findPartner.save().then(
+      (response) => {
+        console.log("Successfully Assigned Patent Portfolio Analysis Task to a Partner");
+      }
+    ).catch((err) => {
+      console.log("Error in Assigning Patent Portfolio Analysis Task to the Partner");
+    });
+
+    res.status(200).json(savedJobOrder._id);
+  } catch (error) {
+    console.error("Error creating job order:", error);
+    res.status(500).send("Error creating job order");
+  }
+
+
+});
+
+// API endpoint to store Patent Translation Services Form Data and to assign tasks to the Partners
+app.post("/api/patent_translation_services", verifyToken, async (req, res) => {
+  try {
+    const userId = req.userId;
+    const patentTranslationData = req.body;
+
+    // Set default values
+    patentTranslationData.userID = userId;
+
+
+    // Fetch the latest job_no from the database
+    const latestJobOrder = await JobOrder.findOne()
+      .sort({ "_id.job_no": -1 })
+      .limit(1)
+      .exec();
+
+    // Increment the job_no and assign it to the new job
+    const newJobNo = latestJobOrder ? latestJobOrder._id.job_no + 1 : 1000;
+    patentTranslationData._id = { job_no: newJobNo };
+
+    // Save the job order to the database
+    const savedJobOrder = new patentTranslation(patentTranslationData);
+
+    // Assign the new job_no to the _id field
+    savedJobOrder._id = { job_no: newJobNo };
+
+    // Save the job order to the database
+    const savedPatentTranslation = await savedJobOrder.save();
+
+    // Finding Free Partners and Assigning Task to them
+    const findPartner = await Partner.findOne({ is_free: true });
+    console.log(findPartner);
+    findPartner.jobs.push(savedJobOrder._id.job_no);
+    findPartner.is_free = false;
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + 7);
+    const newJobOrder = new JobOrder(
+      {_id: {
+      job_no: newJobNo,
+    }, 
+    service: "Patent Translation Services", 
+    userID: userId, 
+    partnerID:findPartner.userID, 
+    domain: req.body.field, 
+    start_date: new Date(), 
+    end_date: endDate,
+    country: "NA",
+    status: "In Progress",
+    budget: "To be Allocated" }).save();
+    
+    findPartner.save().then(
+      (response) => {
+        console.log("Successfully Assigned Patent Translation Services Task to a Partner");
+      }
+    ).catch((err) => {
+      console.log("Error in Assigning Patent Translation Services Task to the Partner");
+    });
+
+    res.status(200).json(savedJobOrder._id);
+  } catch (error) {
+    console.error("Error creating job order:", error);
+    res.status(500).send("Error creating job order");
+  }
+});
+
+
 
 
 //SIGNIN & SIGNUP FOR USERS

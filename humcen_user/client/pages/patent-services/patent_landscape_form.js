@@ -46,50 +46,43 @@ const ColorButton = styled(Button)(({ theme }) => ({
 
 export default function Inbox() {
   const [domain, setDomain] = useState("");
-  const [title, setTitle] = useState("");
-  const [time, setTime] = useState("");
+  const [description, setDescription] = useState("");
   const [keyword, setKeyword] = useState("");
+  const [compInfo, setCompInfo] = useState("");
   const [country, setCountry] = useState("");
-  const [budget, setBudget] = useState("");
-  const [files, setFiles] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const router = useRouter();
-
-
-  const getFiles = (files) => {
-    setFiles(files);
-  };
 
   const handleDomainChange = (value) => {
     setDomain(value);
   };
+  const handleDescriptionChange = (event) => {
+    setDescription(event.target.value);
+  };
+
   const handleKeywordChange = (event) => {
     setKeyword(event.target.value);
   };
 
-  const handleTitleChange = (event) => {
-    setTitle(event.target.value); // Update the title state on input change
-  };
+  const handleCompInfoChange = (event) => {
+    setCompInfo(event.target.value);
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = {
-      domain: domain,
-      country: country,
-      job_title: title,
+      field: domain,
+      technology_description: description,
       keywords: keyword,
-      budget: budget,
-      time_of_delivery: time,
-      service_specific_files: {
-        invention_details: files,
-      },
+      competitor_information: compInfo,
+      country: country,
     };
 
     try {
-      const response = await api.post("/job_order", formData);
+      const response = await api.post("/patent_landscape", formData);
       const data = response.data;
-      console.log("Form submitted successfully");
+      console.log("Patent Landscape Form submitted successfully");
       console.log(data);
       setIsSubmitted(true);
     } catch (error) {
@@ -165,7 +158,7 @@ export default function Inbox() {
               InputProps={{
                 style: { borderRadius: 8 },
               }}
-              onChange={handleKeywordChange} // Provide the onChange event handler
+              onChange={handleDescriptionChange} // Provide the onChange event handler
             />
           </Card>
           <Card
@@ -225,7 +218,7 @@ export default function Inbox() {
               InputProps={{
                 style: { borderRadius: 8 },
               }}
-              onChange={handleKeywordChange} // Provide the onChange event handler
+              onChange={handleCompInfoChange} // Provide the onChange event handler
             />
           </Card>
           <Card
