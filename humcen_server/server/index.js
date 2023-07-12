@@ -18,12 +18,12 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const patentIllustration = require("./patent_illustration"); // Import Patent Illustration Model
 const Consultation = require("./consultation");
-const verifyToken = require('./verifyToken');
-const { ObjectId } = require('mongoose');
-const verifyAdmin = require('../server/verifyAdmin')
-const verifyPartner = require('../server/verifyPartner');
-const path = require('path');
-const fs = require('fs');
+const verifyToken = require("./verifyToken");
+const { ObjectId } = require("mongoose");
+const verifyAdmin = require("../server/verifyAdmin");
+const verifyPartner = require("../server/verifyPartner");
+const path = require("path");
+const fs = require("fs");
 const { log } = require("console");
 const app = express();
 app.use(express.json());
@@ -67,107 +67,114 @@ const generateUserID = async () => {
 //this is exclusively for the USER HUMCEN
 
 // Define API endpoint for fetching customer profile image
-app.get('/api/user/img', verifyToken, async (req, res) => {
+app.get("/api/user/img", verifyToken, async (req, res) => {
   const userId = req.userId;
 
   try {
     // Find the customer with the given userId
     const user = await Customer.findOne({ userID: userId });
 
-    res.json(user.profile_img)
+    res.json(user.profile_img);
   } catch (error) {
     // Handle any errors that occurred during the process
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: "Internal server error" });
   }
 });
-
 
 // API endpoint for fetching customer's first name
-app.get('/api/user/name', verifyToken, async (req, res) => {
+app.get("/api/user/name", verifyToken, async (req, res) => {
   const userId = req.userId;
 
   try {
     // Find the customer with the given userId
     const user = await Customer.findOne({ userID: userId });
 
-    res.json(user.first_name + " " + user.last_name)
+    res.json(user.first_name + " " + user.last_name);
   } catch (error) {
     // Handle any errors that occurred during the process
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
-// API endpoint for fetching Customer's Settings 
-app.get('/api/user/settings', verifyToken, async (req, res) => {
+// API endpoint for fetching Customer's Settings
+app.get("/api/user/settings", verifyToken, async (req, res) => {
   const userId = req.userId;
   try {
     // Find the customer with the given userId
     const user = await Customer.findOne({ userID: userId });
     res.json(user);
     console.log(user);
-    
   } catch (error) {
     // Handle any errors that occurred during the process
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
 // API endpoint for updating Customer's Settings
-app.put('/api/user/settings', verifyToken, async (req, res) => {
+app.put("/api/user/settings", verifyToken, async (req, res) => {
   const userId = req.userId;
-  const user = await Customer.findOne({ userID: userId});
+  const user = await Customer.findOne({ userID: userId });
   user.first_name = req.body.data.fName;
   user.last_name = req.body.data.lName;
   user.email = req.body.data.email;
   user.phno = req.body.data.phone;
-  user.save()
-  .then((res) => console.log("Successfully Updated"))
-  .catch((error) => console.error("Error in updating Profile Settings: ", error));
+  user
+    .save()
+    .then((res) => console.log("Successfully Updated"))
+    .catch((error) =>
+      console.error("Error in updating Profile Settings: ", error)
+    );
 });
 
 // API endpoint for updating Customer's Preferential Settings
-app.put('/api/user/pref-settings', verifyToken, async (req, res) => {
+app.put("/api/user/pref-settings", verifyToken, async (req, res) => {
   const userId = req.userId;
-  const user = await Customer.findOne({ userID: userId});
+  const user = await Customer.findOne({ userID: userId });
   user.pref.mails = req.body.data.mails;
   user.pref.order_updates = req.body.data.order_updates;
   user.pref.marketing_emails = req.body.data.marketing_emails;
   user.pref.newsletter = req.body.data.newsletter;
-  user.save()
-  .then((res) => console.log("Successfully Updated"))
-  .catch((error) => console.error("Error in updating User's Preferential Profile Settings: ", error));
+  user
+    .save()
+    .then((res) => console.log("Successfully Updated"))
+    .catch((error) =>
+      console.error(
+        "Error in updating User's Preferential Profile Settings: ",
+        error
+      )
+    );
 });
 
 // API endpoint for updating Customer's Password
-app.put('/api/user/password', verifyToken, async(req, res) => {
+app.put("/api/user/password", verifyToken, async (req, res) => {
   const userId = req.userId;
-  const user = await Customer.findOne({userID: userId});
+  const user = await Customer.findOne({ userID: userId });
   const saltRounds = 10;
-    bcrypt.genSalt(saltRounds, (err, salt) => {
+  bcrypt.genSalt(saltRounds, (err, salt) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send("Error creating/updating customer");
+    }
+
+    bcrypt.hash(req.body.data.password, salt, async (err, hashedPassword) => {
       if (err) {
         console.error(err);
         return res.status(500).send("Error creating/updating customer");
       }
 
-      bcrypt.hash(req.body.data.password, salt, async (err, hashedPassword) => {
-        if (err) {
-          console.error(err);
-          return res.status(500).send("Error creating/updating customer");
-        }
-
-        user.password = hashedPassword;
-        user.save()
+      user.password = hashedPassword;
+      user
+        .save()
         .then((res) => console.log("Successfully Updated the Password"))
-        .catch((error) => console.error("Error in updating User's Password: ",error));
-
-        
-      });
+        .catch((error) =>
+          console.error("Error in updating User's Password: ", error)
+        );
     });
-  
-})
+  });
+});
 
 // Define your API route for fetching job order data
 app.get("/api/job_order/:id", verifyToken, async (req, res) => {
@@ -184,14 +191,17 @@ app.get("/api/job_order/:id", verifyToken, async (req, res) => {
       res.json(specificJob);
     } else {
       // Return an error message if no job order found with the provided id or for the specific user
-      res.status(404).json({ error: "No job found with the provided id or unauthorized access" });
+      res
+        .status(404)
+        .json({
+          error: "No job found with the provided id or unauthorized access",
+        });
     }
   } catch (error) {
     console.error("Error fetching job order data:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 
 //JOB_ORDER TABLE FOR SPECIFIC USER
 app.get("/api/job_order", verifyToken, async (req, res) => {
@@ -240,18 +250,19 @@ app.post("/api/job_order", verifyToken, async (req, res) => {
     const savedJobOrder = await jobOrder.save();
 
     // Finding Free Partners and Assigning Patent Drafting to them
-    const findPartner = await Partner.findOne({is_free: true})
+    const findPartner = await Partner.findOne({ is_free: true });
     console.log(findPartner);
 
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findPartner.is_free = false;
-    findPartner.save().then(
-    (response) => {
-      console.log("Successfully Assigned Patent Drafting Task to a Partner");
-    }
-    ).catch((err) => {
-      console.log("Error in Assigning Patent Drafting Task to the Partner")
-    });
+    findPartner
+      .save()
+      .then((response) => {
+        console.log("Successfully Assigned Patent Drafting Task to a Partner");
+      })
+      .catch((err) => {
+        console.log("Error in Assigning Patent Drafting Task to the Partner");
+      });
 
     res.status(200).json(savedJobOrder);
   } catch (error) {
@@ -316,18 +327,19 @@ app.post("/api/patent_filing", verifyToken, async (req, res) => {
     // Save the job order to the database
     const savedJobOrder = await jobOrder.save();
     // Finding Free Partners and Assigning Task to them
-    const findPartner = await Partner.findOne({is_free: true})
+    const findPartner = await Partner.findOne({ is_free: true });
     console.log(findPartner);
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findPartner.is_free = false;
-    findPartner.save().then(
-    (response) => {
-      console.log("Successfully Assigned Patent Filing to a Partner");
-    }
-    ).catch((err) => {
-      console.log("Error in Assigning Patent Filing to the Partner")
-    });
-    
+    findPartner
+      .save()
+      .then((response) => {
+        console.log("Successfully Assigned Patent Filing to a Partner");
+      })
+      .catch((err) => {
+        console.log("Error in Assigning Patent Filing to the Partner");
+      });
+
     res.status(200).json(savedJobOrder);
   } catch (error) {
     console.error("Error creating job order:", error);
@@ -347,49 +359,53 @@ app.post("/api/patent_search", verifyToken, async (req, res) => {
     // Fetch the latest job_no from the database
     // ...
 
-// Fetch the latest job_no from the database
-const latestSearchOrder = await JobOrder.findOne()
-.sort({ "_id.job_no": -1 })
-.limit(1)
-.exec();
+    // Fetch the latest job_no from the database
+    const latestSearchOrder = await JobOrder.findOne()
+      .sort({ "_id.job_no": -1 })
+      .limit(1)
+      .exec();
 
+    // Increment the job_no and assign it to the new job
+    const newSearchNo = latestSearchOrder
+      ? latestSearchOrder._id.job_no + 1
+      : 1000;
 
-// Increment the job_no and assign it to the new job
-const newSearchNo = latestSearchOrder ? latestSearchOrder._id.job_no + 1 : 1000;
+    // Create a new JobOrder instance using the received data
+    const searchOrder = new Search(searchData);
 
-// Create a new JobOrder instance using the received data
-const searchOrder = new Search(searchData);
+    // Assign the new job_no to the _id field
+    searchOrder._id = { job_no: newSearchNo };
 
-// Assign the new job_no to the _id field
-searchOrder._id = { job_no: newSearchNo };
-
-// Save the job order to the database
-const savedSearch = await searchOrder.save();
+    // Save the job order to the database
+    const savedSearch = await searchOrder.save();
 
     // Finding Free Partners and Assigning Patent Drafting to them
-    const findPartner = await Partner.findOne({is_free: true})
+    const findPartner = await Partner.findOne({ is_free: true });
     console.log(findPartner);
 
     findPartner.jobs.push(savedSearch._id.job_no);
     findPartner.is_free = false;
-    const newJobOrder = new JobOrder({_id: {
-      job_no: newSearchNo,
-    }, 
-    service: "Patent Search",
-    userID: userId, 
-    partnerID:findPartner.userID,
-    start_date: new Date(),
-    end_date: endDate,
-    budget: "To be Allocated",
-    country: "NA",
-    domain: req.body.field}).save();
-    findPartner.save().then(
-    (response) => {
-      console.log("Successfully Assigned Patent Search Task to a Partner");
-    }
-    ).catch((err) => {
-      console.log("Error in Assigning Patent Search Task to the Partner")
-    });
+    const newJobOrder = new JobOrder({
+      _id: {
+        job_no: newSearchNo,
+      },
+      service: "Patent Search",
+      userID: userId,
+      partnerID: findPartner.userID,
+      start_date: new Date(),
+      end_date: endDate,
+      budget: "To be Allocated",
+      country: "NA",
+      domain: req.body.field,
+    }).save();
+    findPartner
+      .save()
+      .then((response) => {
+        console.log("Successfully Assigned Patent Search Task to a Partner");
+      })
+      .catch((err) => {
+        console.log("Error in Assigning Patent Search Task to the Partner");
+      });
 
     res.status(200).json(savedSearch);
   } catch (error) {
@@ -410,51 +426,56 @@ app.post("/api/response_to_fer", verifyToken, async (req, res) => {
     // Fetch the latest job_no from the database
     // ...
 
-// Fetch the latest job_no from the database
-const latestResponseToFerOrder = await JobOrder.findOne()
-.sort({ "_id.job_no": -1 })
-.limit(1)
-.exec();
+    // Fetch the latest job_no from the database
+    const latestResponseToFerOrder = await JobOrder.findOne()
+      .sort({ "_id.job_no": -1 })
+      .limit(1)
+      .exec();
 
+    // Increment the job_no and assign it to the new job
+    const newResponseToFerNo = latestResponseToFerOrder
+      ? latestResponseToFerOrder._id.job_no + 1
+      : 1000;
 
-// Increment the job_no and assign it to the new job
-const newResponseToFerNo = latestResponseToFerOrder ? latestResponseToFerOrder._id.job_no + 1 : 1000;
+    // Create a new JobOrder instance using the received data
+    const responseToFerOrder = new responseToFer(responseToFerData);
 
-// Create a new JobOrder instance using the received data
-const responseToFerOrder = new responseToFer(responseToFerData);
+    // Assign the new job_no to the _id field
+    responseToFerOrder._id = { job_no: newResponseToFerNo };
 
-// Assign the new job_no to the _id field
-responseToFerOrder._id = { job_no: newResponseToFerNo };
-
-// Save the job order to the database
-const savedResponseToFer = await responseToFerOrder.save();
+    // Save the job order to the database
+    const savedResponseToFer = await responseToFerOrder.save();
 
     // Finding Free Partners and Assigning Patent Drafting to them
-    const findPartner = await Partner.findOne({is_free: true})
+    const findPartner = await Partner.findOne({ is_free: true });
     console.log(findPartner);
 
     findPartner.jobs.push(savedResponseToFer._id.job_no);
     findPartner.is_free = false;
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
-    const newJobOrder = new JobOrder({_id: {
-      job_no: newResponseToFerNo,
-    }, service: "Response To FER/Office Action",
-     userID: userId, 
-     partnerID:findPartner.userID, 
-     country: req.body.country, 
-     start_date: new Date(),
-     end_date: endDate,
-     status: "In Progress",
-     budget: "To be Allocated",
-     domain: req.body.field}).save();
-    findPartner.save().then(
-    (response) => {
-      console.log("Successfully Assigned Response to FER Task to a Partner");
-    }
-    ).catch((err) => {
-      console.log("Error in Assigning Response to FER Task to the Partner")
-    });
+    const newJobOrder = new JobOrder({
+      _id: {
+        job_no: newResponseToFerNo,
+      },
+      service: "Response To FER/Office Action",
+      userID: userId,
+      partnerID: findPartner.userID,
+      country: req.body.country,
+      start_date: new Date(),
+      end_date: endDate,
+      status: "In Progress",
+      budget: "To be Allocated",
+      domain: req.body.field,
+    }).save();
+    findPartner
+      .save()
+      .then((response) => {
+        console.log("Successfully Assigned Response to FER Task to a Partner");
+      })
+      .catch((err) => {
+        console.log("Error in Assigning Response to FER Task to the Partner");
+      });
 
     res.status(200).json(savedResponseToFer);
   } catch (error) {
@@ -475,55 +496,61 @@ app.post("/api/freedom_to_operate", verifyToken, async (req, res) => {
     // Fetch the latest job_no from the database
     // ...
 
-// Fetch the latest job_no from the database
-const latestFTOOrder = await JobOrder.findOne()
-.sort({ "_id.job_no": -1 })
-.limit(1)
-.exec();
+    // Fetch the latest job_no from the database
+    const latestFTOOrder = await JobOrder.findOne()
+      .sort({ "_id.job_no": -1 })
+      .limit(1)
+      .exec();
 
-// Increment the job_no and assign it to the new job
-const newFTONo = latestFTOOrder ? latestFTOOrder._id.job_no + 1 : 1000;
+    // Increment the job_no and assign it to the new job
+    const newFTONo = latestFTOOrder ? latestFTOOrder._id.job_no + 1 : 1000;
 
-freedomToOperateData._id = { job_no: newFTONo };
+    freedomToOperateData._id = { job_no: newFTONo };
 
-// Create a new JobOrder instance using the received data
-const fTOOrder = new freedomToOperate(freedomToOperateData);
+    // Create a new JobOrder instance using the received data
+    const fTOOrder = new freedomToOperate(freedomToOperateData);
 
-// Assign the new job_no to the _id field
-fTOOrder._id = { job_no: newFTONo };
+    // Assign the new job_no to the _id field
+    fTOOrder._id = { job_no: newFTONo };
 
-// Save the job order to the database
-const savedFTO = await fTOOrder.save();
+    // Save the job order to the database
+    const savedFTO = await fTOOrder.save();
 
     // Finding Free Partners and Assigning Patent Drafting to them
-    const findPartner = await Partner.findOne({is_free: true})
+    const findPartner = await Partner.findOne({ is_free: true });
     console.log(findPartner);
 
     findPartner.jobs.push(savedFTO._id.job_no);
     findPartner.is_free = false;
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
-    const newJobOrder = new JobOrder(
-      {_id: {
-      job_no: newFTONo,
-    }, 
-    service: "Freedom To Operate",
-     userID: userId, 
-     partnerID:findPartner.userID, 
-     country: req.body.country,
-     start_date: new Date(),
-     end_date: endDate,
-     status: "In Progress",
-     budget: "To be Allocated",
-     domain: req.body.field}).save();
-    
-    findPartner.save().then(
-    (response) => {
-      console.log("Successfully Assigned Freedom To Operate Task to a Partner");
-    }
-    ).catch((err) => {
-      console.log("Error in Assigning Freedom To Operate Task to the Partner")
-    });
+    const newJobOrder = new JobOrder({
+      _id: {
+        job_no: newFTONo,
+      },
+      service: "Freedom To Operate",
+      userID: userId,
+      partnerID: findPartner.userID,
+      country: req.body.country,
+      start_date: new Date(),
+      end_date: endDate,
+      status: "In Progress",
+      budget: "To be Allocated",
+      domain: req.body.field,
+    }).save();
+
+    findPartner
+      .save()
+      .then((response) => {
+        console.log(
+          "Successfully Assigned Freedom To Operate Task to a Partner"
+        );
+      })
+      .catch((err) => {
+        console.log(
+          "Error in Assigning Freedom To Operate Task to the Partner"
+        );
+      });
 
     res.status(200).send(savedFTO._id);
   } catch (error) {
@@ -541,7 +568,6 @@ app.post("/api/patent_illustration", verifyToken, async (req, res) => {
 
     // Set default values
     illustrationData.userID = userId;
-
 
     // Fetch the latest job_no from the database
     const latestJobOrder = await JobOrder.findOne()
@@ -569,27 +595,29 @@ app.post("/api/patent_illustration", verifyToken, async (req, res) => {
     findPartner.is_free = false;
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
-    const newJobOrder = new JobOrder(
-      {_id: {
-      job_no: newJobNo,
-    }, 
-    service: "Patent Illustration", 
-    userID: userId, 
-    partnerID:findPartner.userID, 
-    domain: req.body.field, 
-    start_date: new Date(), 
-    end_date: endDate,
-    country: "NA",
-    status: "In Progress",
-    budget: "To be Allocated" }).save();
-    
-    findPartner.save().then(
-      (response) => {
+    const newJobOrder = new JobOrder({
+      _id: {
+        job_no: newJobNo,
+      },
+      service: "Patent Illustration",
+      userID: userId,
+      partnerID: findPartner.userID,
+      domain: req.body.field,
+      start_date: new Date(),
+      end_date: endDate,
+      country: "NA",
+      status: "In Progress",
+      budget: "To be Allocated",
+    }).save();
+
+    findPartner
+      .save()
+      .then((response) => {
         console.log("Successfully Assigned Patent Illustration to a Partner");
-      }
-    ).catch((err) => {
-      console.log("Error in Assigning Patent Illustration to the Partner");
-    });
+      })
+      .catch((err) => {
+        console.log("Error in Assigning Patent Illustration to the Partner");
+      });
 
     res.status(200).json(savedJobOrder._id);
   } catch (error) {
@@ -597,7 +625,6 @@ app.post("/api/patent_illustration", verifyToken, async (req, res) => {
     res.status(500).send("Error creating job order");
   }
 });
-
 
 // API endpoint to save the Freedom to Patent Landscape Form Data and Assign Tasks
 app.post("/api/patent_landscape", verifyToken, async (req, res) => {
@@ -607,7 +634,6 @@ app.post("/api/patent_landscape", verifyToken, async (req, res) => {
 
     // Set default values
     patentLandscapeData.userID = userId;
-
 
     // Fetch the latest job_no from the database
     const latestJobOrder = await JobOrder.findOne()
@@ -635,27 +661,29 @@ app.post("/api/patent_landscape", verifyToken, async (req, res) => {
     findPartner.is_free = false;
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
-    const newJobOrder = new JobOrder(
-      {_id: {
-      job_no: newJobNo,
-    }, 
-    service: "Freedom to Patent Landscape", 
-    userID: userId, 
-    partnerID:findPartner.userID, 
-    domain: req.body.field, 
-    start_date: new Date(), 
-    end_date: endDate,
-    country: req.body.country,
-    status: "In Progress",
-    budget: "To be Allocated" }).save();
-    
-    findPartner.save().then(
-      (response) => {
+    const newJobOrder = new JobOrder({
+      _id: {
+        job_no: newJobNo,
+      },
+      service: "Freedom to Patent Landscape",
+      userID: userId,
+      partnerID: findPartner.userID,
+      domain: req.body.field,
+      start_date: new Date(),
+      end_date: endDate,
+      country: req.body.country,
+      status: "In Progress",
+      budget: "To be Allocated",
+    }).save();
+
+    findPartner
+      .save()
+      .then((response) => {
         console.log("Successfully Assigned Patent Landscape to a Partner");
-      }
-    ).catch((err) => {
-      console.log("Error in Assigning Patent Landscape to the Partner");
-    });
+      })
+      .catch((err) => {
+        console.log("Error in Assigning Patent Landscape to the Partner");
+      });
 
     res.status(200).json(savedJobOrder._id);
   } catch (error) {
@@ -672,7 +700,6 @@ app.post("/api/patent_watch", verifyToken, async (req, res) => {
 
     // Set default values
     patentWatchData.userID = userId;
-
 
     // Fetch the latest job_no from the database
     const latestJobOrder = await JobOrder.findOne()
@@ -700,27 +727,29 @@ app.post("/api/patent_watch", verifyToken, async (req, res) => {
     findPartner.is_free = false;
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
-    const newJobOrder = new JobOrder(
-      {_id: {
-      job_no: newJobNo,
-    }, 
-    service: "Patent Watch", 
-    userID: userId, 
-    partnerID:findPartner.userID, 
-    domain: req.body.field, 
-    start_date: new Date(), 
-    end_date: endDate,
-    country: "NA",
-    status: "In Progress",
-    budget: "To be Allocated" }).save();
-    
-    findPartner.save().then(
-      (response) => {
+    const newJobOrder = new JobOrder({
+      _id: {
+        job_no: newJobNo,
+      },
+      service: "Patent Watch",
+      userID: userId,
+      partnerID: findPartner.userID,
+      domain: req.body.field,
+      start_date: new Date(),
+      end_date: endDate,
+      country: "NA",
+      status: "In Progress",
+      budget: "To be Allocated",
+    }).save();
+
+    findPartner
+      .save()
+      .then((response) => {
         console.log("Successfully Assigned Patent Watch to a Partner");
-      }
-    ).catch((err) => {
-      console.log("Error in Assigning Patent Watch to the Partner");
-    });
+      })
+      .catch((err) => {
+        console.log("Error in Assigning Patent Watch to the Partner");
+      });
 
     res.status(200).json(savedJobOrder._id);
   } catch (error) {
@@ -737,7 +766,6 @@ app.post("/api/patent_licensing", verifyToken, async (req, res) => {
 
     // Set default values
     patentLicenseData.userID = userId;
-
 
     // Fetch the latest job_no from the database
     const latestJobOrder = await JobOrder.findOne()
@@ -765,27 +793,33 @@ app.post("/api/patent_licensing", verifyToken, async (req, res) => {
     findPartner.is_free = false;
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
-    const newJobOrder = new JobOrder(
-      {_id: {
-      job_no: newJobNo,
-    }, 
-    service: "Patent Licensing and Commercialization Services", 
-    userID: userId, 
-    partnerID:findPartner.userID, 
-    domain: req.body.field, 
-    start_date: new Date(), 
-    end_date: endDate,
-    country: req.body.country,
-    status: "In Progress",
-    budget: "To be Allocated" }).save();
-    
-    findPartner.save().then(
-      (response) => {
-        console.log("Successfully Assigned Patent Licensing and Commercialization Services Task to a Partner");
-      }
-    ).catch((err) => {
-      console.log("Error in Assigning Patent Licensing and Commercialization Services Task to the Partner");
-    });
+    const newJobOrder = new JobOrder({
+      _id: {
+        job_no: newJobNo,
+      },
+      service: "Patent Licensing and Commercialization Services",
+      userID: userId,
+      partnerID: findPartner.userID,
+      domain: req.body.field,
+      start_date: new Date(),
+      end_date: endDate,
+      country: req.body.country,
+      status: "In Progress",
+      budget: "To be Allocated",
+    }).save();
+
+    findPartner
+      .save()
+      .then((response) => {
+        console.log(
+          "Successfully Assigned Patent Licensing and Commercialization Services Task to a Partner"
+        );
+      })
+      .catch((err) => {
+        console.log(
+          "Error in Assigning Patent Licensing and Commercialization Services Task to the Partner"
+        );
+      });
 
     res.status(200).json(savedJobOrder._id);
   } catch (error) {
@@ -795,71 +829,78 @@ app.post("/api/patent_licensing", verifyToken, async (req, res) => {
 });
 
 // API endpoint to store data in Freedom to Patent Portfolio Analysis and to assign tasks to Partner
-app.post("/api/freedom_to_patent_portfolio_analysis", verifyToken, async (req, res) => {
-  try {
-    const userId = req.userId;
-    const patentPortfolioData = req.body;
+app.post(
+  "/api/freedom_to_patent_portfolio_analysis",
+  verifyToken,
+  async (req, res) => {
+    try {
+      const userId = req.userId;
+      const patentPortfolioData = req.body;
 
-    // Set default values
-    patentPortfolioData.userID = userId;
+      // Set default values
+      patentPortfolioData.userID = userId;
 
+      // Fetch the latest job_no from the database
+      const latestJobOrder = await JobOrder.findOne()
+        .sort({ "_id.job_no": -1 })
+        .limit(1)
+        .exec();
 
-    // Fetch the latest job_no from the database
-    const latestJobOrder = await JobOrder.findOne()
-      .sort({ "_id.job_no": -1 })
-      .limit(1)
-      .exec();
+      // Increment the job_no and assign it to the new job
+      const newJobNo = latestJobOrder ? latestJobOrder._id.job_no + 1 : 1000;
+      patentPortfolioData._id = { job_no: newJobNo };
 
-    // Increment the job_no and assign it to the new job
-    const newJobNo = latestJobOrder ? latestJobOrder._id.job_no + 1 : 1000;
-    patentPortfolioData._id = { job_no: newJobNo };
+      // Save the job order to the database
+      const savedJobOrder = new patentPortfolioAnalysis(patentPortfolioData);
 
-    // Save the job order to the database
-    const savedJobOrder = new patentPortfolioAnalysis(patentPortfolioData);
+      // Assign the new job_no to the _id field
+      savedJobOrder._id = { job_no: newJobNo };
 
-    // Assign the new job_no to the _id field
-    savedJobOrder._id = { job_no: newJobNo };
+      // Save the job order to the database
+      const savedPatentPortfolio = await savedJobOrder.save();
 
-    // Save the job order to the database
-    const savedPatentPortfolio = await savedJobOrder.save();
+      // Finding Free Partners and Assigning Task to them
+      const findPartner = await Partner.findOne({ is_free: true });
+      console.log(findPartner);
+      findPartner.jobs.push(savedJobOrder._id.job_no);
+      findPartner.is_free = false;
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() + 7);
+      const newJobOrder = new JobOrder({
+        _id: {
+          job_no: newJobNo,
+        },
+        service: "Patent Portfolio Analysis",
+        userID: userId,
+        partnerID: findPartner.userID,
+        domain: req.body.field,
+        start_date: new Date(),
+        end_date: endDate,
+        country: req.body.country,
+        status: "In Progress",
+        budget: "To be Allocated",
+      }).save();
 
-    // Finding Free Partners and Assigning Task to them
-    const findPartner = await Partner.findOne({ is_free: true });
-    console.log(findPartner);
-    findPartner.jobs.push(savedJobOrder._id.job_no);
-    findPartner.is_free = false;
-    const endDate = new Date();
-    endDate.setDate(endDate.getDate() + 7);
-    const newJobOrder = new JobOrder(
-      {_id: {
-      job_no: newJobNo,
-    }, 
-    service: "Patent Portfolio Analysis", 
-    userID: userId, 
-    partnerID:findPartner.userID, 
-    domain: req.body.field, 
-    start_date: new Date(), 
-    end_date: endDate,
-    country: req.body.country,
-    status: "In Progress",
-    budget: "To be Allocated" }).save();
-    
-    findPartner.save().then(
-      (response) => {
-        console.log("Successfully Assigned Patent Portfolio Analysis Task to a Partner");
-      }
-    ).catch((err) => {
-      console.log("Error in Assigning Patent Portfolio Analysis Task to the Partner");
-    });
+      findPartner
+        .save()
+        .then((response) => {
+          console.log(
+            "Successfully Assigned Patent Portfolio Analysis Task to a Partner"
+          );
+        })
+        .catch((err) => {
+          console.log(
+            "Error in Assigning Patent Portfolio Analysis Task to the Partner"
+          );
+        });
 
-    res.status(200).json(savedJobOrder._id);
-  } catch (error) {
-    console.error("Error creating job order:", error);
-    res.status(500).send("Error creating job order");
+      res.status(200).json(savedJobOrder._id);
+    } catch (error) {
+      console.error("Error creating job order:", error);
+      res.status(500).send("Error creating job order");
+    }
   }
-
-
-});
+);
 
 // API endpoint to store Patent Translation Services Form Data and to assign tasks to the Partners
 app.post("/api/patent_translation_services", verifyToken, async (req, res) => {
@@ -869,7 +910,6 @@ app.post("/api/patent_translation_services", verifyToken, async (req, res) => {
 
     // Set default values
     patentTranslationData.userID = userId;
-
 
     // Fetch the latest job_no from the database
     const latestJobOrder = await JobOrder.findOne()
@@ -897,27 +937,33 @@ app.post("/api/patent_translation_services", verifyToken, async (req, res) => {
     findPartner.is_free = false;
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
-    const newJobOrder = new JobOrder(
-      {_id: {
-      job_no: newJobNo,
-    }, 
-    service: "Patent Translation Services", 
-    userID: userId, 
-    partnerID:findPartner.userID, 
-    domain: req.body.field, 
-    start_date: new Date(), 
-    end_date: endDate,
-    country: "NA",
-    status: "In Progress",
-    budget: "To be Allocated" }).save();
-    
-    findPartner.save().then(
-      (response) => {
-        console.log("Successfully Assigned Patent Translation Services Task to a Partner");
-      }
-    ).catch((err) => {
-      console.log("Error in Assigning Patent Translation Services Task to the Partner");
-    });
+    const newJobOrder = new JobOrder({
+      _id: {
+        job_no: newJobNo,
+      },
+      service: "Patent Translation Services",
+      userID: userId,
+      partnerID: findPartner.userID,
+      domain: req.body.field,
+      start_date: new Date(),
+      end_date: endDate,
+      country: "NA",
+      status: "In Progress",
+      budget: "To be Allocated",
+    }).save();
+
+    findPartner
+      .save()
+      .then((response) => {
+        console.log(
+          "Successfully Assigned Patent Translation Services Task to a Partner"
+        );
+      })
+      .catch((err) => {
+        console.log(
+          "Error in Assigning Patent Translation Services Task to the Partner"
+        );
+      });
 
     res.status(200).json(savedJobOrder._id);
   } catch (error) {
@@ -925,9 +971,6 @@ app.post("/api/patent_translation_services", verifyToken, async (req, res) => {
     res.status(500).send("Error creating job order");
   }
 });
-
-
-
 
 //SIGNIN & SIGNUP FOR USERS
 
@@ -965,7 +1008,8 @@ app.post("/api/customer", async (req, res) => {
 
         customerData.userID = userID; // Convert userID to a string
         customerData.password = hashedPassword;
-        customerData.profile_img = "https://api.multiavatar.com/"+ userID +".png"; // User's Profile Avatar
+        customerData.profile_img =
+          "https://api.multiavatar.com/" + userID + ".png"; // User's Profile Avatar
         const newCustomer = new Customer(customerData);
         const savedCustomer = await newCustomer.save();
 
@@ -1128,7 +1172,7 @@ app.get("/api/admin/verify-token", verifyAdmin, async (req, res) => {
 //this is exclusively for the PARTNER HUMCEN
 
 // Fetch the Partner's Full Name
-app.get('/api/partner/name', verifyPartner, async (req, res) => {
+app.get("/api/partner/name", verifyPartner, async (req, res) => {
   const userID = req.userID;
 
   try {
@@ -1139,12 +1183,12 @@ app.get('/api/partner/name', verifyPartner, async (req, res) => {
   } catch (error) {
     // Handle any errors that occurred during the process
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
 // API endpoint for fetching Partner's Profile Image
-app.get('/api/partner/img', verifyPartner, async (req, res) => {
+app.get("/api/partner/img", verifyPartner, async (req, res) => {
   const userID = req.userID;
 
   try {
@@ -1155,30 +1199,29 @@ app.get('/api/partner/img', verifyPartner, async (req, res) => {
   } catch (error) {
     // Handle any errors that occurred during the process
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
-// API endpoint for fetching Partner's Settings 
-app.get('/api/partner/settings', verifyPartner, async (req, res) => {
+// API endpoint for fetching Partner's Settings
+app.get("/api/partner/settings", verifyPartner, async (req, res) => {
   const userID = req.userID;
   try {
     // Find the customer with the given userId
     const partner = await Partner.findOne({ userID: userID });
     res.json(partner);
     console.log(partner);
-    
   } catch (error) {
     // Handle any errors that occurred during the process
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
 // API endpoint for updating Partner's Settings
-app.put('/api/partner/settings', verifyPartner, async (req, res) => {
+app.put("/api/partner/settings", verifyPartner, async (req, res) => {
   const userID = req.userID;
-  const partner = await Partner.findOne({ userID: userID});
+  const partner = await Partner.findOne({ userID: userID });
   partner.applicant_type = req.body.data.applicant_type;
   partner.business_name = req.body.data.business_name;
   partner.company_id = req.body.data.company_id;
@@ -1192,15 +1235,18 @@ app.put('/api/partner/settings', verifyPartner, async (req, res) => {
   partner.town = req.body.data.town;
   partner.post_code = req.body.data.post_code;
   partner.country = req.body.data.country;
-  partner.save()
-  .then((res) => console.log("Successfully Updated"))
-  .catch((error) => console.error("Error in updating Profile Settings: ", error));
+  partner
+    .save()
+    .then((res) => console.log("Successfully Updated"))
+    .catch((error) =>
+      console.error("Error in updating Profile Settings: ", error)
+    );
 });
 
 // API endpoint for Updating Partner's Bank Details
-app.put('/api/partner/bank-settings', verifyPartner, async (req, res) => {
+app.put("/api/partner/bank-settings", verifyPartner, async (req, res) => {
   const userID = req.userID;
-  const partner = await Partner.findOne({ userID: userID});
+  const partner = await Partner.findOne({ userID: userID });
   partner.bank.bank_name = req.body.data.bankName;
   partner.bank.account_num = req.body.data.accountNum;
   partner.bank.account_name = req.body.data.accountName;
@@ -1210,73 +1256,82 @@ app.put('/api/partner/bank-settings', verifyPartner, async (req, res) => {
   partner.bank.town = req.body.data.town;
   partner.bank.post_code = req.body.data.postCode;
   partner.bank.country = req.body.data.country;
-  partner.save()
-  .then((res) => console.log("Bank Details Successfully Updated"))
-  .catch((error) => console.error("Error in updating Profile Settings: ", error));
+  partner
+    .save()
+    .then((res) => console.log("Bank Details Successfully Updated"))
+    .catch((error) =>
+      console.error("Error in updating Profile Settings: ", error)
+    );
 });
 
 // API endpoint for updating Partner's Preferential Settings
-app.put('/api/partner/pref-settings', verifyPartner, async (req, res) => {
+app.put("/api/partner/pref-settings", verifyPartner, async (req, res) => {
   const userID = req.userID;
-  const partner = await Partner.findOne({ userID: userID});
+  const partner = await Partner.findOne({ userID: userID });
   partner.pref.mails = req.body.data.mails;
   partner.pref.order_updates = req.body.data.order_updates;
   partner.pref.marketing_emails = req.body.data.marketing_emails;
   partner.pref.newsletter = req.body.data.newsletter;
-  partner.save()
-  .then((res) => console.log("Partner's Preferentials Successfully Updated"))
-  .catch((error) => console.error("Error in updating Partner's Preferential Profile Settings: ", error));
+  partner
+    .save()
+    .then((res) => console.log("Partner's Preferentials Successfully Updated"))
+    .catch((error) =>
+      console.error(
+        "Error in updating Partner's Preferential Profile Settings: ",
+        error
+      )
+    );
 });
 
 // API endpoint for updating Customer's Password
-app.put('/api/partner/password', verifyPartner, async(req, res) => {
+app.put("/api/partner/password", verifyPartner, async (req, res) => {
   const userID = req.userID;
-  const partner = await Partner.findOne({userID: userID});
+  const partner = await Partner.findOne({ userID: userID });
   const saltRounds = 10;
-    bcrypt.genSalt(saltRounds, (err, salt) => {
+  bcrypt.genSalt(saltRounds, (err, salt) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send("Error creating/updating Partner");
+    }
+
+    bcrypt.hash(req.body.data.password, salt, async (err, hashedPassword) => {
       if (err) {
         console.error(err);
         return res.status(500).send("Error creating/updating Partner");
       }
 
-      bcrypt.hash(req.body.data.password, salt, async (err, hashedPassword) => {
-        if (err) {
-          console.error(err);
-          return res.status(500).send("Error creating/updating Partner");
-        }
-
-        partner.password = hashedPassword;
-        partner.save()
-        .then((res) => console.log("Successfully Updated the Partner's Password"))
-        .catch((error) => console.error("Error in updating Partner's Password: ",error));
-
-        
-      });
+      partner.password = hashedPassword;
+      partner
+        .save()
+        .then((res) =>
+          console.log("Successfully Updated the Partner's Password")
+        )
+        .catch((error) =>
+          console.error("Error in updating Partner's Password: ", error)
+        );
     });
-  
-})
-
+  });
+});
 
 // VERIFY JWT TOKEN MIDDLEWARE PARTNER authVERIFY(frontend)
-app.get('/api/partner/verify-token', verifyPartner, async (req, res) => {
+app.get("/api/partner/verify-token", verifyPartner, async (req, res) => {
   try {
     const userID = req.userID;
-    const user = await Partner.findOne({ userID: userID});
-    console.log(user)
+    const user = await Partner.findOne({ userID: userID });
+    console.log(user);
     if (!user) {
       // User not found, return an error response
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: "User not found" });
     }
 
     // Fetch other user-specific data from respective collections if needed
 
     res.json({ user });
   } catch (error) {
-    console.error('Error fetching user specific data:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error fetching user specific data:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 //SIGN UP FOR PARTNERS
 app.post("/api/partner", async (req, res) => {
@@ -1312,7 +1367,8 @@ app.post("/api/partner", async (req, res) => {
 
         customerData.userID = userID; // Convert userID to a string
         customerData.password = hashedPassword;
-        customerData.profile_img = "https://api.multiavatar.com/-"+ userID +".png"; // User's Profile Avatar
+        customerData.profile_img =
+          "https://api.multiavatar.com/-" + userID + ".png"; // User's Profile Avatar
         const newParnter = new Partner(customerData);
         const savedPartner = await newParnter.save();
 
@@ -1333,7 +1389,7 @@ app.post("/api/auth/partner/signin", async (req, res) => {
 
     if (!user) {
       // User not found, return an error response
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: "User not found" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -1343,17 +1399,16 @@ app.post("/api/auth/partner/signin", async (req, res) => {
       return res.status(401).json({ message: "Invalid password" });
     }
 
-
     // Authentication successful, sign and send the JWT token
-    const token = jwt.sign({ userID: user.userID }, 'your-secret-key', { expiresIn: '1h' });
+    const token = jwt.sign({ userID: user.userID }, "your-secret-key", {
+      expiresIn: "1h",
+    });
     res.json({ token });
-
   } catch (error) {
-    console.error('Failed to sign in:', error);
-    res.status(500).json({ message: 'Failed to sign in' });
+    console.error("Failed to sign in:", error);
+    res.status(500).json({ message: "Failed to sign in" });
   }
 });
-
 
 app.get("/api/partner/jobs/:id", verifyPartner, async (req, res) => {
   try {
@@ -1382,7 +1437,9 @@ app.get("/api/partner/jobs/:id", verifyPartner, async (req, res) => {
     console.log("specificJob:", specificJob); // Check the fetched specific job order
 
     if (!specificJob) {
-      return res.status(404).json({ error: "No job found with the provided job number" });
+      return res
+        .status(404)
+        .json({ error: "No job found with the provided job number" });
     }
 
     res.json(specificJob);
@@ -1392,7 +1449,6 @@ app.get("/api/partner/jobs/:id", verifyPartner, async (req, res) => {
   }
 });
 
-
 app.get("/api/partner/job_order", verifyPartner, async (req, res) => {
   try {
     const userID = req.userID;
@@ -1400,7 +1456,7 @@ app.get("/api/partner/job_order", verifyPartner, async (req, res) => {
 
     // Fetch the partner document based on the user ID
     const partner = await Partner.findOne({ userID: userID });
-    console.log("partner:", partner); // Check the fetched partner document
+    // console.log("partner:", partner); // Check the fetched partner document
 
     if (!partner) {
       return res.status(404).json({ error: "Partner not found" });
@@ -1410,8 +1466,10 @@ app.get("/api/partner/job_order", verifyPartner, async (req, res) => {
     const jobOrderIds = partner.jobs;
 
     // Fetch the job orders using the retrieved IDs
-    const jobOrders = await JobOrder.find({ "_id.job_no": { $in: jobOrderIds } });
-    console.log("jobOrders:", jobOrders); // Check the fetched job orders
+    const jobOrders = await JobOrder.find({
+      "_id.job_no": { $in: jobOrderIds },
+    });
+    // console.log("jobOrders:", jobOrders); // Check the fetched job orders
 
     res.json({ jobOrders });
   } catch (error) {
@@ -1433,11 +1491,10 @@ const generatePartnerID = async () => {
 
     return newUserID;
   } catch (error) {
-    console.error('Error generating userID:', error);
+    console.error("Error generating userID:", error);
     throw error;
   }
 };
-
 
 // Start the server
 

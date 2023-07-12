@@ -129,7 +129,8 @@ api.interceptors.request.use((config) => {
 async function fetchJobOrders() {
   try {
     const response = await api.get('/partner/job_order');
-    const { jobOrders } = response.data; // Extract the jobOrders array from the response data
+    const { jobOrders } = response.data;
+    // console.log(jobOrders); // Extract the jobOrders array from the response data
 
     if (Array.isArray(jobOrders)) {
       return jobOrders;

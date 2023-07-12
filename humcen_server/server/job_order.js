@@ -29,7 +29,11 @@ const jobOrderSchema = new mongoose.Schema({
     investors: { type: Object }
   },
   domain: { type: String },
-  time_of_delivery: { type: String }
+  time_of_delivery: { type: String },
+  Accepted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const JobOrder = mongoose.model('JobOrder', jobOrderSchema, 'job_order');

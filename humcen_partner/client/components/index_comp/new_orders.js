@@ -4,26 +4,45 @@ import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
 import { styled } from "@mui/system";
+import axios from "axios";
 
-const ColorButton = styled(Button)(({ theme }) => ({
-  color: "white",
-  width: "120%",
-  height: "60px",
-  borderRadius: "100px",
-  marginBottom: "30px",
-  background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
-  "&:hover": {
-    background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
-  },
-  textTransform: "none",
-  fontSize: "14px",
-  fontWeight: "400",
-}));
+// Create an Axios instance
+const api = axios.create({
+  baseURL: 'http://localhost:3000/api',
+});
 
+// Add an interceptor to include the token in the request headers
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers['Authorization'] = token;
+  }
+  return config;
+});
+
+
+
+async function fetchJobOrders() {
+  try {
+    const response = await api.get('/partner/job_order');
+    const { jobOrders } = response.data;
+    // console.log(jobOrders); // Extract the jobOrders array from the response data
+
+    if (Array.isArray(jobOrders)) {
+      return jobOrders;
+    } else {
+      console.error('Invalid data format: Expected an array');
+      return [];
+    }
+  } catch (error) {
+    console.error('Error fetching job orders:', error);
+    return [];
+  }
+}
 const NewOrder = () => {
   return (
     <>
-      <Card
+      <Card 
         sx={{
           boxShadow: "none",
           borderRadius: "10px",
@@ -65,12 +84,15 @@ const NewOrder = () => {
                 >
                   <Button
                     sx={{
-                      background: "#E0E0E0",
+                      background: "#D3D3D3",
                       color: "white",
                       borderRadius: "100px",
                       width: "100%",
-                      height: "90%",
+                      height: "88%",
                       textTransform: "none",
+                      "&:hover": {  
+                        background: "linear-gradient(90deg,#00308F  0%, #7FFFD4 100%)",
+                      },
                     }}
                   >
                     Reject
@@ -83,12 +105,15 @@ const NewOrder = () => {
                 >
                   <Button
                     sx={{
-                      background: "#27AE60",
+                      background: "#27AE60", 
                       color: "white",
                       borderRadius: "100px",
                       width: "100%",
-                      height: "90%",
+                      height: "88%",
                       textTransform: "none",
+                      "&:hover": {
+                        background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
+                      },
                     }}
                   >
                     Accept
