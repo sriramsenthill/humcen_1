@@ -1,17 +1,20 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styles from "@/styles/Patents.module.css";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
-import { styled } from "@mui/system";
 import axios from "axios";
+import { styled } from "@mui/system";
 
-// Create an Axios instance
+function formatDate(date) {
+  const options = { month: "long", day: "numeric", year: "numeric" };
+  return new Date(date).toLocaleDateString(undefined, options);
+}
+
 const api = axios.create({
   baseURL: 'http://localhost:3000/api',
 });
 
-// Add an interceptor to include the token in the request headers
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -20,16 +23,14 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-
-
 async function fetchJobOrders() {
   try {
     const response = await api.get('/partner/job_order');
     const { jobOrders } = response.data;
-    // console.log(jobOrders); // Extract the jobOrders array from the response data
 
     if (Array.isArray(jobOrders)) {
-      return jobOrders;
+      const filteredJobOrders = jobOrders.filter(order => !order.Accepted);
+      return filteredJobOrders;
     } else {
       console.error('Invalid data format: Expected an array');
       return [];
@@ -39,7 +40,41 @@ async function fetchJobOrders() {
     return [];
   }
 }
+
 const NewOrder = () => {
+  const [jobOrders, setJobOrders] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const filteredOrders = await fetchJobOrders();
+        setJobOrders(filteredOrders);
+      } catch (error) {
+        console.error('Error fetching job orders:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleAcceptJob = async (jobId) => {
+    try {
+      await api.put(`/accept/${jobId}`);
+      window.location.reload();
+    } catch (error) {
+      console.error('Error accepting job order:', error);
+    }
+  };
+
+  const handleRejectJob = async (jobId) => {
+    try {
+      await api.delete(`/reject/${jobId}`);
+      window.location.reload();
+    } catch (error) {
+      console.error('Error rejecting job order:', error);
+    }
+  };
+
   return (
     <>
       <Card 
@@ -60,73 +95,84 @@ const NewOrder = () => {
               borderCollapse: "collapse",
             }}
           >
-            <tbody>
+            <thead>
               <tr>
-                <td className={styles.label} style={{ padding: "5px" }}>
+                <th className={styles.label} style={{ padding: "5px" }}>
                   Job No
-                </td>
-                <td className={styles.label} style={{ padding: "5px" }}>
+                </th>
+                <th className={styles.label} style={{ padding: "5px" }}>
                   Patent Type
-                </td>
-                <td className={styles.label} style={{ padding: "5px" }}>
+                </th>
+                <th className={styles.label} style={{ padding: "5px" }}>
                   Location
-                </td>
-                <td className={styles.label} style={{ padding: "5px" }}>
+                </th>
+                <th className={styles.label} style={{ padding: "5px" }}>
                   Budget
-                </td>
-                <td className={styles.label} style={{ padding: "5px" }}>
+                </th>
+                <th className={styles.label} style={{ padding: "5px" }}>
                   Expected Delivery
-                </td>
-                <td
-                  className={styles.label}
-                  style={{ padding: "2px" }}
-                  rowSpan={2}
-                >
-                  <Button
-                    sx={{
-                      background: "#D3D3D3",
-                      color: "white",
-                      borderRadius: "100px",
-                      width: "100%",
-                      height: "88%",
-                      textTransform: "none",
-                      "&:hover": {  
-                        background: "linear-gradient(90deg,#00308F  0%, #7FFFD4 100%)",
-                      },
-                    }}
-                  >
-                    Reject
-                  </Button>
-                </td>
-                <td
-                  className={styles.label}
-                  style={{ padding: "2px" }}
-                  rowSpan={2}
-                >
-                  <Button
-                    sx={{
-                      background: "#27AE60", 
-                      color: "white",
-                      borderRadius: "100px",
-                      width: "100%",
-                      height: "88%",
-                      textTransform: "none",
-                      "&:hover": {
-                        background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
-                      },
-                    }}
-                  >
-                    Accept
-                  </Button>
-                </td>
+                </th>
+                <th className={styles.label} style={{ padding: "2px" }}>
+                  Actions
+                </th>
               </tr>
-              <tr>
-                <td style={{ padding: "5px" }}>1001</td>
-                <td style={{ padding: "5px" }}>Patent Drafting</td>
-                <td style={{ padding: "5px" }}>United Kingdom</td>
-                <td style={{ padding: "5px" }}>300000</td>
-                <td style={{ padding: "5px" }}>12 Apr 2023</td>
-              </tr>
+            </thead>
+            <tbody>
+              {jobOrders.map((order) => (
+                <tr key={order._id}>
+                  <td className={styles.label} style={{ padding: "5px" }}>
+                    {order._id.job_no}
+                  </td>
+                  <td className={styles.label} style={{ padding: "5px" }}>
+                    {order.service}
+                  </td>
+                  <td className={styles.label} style={{ padding: "5px" }}>
+                    {order.country}
+                  </td>
+                  <td className={styles.label} style={{ padding: "5px" }}>
+                    {order.budget}
+                  </td>
+                  <td className={styles.label} style={{ padding: "5px" }}>
+                    {formatDate(order.end_date)}
+                  </td>
+                  <td className={styles.label} style={{ padding: "2px" }}>
+                    <Button
+                      sx={{
+                        background: "#D3D3D3",
+                        color: "white",
+                        borderRadius: "100px",
+                        width: "100%",
+                        height: "88%",
+                        textTransform: "none",
+                        "&:hover": {  
+                          background: "linear-gradient(90deg,#00308F  0%, #7FFFD4 100%)",
+                        },
+                      }}
+                      onClick={() => handleRejectJob(order._id.job_no)}
+                    >
+                      Reject
+                    </Button>
+                  </td>
+                  <td>
+                    <Button
+                      sx={{
+                        background: "#27AE60", 
+                        color: "white",
+                        borderRadius: "100px",
+                        width: "100%",
+                        height: "88%",
+                        textTransform: "none",
+                        "&:hover": {
+                          background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
+                        },
+                      }}
+                      onClick={() => handleAcceptJob(order._id.job_no)}
+                    >
+                      Accept
+                    </Button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </Grid>
