@@ -1478,6 +1478,38 @@ app.get("/api/partner/job_order", verifyPartner, async (req, res) => {
   }
 });
 //PARTNER ACCEPT BUTTON
+app.put("/api/accept/:jobId", verifyPartner, async (req, res) => {
+  const { jobId } = req.params;
+  const userID = req.userID;
+
+  try {
+    // Fetch the partner document based on the user ID
+    const partner = await Partner.findOne({ userID });
+
+    if (!partner) {
+      return res.status(404).json({ error: "Partner not found" });
+    }
+
+    // Update the Accepted field of the specified job ID to true
+    const updatedJobOrder = await JobOrder.findOneAndUpdate(
+      { "_id.job_no": jobId },
+      { Accepted: true },
+      { new: true }
+    );
+
+    if (!updatedJobOrder) {
+      return res.status(404).json({ error: "Job order not found" });
+    }
+
+    res.json({ message: "Job order accepted successfully" });
+  } catch (error) {
+    console.error("Error accepting job order:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+//PARTNER REJECT BUTTON
+
 app.delete("/api/reject/:jobId", verifyPartner, async (req, res) => {
   const { jobId } = req.params;
   const userID = req.userID;
