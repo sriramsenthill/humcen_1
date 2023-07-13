@@ -1590,6 +1590,43 @@ app.delete("/api/reject/:jobId", verifyPartner, async (req, res) => {
   }
 });
 
+//DOWNLOAD BUTTON FOR PARTNER ONGOING PATENTS
+app.get("/api/partner/job_order/:id", verifyPartner, async (req, res) => {
+  const jobId = req.params.id;
+  try {
+    // Retrieve job details from MongoDB using the provided job ID
+    const jobDetails = await JobOrder.findOne({ "_id.job_no": jobId });
+
+    // Check if job details exist and have invention details
+    if (!jobDetails || !jobDetails.service_specific_files || !jobDetails.service_specific_files.invention_details) {
+      return res.status(404).json({ error: "File not found" });
+    }
+
+    // Extract the file data from the job details
+    const inventionDetails = jobDetails.service_specific_files.invention_details[0];
+
+    // Check if base64 data is present
+    if (!inventionDetails.base64) {
+      return res.status(404).json({ error: "File not found" });
+    }
+
+    const { base64, name } = inventionDetails;
+
+    // Set the appropriate headers for file download
+    res.set({
+      'Content-Type': 'application/octet-stream',
+      'Content-Disposition': `attachment; filename=${name}`,
+    });
+
+    // Send the file data as a response to the frontend
+    res.json({ fileData: base64, fileName: name });
+
+  } catch (error) {
+    console.error('Error retrieving file:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 
 // NEW USER ID CREATION FROM PARTNER TABLE FOR USERS

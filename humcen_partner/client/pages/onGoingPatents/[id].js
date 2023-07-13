@@ -63,6 +63,34 @@ const DynamicPage = () => {
   if (!job) {
     return <div>No job found with the provided job number.</div>;
   }
+  const downloadBase64File = (base64Data, fileName) => {
+    const link = document.createElement('a');
+    link.href = base64Data;
+    link.setAttribute('download', fileName);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const onClickDownload = async (jobId) => {
+    try {
+      const response = await api.get(`/partner/job_order/${jobId}`);
+      const fileData = response.data.fileData;
+      const fileName = response.data.fileName;
+      
+      const downloadUrl = window.URL.createObjectURL(new Blob([fileData]));
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.setAttribute('download', fileName);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      downloadBase64File(fileData, fileName);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
+  };
+  
 
   const {
     job_no,
