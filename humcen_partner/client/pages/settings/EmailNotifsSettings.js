@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
+import Checkbox from "@mui/material/Checkbox";
 import axios from "axios";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -7,8 +8,8 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
+import KnownSettings from "@/components/KnownFieldsSettings";
 import { styled } from "@mui/system";
-
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -21,6 +22,9 @@ import EditIcon from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
 import { FormControlLabel } from "@mui/material";
 import Switch from "@mui/material/Switch";
+import serviceList from "pages/my-patent-services/ServiceListArray";
+
+const servList = serviceList.map(elem => elem.title);
 
 const IOSSwitch = styled((props) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -84,9 +88,11 @@ const ColorButton = styled(Button)(({ theme }) => ({
   fontWeight: "400",
 }));
 
+
 export default function Profile() {
   const [editMode, setEditMode] = React.useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [knownFieldsValues, setKnownFieldsValues] = useState([]);
   const [UID, setUserID] = useState("");
   const [essentialEmails, setEssentialEmails] = useState(false);
   const [orderUpdates, setOrderUpdates] = useState(false);
@@ -114,12 +120,48 @@ export default function Profile() {
           setMarketingMails(marketingMails);
           const newsletter = response.data.pref.newsletter;
           setNewsLetter(newsletter);
+          const knownFieldsValues = Object.keys(response.data.known_fields);
+          setKnownFieldsValues(knownFieldsValues);
+
+          // const fields = response.data.known_fields.map((field) => { return field});
+          // const filteredServices = serviceList.filter((service) => fields.includes(service.title));
+          // setYesServices(filteredServices);
+
         })
         .catch((error) => {
-          console.error("Error fetching Partner's Preferential Settings:", error);
+          console.error(
+            "Error fetching Partner's Preferential Settings:",
+            error
+          );
         });
     }
   }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      axios
+        .get("http://localhost:3000/api/partner/fields", {
+          headers: {
+            Authorization: token,
+          },
+        })
+        .then((response) => {
+          const totalYes = []
+          const yesServices = response.data;
+          yesServices.forEach(service => totalYes.push(service));
+          setYesServices(totalYes);
+          console.log("Yes Services : " + Object.entries(yesServices));
+        })
+        .catch((error) => {
+          console.error(
+            "Error fetching Partner's Known Fields Settings:",
+            error
+          );
+        });
+    }
+  }, []);
+
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -128,6 +170,11 @@ export default function Profile() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleKnownFieldsChange = (values) => {
+    setKnownFieldsValues(values);
+  };
+
 
 
   return (
@@ -143,6 +190,34 @@ export default function Profile() {
           background: "white",
         }}
       >
+      <Grid item xs={6}>
+        <Typography
+        sx={{
+            borderBottom: "1px solid #F7FAFF",
+            fontSize: "18px",
+            padding: "8px 10px",
+            fontWeight: "600",
+            color: "#223345",
+            textAlign: "center",
+            paddingRight:"200px",
+            }}>
+        Known Fields</Typography>
+      <div style={{
+        paddingLeft: "70px",
+        paddingBottom: "30px",
+      }}>
+      {/* {yesServices.map((field) => {
+              return (
+                
+              );
+            })} */}
+            <KnownSettings
+              onChange={handleKnownFieldsChange}
+              edit={!editMode}
+              size={6}
+            />
+      </div>
+      </Grid>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={8} md={8} style={{ flexBasis: "60%" }}>
             <TableContainer
@@ -156,9 +231,7 @@ export default function Profile() {
                 <TableHead></TableHead>
 
                 <TableBody>
-                  <TableRow
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
+                  <TableRow>
                     <TableCell
                       sx={{
                         borderBottom: "1px solid #F7FAFF",
@@ -192,16 +265,16 @@ export default function Profile() {
                             sx={{ m: 1 }}
                             disabled={!editMode}
                             checked={essentialEmails}
-                            onChange={() => setEssentialEmails(!essentialEmails)}
+                            onChange={() =>
+                              setEssentialEmails(!essentialEmails)
+                            }
                           />
                         }
                       />
                     </TableCell>
                   </TableRow>
 
-                  <TableRow
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
+                  <TableRow>
                     <TableCell
                       sx={{
                         borderBottom: "1px solid #F7FAFF",
@@ -242,9 +315,7 @@ export default function Profile() {
                     </TableCell>
                   </TableRow>
 
-                  <TableRow
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
+                  <TableRow>
                     <TableCell
                       sx={{
                         borderBottom: "1px solid #F7FAFF",
@@ -278,15 +349,16 @@ export default function Profile() {
                             sx={{ m: 1 }}
                             disabled={!editMode}
                             checked={marketingMails}
-                            onChange={() => setMarketingMails(!marketingMails)}
+                            onChange={() =>
+                              setMarketingMails(!marketingMails)
+                            }
                           />
                         }
                       />
                     </TableCell>
                   </TableRow>
-                  <TableRow
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
+
+                  <TableRow>
                     <TableCell
                       sx={{
                         borderBottom: "1px solid #F7FAFF",
@@ -350,14 +422,14 @@ export default function Profile() {
               onClick={() => {
                 if (editMode) { 
                   setEditMode(false);
-                  setEditMode(false);
                   const token = localStorage.getItem("token");
                   axios.put('http://localhost:3000/api/partner/pref-settings',{data:{
                   userID: UID,
                   mails: essentialEmails,
                   order_updates: orderUpdates,
                   marketing_emails: marketingMails,
-                  newsletter: newsletter
+                  newsletter: newsletter,
+                  known_fields: knownFieldsValues,
                  }}, {headers:{
                   "Authorization": token,
                   "Content-Type": "application/json"

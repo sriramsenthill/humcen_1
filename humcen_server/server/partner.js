@@ -140,7 +140,20 @@ const PartnerSchema = new mongoose.Schema({
   is_free: {
     type: Boolean,
   },
-
+  known_fields: {
+    "Patent Consultation": { type: Boolean, default: false },
+    "Patent Drafting": { type: Boolean, default: false },
+    "Patent Filing": { type: Boolean, default: false },
+    "Patent Search": { type: Boolean, default: false },
+    "Response to FER/Office Action": { type: Boolean, default: false },
+    "Freedom To Operate Search": { type: Boolean, default: false },
+    "Freedom to Patent Landscape": { type: Boolean, default: false },
+    "Freedom to Patent Portfolio Analysis": { type: Boolean, default: false },
+    "Patent Translation Service": { type: Boolean, default: false },
+    "Patent Illustration": { type: Boolean, default: false },
+    "Patent Watch": { type: Boolean, default: false },
+    "Patent Licensing and Commercialization Services": { type: Boolean, default: false }
+  }
 
 });
 

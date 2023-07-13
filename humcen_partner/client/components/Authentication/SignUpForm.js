@@ -10,6 +10,7 @@ import Checkbox from "@mui/material/Checkbox";
 import styles from "@/components/Authentication/Authentication.module.css";
 import { useRouter } from "next/router";
 import KnownFields from "../KnownFields";
+import serviceList from "pages/my-patent-services/ServiceListArray";
 
 
 const SignUpForm = () => {
@@ -19,7 +20,8 @@ const SignUpForm = () => {
     email: "",
     first_name: "",
     last_name: "",
-    password: ""
+    password: "",
+    known_fields: [],
   });
 
   useEffect(() => {
@@ -39,7 +41,7 @@ const SignUpForm = () => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({...formData, known_fields: knownFieldsValues})
       });
 
       if (response.ok) {
@@ -51,8 +53,9 @@ const SignUpForm = () => {
           first_name: "",
           last_name: "",
           password: "",
-          known_fields:[knownFieldsValues],
+          known_fields: [],
         });
+        setKnownFieldsValues([]);
       } else {
         console.error("Failed to save user data");
       }
@@ -245,7 +248,7 @@ const SignUpForm = () => {
                         Known Fields :
                       </Typography>
                       <Grid item xs={12}>
-                      <KnownFields onChange={handleKnownFieldsChange}/>
+                      <KnownFields onChange={handleKnownFieldsChange} size={6}/>
                       </Grid>
                     </Grid>
                   </Grid>

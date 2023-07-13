@@ -1,6 +1,7 @@
 const express = require("express");
 const Search = require("./search"); // Import the Patent Search Model
 const mongoose = require("mongoose");
+const servList = require("./Works");
 const patentPortfolioAnalysis = require("./patent_portfolio_analysis"); // Import Patent Portfolio Analysis Model
 const patentTranslation = require("./patent_translation_service"); // Import Patent Translation Services Mode
 const patentLicense = require("./patent_licensing"); // Import Patent Licensing and Commercialization Services Model
@@ -1218,6 +1219,21 @@ app.get("/api/partner/settings", verifyPartner, async (req, res) => {
   }
 });
 
+// API endpoint for fetching Partner's Known Fields 
+app.get('/api/partner/fields', verifyPartner, async (req, res) => {
+  const userID = req.userID;
+  try {
+    // Find the customer with the given userId
+    const partner = await Partner.findOne({ userID: userID });
+    res.json(partner.known_fields);
+    
+  } catch (error) {
+    // Handle any errors that occurred during the process
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // API endpoint for updating Partner's Settings
 app.put("/api/partner/settings", verifyPartner, async (req, res) => {
   const userID = req.userID;
@@ -1266,12 +1282,20 @@ app.put("/api/partner/bank-settings", verifyPartner, async (req, res) => {
 
 // API endpoint for updating Partner's Preferential Settings
 app.put("/api/partner/pref-settings", verifyPartner, async (req, res) => {
+  const serviceList = servList.map(elem => elem.title);
   const userID = req.userID;
   const partner = await Partner.findOne({ userID: userID });
   partner.pref.mails = req.body.data.mails;
   partner.pref.order_updates = req.body.data.order_updates;
   partner.pref.marketing_emails = req.body.data.marketing_emails;
   partner.pref.newsletter = req.body.data.newsletter;
+  req.body.data.known_fields.forEach((field) => {
+    partner.known_fields[field] = true;
+  });
+  const remService = serviceList.filter((elem) => !req.body.data.known_fields.includes(elem));
+  remService.forEach((service)=> {
+    partner.known_fields[service] = false;
+  });
   partner
     .save()
     .then((res) => console.log("Partner's Preferentials Successfully Updated"))
@@ -1369,7 +1393,11 @@ app.post("/api/partner", async (req, res) => {
         customerData.password = hashedPassword;
         customerData.profile_img =
           "https://api.multiavatar.com/-" + userID + ".png"; // User's Profile Avatar
+        customerData.known_fields = req.body.known_fields;
         const newParnter = new Partner(customerData);
+        customerData.known_fields.forEach((field) => {
+          newParnter.known_fields[field] = true;
+        });
         const savedPartner = await newParnter.save();
 
         res.status(201).json(savedPartner);
