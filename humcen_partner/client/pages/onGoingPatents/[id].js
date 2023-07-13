@@ -65,29 +65,36 @@ const DynamicPage = () => {
   if (!job) {
     return <div>No job found with the provided job number.</div>;
   }
-  const downloadBase64File = (base64Data, fileName) => {
-    const link = document.createElement('a');
-    link.href = base64Data;
-    link.setAttribute('download', fileName);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
 
   const onClickDownload = async (jobId) => {
     try {
       const response = await api.get(`/partner/job_order/${jobId}`);
       const fileData = response.data.fileData;
       const fileName = response.data.fileName;
-      
-      const downloadUrl = window.URL.createObjectURL(new Blob([fileData]));
-      const link = document.createElement('a');
-      link.href = downloadUrl;
-      link.setAttribute('download', fileName);
-      document.body.appendChild(link);
+      const base64Data = fileData.split(",")[1];
+
+      // Convert base64 data to binary
+      const binaryString = window.atob(base64Data);
+  
+      // Create Uint8Array from binary data
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+  
+      // Create Blob object from binary data
+      const blob = new Blob([bytes], { type: "application/text" }); // Replace "application/pdf" with the appropriate MIME type for your file
+  
+      // Create temporary download link
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = fileName || "file"; // Set the desired filename and extension
+  
+      // Trigger the download
       link.click();
-      document.body.removeChild(link);
-      downloadBase64File(fileData, fileName);
+  
+      // Clean up the temporary link
+      URL.revokeObjectURL(link.href);
     } catch (error) {
       console.error('Error downloading file:', error);
     }
