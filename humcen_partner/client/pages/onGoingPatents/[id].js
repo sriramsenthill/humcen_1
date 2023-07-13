@@ -9,6 +9,8 @@ import withAuth from "@/components/withAuth";
 import Features from "./Features";
 import BasicTabs from "./Tabs";
 import axios from "axios";
+import Button from "@mui/material/Button";
+
 
 // Create an Axios instance
 const api = axios.create({
@@ -202,6 +204,25 @@ const DynamicPage = () => {
                 <td style={{ padding: "10px" }}></td>
                 <td style={{ padding: "10px" }}></td>
                 <td style={{ padding: "10px" }}></td>
+                <td>
+                <Button
+                      sx={{
+                        background: "#27AE60", 
+                        color: "white",
+                        borderRadius: "100px",
+                        width: "100%",
+                        height: "88%",
+                        textTransform: "none",
+                        "&:hover": {
+                          background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
+                        },
+                      }}
+                      onClick={()=>onClickDownload(job._id.job_no)}
+                    >
+                      Download now
+                    </Button>
+                    </td>
+
               </tr>
             </tbody>
           </table>
