@@ -10,7 +10,7 @@ import Features from "./Features";
 import BasicTabs from "./Tabs";
 import axios from "axios";
 import Button from "@mui/material/Button";
-
+import JobDetails from "./jobDetails";
 
 // Create an Axios instance
 const api = axios.create({
@@ -33,13 +33,17 @@ const DynamicPage = () => {
   const { id } = router.query;
 
   const [job, setJob] = useState(null); // Initialize job state as null
+  const [jobno,setjobno]=useState(null);
+  const [Service,setService]=useState(null);
 
   useEffect(() => {
     const fetchJobData = async () => {
       try {
         const response = await api.get(`partner/jobs/${id}`);
         const specificJob = response.data;
-
+        setService(specificJob.service);
+        const {job_no}=specificJob._id;
+        setjobno(job_no);
         if (specificJob) {
           setJob(specificJob);
         } else {
@@ -231,6 +235,7 @@ const DynamicPage = () => {
                     </td>
 
               </tr>
+              <JobDetails services={Service} jobNo={jobno}/>
             </tbody>
           </table>
         </Grid>

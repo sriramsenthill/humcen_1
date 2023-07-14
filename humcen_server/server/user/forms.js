@@ -174,6 +174,7 @@ const savePatentSearchData = async (req, res) => {
       start_date: new Date(),
       end_date: endDate,
       budget: "To be Allocated",
+      status: "In Progress",
       country: "NA",
       domain: req.body.field,
     }).save();
@@ -223,7 +224,7 @@ const saveResponseToFerData = async (req, res) => {
 
     const newJobOrder = new JobOrder({
       _id: { job_no: newResponseToFerNo },
-      service: "Response To FER/Office Action",
+      service: "Response To FER Office Action",
       userID: userId,
       partnerID: findPartner.userID,
       country: req.body.country,

@@ -78,8 +78,8 @@ export default function Inbox() {
     const formData = {
       domain: domain,
       country:country,
-      businessObj:businessObj,
-      marketAndIndustry:marketAndIndustry,
+      business_objectives:businessObj,
+      market_and_industry_information:marketAndIndustry,
       service_specific_files: {
         invention_details: files,
       },

@@ -25,6 +25,11 @@ market_and_industry_information: {
     userID: {
       type: Number,
     },
+    service_specific_files: {
+      invention_details: {
+        type: Object,
+      },
+    },
   });
 
 

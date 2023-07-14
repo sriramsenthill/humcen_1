@@ -1,15 +1,45 @@
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import styles from "@/styles/Patents.module.css";
-import style from "@/styles/PageTitle.module.css";
-import Grid from "@mui/material/Grid";
+import {React, useState, useEffect} from "react";
+import { Box, Typography } from "@mui/material";
 import Card from "@mui/material/Card";
+import axios from "axios";
 
-export default function jobDetails()
-{
-    return(
-        <Card
+
+
+const api = axios.create({
+    baseURL: "http://localhost:3000/api",
+  });
+
+
+const JobDetails = ({services, jobNo}) => {
+    const [jobData,setJobData]=useState(null);
+    const [personalInfo, setPersonalInfo] = useState([]);
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            api
+              .get(`${services}/${jobNo}`, {
+                headers: {
+                  Authorization: token,
+                },
+              })
+              .then((response) => { 
+                console.log("Response " + response.data);
+                setPersonalInfo(Object.entries(response.data).map(([key, value]) => ({
+                  title: key,
+                  text: value,
+                })));
+                console.log(personalInfo);           
+              })
+              .catch((error) => {
+                console.error("Error fetching profile Settings:", error);
+              });
+          }
+        }, []);
+    
+           
+  return (
+    <>
+      <Card
         sx={{
           boxShadow: "none",
           borderRadius: "10px",
@@ -17,84 +47,53 @@ export default function jobDetails()
           mb: "15px",
         }}
       >
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6} md={6}>
-            <h1>{job_title}</h1>
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            sm={6}
-            md={6}
-            justifyContent="flex-end"
-            textAlign="right"
-          >
-            <h2>
-              <span className={styles.label1}>Job no : </span>
-              {job._id.job_no}
-            </h2>
-          </Grid>
-        </Grid>
-        <Grid>
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-              padding: "10px",
+        <Box
+          sx={{
+            borderBottom: "1px solid #EEF0F7",
+            paddingBottom: "10px",
+            mb: "20px",
+          }}
+          className="for-dark-bottom-border"
+        >
+          <Typography
+            as="h3"
+            sx={{
+              fontSize: 18,
+              fontWeight: 500,
             }}
           >
-            <tbody>
-              <tr>
-                <td className={styles.label} style={{ padding: "10px" }}>
-                  Patent Type
-                </td>
-                <td className={styles.label} style={{ padding: "10px" }}>
-                  Customer Name
-                </td>
-                <td className={styles.label} style={{ padding: "10px" }}>
-                  Partner Name
-                </td>
-                <td className={styles.label} style={{ padding: "10px" }}>
-                  Location
-                </td>
-                <td className={styles.label} style={{ padding: "10px" }}>
-                  Budget
-                </td>
-                <td className={styles.label} style={{ padding: "10px" }}>
-                  Assigned
-                </td>
-                <td className={styles.label} style={{ padding: "10px" }}>
-                  Status
-                </td>
-              </tr>
-              <tr>
-                <td style={{ padding: "10px" }}>{service}</td>
-                <td style={{ padding: "10px" }}>{userName}</td>
-                <td style={{ padding: "10px" }}>{partnerName}</td>
-                <td style={{ padding: "10px" }}>{country}</td>
-                <td style={{ padding: "10px" }}>{budget}</td>
-                <td style={{ padding: "10px" }}>{formattedStartDate}</td>
-                <td style={{ padding: "10px" }}>{status}</td>
-              </tr>
-              <tr>
-                <td style={{ padding: "10px" }}></td>
-                <td style={{ padding: "10px" }}>
-                  <Link href="/">Mail</Link>
-                </td>
-                <td style={{ padding: "10px" }}>
-                  <Link href="/">Mail</Link>
-                </td>
-                <td style={{ padding: "10px" }}></td>
-                <td style={{ padding: "10px" }}></td>
-                <td style={{ padding: "10px" }}></td>
-              </tr>
-            </tbody>
-          </table>
-        </Grid>
+            Job Details
+          </Typography>
+        </Box>
+        
+        <Box>
+          
+          {personalInfo.map((info) => (
+            <Box
+              sx={{
+                display: 'flex',
+                borderBottom: '1px solid #F7FAFF',
+                p: '10px 0',
+              }}
+              key={info.title}
+              className="for-dark-bottom-border"
+            >
+              <Typography 
+                as='h4' 
+                fontWeight='500' 
+                fontSize='14px' 
+                width='100px'
+              >
+                {info.title}
+              </Typography>
+
+              <Typography>{info.text}</Typography>
+            </Box>
+          ))}
+        </Box>
       </Card>
+    </>
+  );
+};
 
-    );
-}
-
-
-
+export default JobDetails;

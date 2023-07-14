@@ -79,12 +79,10 @@ export default function Inbox() {
 
     const formData = {
       domain: domain,
-      sourceLanguage:sourceLanguage,
-      targetLanguage:targetLanguage,
-      additionalInfo:additionalInfo,
-      service_specific_files: {
-        invention_details: files,
-      },
+      source_language:sourceLanguage,
+      target_language:targetLanguage,
+      additional_instructions:additionalInfo,
+      document_details: files,
     };
 
     try {

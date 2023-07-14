@@ -19,6 +19,9 @@ const freedomToOperateSchema = new mongoose.Schema({
   userID: {
     type: Number,
   },
+  country: {
+    type: String,
+  },
 });
 
 const freedomToOperate = mongoose.model('FreedomToOperate', freedomToOperateSchema, 'freedom_to_operate_search');

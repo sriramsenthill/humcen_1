@@ -139,6 +139,7 @@ router.get("/api/partner/job_order", verifyPartner, engine.getPartnerJobOrders);
 router.put("/api/accept/:jobId", verifyPartner, engine.acceptJobOrder);
 router.delete("/api/reject/:jobId", verifyPartner, engine.rejectJobOrder);
 router.get("/api/partner/job_order/:id", verifyPartner, engine.getFilesForPartners);
+router.get("/api/:services/:jobID", verifyPartner, engine.getJobDetailsForPartners);
 
 module.exports = router;
 
