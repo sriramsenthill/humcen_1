@@ -15,7 +15,7 @@ const patentTranslationServiceSchema = new mongoose.Schema({
     },
     
  
-source_language:{
+target_language:{
       type: String,
     },
     document_details: {

@@ -4,6 +4,7 @@ import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
 import axios from "axios";
+import Link from "@mui/material/Link";
 import { styled } from "@mui/system";
 
 function formatDate(date) {
@@ -97,23 +98,26 @@ const NewOrder = () => {
           >
             <thead>
               <tr>
-                <th className={styles.label} style={{ padding: "5px" }}>
+                <th className={styles.label} style={{ padding: "5px", textAlign: "left"}}>
                   Job No
                 </th>
-                <th className={styles.label} style={{ padding: "5px" }}>
+                <th className={styles.label} style={{ padding: "5px", textAlign: "left" }}>
                   Patent Type
                 </th>
-                <th className={styles.label} style={{ padding: "5px" }}>
+                <th className={styles.label} style={{ padding: "5px", textAlign: "left" }}>
                   Location
                 </th>
-                <th className={styles.label} style={{ padding: "5px" }}>
+                <th className={styles.label} style={{ padding: "5px" , textAlign: "left"}}>
                   Budget
                 </th>
-                <th className={styles.label} style={{ padding: "5px" }}>
+                <th className={styles.label} style={{ padding: "5px" , textAlign: "left"}}>
                   Expected Delivery
                 </th>
-                <th className={styles.label} style={{ padding: "2px" }}>
+                <th className={styles.label} style={{ padding: "2px" , position: "relative", left: "30px"}}>
                   Actions
+                </th>
+                <th className={styles.label} style={{ paddingLeft: "2px" ,position: "relative", left: "90px",}}>
+                  Details
                 </th>
               </tr>
             </thead>
@@ -141,6 +145,8 @@ const NewOrder = () => {
                         background: "#D3D3D3",
                         color: "white",
                         borderRadius: "100px",
+                        position: "relative",
+                        right: "25px",
                         width: "100%",
                         height: "88%",
                         textTransform: "none",
@@ -156,9 +162,11 @@ const NewOrder = () => {
                   <td>
                     <Button
                       sx={{
-                        background: "#27AE60", 
+                        background: "#27AE60",
                         color: "white",
                         borderRadius: "100px",
+                        position: "relative",
+                        right: "25px",
                         width: "100%",
                         height: "88%",
                         textTransform: "none",
@@ -170,6 +178,24 @@ const NewOrder = () => {
                     >
                       Accept
                     </Button>
+                  </td>
+                  <td>
+                  <Link href={`onGoingPatents/${order._id.job_no}`} passHref>
+                      <Button
+                    sx={{
+                      background: "#01ACF6",
+                      color: "white",
+                      borderRadius: "100px",
+                      width: "100%",
+                      height: "90%",
+                      textTransform: "none",
+                      position: "relative",
+                      left: "10px",
+                    }}
+                  >
+                        Details
+                      </Button>
+                      </Link>
                   </td>
                 </tr>
               ))}

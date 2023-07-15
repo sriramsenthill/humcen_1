@@ -4,7 +4,6 @@ const responseToFerSchema = new mongoose.Schema({
   _id: {
     job_no: {
         type: Number,
-      
       },
   },
   field: {
@@ -25,6 +24,9 @@ const responseToFerSchema = new mongoose.Schema({
   },
   userID: {
     type: Number,
+  },
+  country: {
+    type: String,
   }
 });
 

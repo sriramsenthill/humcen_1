@@ -255,7 +255,7 @@ const saveResponseToFerData = async (req, res) => {
 
     const newJobOrder = new JobOrder({
       _id: { job_no: newResponseToFerNo },
-      service: "Response To FER/Office Action",
+      service: "Response To FER Office Action",
       userID: userId,
       partnerID: findPartner.userID,
       country: req.body.country,

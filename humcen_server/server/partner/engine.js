@@ -1,5 +1,15 @@
 const Partner = require("../mongoose_schemas/partner"); // Import the Partner model
 const JobOrder = require("../mongoose_schemas/job_order"); // Import the JobOrder model
+const Search = require("../mongoose_schemas/search"); // Import the Patent Search Model
+const patentPortfolioAnalysis = require("../mongoose_schemas/patent_portfolio_analysis"); // Import Patent Portfolio Analysis Model
+const patentTranslation = require("../mongoose_schemas/patent_translation_service"); // Import Patent Translation Services Mode
+const patentLicense = require("../mongoose_schemas/patent_licensing"); // Import Patent Licensing and Commercialization Services Model
+const patentLandscape = require("../mongoose_schemas/freedom_to_patent_landscape"); // Import Freedom to Patent Landscape Model
+const patentWatch = require("../mongoose_schemas/patent_watch"); // Import Patent Watch Model
+const responseToFer = require("../mongoose_schemas/response_to_fer");
+const freedomToOperate = require("../mongoose_schemas/freedom_to_operate"); // Import the Freedom To Operate Search Model
+const patentIllustration = require("../mongoose_schemas/patent_illustration"); // Import Patent Illustration Model
+const Consultation = require("../mongoose_schemas/consultation");
 
 
 const getPartnerJobsById = async (req, res) => {
@@ -193,10 +203,130 @@ const getFilesForPartners = async (req, res) => {
   }
 };
 
+// Sends Job Details according to the Services chosen
+
+const getJobDetailsForPartners = async (req, res) => {
+  console.log(req.params);
+  try {
+    const serviceName = req.params.services;
+    const jobID = req.params.jobID;
+    
+    let neededData = {};
+    let jobData;
+    
+
+    if (serviceName === "Patent Drafting" || serviceName === "Patent Filing") {
+      jobData = await JobOrder.findOne({ "_id.job_no": jobID });
+      neededData = {
+        "Domain": jobData.domain,
+        "Country": jobData.country,
+        "Title": jobData.job_title,
+        "Keywords": jobData.keywords,
+        "Budget": jobData.budget,
+        "Time of Delivery": jobData.time_of_delivery
+      };
+    } else if (serviceName === "Patent Search") {
+      jobData = await Search.findOne({ "_id.job_no": jobID });
+      neededData = {
+        "Domain": jobData.field,
+        "Description": jobData.invention_description,
+        "Keywords": jobData.keywords
+      };
+    } else if (serviceName === "Response to FER Office Action") {
+      console.log("Yes");
+      jobData = await responseToFer.findOne({ "_id.job_no": jobID });
+      console.log(jobData);
+      neededData = {
+        "Domain": jobData.field,
+        "Strategy": jobData.response_strategy,
+        "Country": jobData.country
+      };
+    } else if (serviceName === "Freedom To Operate") {
+      jobData = await freedomToOperate.findOne({ "_id.job_no": jobID });
+      neededData = {
+        "Domain": jobData.field,
+        "Keywords": jobData.keywords,
+        "Country": jobData.country
+      };
+    } else if (serviceName === "Freedom to Patent Landscape") {
+      jobData = await patentLandscape.findOne({ "_id.job_no": jobID });
+      neededData = {
+        "Domain": jobData.field,
+        "Tech Description": jobData.technology_description,
+        "Keywords": jobData.keywords,
+        "Competitor Info": jobData.competitor_information,
+        "Country": jobData.country
+      };
+    } else if (serviceName === "Patent Portfolio Analysis") {
+      jobData = await patentPortfolioAnalysis.findOne({ "_id.job_no": jobID });
+      neededData = {
+        "Domain": jobData.field,
+        "Objectives": jobData.business_objectives,
+        "Market Info": jobData.market_and_industry_information,
+        "Country": jobData.country
+      };
+    } else if (serviceName === "Patent Translation Services") {
+      jobData = await patentTranslation.findOne({ "_id.job_no": jobID });
+      neededData = {
+        "Domain": jobData.field,
+        "Source Language": jobData.source_language,
+        "Target Language": jobData.target_language,
+        "Additional Info": jobData.additional_instructions
+      };
+    } else if (serviceName === "Patent Illustration") {
+      jobData = await patentIllustration.findOne({ "_id.job_no": jobID });
+      neededData = {
+        "Domain": jobData.field,
+        "Patent Specifications": jobData.patent_specifications,
+        "Drawing Requirements": jobData.drawing_requirements
+      };
+    } else if (serviceName === "Patent Watch") {
+      jobData = await patentWatch.findOne({ "_id.job_no": jobID });
+      neededData = {
+        "Domain": jobData.field,
+        "Tech Focus": jobData.industry_focus,
+        "Competitor Info": jobData.competitor_information,
+        "Geographic Scope": jobData.geographic_scope,
+        "Keywords": jobData.keywords,
+        "Monitoring Duration": jobData.monitoring_duration
+      };
+    } else if (serviceName === "Patent Licensing and Commercialization Services") {
+      jobData = await patentLicense.findOne({ "_id.job_no": jobID });
+      neededData = {
+        "Domain": jobData.field,
+        "Patent Info": jobData.patent_information,
+        "Goals": jobData.commercialization_goals,
+        "Competitive Landscape": jobData.competitive_landscape,
+        "Tech Description": jobData.technology_description,
+        "Country": jobData.country
+      };
+    } else {
+      jobData = await responseToFer.findOne({ "_id.job_no": jobID });
+      console.log(jobData);
+      neededData = {
+        "Domain": jobData.field,
+        "Strategy": jobData.response_strategy,
+        "Country": jobData.country
+      };
+    }
+
+    console.log(jobID);
+    console.log(serviceName);
+    console.log(neededData);
+    res.json(neededData);
+  } catch (error) {
+    console.log("Error while trying to get Job Data: ", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
+
 module.exports = {
   getPartnerJobsById,
   getPartnerJobOrders,
   acceptJobOrder,
   rejectJobOrder,
   getFilesForPartners,
+  getJobDetailsForPartners,
 };
