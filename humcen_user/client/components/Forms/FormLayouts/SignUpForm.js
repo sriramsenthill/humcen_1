@@ -23,6 +23,8 @@ export default function SignUpForm() {
     });
   };
 
+
+  
   return (
     <>
       <Card
@@ -130,6 +132,7 @@ export default function SignUpForm() {
                 variant="contained"
                 sx={{ mt: 3, mb: 2, color: "#fff !important" }}
                 size="large"
+                onClick={handleSignUp}
               >
                 Sign Up
               </Button>

@@ -46,6 +46,9 @@ const customerSchema = new mongoose.Schema({
     surname: {
       type: String
     }
+  },
+  jobs: {
+    type: [Number],
   }
 });
 

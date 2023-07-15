@@ -107,8 +107,33 @@ const verifyTokenMiddleware = async (req, res) => {
   }
 };
 
+const getCustomerData = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const customer = await Customer.findOne({ userID: userId });
+    if (!customer) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+
+    // Additional logic if needed
+    const {jobs}=customer
+    res.json(jobs);
+  } catch (error) {
+    console.error("Error fetching customer data:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
+
+
+
+
+
+
 module.exports = {
   signUpUser,
   signInUser,
-  verifyTokenMiddleware
+  verifyTokenMiddleware,
+  getCustomerData
 };

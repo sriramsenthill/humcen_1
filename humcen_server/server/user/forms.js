@@ -10,7 +10,7 @@ const JobOrder = require("../mongoose_schemas/job_order"); // Import the JobOrde
 const Partner = require("../mongoose_schemas/partner"); // Import the Partner model
 const patentIllustration = require("../mongoose_schemas/patent_illustration"); // Import Patent Illustration Model
 const Consultation = require("../mongoose_schemas/consultation");
-
+const Customer=require("../mongoose_schemas/customer");
 
 // Define your API route for fetching job order data
 const getJobOrderOnID = async (req, res) => {
@@ -80,10 +80,18 @@ const createJobOrderPatentDrafting = async (req, res) => {
     jobOrderData._id = { job_no: newJobNo };
     const jobOrder = new JobOrder(jobOrderData);
     const savedJobOrder = await jobOrder.save();
-    const findPartner = await Partner.findOne({ is_free: true });
+    let findPartner = await Partner.findOne({ is_free: true });
+    let findCustomer = await Customer.findOne({ userID: userId });
+    if (!findPartner) {
+      findPartner = new Partner({ is_free: true, jobs: [] });
+    }
     console.log(findPartner);
     findPartner.jobs.push(savedJobOrder._id.job_no);
+    findCustomer.jobs.push(savedJobOrder._id.job_no);
+
     findPartner.is_free = false;
+    await Promise.all([findPartner.save(), findCustomer.save()]);
+
     findPartner
       .save()
       .then((response) => {
@@ -120,24 +128,32 @@ const createJobOrderPatentFiling = async (req, res) => {
     jobOrderData._id = { job_no: newJobNo };
     const jobOrder = new JobOrder(jobOrderData);
     const savedJobOrder = await jobOrder.save();
-    const findPartner = await Partner.findOne({ is_free: true });
+
+    let findPartner = await Partner.findOne({ is_free: true });
+    let findCustomer = await Customer.findOne({ userID: userId });
+    console.log(findCustomer);
+    
+    if (!findPartner) {
+      findPartner = new Partner({ is_free: true, jobs: [] });
+    }
     console.log(findPartner);
     findPartner.jobs.push(savedJobOrder._id.job_no);
+    findCustomer.jobs.push(savedJobOrder._id.job_no);
+
     findPartner.is_free = false;
-    findPartner
-      .save()
-      .then((response) => {
-        console.log("Successfully Assigned Patent Filing to a Partner");
-      })
-      .catch((err) => {
-        console.log("Error in Assigning Patent Filing to the Partner");
-      });
+
+    await Promise.all([findPartner.save(), findCustomer.save()]);
+
+    console.log("Successfully Assigned Patent Filing to a Partner");
+    
     res.status(200).json(savedJobOrder);
   } catch (error) {
     console.error("Error creating job order:", error);
     res.status(500).send("Error creating job order");
   }
 };
+
+
 
 const savePatentSearchData = async (req, res) => {
   try {
@@ -158,10 +174,18 @@ const savePatentSearchData = async (req, res) => {
     searchOrder._id = { job_no: newSearchNo };
     const savedSearch = await searchOrder.save();
 
-    const findPartner = await Partner.findOne({ is_free: true });
+    let findPartner = await Partner.findOne({ is_free: true });
+    let findCustomer = await Customer.findOne({ userID: userId });
+
+    if (!findPartner) {
+      findPartner = new Partner({ is_free: true, jobs: [] });
+    }
     console.log(findPartner);
-    findPartner.jobs.push(savedSearch._id.job_no);
+    findPartner.jobs.push(searchOrder._id.job_no);
+    findCustomer.jobs.push(searchOrder._id.job_no);
+
     findPartner.is_free = false;
+    await Promise.all([findPartner.save(), findCustomer.save()]);
 
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
@@ -174,6 +198,7 @@ const savePatentSearchData = async (req, res) => {
       start_date: new Date(),
       end_date: endDate,
       budget: "To be Allocated",
+      status: "In Progress",
       country: "NA",
       domain: req.body.field,
     }).save();
@@ -213,10 +238,17 @@ const saveResponseToFerData = async (req, res) => {
     responseToFerOrder._id = { job_no: newResponseToFerNo };
     const savedResponseToFer = await responseToFerOrder.save();
 
-    const findPartner = await Partner.findOne({ is_free: true });
+    let findPartner = await Partner.findOne({ is_free: true });
+    let findCustomer = await Customer.findOne({ userID: userId });
+    if (!findPartner) {
+      findPartner = new Partner({ is_free: true, jobs: [] });
+    }
     console.log(findPartner);
-    findPartner.jobs.push(savedResponseToFer._id.job_no);
+    findPartner.jobs.push(responseToFerOrder._id.job_no);
+    findCustomer.jobs.push(responseToFerOrder._id.job_no);
+
     findPartner.is_free = false;
+    await Promise.all([findPartner.save(), findCustomer.save()]);
 
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
@@ -264,14 +296,20 @@ const saveFreedomToOperateData = async (req, res) => {
     const newFTONo = latestFTOOrder ? latestFTOOrder._id.job_no + 1 : 1000;
     freedomToOperateData._id = { job_no: newFTONo };
 
-    const fTOOrder = new freedomToOperate(freedomToOperateData);
-    fTOOrder._id = { job_no: newFTONo };
-    const savedFTO = await fTOOrder.save();
-
-    const findPartner = await Partner.findOne({ is_free: true });
+    const savedFTO = await freedomToOperate.create(freedomToOperateData);
+    let findPartner = await Partner.findOne({ is_free: true });
+    let findCustomer = await Customer.findOne({ userID: userId });
+    if (!findPartner) {
+      findPartner = new Partner({ is_free: true, jobs: [] });
+    }
     console.log(findPartner);
-    findPartner.jobs.push(savedFTO._id.job_no);
+    findPartner.jobs.push(freedomToOperateData._id.job_no);
+    findCustomer.jobs.push(freedomToOperateData._id.job_no);
+
     findPartner.is_free = false;
+    await Promise.all([findPartner.save(), findCustomer.save()]);
+
+    
 
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
@@ -287,16 +325,13 @@ const saveFreedomToOperateData = async (req, res) => {
       status: "In Progress",
       budget: "To be Allocated",
       domain: req.body.field,
-    }).save();
+    });
 
-    findPartner
-      .save()
-      .then((response) => {
-        console.log("Successfully Assigned Freedom To Operate Task to a Partner");
-      })
-      .catch((err) => {
-        console.log("Error in Assigning Freedom To Operate Task to the Partner");
-      });
+    await newJobOrder.save();
+
+    await findPartner.save();
+
+    console.log("Successfully Assigned Freedom To Operate Task to a Partner");
 
     res.status(200).send(savedFTO._id);
   } catch (error) {
@@ -304,6 +339,7 @@ const saveFreedomToOperateData = async (req, res) => {
     res.status(500).send("Error creating Freedom to Operate");
   }
 };
+
 
 
 
@@ -325,10 +361,17 @@ const savePatentIllustrationData = async (req, res) => {
     savedJobOrder._id = { job_no: newJobNo };
     const savedPatentIllustration = await savedJobOrder.save();
 
-    const findPartner = await Partner.findOne({ is_free: true });
+    let findPartner = await Partner.findOne({ is_free: true });
+    let findCustomer = await Customer.findOne({ userID: userId });
+    if (!findPartner) {
+      findPartner = new Partner({ is_free: true, jobs: [] });
+    }
     console.log(findPartner);
     findPartner.jobs.push(savedJobOrder._id.job_no);
+    findCustomer.jobs.push(savedJobOrder._id.job_no);
+
     findPartner.is_free = false;
+    await Promise.all([findPartner.save(), findCustomer.save()]);
 
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
@@ -380,11 +423,17 @@ const savePatentLandscapeData = async (req, res) => {
     savedJobOrder._id = { job_no: newJobNo };
     const savedPatentLandscape = await savedJobOrder.save();
 
-    const findPartner = await Partner.findOne({ is_free: true });
+    let findPartner = await Partner.findOne({ is_free: true });
+    let findCustomer = await Customer.findOne({ userID: userId });
+    if (!findPartner) {
+      findPartner = new Partner({ is_free: true, jobs: [] });
+    }
     console.log(findPartner);
     findPartner.jobs.push(savedJobOrder._id.job_no);
-    findPartner.is_free = false;
+    findCustomer.jobs.push(savedJobOrder._id.job_no);
 
+    findPartner.is_free = false;
+    await Promise.all([findPartner.save(), findCustomer.save()]);
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
 
@@ -435,10 +484,17 @@ const savePatentWatchData = async (req, res) => {
     savedJobOrder._id = { job_no: newJobNo };
     const savedPatentWatch = await savedJobOrder.save();
 
-    const findPartner = await Partner.findOne({ is_free: true });
+    let findPartner = await Partner.findOne({ is_free: true });
+    let findCustomer = await Customer.findOne({ userID: userId });
+    if (!findPartner) {
+      findPartner = new Partner({ is_free: true, jobs: [] });
+    }
     console.log(findPartner);
-    findPartner.jobs.push(savedJobOrder._id.job_no);
+    findPartner.jobs.push(patentWatchData._id.job_no);
+    findCustomer.jobs.push(patentWatchData._id.job_no);
+
     findPartner.is_free = false;
+    await Promise.all([findPartner.save(), findCustomer.save()]);
 
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
@@ -490,11 +546,17 @@ const savePatentLicenseData = async (req, res) => {
     savedJobOrder._id = { job_no: newJobNo };
     const savedPatentLicense = await savedJobOrder.save();
 
-    const findPartner = await Partner.findOne({ is_free: true });
+    let findPartner = await Partner.findOne({ is_free: true });
+    let findCustomer = await Customer.findOne({ userID: userId });
+    if (!findPartner) {
+      findPartner = new Partner({ is_free: true, jobs: [] });
+    }
     console.log(findPartner);
     findPartner.jobs.push(savedJobOrder._id.job_no);
-    findPartner.is_free = false;
+    findCustomer.jobs.push(savedJobOrder._id.job_no);
 
+    findPartner.is_free = false;
+    await Promise.all([findPartner.save(), findCustomer.save()]);
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
 
@@ -549,11 +611,18 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
     savedJobOrder._id = { job_no: newJobNo };
     const savedPatentPortfolio = await savedJobOrder.save();
 
-    const findPartner = await Partner.findOne({ is_free: true });
+    
+    let findPartner = await Partner.findOne({ is_free: true });
+    let findCustomer = await Customer.findOne({ userID: userId });
+    if (!findPartner) {
+      findPartner = new Partner({ is_free: true, jobs: [] });
+    }
     console.log(findPartner);
     findPartner.jobs.push(savedJobOrder._id.job_no);
-    findPartner.is_free = false;
+    findCustomer.jobs.push(savedJobOrder._id.job_no);
 
+    findPartner.is_free = false;
+    await Promise.all([findPartner.save(), findCustomer.save()]);
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
 
@@ -608,11 +677,17 @@ const savePatentTranslationData = async (req, res) => {
     savedJobOrder._id = { job_no: newJobNo };
     const savedPatentTranslation = await savedJobOrder.save();
 
-    const findPartner = await Partner.findOne({ is_free: true });
+    let findPartner = await Partner.findOne({ is_free: true });
+    let findCustomer = await Customer.findOne({ userID: userId });
+    if (!findPartner) {
+      findPartner = new Partner({ is_free: true, jobs: [] });
+    }
     console.log(findPartner);
     findPartner.jobs.push(savedJobOrder._id.job_no);
-    findPartner.is_free = false;
+    findCustomer.jobs.push(savedJobOrder._id.job_no);
 
+    findPartner.is_free = false;
+    await Promise.all([findPartner.save(), findCustomer.save()]);
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
 

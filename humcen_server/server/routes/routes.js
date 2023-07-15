@@ -95,6 +95,8 @@ router.post("/api/auth/signin", user_auth.signInUser);
 
 router.get("/api/verify-token", verifyToken, user_auth.verifyTokenMiddleware);
 
+router.get("/", verifyToken, user_auth.getCustomerData);
+
 //ADMIN DATA
 router.get("/api/admin/user", data.getUsers);
 
@@ -140,5 +142,5 @@ router.put("/api/accept/:jobId", verifyPartner, engine.acceptJobOrder);
 router.delete("/api/reject/:jobId", verifyPartner, engine.rejectJobOrder);
 router.get("/api/partner/job_order/:id", verifyPartner, engine.getFilesForPartners);
 
-module.exports = router;
 
+module.exports = router;
