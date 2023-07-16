@@ -26,7 +26,10 @@ target_language:{
     },
     additional_instructions:{
         type:String,
-    }
+    },
+    country: {
+      type: String,
+    },
   });
 
 

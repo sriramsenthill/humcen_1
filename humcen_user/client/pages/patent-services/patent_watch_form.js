@@ -47,6 +47,7 @@ const ColorButton = styled(Button)(({ theme }) => ({
 export default function Inbox() {
   const [domain, setDomain] = useState("");
   const [focus, setFocus] = useState("");
+  const [country, setCountry] = useState("");
   const [compInfo, setCompInfo] = useState("");
   const [geoScope, setGeoScope] = useState("");
   const [keyword, setKeyword] = useState("");
@@ -89,6 +90,7 @@ export default function Inbox() {
     const formData = {
       field: domain,
       industry_focus: focus,
+      country: country,
       competitor_information: compInfo,
       geographic_scope: geoScope,
       keywords: keyword,
@@ -147,6 +149,149 @@ export default function Inbox() {
       <form onSubmit={handleSubmit}>
       <Card variant="outlined" sx={{ margin: "5% 12%" }}>
           <DefaultSelect domain={domain} onDomainChange={handleDomainChange} />
+          <Card
+            sx={{
+              boxShadow: "none",
+              borderRadius: "10px",
+              p: "25px",
+              mb: "10px",
+            }}
+          >
+            <Typography
+              as="h3"
+              sx={{
+                fontSize: 18,
+                fontWeight: 500,
+                mb: "10px",
+              }}
+            >
+              Target Country :
+            </Typography>
+            <Typography
+              as="h5"
+              sx={{
+                fontSize: 12,
+                fontWeight: 350,
+                mb: "10px",
+              }}
+            >
+             ( Specify the country or countries where you primarily seek to protect and enforce your patent watch. )
+            </Typography>
+            <Button
+              style={{
+                background: country === "India" ? "#68BDFD" : "#F8FCFF",
+                color: country === "India" ? "white" : "#BFBFBF",
+                width: "13%",
+                marginRight: "2%",
+                height: "40px",
+                textTransform: "none",
+              }}
+              onClick={() => {
+                setCountry("India"); // Update the country state on button click
+              }}
+            >
+              <img
+                src="https://hatscripts.github.io/circle-flags/flags/in.svg"
+                width="24"
+              />
+              &nbsp;&nbsp;India
+            </Button>
+            <Button
+              style={{
+                background: country === "United States" ? "#68BDFD" : "#F8FCFF",
+                color: country === "United States" ? "white" : "#BFBFBF",
+                width: "13%",
+                marginRight: "2%",
+                height: "40px",
+                textTransform: "none",
+              }}
+              onClick={() => {
+                setCountry("United States");
+              }}
+            >
+              <img
+                src="https://hatscripts.github.io/circle-flags/flags/us.svg"
+                width="24"
+              />
+              &nbsp;&nbsp;United States
+            </Button>
+            <Button
+              style={{
+                background: country === "Germany" ? "#68BDFD" : "#F8FCFF",
+                color: country === "Germany" ? "white" : "#BFBFBF",
+                width: "13%",
+                marginRight: "2%",
+                height: "40px",
+                textTransform: "none",
+              }}
+              onClick={() => {
+                setCountry("Germany");
+              }}
+            >
+              <img
+                src="https://hatscripts.github.io/circle-flags/flags/de.svg"
+                width="24"
+              />
+              &nbsp;&nbsp;Germany
+            </Button>
+            <Button
+              style={{
+                background: country === "China" ? "#68BDFD" : "#F8FCFF",
+                color: country === "China" ? "white" : "#BFBFBF",
+                width: "13%",
+                marginRight: "2%",
+                height: "40px",
+                textTransform: "none",
+              }}
+              onClick={() => {
+                setCountry("China");
+              }}
+            >
+              <img
+                src="https://hatscripts.github.io/circle-flags/flags/cn.svg"
+                width="24"
+              />
+              &nbsp;&nbsp;China
+            </Button>
+            <Button
+              style={{
+                background: country === "UAE" ? "#68BDFD" : "#F8FCFF",
+                color: country === "UAE" ? "white" : "#BFBFBF",
+                width: "13%",
+                marginRight: "2%",
+                height: "40px",
+                textTransform: "none",
+              }}
+              onClick={() => {
+                setCountry("UAE");
+              }}
+            >
+              <img
+                src="https://hatscripts.github.io/circle-flags/flags/ae.svg"
+                width="24"
+              />
+              &nbsp;&nbsp;UAE
+            </Button>
+            <Button
+              style={{
+                background: country === "Japan" ? "#68BDFD" : "#F8FCFF",
+                color: country === "Japan" ? "white" : "#BFBFBF",
+                width: "13%",
+                marginRight: "2%",
+                height: "40px",
+                textTransform: "none",
+              }}
+              onClick={() => {
+                setCountry("Japan");
+              }}
+            >
+              <img
+                src="https://hatscripts.github.io/circle-flags/flags/jp.svg"
+                width="24"
+              />
+              &nbsp;&nbsp;Japan
+            </Button>
+          </Card>
           <Card
             sx={{
               boxShadow: "none",

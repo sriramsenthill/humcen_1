@@ -20,7 +20,10 @@ const searchSchema = new mongoose.Schema({
   },
   keywords: {
     type: [String],
-  }
+  },
+  country: {
+    type: String,
+  },
 });
 
 const Search = mongoose.model('Search', searchSchema, 'patent_search');

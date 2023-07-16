@@ -26,7 +26,10 @@ const patentWatchSchema = new mongoose.Schema({
   },
   userID: {
     type: Number,
-  }
+  },
+  country: {
+    type: String,
+  },
 });
 
 const patentWatchModel = mongoose.model('PatentWatch', patentWatchSchema, "patent_watch");

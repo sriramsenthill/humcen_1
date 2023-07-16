@@ -80,7 +80,7 @@ const createJobOrderPatentDrafting = async (req, res) => {
     jobOrderData._id = { job_no: newJobNo };
     const jobOrder = new JobOrder(jobOrderData);
     const savedJobOrder = await jobOrder.save();
-    let findPartner = await Partner.findOne({ is_free: true });
+    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Patent Drafting"]: true });
     let findCustomer = await Customer.findOne({ userID: userId });
     if (!findPartner) {
       findPartner = new Partner({ is_free: true, jobs: [] });
@@ -129,7 +129,7 @@ const createJobOrderPatentFiling = async (req, res) => {
     const jobOrder = new JobOrder(jobOrderData);
     const savedJobOrder = await jobOrder.save();
 
-    let findPartner = await Partner.findOne({ is_free: true });
+    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Patent Filing"]: true });
     let findCustomer = await Customer.findOne({ userID: userId });
     console.log(findCustomer);
     
@@ -173,8 +173,7 @@ const savePatentSearchData = async (req, res) => {
     const searchOrder = new Search(searchData);
     searchOrder._id = { job_no: newSearchNo };
     const savedSearch = await searchOrder.save();
-
-    let findPartner = await Partner.findOne({ is_free: true });
+    let findPartner = await Partner.findOne({ is_free: true, ["known_fields.Patent Search"] : true, country: req.body.country });
     let findCustomer = await Customer.findOne({ userID: userId });
 
     if (!findPartner) {
@@ -199,7 +198,7 @@ const savePatentSearchData = async (req, res) => {
       end_date: endDate,
       budget: "To be Allocated",
       status: "In Progress",
-      country: "NA",
+      country: req.body.country,
       domain: req.body.field,
     }).save();
 
@@ -238,7 +237,7 @@ const saveResponseToFerData = async (req, res) => {
     responseToFerOrder._id = { job_no: newResponseToFerNo };
     const savedResponseToFer = await responseToFerOrder.save();
 
-    let findPartner = await Partner.findOne({ is_free: true });
+    let findPartner = await Partner.findOne({ is_free: true, ["known_fields.Response to FER/Office Action"]: true, country: req.body.country });
     let findCustomer = await Customer.findOne({ userID: userId });
     if (!findPartner) {
       findPartner = new Partner({ is_free: true, jobs: [] });
@@ -297,7 +296,7 @@ const saveFreedomToOperateData = async (req, res) => {
     freedomToOperateData._id = { job_no: newFTONo };
 
     const savedFTO = await freedomToOperate.create(freedomToOperateData);
-    let findPartner = await Partner.findOne({ is_free: true });
+    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Freedom To Operate Search"]: true });
     let findCustomer = await Customer.findOne({ userID: userId });
     if (!findPartner) {
       findPartner = new Partner({ is_free: true, jobs: [] });
@@ -361,7 +360,7 @@ const savePatentIllustrationData = async (req, res) => {
     savedJobOrder._id = { job_no: newJobNo };
     const savedPatentIllustration = await savedJobOrder.save();
 
-    let findPartner = await Partner.findOne({ is_free: true });
+    let findPartner = await Partner.findOne({ is_free: true, ["known_fields.Patent Illustration"]: true, country: req.body.country });
     let findCustomer = await Customer.findOne({ userID: userId });
     if (!findPartner) {
       findPartner = new Partner({ is_free: true, jobs: [] });
@@ -384,7 +383,7 @@ const savePatentIllustrationData = async (req, res) => {
       domain: req.body.field,
       start_date: new Date(),
       end_date: endDate,
-      country: "NA",
+      country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
     }).save();
@@ -423,7 +422,7 @@ const savePatentLandscapeData = async (req, res) => {
     savedJobOrder._id = { job_no: newJobNo };
     const savedPatentLandscape = await savedJobOrder.save();
 
-    let findPartner = await Partner.findOne({ is_free: true });
+    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Freedom to Patent Landscape"]: true });
     let findCustomer = await Customer.findOne({ userID: userId });
     if (!findPartner) {
       findPartner = new Partner({ is_free: true, jobs: [] });
@@ -484,7 +483,7 @@ const savePatentWatchData = async (req, res) => {
     savedJobOrder._id = { job_no: newJobNo };
     const savedPatentWatch = await savedJobOrder.save();
 
-    let findPartner = await Partner.findOne({ is_free: true });
+    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Patent Watch"]: true });
     let findCustomer = await Customer.findOne({ userID: userId });
     if (!findPartner) {
       findPartner = new Partner({ is_free: true, jobs: [] });
@@ -507,7 +506,7 @@ const savePatentWatchData = async (req, res) => {
       domain: req.body.field,
       start_date: new Date(),
       end_date: endDate,
-      country: "NA",
+      country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
     }).save();
@@ -546,7 +545,7 @@ const savePatentLicenseData = async (req, res) => {
     savedJobOrder._id = { job_no: newJobNo };
     const savedPatentLicense = await savedJobOrder.save();
 
-    let findPartner = await Partner.findOne({ is_free: true });
+    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Patent Licensing and Commercialization Services"]: true });
     let findCustomer = await Customer.findOne({ userID: userId });
     if (!findPartner) {
       findPartner = new Partner({ is_free: true, jobs: [] });
@@ -612,7 +611,7 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
     const savedPatentPortfolio = await savedJobOrder.save();
 
     
-    let findPartner = await Partner.findOne({ is_free: true });
+    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Freedom to Patent Portfolio Analysis"]: true });
     let findCustomer = await Customer.findOne({ userID: userId });
     if (!findPartner) {
       findPartner = new Partner({ is_free: true, jobs: [] });
@@ -677,7 +676,7 @@ const savePatentTranslationData = async (req, res) => {
     savedJobOrder._id = { job_no: newJobNo };
     const savedPatentTranslation = await savedJobOrder.save();
 
-    let findPartner = await Partner.findOne({ is_free: true });
+    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Patent Translation Service"]: true });
     let findCustomer = await Customer.findOne({ userID: userId });
     if (!findPartner) {
       findPartner = new Partner({ is_free: true, jobs: [] });
@@ -699,7 +698,7 @@ const savePatentTranslationData = async (req, res) => {
       domain: req.body.field,
       start_date: new Date(),
       end_date: endDate,
-      country: "NA",
+      country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
     }).save();

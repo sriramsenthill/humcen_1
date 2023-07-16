@@ -255,7 +255,7 @@ export default function Inbox() {
               style={{
                 background: country === "India" ? "#68BDFD" : "#F8FCFF",
                 color: country === "India" ? "white" : "#BFBFBF",
-                width: "15%",
+                width: "13%",
                 marginRight: "2%",
                 height: "40px",
                 textTransform: "none",
@@ -274,7 +274,7 @@ export default function Inbox() {
               style={{
                 background: country === "United States" ? "#68BDFD" : "#F8FCFF",
                 color: country === "United States" ? "white" : "#BFBFBF",
-                width: "15%",
+                width: "13%",
                 marginRight: "2%",
                 height: "40px",
                 textTransform: "none",
@@ -293,7 +293,7 @@ export default function Inbox() {
               style={{
                 background: country === "Germany" ? "#68BDFD" : "#F8FCFF",
                 color: country === "Germany" ? "white" : "#BFBFBF",
-                width: "15%",
+                width: "13%",
                 marginRight: "2%",
                 height: "40px",
                 textTransform: "none",
@@ -307,6 +307,63 @@ export default function Inbox() {
                 width="24"
               />
               &nbsp;&nbsp;Germany
+            </Button>
+            <Button
+              style={{
+                background: country === "China" ? "#68BDFD" : "#F8FCFF",
+                color: country === "China" ? "white" : "#BFBFBF",
+                width: "13%",
+                marginRight: "2%",
+                height: "40px",
+                textTransform: "none",
+              }}
+              onClick={() => {
+                setCountry("China");
+              }}
+            >
+              <img
+                src="https://hatscripts.github.io/circle-flags/flags/cn.svg"
+                width="24"
+              />
+              &nbsp;&nbsp;China
+            </Button>
+            <Button
+              style={{
+                background: country === "UAE" ? "#68BDFD" : "#F8FCFF",
+                color: country === "UAE" ? "white" : "#BFBFBF",
+                width: "13%",
+                marginRight: "2%",
+                height: "40px",
+                textTransform: "none",
+              }}
+              onClick={() => {
+                setCountry("UAE");
+              }}
+            >
+              <img
+                src="https://hatscripts.github.io/circle-flags/flags/ae.svg"
+                width="24"
+              />
+              &nbsp;&nbsp;UAE
+            </Button>
+            <Button
+              style={{
+                background: country === "Japan" ? "#68BDFD" : "#F8FCFF",
+                color: country === "Japan" ? "white" : "#BFBFBF",
+                width: "13%",
+                marginRight: "2%",
+                height: "40px",
+                textTransform: "none",
+              }}
+              onClick={() => {
+                setCountry("Japan");
+              }}
+            >
+              <img
+                src="https://hatscripts.github.io/circle-flags/flags/jp.svg"
+                width="24"
+              />
+              &nbsp;&nbsp;Japan
             </Button>
           </Card>
           <Card

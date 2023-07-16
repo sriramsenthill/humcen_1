@@ -9,6 +9,9 @@ const patentIllustrationToOperateSchema = new mongoose.Schema({
     field: {
       type: String,
     },
+    country: {
+      type: String,
+    },
     patent_specifications: {
       type: String,
     },
