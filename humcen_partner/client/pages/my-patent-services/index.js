@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
 import ModernCard from "@/components/ModernCard";
+import AddCard from '@/components/AddCard';
 import Grid from "@mui/material/Grid";
 import styles from "@/styles/PageTitle.module.css";
 import { useRouter } from "next/router";
@@ -67,6 +68,12 @@ const MyPage = () => {
             link={service.link}
           />
         ))}
+        <AddCard
+            key="Add"
+            title="Add Services"
+            imageSrc="/images/patent_img/add.png"
+        />
+
       </Grid>
     </>
   );

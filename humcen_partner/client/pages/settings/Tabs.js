@@ -10,6 +10,7 @@ import ProfileSettings from "./ProfileSettings";
 import EmailNotifsSettings from "./EmailNotifsSettings";
 import ChangePassword from "./ChangePassword";
 import BillingSettings from "./BillingSettings";
+import AddServices from "./AddServices";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -119,6 +120,14 @@ export default function BasicTabs({ no, items }) {
                   label="Security"
                   {...a11yProps(3)}
                 />
+                <Tab
+                  sx={{
+                    textTransform: "none",
+                    marginRight: "10px",
+                  }}
+                  label="Services"
+                  {...a11yProps(4)}
+                />
               </Tabs>
             </Box>
             <TabPanel value={value} index={0}>
@@ -132,6 +141,9 @@ export default function BasicTabs({ no, items }) {
             </TabPanel>
             <TabPanel value={value} index={3}>
               <ChangePassword />
+            </TabPanel>
+            <TabPanel value={value} index={4}>
+              <AddServices />
             </TabPanel>
           </Box>
         </Card>

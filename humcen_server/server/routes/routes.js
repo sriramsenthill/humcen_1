@@ -127,6 +127,8 @@ router.put("/api/partner/bank-settings", verifyPartner, partnerSetttings.updateP
 
 router.put("/api/partner/pref-settings", verifyPartner, partnerSetttings.updatePartnerPrefSettings);
 
+router.put("/api/partner/service-settings", verifyPartner, partnerSetttings.editPartnerServices);
+
 router.put("/api/partner/password", verifyPartner, partnerSetttings.updatePartnerPassword);
 
 router.get("/api/partner/verify-token", verifyPartner, partnerSetttings.verifyPartnerToken);

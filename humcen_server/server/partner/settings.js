@@ -107,20 +107,12 @@ const fetchPartnerFullName = async (req, res) => {
   };
   
   const updatePartnerPrefSettings = async (req, res) => {
-    const serviceList = servList.map(elem => elem.title);
     const userID = req.userID;
     const partner = await Partner.findOne({ userID });
     partner.pref.mails = req.body.data.mails;
     partner.pref.order_updates = req.body.data.order_updates;
     partner.pref.marketing_emails = req.body.data.marketing_emails;
     partner.pref.newsletter = req.body.data.newsletter;
-    req.body.data.known_fields.forEach((field) => {
-      partner.known_fields[field] = true;
-    });
-    const remService = serviceList.filter((elem) => !req.body.data.known_fields.includes(elem));
-    remService.forEach((service)=> {
-      partner.known_fields[service] = false;
-    });
     partner
       .save()
       .then((res) => console.log("Partner's Preferentials Successfully Updated"))
@@ -132,6 +124,28 @@ const fetchPartnerFullName = async (req, res) => {
       );
   };
   
+  const editPartnerServices = async (req, res) => {
+    const serviceList = servList.map(elem => elem.title);
+    const userID = req.userID;
+    const partner = await Partner.findOne({ userID });
+    req.body.data.known_fields.forEach((field) => {
+      partner.known_fields[field] = true;
+    });
+    const remService = serviceList.filter((elem) => !req.body.data.known_fields.includes(elem));
+    remService.forEach((service)=> {
+      partner.known_fields[service] = false;
+    });
+    partner
+      .save()
+      .then((res) => console.log("Partner's Service Settings Successfully Updated"))
+      .catch((error) =>
+        console.error(
+          "Error in updating Partner's Service Settings: ",
+          error
+        )
+      );
+  }
+
   const updatePartnerPassword = async (req, res) => {
     const userID = req.userID;
     const partner = await Partner.findOne({ userID });
@@ -189,5 +203,6 @@ const fetchPartnerFullName = async (req, res) => {
     updatePartnerBankDetails,
     updatePartnerPrefSettings,
     updatePartnerPassword,
+    editPartnerServices,
     verifyPartnerToken
   };
