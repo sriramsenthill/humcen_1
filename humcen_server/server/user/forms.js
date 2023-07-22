@@ -222,6 +222,7 @@ const saveResponseToFerData = async (req, res) => {
   try {
     const userId = req.userId;
     const responseToFerData = req.body;
+    console.log(responseToFerData);
     responseToFerData.userID = userId;
 
     const latestResponseToFerOrder = await JobOrder.findOne()

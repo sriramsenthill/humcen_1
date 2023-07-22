@@ -9,6 +9,7 @@ import withAuth from "@/components/withAuth";
 import Features from "./Features";
 import BasicTabs from "./Tabs";
 import axios from "axios";
+import JSZip from "jszip";
 import Button from "@mui/material/Button";
 import JobDetails from "./jobDetails";
 
@@ -72,33 +73,42 @@ const DynamicPage = () => {
 
   const onClickDownload = async (jobId) => {
     try {
-      const response = await api.get(`/partner/job_order/${jobId}`);
+      const response = await api.get(`/partner/job_order/${Service}/${jobId}`);
+      console.log(response.data)
       const fileData = response.data.fileData;
       const fileName = response.data.fileName;
-      const base64Data = fileData.split(",")[1];
+      const fileMIME = response.data.fileMIME;
+      const zip = new JSZip();
 
-      // Convert base64 data to binary
-      const binaryString = window.atob(base64Data);
-  
-      // Create Uint8Array from binary data
-      const bytes = new Uint8Array(binaryString.length);
-      for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
+      for(let totalFiles=0; totalFiles < fileData.length; totalFiles++) {
+        const base64Data = fileData[totalFiles].split(",")[1];
+
+        // Convert base64 data to binary
+        const binaryString = window.atob(base64Data);
+    
+        // Create Uint8Array from binary data
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+    
+        // Create Blob object from binary data
+        const blob = new Blob([bytes], { type: fileMIME[totalFiles] }); // Replace "application/pdf" with the appropriate MIME type for your file
+        zip.file(fileName[totalFiles] || `file_${totalFiles}.txt`, blob);
       }
-  
-      // Create Blob object from binary data
-      const blob = new Blob([bytes], { type: "application/text" }); // Replace "application/pdf" with the appropriate MIME type for your file
-  
-      // Create temporary download link
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = fileName || "file"; // Set the desired filename and extension
-  
-      // Trigger the download
-      link.click();
-  
-      // Clean up the temporary link
-      URL.revokeObjectURL(link.href);
+      const content = await zip.generateAsync({ type: "blob" });
+        const dataURL = URL.createObjectURL(content);
+        // Create temporary download link
+        const link = document.createElement("a");
+        link.href = dataURL;
+        link.download = Service + "_" +  jobId + ".zip"; // Set the desired filename and extension
+    
+        // Trigger the download
+        link.click();
+    
+        // Clean up the temporary link
+        URL.revokeObjectURL(link.href);
+
     } catch (error) {
       console.error('Error downloading file:', error);
     }

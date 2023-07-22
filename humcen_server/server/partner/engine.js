@@ -169,34 +169,213 @@ const rejectJobOrder = async (req, res) => {
  //DOWNLOAD BUTTON FOR PARTNER ONGOING PATENTS
 const getFilesForPartners = async (req, res) => {
   const jobId = req.params.id;
+  const service = req.params.services;
   try {
     // Retrieve job details from MongoDB using the provided job ID
-    const jobDetails = await JobOrder.findOne({ "_id.job_no": jobId });
+    if (service === "Patent Drafting") {
+      const jobDetails = await JobOrder.findOne({ "_id.job_no": jobId });
 
-    // Check if job details exist and have invention details
-    if (!jobDetails || !jobDetails.service_specific_files || !jobDetails.service_specific_files.invention_details) {
-      return res.status(404).json({ error: "File not found" });
-    }
+      // Check if job details exist and have invention details
+      if (!jobDetails || !jobDetails.service_specific_files || !jobDetails.service_specific_files.invention_details) {
+        return res.status(404).json({ error: "File not found" });
+      }
 
-    // Extract the file data from the job details
-    const inventionDetails = jobDetails.service_specific_files.invention_details[0];
+      // Extract the file data from the job details
+      const inventionDetails = jobDetails.service_specific_files.invention_details[0];
 
-    // Check if base64 data is present
-    if (!inventionDetails.base64) {
-      return res.status(404).json({ error: "File not found" });
-    }
+      // Check if base64 data is present
+      if (!inventionDetails.base64) {
+        return res.status(404).json({ error: "File not found" });
+      }
 
-    const { base64, name } = inventionDetails;
+      const { base64, name } = inventionDetails;
 
-    // Set the appropriate headers for file download
-    res.set({
+      // Set the appropriate headers for file download
+      res.set({
       'Content-Type': 'application/octet-stream',
       'Content-Disposition': `attachment; filename=${name}`,
-    });
+      });
 
-    // Send the file data as a response to the frontend
-    res.json({ fileData: base64, fileName: name });
+      // Send the file data as a response to the frontend
+      res.json({ fileData: base64, fileName: name });
+    } 
 
+    // For Patent Filing
+    else if (service === "Patent Filing") {
+      const jobDetails = await JobOrder.findOne({ "_id.job_no": jobId });
+      if (!jobDetails || !jobDetails.service_specific_files || !jobDetails.service_specific_files.details || !jobDetails.service_specific_files.applicants || !jobDetails.service_specific_files.investors) {
+        return res.status(404).json({ error: "File not found" });
+      }
+      const inventionDetails = jobDetails.service_specific_files.details[0];
+      const applicantsList = jobDetails.service_specific_files.applicants[0];
+      const investorsList = jobDetails.service_specific_files.investors[0];
+
+      if (!inventionDetails.base64 || !applicantsList.base64 || !investorsList.base64) {
+        return res.status(404).json({ error: "File not found" });
+      }
+      let fileNames = new Array(inventionDetails.name, applicantsList.name, investorsList.name );
+      let fileContents = new Array(inventionDetails.base64, applicantsList.base64, investorsList.base64 );
+      let fileMimes = new Array(inventionDetails.type, applicantsList.type, investorsList.type);
+      fileNames.forEach((file) => {
+        res.set({
+          'Content-Type': 'application/octet-stream',
+          'Content-Disposition': `attachment; filename=${file}`,
+          });
+      });
+      res.json({ fileData: fileContents, fileName: fileNames, fileMIME: fileMimes });
+
+    }
+
+    // For Patent Search
+    else if (service === "Patent Search") {
+      const jobDetails = await Search.findOne({ "_id.job_no": jobId });
+      if (!jobDetails || !jobDetails.technical_diagram) {
+        return res.status(404).json({ error: "File not found" });
+      }
+      const technicalDiagrams = jobDetails.technical_diagram[0];
+
+      if (!technicalDiagrams.base64) {
+        return res.status(404).json({ error: "File not found" });
+      }
+      let fileNames = new Array(technicalDiagrams.name);
+      let fileContents = new Array(technicalDiagrams.base64);
+      let fileMimes = new Array(technicalDiagrams.type);
+      fileNames.forEach((file) => {
+        res.set({
+          'Content-Type': 'application/octet-stream',
+          'Content-Disposition': `attachment; filename=${file}`,
+          });
+      });
+      res.json({ fileData: fileContents, fileName: fileNames, fileMIME: fileMimes });
+
+    }
+
+    // For Response To FER/ Office Action
+    else if (service === "Response To FER Office Action") {
+      const jobDetails = await responseToFer.findOne({ "_id.job_no": jobId });
+      if (!jobDetails || !jobDetails.fer || !jobDetails.complete_specifications) {
+        return res.status(404).json({ error: "File not found" });
+      }
+      const ferFile = jobDetails.fer[0];
+      const specsFile = jobDetails.complete_specifications[0];
+
+      if (!ferFile.base64 || !specsFile.base64) {
+        return res.status(404).json({ error: "File not found" });
+      }
+      let fileNames = new Array(ferFile.name, specsFile.name);
+      console.log(fileNames);
+      let fileContents = new Array(ferFile.base64, specsFile.base64);
+      let fileMimes = new Array(ferFile.type, specsFile.type);
+      console.log(ferFile.name, specsFile.name);
+      fileNames.forEach((file) => {
+        res.set({
+          'Content-Type': 'application/octet-stream',
+          'Content-Disposition': `attachment; filename=${file}`,
+          });
+      });
+      res.json({ fileData: fileContents, fileName: fileNames, fileMIME: fileMimes });
+
+    }
+
+    // For Freedom To Operate Search
+    else if (service === "Freedom To Operate") {
+      const jobDetails = await freedomToOperate.findOne({ "_id.job_no": jobId });
+      if (!jobDetails || !jobDetails.invention_description || !jobDetails.patent_application_details ) {
+        return res.status(404).json({ error: "File not found" });
+      }
+      const inventionFile = jobDetails.invention_description[0];
+      const patentFile = jobDetails.patent_application_details[0];
+
+      if (!inventionFile.base64 || !patentFile.base64) {
+        return res.status(404).json({ error: "File not found" });
+      }
+      let fileNames = new Array(inventionFile.name, patentFile.name);
+      let fileContents = new Array(inventionFile.base64, patentFile.base64);
+      let fileMimes = new Array(inventionFile.type, patentFile.type);
+      fileNames.forEach((file) => {
+        res.set({
+          'Content-Type': 'application/octet-stream',
+          'Content-Disposition': `attachment; filename=${file}`,
+          });
+      });
+      console.log(fileContents, fileNames, fileMimes);
+      res.json({ fileData: fileContents, fileName: fileNames, fileMIME: fileMimes });
+
+    }
+
+    // For Freedom to Patent Portfolio Analysis
+    else if (service === "Patent Portfolio Analysis") {
+      const jobDetails = await patentPortfolioAnalysis.findOne({ "_id.job_no": jobId });
+      if (!jobDetails || !jobDetails.service_specific_files.invention_details ) {
+        return res.status(404).json({ error: "File not found" });
+      }
+      const portfolioInfoFile = jobDetails.service_specific_files.invention_details[0];
+
+      if (!portfolioInfoFile.base64) {
+        return res.status(404).json({ error: "File not found" });
+      }
+      let fileNames = new Array(portfolioInfoFile.name);
+      let fileContents = new Array(portfolioInfoFile.base64);
+      let fileMimes = new Array(portfolioInfoFile.type);
+      fileNames.forEach((file) => {
+        res.set({
+          'Content-Type': 'application/octet-stream',
+          'Content-Disposition': `attachment; filename=${file}`,
+          });
+      });
+      res.json({ fileData: fileContents, fileName: fileNames, fileMIME: fileMimes });
+
+    }
+
+    // For Patent Translation Service
+    else if (service === "Patent Translation Services") {
+      const jobDetails = await patentTranslation.findOne({ "_id.job_no": jobId });
+      if (!jobDetails || !jobDetails.document_details ) {
+        return res.status(404).json({ error: "File not found" });
+      }
+      const documentFile = jobDetails.document_details[0];
+
+      if (!documentFile.base64) {
+        return res.status(404).json({ error: "File not found" });
+      }
+      let fileNames = new Array(documentFile.name);
+      let fileContents = new Array(documentFile.base64);
+      let fileMimes = new Array(documentFile.type);
+      fileNames.forEach((file) => {
+        res.set({
+          'Content-Type': 'application/octet-stream',
+          'Content-Disposition': `attachment; filename=${file}`,
+          });
+      });
+      res.json({ fileData: fileContents, fileName: fileNames, fileMIME: fileMimes });
+
+    }
+
+    // For Patent Illustration
+    else if (service === "Patent Illustration") {
+      const jobDetails = await patentIllustration.findOne({ "_id.job_no": jobId });
+      if (!jobDetails || !jobDetails.preferred_style ) {
+        return res.status(404).json({ error: "File not found" });
+      }
+      const styleFile = jobDetails.preferred_style[0];
+
+      if (!styleFile.base64) {
+        return res.status(404).json({ error: "File not found" });
+      }
+      let fileNames = new Array(styleFile.name);
+      let fileContents = new Array(styleFile.base64);
+      let fileMimes = new Array(styleFile.type);
+      fileNames.forEach((file) => {
+        res.set({
+          'Content-Type': 'application/octet-stream',
+          'Content-Disposition': `attachment; filename=${file}`,
+          });
+      });
+      res.json({ fileData: fileContents, fileName: fileNames, fileMIME: fileMimes });
+
+    }
+
+    
   } catch (error) {
     console.error('Error retrieving file:', error);
     res.status(500).json({ error: 'Internal Server Error' });

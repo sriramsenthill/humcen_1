@@ -14,7 +14,7 @@ const responseToFerSchema = new mongoose.Schema({
     type: Object,
 
   },
-  complete_specification: {
+  complete_specifications: {
     type: Object,
 
   },
