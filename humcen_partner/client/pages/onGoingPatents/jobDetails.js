@@ -10,6 +10,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material
 import { useRouter } from "next/router";
 
 
+
 const api = axios.create({
     baseURL: "http://localhost:3000/api",
   });
@@ -160,45 +161,39 @@ const JobDetails = ({services, jobNo}) => {
           </Typography>
         </Box>
         
-        <Box>
-          
-          {personalInfo.map((info) => (
-            <Box
-              sx={{
-                display: 'flex',
-                borderBottom: '1px solid #F7FAFF',
-                p: '10px 0',
-              }}
-              key={info.title}
-              className="for-dark-bottom-border"
-            >
-              <Typography 
-                as='h4' 
-                fontWeight='500' 
-                fontSize='14px' 
-                width='100px'
-              >
-                {info.title}
-              </Typography>
-
-              <Typography>{info.text}</Typography>
-            </Box>
-          ))}
-          <Divider />
+        <Box sx={{ padding: '20px', backgroundColor: '#F7FAFF',}}>
+        {personalInfo.map((info) => (
+        <Box
+          key={info.title}
+          sx={{
+           display:'flex',
+            borderBottom: '1px solid #E1E7F5',
+            
+            py: '10px',
+          }}
+        >
           <Typography
-            as="h2"
+            variant="h6"
             sx={{
-              fontSize: 20,
-              fontWeight: 500,
-              paddingTop: "20px",
-              paddingBottom: "20px",
+              fontWeight: 'bold',
+              width: '100px',
+              pr: '10px',
             }}
           >
-            Upload your Work
+            {info.title}
           </Typography>
-          <FileBase64 multiple={true} onDone={getFiles} />{" "}
-          <Divider />
+
+          <Typography>{info.text}</Typography>
+        
         </Box>
+      ))}
+   
+      <Typography variant="h5" sx={{ fontWeight: 'bold', py: '20px' }}>
+        Upload your Work
+      </Typography>
+      <FileBase64 multiple={true} onDone={getFiles} />
+      <Divider sx={{ my: '20px' }} />
+    </Box>
       </Card>
       <Button
             sx={{
