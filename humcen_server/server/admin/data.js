@@ -2,6 +2,7 @@ const JobOrder = require("../mongoose_schemas/job_order"); // Import the JobOrde
 const Admin = require("../mongoose_schemas/admin"); // Import the Admin model
 const Partner = require("../mongoose_schemas/partner"); // Import the Admin model
 const User = require("../mongoose_schemas/user"); // Import the User model
+const JobFiles = require("../mongoose_schemas/job_files"); // Import Job Files Model
 
 const getUsers = async (req, res) => {
   try {
@@ -44,9 +45,42 @@ const getJobOrders = async (req, res) => {
   }
 };
 
+const getJobFiles = async (req, res) => {
+  const jobID = req.params.jobID;
+  console.log(jobID);
+  try {
+    const jobFile = await JobFiles.findOne({"_id.job_no": jobID});
+    if(! jobFile) {
+      console.log("No Job Files Present under Job No " + jobID);
+    } else {
+      if (!jobFile || !jobFile.job_files ) {
+        return res.status(404).json({ error: "File not found" });
+      }
+      const JFile = jobFile.job_files[0];
+
+      if (!JFile.base64) {
+        return res.status(404).json({ error: "File not found" });
+      }
+      let fileNames = new Array(JFile.name);
+      let fileContents = new Array(JFile.base64);
+      let fileMimes = new Array(JFile.type);
+      fileNames.forEach((file) => {
+        res.set({
+          'Content-Type': 'application/octet-stream',
+          'Content-Disposition': `attachment; filename=${file}`,
+          });
+      });
+      res.json({ fileData: fileContents, fileName: fileNames, fileMIME: fileMimes });
+    }
+  } catch(err) {
+    console.error("Job FIle Not Found", err);
+  }
+}
+
 module.exports = {
   getUsers,
   getPartners,
   getAdmins,
-  getJobOrders
+  getJobOrders,
+  getJobFiles,
 };

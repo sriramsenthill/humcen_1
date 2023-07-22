@@ -1,5 +1,6 @@
 const Partner = require("../mongoose_schemas/partner"); // Import the Partner model
 const JobOrder = require("../mongoose_schemas/job_order"); // Import the JobOrder model
+const JobFiles = require("../mongoose_schemas/job_files"); // Import Job Files Model
 const Search = require("../mongoose_schemas/search"); // Import the Patent Search Model
 const patentPortfolioAnalysis = require("../mongoose_schemas/patent_portfolio_analysis"); // Import Patent Portfolio Analysis Model
 const patentTranslation = require("../mongoose_schemas/patent_translation_service"); // Import Patent Translation Services Mode
@@ -499,6 +500,48 @@ const getJobDetailsForPartners = async (req, res) => {
   }
 };
 
+// Finding Partner according to Job ID
+
+const findPartnersWithJobNo = async (req, res) => {
+  const jobID = req.params.id;
+  const service = req.params.services;
+  console.log("Params " + parseInt(jobID));
+  try
+  {
+    const partner = await Partner.findOne( { jobs: {$in: [parseInt(jobID)]}} ); // Finding Partners according to the given Job ID
+    res.json({partnerID: partner.userID, partnerName: partner.full_name, country: partner.country, service: service});
+  
+
+  } catch(err) {
+    console.error("Error in Finding Partner according to Job ID", err);
+  }
+
+
+};
+
+const addJobFiles = async (req, res) => {
+  console.log("Requests " + req.body.partnerID);
+  const job = req.body;
+  try {
+    const jobFile = new JobFiles(
+      {
+      "_id.job_no": job.job_no, 
+        service: job.service, 
+        country: job.country, 
+        partnerID: job.partnerID, 
+        partnerName: job.partnerName, 
+        job_files: job.job_files,
+  }).save().then((response) => {
+    console.log("Job Files added Successfully");
+  }).catch((err) => {
+    console.log("Error in Updating Job Files");
+  });
+
+  } catch {
+    console.error("Error in Updating Job Files", err);
+  }
+
+}
 
 
 module.exports = {
@@ -508,4 +551,6 @@ module.exports = {
   rejectJobOrder,
   getFilesForPartners,
   getJobDetailsForPartners,
+  findPartnersWithJobNo,
+  addJobFiles,
 };

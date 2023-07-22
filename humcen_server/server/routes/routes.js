@@ -106,6 +106,8 @@ router.get("/api/admin/admin", data.getAdmins);
 
 router.get("/api/admin/job_order", data.getJobOrders);
 
+router.get("/api/admin/job_files/:jobID", data.getJobFiles);
+
 //ADMIN_AUTH
 router.post("/api/auth/admin/signin", admin_auth.adminSignIn);
 
@@ -144,6 +146,8 @@ router.put("/api/accept/:jobId", verifyPartner, engine.acceptJobOrder);
 router.delete("/api/reject/:jobId", verifyPartner, engine.rejectJobOrder);
 router.get("/api/partner/job_order/:services/:id", verifyPartner, engine.getFilesForPartners);
 router.get("/api/:services/:jobID", verifyPartner, engine.getJobDetailsForPartners);
+router.get("/api/partner-details/:services/:id", verifyPartner, engine.findPartnersWithJobNo);
+router.put("/api/partner/job-files", verifyPartner, engine.addJobFiles);
 
 
 module.exports = router;
