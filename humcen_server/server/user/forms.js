@@ -11,6 +11,7 @@ const Partner = require("../mongoose_schemas/partner"); // Import the Partner mo
 const patentIllustration = require("../mongoose_schemas/patent_illustration"); // Import Patent Illustration Model
 const Consultation = require("../mongoose_schemas/consultation");
 const Customer=require("../mongoose_schemas/customer");
+const JobFiles=require("../mongoose_schemas/job_files");
 
 // Define your API route for fetching job order data
 const getJobOrderOnID = async (req, res) => {
@@ -724,6 +725,23 @@ const savePatentTranslationData = async (req, res) => {
   }
 };
 
+// Fetch Partner's Work Files for User
+const getJobFilesDetailsForUsers = async(req, res) => {
+  const jobID = req.params.jobID;
+  try{
+    const jobFile = await JobFiles.findOne({"_id.job_no": jobID});
+    if(! jobFile) {
+      console.log("No Job Files Present under Job No " + jobID);
+    } else {
+      res.json(jobFile);
+    }
+
+  } catch(error) {
+      console.error("Error in fetching Job Details File.", error);
+  }
+}
+
+
   module.exports = {
     getJobOrderOnID,
     getJobOrders,
@@ -739,4 +757,5 @@ const savePatentTranslationData = async (req, res) => {
     savePatentLicenseData,
     savePatentPortfolioAnalysisData,
     savePatentTranslationData,
+    getJobFilesDetailsForUsers,
   };

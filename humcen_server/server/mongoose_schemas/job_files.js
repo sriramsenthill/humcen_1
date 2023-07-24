@@ -10,6 +10,18 @@ const jobFilesSchema = new mongoose.Schema({
   partnerName: { type: String },
   job_files: {
     type: Object,
+  },
+  access_provided: {
+    type: Boolean,
+    default: false,
+  },
+  verification: {
+    type: String,
+    default: "In Progress",
+  },
+  decided: {
+    type: Boolean,
+    default: false,
   }
 });
 

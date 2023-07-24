@@ -19,6 +19,8 @@ const  DynamicPage = () => {
   const [job, setJob] = useState(null); // Initialize job state as null
   const [Service, setService] = useState("");
   const [jobID, setJobID] = useState("");
+  const [access, setButtonAccess] = useState(false);
+  const [downloadStatus, setDownloadStatus] = useState(true);
   const [isComponentLoaded, setComponentLoaded] = useState(false);
 
   useEffect(() => {
@@ -44,24 +46,50 @@ const  DynamicPage = () => {
       }
     };
 
+    
     fetchJobData();
 
-    // Clean up the effect by resetting the job state when the component is unmounted
-    return () => {
-      setJob(null);
-    };
   }, [id]); // Add 'id' as a dependency
 
   console.log(job);
+
+  // Visibility
+
+  useEffect(() => {
+    const fetchJobFileData = async (jobID) => {
+      try {
+        const token = localStorage.getItem("token");
+        if (token) {
+          const response = await axios.get(`http://localhost:3000/api/admin/job_files_details/${jobID}`);
+          console.log("Response from GET:", response.data);
+          setButtonAccess(response.data.decided);
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          console.error("Unauthorized: You do not have access to this resource.", error);
+        } else {
+          console.error("Error in giving access for the User to download the File.", error);
+        }
+      }
+    };
+
+    if (jobID) {
+      fetchJobFileData(jobID);
+    }
+
+  }, [jobID]);
+  
 
   if (!job) {
     return <div>No job found with the provided job number.</div>;
   }
 
   const onClickDownload = async (jobId) => {
+    console.log(access);
     try {
       const response = await axios.get(`http://localhost:3000/api/admin/job_files/${jobId}`);
       console.log(response.data);
+      
       const fileData = response.data.fileData;
       const fileName = response.data.fileName;
       const fileMIME = response.data.fileMIME;
@@ -100,6 +128,66 @@ const  DynamicPage = () => {
       console.error('Error downloading file:', error);
     }
   };
+
+  // Function to enable the Access for User's Download Button
+  const onUserAccess = async (jobId) => {
+    try {
+      const token = localStorage.getItem("token");
+      if(token) {
+        const response = await axios.put(
+          `http://localhost:3000/api/admin/job_files_details/${jobId}`,
+          {
+            accessProvided: true,
+            decision: true,
+            verification: "Job completed Successfully",
+          },
+          {
+            headers: {
+              "Authorization": token,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
+      setButtonAccess(!access);
+      setDownloadStatus(true);
+      window.location.reload(true);
+      console.log("Coming" + response.data);
+    } catch(error) {
+      console.error("Error in giving access for the User to download the File.", error);
+    }
+
+  }
+
+  // Function to reject Partner's Work
+  const onPartnerNotif = async (jobId) => {
+    try {
+      const token = localStorage.getItem("token");
+      if(token) {
+        const response = await axios.put(
+          `http://localhost:3000/api/admin/job_files_details/${jobId}`,
+          {
+            accessProvided: false,
+            decision: true,
+            verification: "You need to re-evaluate your Work. For more details, contact Admin.",
+            file: {},
+          },
+          {
+            headers: {
+              "Authorization": token,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
+      setButtonAccess(!access);
+      setDownloadStatus(false);
+      window.location.reload();
+      console.log(response.data);
+    } catch(error) {
+      console.error("Error in giving access for the User to download the File.", error);
+    }
+  }
 
   const {
     job_no,
@@ -211,7 +299,7 @@ const  DynamicPage = () => {
                 <td>
                 <Button
                       sx={{
-                        background: "#27AE60", 
+                        background: downloadStatus ?  "#27AE60" : "#D3D3D3" , 
                         color: "white",
                         borderRadius: "100px",
                         width: "100%",
@@ -222,6 +310,7 @@ const  DynamicPage = () => {
                         },
                       }}
                       onClick={()=>onClickDownload(job._id.job_no)}
+                      disabled={!downloadStatus}
                     >
                       Download now
                     </Button>
@@ -247,6 +336,76 @@ const  DynamicPage = () => {
               </tr>
             </tbody>
           </table>
+
+  { !access && (<Grid container spacing={2}>
+          <Grid item xs={12} sm={6} md={6}>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={6}
+            justifyContent="flex-start"
+            textAlign="center"
+          >
+            <h2 style={{
+              position: "relative",
+              right: "50%",
+            }} >Partner's Work Access Management</h2>
+          </Grid>
+          </Grid>)}
+        { !access &&  (<Grid container spacing={2}>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={6}
+            justifyContent="flex-end"
+            textAlign="right"
+          >
+                <Button
+                      sx={{
+                        background: "#1D5D9B", 
+                        color: "white",
+                        borderRadius: "100px",
+                        width: "30%",
+                        height: "88%",
+                        textTransform: "none",
+                        "&:hover": {
+                          background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
+                        },
+                      }} // onUserAccess(job._id.job_no)
+                      onClick={()=> {  window.location.reload(true); onUserAccess(job._id.job_no)}}
+                    >
+                      Accept the Work
+                    </Button>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={6}
+            justifyContent="flex-end"
+            textAlign="left"
+          >
+                <Button
+                      sx={{
+                        background: "#B22222", 
+                        color: "white",
+                        borderRadius: "100px",
+                        width: "30%",
+                        height: "88%",
+                        textTransform: "none",
+                        "&:hover": {
+                          background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
+                        },
+                      }}
+                      onClick={()=>{ window.location.reload(true) ;onPartnerNotif(job._id.job_no) }}
+                    >
+                      Reject the Work
+                </Button>
+          </Grid>
+        </Grid>)}  
         </Grid>
       </Card>
       <div>{isComponentLoaded && <CrossAssign />}</div>

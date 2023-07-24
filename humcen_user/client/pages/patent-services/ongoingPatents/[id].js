@@ -8,6 +8,7 @@ import Card from "@mui/material/Card";
 import withAuth from "@/components/withAuth";
 import Features from "./Features";
 import BasicTabs from "./Tabs";
+import { Button } from "@mui/material";
 import axios from "axios";
 
 // Create an Axios instance
@@ -31,6 +32,8 @@ const DynamicPage = () => {
   const { id } = router.query;
 
   const [job, setJob] = useState(null); // Initialize job state as null
+  const [downloadStatus, setDownloadStatus] = useState(false); // Initally, User is denied from downloading
+  const [jobID, setJobID] = useState("");
 
   useEffect(() => {
     const fetchJobData = async () => {
@@ -40,6 +43,7 @@ const DynamicPage = () => {
 
         if (specificJob) {
           setJob(specificJob);
+          setJobID(id);
         } else {
           console.log("No job found with the provided job number:", id);
           setJob(null);
@@ -58,11 +62,79 @@ const DynamicPage = () => {
     };
   }, [id]); // Add 'id' as a dependency
 
+  useEffect(() => {
+    const fetchJobFileData = async (jobID) => {
+      try {
+        const response = await api.get(`/user/job_files_details/${jobID}`);
+        console.log("Response from GET:", response.data);
+        setDownloadStatus(response.data.access_provided);
+        const token = localStorage.getItem("token");
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          console.error("Unauthorized: You do not have access to this resource.", error);
+        } else {
+          console.error("Error in giving access for the User to download the File.", error);
+        }
+      }
+    };
+
+    if (jobID) {
+      fetchJobFileData(jobID);
+    }
+
+  }, [jobID]);
+  
+
   console.log(job);
 
   if (!job) {
     return <div>No job found with the provided job number.</div>;
   }
+
+  const onClickDownload = async (jobId) => {
+    console.log(access);
+    try {
+      const response = await axios.get(`http://localhost:3000/api/user/job_files/${jobId}`);
+      console.log(response.data);
+      
+      const fileData = response.data.fileData;
+      const fileName = response.data.fileName;
+      const fileMIME = response.data.fileMIME;
+      const zip = new JSZip();
+
+      for(let totalFiles=0; totalFiles < fileData.length; totalFiles++) {
+        const base64Data = fileData[totalFiles].split(",")[1];
+
+        // Convert base64 data to binary
+        const binaryString = window.atob(base64Data);
+    
+        // Create Uint8Array from binary data
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+    
+        // Create Blob object from binary data
+        const blob = new Blob([bytes], { type: fileMIME[totalFiles] }); // Replace "application/pdf" with the appropriate MIME type for your file
+        zip.file(fileName[totalFiles] || `file_${totalFiles}.txt`, blob);
+      }
+      const content = await zip.generateAsync({ type: "blob" });
+        const dataURL = URL.createObjectURL(content);
+        // Create temporary download link
+        const link = document.createElement("a");
+        link.href = dataURL;
+        link.download = Service + "_" +  jobId + ".zip"; // Set the desired filename and extension
+    
+        // Trigger the download
+        link.click();
+    
+        // Clean up the temporary link
+        URL.revokeObjectURL(link.href);
+
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
+  };
 
   const {
     job_no,
@@ -153,6 +225,9 @@ const DynamicPage = () => {
                 <td className={styles.label} style={{ padding: "10px" }}>
                   Status
                 </td>
+                <td className={styles.label} style={{ padding: "10px" }}>
+                  Partner Work
+                </td>
               </tr>
               <tr>
                 <td style={{ padding: "10px" }}>{service}</td>
@@ -162,6 +237,25 @@ const DynamicPage = () => {
                 <td style={{ padding: "10px" }}>{budget}</td>
                 <td style={{ padding: "10px" }}>{formattedStartDate}</td>
                 <td style={{ padding: "10px" }}>{status}</td>
+                <td>
+                <Button
+                      sx={{
+                        background: downloadStatus ? "#27AE60" : "#D3D3D3"  , 
+                        color: "white",
+                        borderRadius: "100px",
+                        width: "100%",
+                        height: "88%",
+                        textTransform: "none",
+                        "&:hover": {
+                          background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
+                        },
+                      }}
+                      onClick={()=>onClickDownload(job._id.job_no)}
+                      disabled={!downloadStatus}
+                    >
+                      Download now
+                    </Button>
+                    </td>
               </tr>
               <tr>
                 <td style={{ padding: "10px" }}></td>

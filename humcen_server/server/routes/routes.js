@@ -73,6 +73,9 @@ router.post(
   forms.savePatentTranslationData
 );
 
+router.get("/api/user/job_files_details/:jobID", verifyToken, forms.getJobFilesDetailsForUsers);
+
+
 //Users_Settings
 
 router.get("/api/user/img", verifyToken, userSettings.getCustomerProfileImage);
@@ -86,6 +89,8 @@ router.put("/api/user/settings", verifyToken, userSettings.updateCustomerSetting
 router.put("/api/user/pref-settings", verifyToken, userSettings.updatePreferentialSettings);
 
 router.put("/api/user/password", verifyToken, userSettings.updateCustomerPassword);
+
+
 
 //User_SignInUp
 
@@ -107,6 +112,10 @@ router.get("/api/admin/admin", data.getAdmins);
 router.get("/api/admin/job_order", data.getJobOrders);
 
 router.get("/api/admin/job_files/:jobID", data.getJobFiles);
+
+router.put("/api/admin/job_files_details/:jobID", data.updateJobFilesDetails);
+
+router.get("/api/admin/job_files_details/:jobID", data.getJobFilesDetails);
 
 //ADMIN_AUTH
 router.post("/api/auth/admin/signin", admin_auth.adminSignIn);
@@ -148,6 +157,8 @@ router.get("/api/partner/job_order/:services/:id", verifyPartner, engine.getFile
 router.get("/api/:services/:jobID", verifyPartner, engine.getJobDetailsForPartners);
 router.get("/api/partner-details/:services/:id", verifyPartner, engine.findPartnersWithJobNo);
 router.put("/api/partner/job-files", verifyPartner, engine.addJobFiles);
+router.get("/api/partner/job_files_details/:jobID", verifyPartner, engine.getJobFilesDetailsForPartners);
+
 
 
 module.exports = router;

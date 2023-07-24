@@ -23,10 +23,13 @@ const JobDetails = ({services, jobNo}) => {
     const [job, setJob] = useState("");
     const [tokens, setTokens] = useState("");
     const [partID, setPartID] = useState(null);
+    const [upload, setShowUpload] = useState(true);
     const [service, setService] = useState("");
+    const [status, setStatus] = useState("");
     const [country, setCountry] = useState("");
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [partName, setPartName] = useState(null);
+    const [textColor, setTextColor] = useState("black");
     const [personalInfo, setPersonalInfo] = useState([]);
     const router = useRouter();
 
@@ -38,7 +41,6 @@ const JobDetails = ({services, jobNo}) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitted(true); // If you want to show the success dialog
-  
   
     try {
       const token = localStorage.getItem("token");
@@ -70,6 +72,7 @@ const JobDetails = ({services, jobNo}) => {
   
       console.log("Job Files Updated:", response.data);
   
+  
       // Set a state or handle any other logic after successful submission
       // For example, you can show a success message and redirect the user to another page
       
@@ -87,6 +90,7 @@ const JobDetails = ({services, jobNo}) => {
     setIsSubmitted(false);
     router.push("/");
   };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -125,6 +129,30 @@ const JobDetails = ({services, jobNo}) => {
           .catch((error) => {
             console.error("Error fetching Partner Details", error);
           });
+
+          api
+          .get(`partner/job_files_details/${jobNo}`, {
+            headers: {
+              Authorization: token,
+            },
+          })
+          .then((response) => { 
+            if (Object.keys(response.data.job_files).length > 0) {
+              setShowUpload(false);
+            }
+            if(response.data.decided === true && response.data.access_provided === false) {
+              setTextColor("red");
+            } else if(response.data.decided === false && response.data.access_provided === false) {
+              setTextColor("yellow");
+            } else {
+              setTextColor("green");
+            }
+            setStatus(response.data.verification);
+          })
+          .catch((error) => {
+            console.error("Error fetching Partner Details", error);
+          });
+
 
           
       }
@@ -187,15 +215,41 @@ const JobDetails = ({services, jobNo}) => {
         
         </Box>
       ))}
-   
-      <Typography variant="h5" sx={{ fontWeight: 'bold', py: '20px' }}>
+      { upload && (<Typography variant="h5" sx={{ fontWeight: 'bold', py: '20px' }}>
         Upload your Work
-      </Typography>
-      <FileBase64 multiple={true} onDone={getFiles} />
+      </Typography> )}
+      { upload && (<FileBase64 multiple={true} onDone={getFiles} />)}
       <Divider sx={{ my: '20px' }} />
+      <Box
+          key="Status"
+          sx={{
+           display:'flex',
+            borderBottom: '1px solid #E1E7F5',
+            
+            py: '10px',
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 'bold',
+              width: '100px',
+              pr: '10px',
+            }}
+          >
+            Status
+          </Typography>
+
+          <Typography
+          sx={{
+            color: textColor,
+            }}
+          >{status}</Typography>
+        
+        </Box>
     </Box>
       </Card>
-      <Button
+      { upload && (<Button
             sx={{
               background: "#27AE60",
               position: "relative",
@@ -213,7 +267,7 @@ const JobDetails = ({services, jobNo}) => {
               onClick={handleSubmit}
                     >
               Submit
-            </Button>
+            </Button> )}
       <Dialog open={isSubmitted}>
         <DialogTitle>Success</DialogTitle>
         <DialogContent>

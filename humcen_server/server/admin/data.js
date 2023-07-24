@@ -77,10 +77,53 @@ const getJobFiles = async (req, res) => {
   }
 }
 
+const updateJobFilesDetails = async (req, res) => {
+  const jobID = req.params.jobID;
+  try {
+    const jobFile = await JobFiles.findOne({"_id.job_no": jobID});
+    if(! jobFile) {
+      console.log("No Job Files Present under Job No " + jobID);
+    } else {
+      console.log(req.body);
+      jobFile.access_provided = req.body.accessProvided;
+      jobFile.verification = req.body.verification;
+      jobFile.job_files = req.body.file ? {} : jobFile.job_files;
+      jobFile.decided = req.body.decision;
+      jobFile.save()
+      .then((response) => {
+        console.log("Job File status Updated Successfully.")
+      }).catch((err) => {
+        console.log("Error in saving Job File Status", err);
+      });
+    }
+
+  } catch(error) {
+    console.error("Error in providing Job Files Details: ", error)
+  }
+}
+
+const getJobFilesDetails = async(req, res) => {
+  const jobID = req.params.jobID;
+  try{
+    const jobFile = await JobFiles.findOne({"_id.job_no": jobID});
+    if(! jobFile) {
+      console.log("No Job Files Present under Job No " + jobID);
+    } else {
+      res.json(jobFile);
+    }
+
+  } catch(error) {
+      console.error("Error in fetching Job Details File.", error);
+  }
+}
+
+
 module.exports = {
   getUsers,
   getPartners,
   getAdmins,
   getJobOrders,
   getJobFiles,
+  updateJobFilesDetails,
+  getJobFilesDetails,
 };

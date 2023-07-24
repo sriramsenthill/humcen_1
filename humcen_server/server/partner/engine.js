@@ -523,25 +523,57 @@ const addJobFiles = async (req, res) => {
   console.log("Requests " + req.body.partnerID);
   const job = req.body;
   try {
-    const jobFile = new JobFiles(
-      {
-      "_id.job_no": job.job_no, 
-        service: job.service, 
-        country: job.country, 
-        partnerID: job.partnerID, 
-        partnerName: job.partnerName, 
-        job_files: job.job_files,
-  }).save().then((response) => {
-    console.log("Job Files added Successfully");
-  }).catch((err) => {
-    console.log("Error in Updating Job Files");
-  });
+    const jobFile = await JobFiles.findOne({"_id.job_no": job.job_no})
+    if(!jobFile){
+      const taskFile = new JobFiles(
+        {
+        "_id.job_no": job.job_no, 
+          service: job.service, 
+          country: job.country, 
+          partnerID: job.partnerID, 
+          partnerName: job.partnerName, 
+          job_files: job.job_files,
+          verification: "File submitted Successfully",
+    }).save().then((response) => {
+      console.log("Job Files added Successfully");
+    }).catch((err) => {
+      console.log("Error in Updating Job Files");
+    });
+    } else {
+        jobFile.job_files = job.job_files;
+        jobFile.verification = "Job Files sent to the Admin Successfully for Verification";
+        jobFile.save()
+        .then((response) => {
+          console.log("Job Files Updated Successfully");
+        })
+        .catch((err) => {
+          console.error("Error in Updating Job File: ", err);
+        });
+    }
+    
 
   } catch {
     console.error("Error in Updating Job Files", err);
   }
 
 }
+
+// Fetch Partner's Work Files for Partner
+const getJobFilesDetailsForPartners = async(req, res) => {
+  const jobID = req.params.jobID;
+  try{
+    const jobFile = await JobFiles.findOne({"_id.job_no": jobID});
+    if(! jobFile) {
+      console.log("No Job Files Present under Job No " + jobID);
+    } else {
+      res.json(jobFile);
+    }
+
+  } catch(error) {
+      console.error("Error in fetching Job Details File.", error);
+  }
+}
+
 
 
 module.exports = {
@@ -553,4 +585,5 @@ module.exports = {
   getJobDetailsForPartners,
   findPartnersWithJobNo,
   addJobFiles,
+  getJobFilesDetailsForPartners,
 };
