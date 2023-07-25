@@ -112,6 +112,7 @@ const MyPage = () => {
           description={service.desc} // Use "desc" instead of "description"
           imageSrc={service.image}
           link={service.link}
+          className={styles.card}
         />
       ))}
       </Grid>
