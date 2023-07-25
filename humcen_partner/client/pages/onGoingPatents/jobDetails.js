@@ -102,6 +102,10 @@ const JobDetails = ({services, jobNo}) => {
     router.push("/");
   };
 
+  const handleOkClick = () => {
+    setEmpty(false); // This will close the dialog box
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -294,7 +298,7 @@ const JobDetails = ({services, jobNo}) => {
           <p>No Files Detected. Please upload your File</p>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => { window.location.reload(true);}}>OK</Button>
+          <Button onClick={handleOkClick}>OK</Button>
         </DialogActions>
       </Dialog>
     </>

@@ -133,6 +133,8 @@ export default function Inbox() {
       >
         Let's get started with the basic details for Patent Portfolio Analysis
       </p> */}
+      <Card variant="outlined" sx={{ margin: "5% 2%", width: "100%", borderRadius: "15px" }}>
+    
       <form onSubmit={handleSubmit}>
       <Card variant="outlined" sx={{ margin: "5% 12%" }}>
           <DefaultSelect domain={domain} onDomainChange={handleDomainChange} />
@@ -404,6 +406,7 @@ export default function Inbox() {
           </Card>
         </Card>
       </form>
+      </Card>
 
       <Dialog open={isSubmitted}>
         <DialogTitle>Success</DialogTitle>

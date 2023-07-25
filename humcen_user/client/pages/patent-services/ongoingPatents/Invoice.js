@@ -103,7 +103,7 @@ const Invoice = ({ jobNumber }) => {
                       background: "#00ACF6",
                       color: "white",
                       borderRadius: "100px",
-                      width: "100%",
+                      width: "85%",
                       height: "80%",
                       textTransform: "none",
                     }}

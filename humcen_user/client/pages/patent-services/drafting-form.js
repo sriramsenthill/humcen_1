@@ -16,6 +16,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import BannerCard from "@/components/BannerCard";
 
+
 const api = axios.create({
   baseURL: "http://localhost:3000/api",
 });
@@ -120,6 +121,10 @@ export default function Inbox() {
       </div>
 
       <BannerCard title="Patent Drafting" imageSrc="/images/banner_img/2.png" color="common.black"></BannerCard>
+     
+   
+      <Card variant="outlined" sx={{ margin: "5% 2%", width: "100%", borderRadius: "15px" }}>
+    
       <form onSubmit={handleSubmit}>
       <Card variant="outlined" sx={{ margin: "5% 12%" }}>
           <DefaultSelect domain={domain} onDomainChange={handleDomainChange} />
@@ -514,7 +519,7 @@ export default function Inbox() {
           </Card>
         </Card>
       </form>
-
+</Card>
       <Dialog open={isSubmitted}>
         <DialogTitle>Success</DialogTitle>
         <DialogContent>
