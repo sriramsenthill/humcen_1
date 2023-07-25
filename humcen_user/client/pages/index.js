@@ -69,13 +69,17 @@ const eCommerce = () => {
     <>
       <Grid item xs={12} md={12} lg={12} xl={8}>
         {checkJobs === 0 ? (
-          <New_cus />
+          <div className={'card'}>
+            <New_cus />
+          </div>
         ) : (
           <>
             <div className={'card'}>
-            <h1>Welcome, {name}!</h1>
-            <Impressions />
-            <BasicTabs />
+                <h1>Welcome, {name}!</h1>
+
+              <Impressions />
+              <BasicTabs />
+              
             </div>
           </>
         )}
