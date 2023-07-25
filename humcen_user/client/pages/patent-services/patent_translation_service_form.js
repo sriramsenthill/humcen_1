@@ -120,6 +120,7 @@ export default function Inbox() {
         </ul>
       </div>
       <BannerCard title="Patent Translation Service" imageSrc="/images/banner_img/9.png" color="red"></BannerCard>
+      <div className={style.ccard}>
       {/* <h1 className={`${style.heading} ${style.align}`}>Patent Translation Service</h1>
 
       <p
@@ -449,6 +450,7 @@ export default function Inbox() {
           <Button onClick={handleOk}>OK</Button>
         </DialogActions>
       </Dialog>
+      </div>
     </>
   );
 }

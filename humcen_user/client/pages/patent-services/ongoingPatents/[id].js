@@ -92,7 +92,6 @@ const DynamicPage = () => {
   }
 
   const onClickDownload = async (jobId) => {
-    console.log(access);
     try {
       const response = await axios.get(`http://localhost:3000/api/user/job_files/${jobId}`);
       console.log(response.data);

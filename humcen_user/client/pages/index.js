@@ -5,6 +5,7 @@ import BasicTabs from "@/components/UIElements/Tabs/BasicTabs";
 import withAuth from "@/components/withAuth";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import New_cus from "@/components/newCustomer";
 
 const api = axios.create({
   baseURL: "http://localhost:3000/",
@@ -66,14 +67,14 @@ const eCommerce = () => {
   };
   return (
     <>
-      <h1>Welcome, {name}!</h1>
-      {/* Page title */}
-
       <Grid item xs={12} md={12} lg={12} xl={8}>
-        {checkJobs === 0 ? null : (
+        {checkJobs === 0 ? (
+          <New_cus />
+        ) : (
           <>
+            <h1>Welcome, {name}!</h1>
             <Impressions />
-            <BasicTabs />{" "}
+            <BasicTabs />
           </>
         )}
       </Grid>

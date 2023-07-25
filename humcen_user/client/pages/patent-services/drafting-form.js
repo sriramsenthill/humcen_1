@@ -123,7 +123,7 @@ export default function Inbox() {
 
       <BannerCard title="Patent Drafting" imageSrc="/images/banner_img/2.png" color="common.black"></BannerCard>
      
-   
+      <div className={style.ccard}>
       <Card variant="outlined" sx={{ margin: "5% 2%", width: "100%", borderRadius: "15px" }}>
     
       <form onSubmit={handleSubmit}>
@@ -530,6 +530,7 @@ export default function Inbox() {
           <Button onClick={handleOk}>OK</Button>
         </DialogActions>
       </Dialog>
+      </div>
     </>
   );
 }

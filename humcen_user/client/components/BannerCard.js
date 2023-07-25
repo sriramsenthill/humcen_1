@@ -18,6 +18,8 @@ const BannerCard = ({ title, description, imageSrc, color}) => {
     borderRadius: '16px',
     overflow: 'hidden',
     boxShadow: 'rgba(0, 0, 0, 0.3) 0px 7px 29px 0px',
+    transition: 'transform 0.3s ease-in-out',
+    animation: 'slideIn 0.6s ease-out',
   };
 
   const imageStyle = {
@@ -39,7 +41,25 @@ const BannerCard = ({ title, description, imageSrc, color}) => {
 
   
   return (
-    <Card style={cardStyle}>
+    <Card
+    style={cardStyle}
+    onMouseOver={(e) => (e.currentTarget.style.transform = 'scale(1.01)')} // Add the onMouseOver event to apply the pop-up effect
+    onMouseOut={(e) => (e.currentTarget.style.transform = 'scale(1.0)')} // Add the onMouseOut event to revert the effect on mouse out
+  >
+    <style>
+      {`
+        @keyframes slideIn {
+          from {
+            transform: translateX(-35px); /* Start position, 30 pixels to the left */
+            opacity: 0; /* Start with opacity 0 */
+          }
+          to {
+            transform: translateX(0); /* End position, no horizontal movement */
+            opacity: 1; /* End with opacity 1 (fully visible) */
+          }
+        }
+      `}
+    </style>
       <img src={imageSrc} alt={title} style={imageStyle} />
       <div style={titleStyle}>
       <Typography variant="h3" color={color} gutterBottom style={{ fontWeight: 'bold', fontFamily: 'Inter, sans-serif' }}>

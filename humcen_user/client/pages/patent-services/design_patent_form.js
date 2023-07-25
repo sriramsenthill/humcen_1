@@ -120,7 +120,7 @@ export default function Inbox() {
         </ul>
       </div>
       <BannerCard title="Patent Licensing and Commercialization" imageSrc="/images/banner_img/12.png" color="#5C469C"></BannerCard>
-      
+      <div className={style.ccard}>
       {/* <h1 className={`${style.heading} ${style.align}`}>Patent Licensing and Commercialization Services</h1>
 
       <p
@@ -449,6 +449,7 @@ export default function Inbox() {
           <Button onClick={handleOk}>OK</Button>
         </DialogActions>
       </Dialog>
+      </div>
     </>
   );
 }

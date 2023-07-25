@@ -113,7 +113,7 @@ export default function Inbox() {
         </ul>
       </div>
       <BannerCard title="Patent Search" imageSrc="/images/banner_img/4.png" color="common.black"></BannerCard>
-      
+      <div className={style.ccard}>
       {/* <h1 className={`${style.heading} ${style.align}`}>Patent Search</h1>
 
       <p
@@ -401,6 +401,7 @@ export default function Inbox() {
           <Button onClick={handleOk}>OK</Button>
         </DialogActions>
       </Dialog>
+      </div>
     </>
   );
 }
