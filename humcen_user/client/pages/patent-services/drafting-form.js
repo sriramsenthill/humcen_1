@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import BannerCard from "@/components/BannerCard";
 
 
+
 const api = axios.create({
   baseURL: "http://localhost:3000/api",
 });

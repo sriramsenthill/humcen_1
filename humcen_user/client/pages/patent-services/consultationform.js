@@ -2,12 +2,14 @@
 import axios from "axios";
 import BannerCard from "@/components/BannerCard";
 import React, { useState } from "react";
+import { Typography } from "@mui/material";
 import Link from "next/link";
 import style from "@/styles/PageTitle.module.css";
 import styles from "@/styles/patent-job.module.css";
-import { Button, TextField } from "@mui/material";
+import { Button, TextField,Card } from "@mui/material";
 import { styled } from "@mui/system"; // Import styled from "@mui/system" instead of "@mui/material/styles"
 import { useRouter } from "next/router";
+import { Box } from "@mui/material";
 
 // Create an Axios instance
 const api = axios.create({
@@ -123,8 +125,19 @@ export default function Inbox() {
           ensuring your intellectual assets are shielded in the ever-evolving
           landscape of intellectual property.
         </p> */}
+        <Card variant="outlined" sx={{ margin: "2%", width: "100%", borderRadius: "15px" }}>
+
         <form onSubmit={handleSubmit}>
-          <h1>Choose Your Flexible Date</h1>
+        <Card variant="outlined" sx={{ margin: "5% 12%",padding:"30px",}}>
+        <Typography
+              as="h3"
+              sx={{
+                fontSize: 18,
+                fontWeight: 500,
+                mb: "10px",
+              }}
+            >Choose Your Flexible Date
+          </Typography>
           <TextField
             type="date"
             value={selectedDate}
@@ -133,7 +146,14 @@ export default function Inbox() {
             margin="normal"
             required
           />
-          <h1>Choose Your Flexible Time</h1>
+            <Typography
+              as="h3"
+              sx={{
+                fontSize: 18,
+                fontWeight: 500,
+                mb: "10px",
+              }}
+            >Choose Your Flexible Time</Typography>
           <TextField
             type="time"
             value={selectedTime}
@@ -142,7 +162,14 @@ export default function Inbox() {
             margin="normal"
             required
           />
-          <h1>Choose Service Type</h1>
+           <Typography
+              as="h3"
+              sx={{
+                fontSize: 18,
+                fontWeight: 500,
+                mb: "10px",
+              }}
+            >Choose Service Type</Typography>
 
           <TextField
             select
@@ -156,7 +183,14 @@ export default function Inbox() {
             <option value="Patent Filing">Patent Filing</option>
             <option value="Patent Marketplace">Patent Marketplace</option>
           </TextField>
-          <h1>Provide Your Email Address</h1>
+          <Typography
+              as="h3"
+              sx={{
+                fontSize: 18,
+                fontWeight: 500,
+                mb: "10px",
+              }}
+            >Provide Your Email Address</Typography>
           <TextField
             type="email"
             value={selectedEmail}
@@ -165,8 +199,28 @@ export default function Inbox() {
             margin="normal"
             required
           />
-          <ColorButton type="submit">Schedule A Consultation</ColorButton>
+        <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center", // Center the button horizontally
+                marginTop: "3%",
+              }}
+            >
+              <ColorButton
+                type="submit"
+                style={{
+                  width: "43%",
+                  height: "43px",
+                  textTransform: "none",
+                  textAlign: "center",
+                }}
+              >
+                Schedule A Consultation
+              </ColorButton>
+            </Box>
+          </Card>
         </form>
+        </Card>
       </div>
     </>
   );
