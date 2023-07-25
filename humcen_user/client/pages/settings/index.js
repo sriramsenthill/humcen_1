@@ -20,6 +20,7 @@ const Settings=() => {
 
   return (
     <>
+    <div className={'card'}>
       <Card
         sx={{
           boxShadow: "none",
@@ -48,6 +49,7 @@ const Settings=() => {
 
         <BasicTabs />
       </Card>
+      </div>
     </>
   );
 }

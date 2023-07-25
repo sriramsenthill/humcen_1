@@ -72,9 +72,11 @@ const eCommerce = () => {
           <New_cus />
         ) : (
           <>
+            <div className={'card'}>
             <h1>Welcome, {name}!</h1>
             <Impressions />
             <BasicTabs />
+            </div>
           </>
         )}
       </Grid>

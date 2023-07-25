@@ -84,6 +84,7 @@ const serviceList = [
 const Projects = () => {
   return (
     <>
+      <div className={'card'}>
       {/* Page title */}
       <div className={styles.pageTitle}>
         <ul>
@@ -129,6 +130,7 @@ const Projects = () => {
         />
       ))}
       </Grid>
+      </div>
     </>
   );
 };

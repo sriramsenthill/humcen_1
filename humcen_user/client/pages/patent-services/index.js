@@ -88,6 +88,7 @@ const MyPage = () => {
 
   return (
     <>
+    <div className={'card'}>
     <div className={styles.pageTitle}>
         <ul>
           <li>
@@ -116,6 +117,7 @@ const MyPage = () => {
         />
       ))}
       </Grid>
+      </div>
       </>
 
   );

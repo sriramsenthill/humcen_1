@@ -146,7 +146,19 @@ img {
   padding: 5px 13px;
   display: inline-block;
 }
-
+.card{
+  animation: slideIn 0.5s ease-in-out;
+}
+@keyframes slideIn {
+  from {
+    transform: translateX(-35px); /* Start position, 30 pixels to the left */
+    opacity: 0; /* Start with opacity 0 */
+  }
+  to {
+    transform: translateX(0); /* End position, no horizontal movement */
+    opacity: 1; /* End with opacity 1 (fully visible) */
+  }
+}
 .float-left {
   float: left;
 }

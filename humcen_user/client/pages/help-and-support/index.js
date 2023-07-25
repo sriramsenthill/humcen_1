@@ -8,6 +8,7 @@ import withAuth from "@/components/withAuth";
 const Products =() => {
   return (
     <>
+    <div className={'card'}>
       <Card style={{ padding: "2em" }}>
         {/* Page title */}
         <div className={styles.pageTitle}>
@@ -51,6 +52,7 @@ const Products =() => {
           </div>
         </div>
       </Card>
+      </div>
     </>
   );
 }

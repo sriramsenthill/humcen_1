@@ -6,7 +6,7 @@ import withAuth from "@/components/withAuth";
 
 const ProductDetails = () => {
   return (
-    <>
+    <><div className={'card'} >
       {/* Page title */}
       <div className={styles.pageTitle}>
         <ul>
@@ -19,6 +19,7 @@ const ProductDetails = () => {
       <h1 className={styles.heading}>Product Details</h1>
 
       <ProductDetailsContent />
+      </div>
     </>
   );
 }

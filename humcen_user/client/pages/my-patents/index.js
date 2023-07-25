@@ -36,6 +36,7 @@ const Inbox = () => {
   customerDataResponse();
   return (
     <>
+    <div className={'card'}>
       {/* Page title */}
       <div className={styles.pageTitle} style={{
           justifyContent: "space-between",
@@ -52,6 +53,7 @@ const Inbox = () => {
 }}></RecentOrders>
       </Card>
       }
+      </div>
     </>
   );
 }
