@@ -31,6 +31,7 @@ const JobDetails = ({services, jobNo}) => {
     const [partName, setPartName] = useState(null);
     const [textColor, setTextColor] = useState("black");
     const [personalInfo, setPersonalInfo] = useState([]);
+    const [isEmpty, setEmpty ] = useState(false);
     const router = useRouter();
 
 
@@ -40,48 +41,58 @@ const JobDetails = ({services, jobNo}) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitted(true); // If you want to show the success dialog
+    if (!files) {
+      setEmpty(true);
+    } else {
+      setIsSubmitted(true); // If you want to show the success dialog
   
-    try {
-      const token = localStorage.getItem("token");
-  
-      if (!token) {
-        // Handle the case when the user is not authenticated
-        console.error("User not authenticated");
-        return;
-      }
-  
-      // Make the PUT request to update the job files
-      const response = await api.put(
-        'partner/job-files',
-        {
-          job_no: job,
-          service: service,
-          country: country,
-          partnerID: partID,
-          partnerName: partName,
-          job_files: files,
-        },
-        {
-          headers: {
-            "Authorization": token,
-            "Content-Type": "application/json",
-          },
+      try {
+        const token = localStorage.getItem("token");
+    
+        if (!token) {
+          // Handle the case when the user is not authenticated
+          console.error("User not authenticated");
+          return;
         }
-      );
+        if (!files) {
   
-      console.log("Job Files Updated:", response.data);
+        } else {
+                // Make the PUT request to update the job files
+        const response = await api.put(
+          'partner/job-files',
+          {
+            job_no: job,
+            service: service,
+            country: country,
+            partnerID: partID,
+            partnerName: partName,
+            job_files: files,
+          },
+          {
+            headers: {
+              "Authorization": token,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+    
+        console.log("Job Files Updated:", response.data);
+    
   
-  
-      // Set a state or handle any other logic after successful submission
-      // For example, you can show a success message and redirect the user to another page
+        }
       
-      // After successful submission, you can redirect the user to another page
-      router.push("/"); // Replace "/success-page" with your desired route
-  
-    } catch (error) {
-      console.error("Error in Updating Job Files", error);
-      // Handle the error, show an error message, or implement any other error handling logic
+    
+        // Set a state or handle any other logic after successful submission
+        // For example, you can show a success message and redirect the user to another page
+        
+        // After successful submission, you can redirect the user to another page
+        router.push("/"); // Replace "/success-page" with your desired route
+    
+      } catch (error) {
+        console.error("Error in Updating Job Files", error);
+        // Handle the error, show an error message, or implement any other error handling logic
+      }
+
     }
   };
   
@@ -275,6 +286,15 @@ const JobDetails = ({services, jobNo}) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleOk}>OK</Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={isEmpty}>
+        <DialogTitle>Failed</DialogTitle>
+        <DialogContent>
+          <p>No Files Detected. Please upload your File</p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => { window.location.reload(true);}}>OK</Button>
         </DialogActions>
       </Dialog>
     </>
