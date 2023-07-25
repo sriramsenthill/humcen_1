@@ -4,8 +4,7 @@ import Impressions from "@/components/Dashboard/eCommerce/Impressions";
 import BasicTabs from "@/components/UIElements/Tabs/BasicTabs";
 import withAuth from "@/components/withAuth";
 import axios from "axios";
-import { useState, useEffect} from "react";
-
+import { useState, useEffect } from "react";
 
 const api = axios.create({
   baseURL: "http://localhost:3000/",
@@ -20,16 +19,12 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-
-
-
-
-  const eCommerce = () => {
+const eCommerce = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [name, setName] = useState("");
   const open = Boolean(anchorEl);
-  const [checkJobs,setCheckJobs]=useState(null)
-  
+  const [checkJobs, setCheckJobs] = useState(null);
+
   const customerDataResponse = async () => {
     try {
       const response = await api.get("/");
@@ -53,7 +48,7 @@ api.interceptors.request.use((config) => {
           },
         })
         .then((response) => {
-          const  nameData  = response.data;
+          const nameData = response.data;
           setName(nameData);
         })
         .catch((error) => {
@@ -61,9 +56,6 @@ api.interceptors.request.use((config) => {
         });
     }
   }, []);
-
-  
-  
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -78,13 +70,15 @@ api.interceptors.request.use((config) => {
       {/* Page title */}
 
       <Grid item xs={12} md={12} lg={12} xl={8}>
-      {checkJobs===0?null:
-      <>
-      <Impressions />
-        <BasicTabs /> </>}
+        {checkJobs === 0 ? null : (
+          <>
+            <Impressions />
+            <BasicTabs />{" "}
+          </>
+        )}
       </Grid>
     </>
   );
-}
+};
 
 export default withAuth(eCommerce);
