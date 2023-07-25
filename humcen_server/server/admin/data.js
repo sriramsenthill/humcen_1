@@ -89,6 +89,20 @@ const updateJobFilesDetails = async (req, res) => {
       jobFile.verification = req.body.verification;
       jobFile.job_files = req.body.file ? {} : jobFile.job_files;
       jobFile.decided = req.body.decision;
+      if(req.body.reduction) {
+        const workedPartner = await Partner.findOne( { jobs: {$in: [parseInt(jobID)]}} ); // Finding Partner based on the Job ID
+        if(workedPartner) {
+          console.log(workedPartner.in_progress_jobs);
+          workedPartner.in_progress_jobs = workedPartner.in_progress_jobs - 1;
+          workedPartner.save().then((response) => {
+            console.log("Successfully updated in the Partner Schema.")
+          }).catch((err) => {
+            console.error("Error in Updating Partner Schema: ", err);
+          });
+        } else {
+          res.status(404).json({ error: "Partner Not Found" });
+        }
+      }
       jobFile.save()
       .then((response) => {
         console.log("Job File status Updated Successfully.")

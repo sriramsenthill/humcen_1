@@ -67,9 +67,9 @@ const NewOrder = () => {
     }
   };
 
-  const handleRejectJob = async (jobId) => {
+  const handleRejectJob = async (jobId, service, country) => {
     try {
-      await api.delete(`/reject/${jobId}`);
+      await api.delete(`/reject/${service}/${country}/${jobId}`);
       window.location.reload();
     } catch (error) {
       console.error('Error rejecting job order:', error);
@@ -154,7 +154,7 @@ const NewOrder = () => {
                           background: "linear-gradient(90deg,#00308F  0%, #7FFFD4 100%)",
                         },
                       }}
-                      onClick={() => handleRejectJob(order._id.job_no)}
+                      onClick={() => handleRejectJob(order._id.job_no, order.service, order.country)}
                     >
                       Reject
                     </Button>

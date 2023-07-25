@@ -36,7 +36,7 @@ const DynamicPage = () => {
   const [job, setJob] = useState(null); // Initialize job state as null
   const [jobno,setjobno]=useState(null);
   const [Service,setService]=useState(null);
-
+  
   useEffect(() => {
     const fetchJobData = async () => {
       try {
@@ -47,6 +47,7 @@ const DynamicPage = () => {
         setjobno(job_no);
         if (specificJob) {
           setJob(specificJob);
+
         } else {
           console.log("No job found with the provided job number:", id);
           setJob(null);
@@ -74,12 +75,13 @@ const DynamicPage = () => {
   const onClickDownload = async (jobId) => {
     try {
       const response = await api.get(`/partner/job_order/${Service}/${jobId}`);
-      console.log(response.data)
+      console.log(response.data);
+  
       const fileData = response.data.fileData;
       const fileName = response.data.fileName;
       const fileMIME = response.data.fileMIME;
       const zip = new JSZip();
-
+      
       for(let totalFiles=0; totalFiles < fileData.length; totalFiles++) {
         const base64Data = fileData[totalFiles].split(",")[1];
 
@@ -101,18 +103,18 @@ const DynamicPage = () => {
         // Create temporary download link
         const link = document.createElement("a");
         link.href = dataURL;
-        link.download = Service + "_" +  jobId + ".zip"; // Set the desired filename and extension
+        link.download = Service + "_" +  jobId + "_User_Files.zip"; // Set the desired filename and extension
     
         // Trigger the download
         link.click();
     
         // Clean up the temporary link
-        URL.revokeObjectURL(link.href);
-
+        URL.revokeObjectURL(link.href);  
     } catch (error) {
       console.error('Error downloading file:', error);
     }
   };
+  
   
 
   const {

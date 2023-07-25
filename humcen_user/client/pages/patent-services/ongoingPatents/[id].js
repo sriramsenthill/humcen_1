@@ -10,6 +10,7 @@ import Features from "./Features";
 import BasicTabs from "./Tabs";
 import { Button } from "@mui/material";
 import axios from "axios";
+import JSZip from "jszip";
 
 // Create an Axios instance
 const api = axios.create({
@@ -34,6 +35,7 @@ const DynamicPage = () => {
   const [job, setJob] = useState(null); // Initialize job state as null
   const [downloadStatus, setDownloadStatus] = useState(false); // Initally, User is denied from downloading
   const [jobID, setJobID] = useState("");
+  const [Service, setService] = useState("");
 
   useEffect(() => {
     const fetchJobData = async () => {
@@ -44,6 +46,7 @@ const DynamicPage = () => {
         if (specificJob) {
           setJob(specificJob);
           setJobID(id);
+          setService(specificJob.service);
         } else {
           console.log("No job found with the provided job number:", id);
           setJob(null);
@@ -93,7 +96,7 @@ const DynamicPage = () => {
 
   const onClickDownload = async (jobId) => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/user/job_files/${jobId}`);
+      const response = await api.get(`/user/job_files/${jobId}`);
       console.log(response.data);
       
       const fileData = response.data.fileData;

@@ -32,6 +32,7 @@ const JobDetails = ({services, jobNo}) => {
     const [textColor, setTextColor] = useState("black");
     const [personalInfo, setPersonalInfo] = useState([]);
     const [isEmpty, setEmpty ] = useState(false);
+    const [isAccepted, setAccepted] = useState(false); // To show up the Submit button if and only if the Partner accepts the Job
     const router = useRouter();
 
 
@@ -133,7 +134,7 @@ const JobDetails = ({services, jobNo}) => {
             },
           })
           .then((response) => { 
-              console.log("Hey" + response.data.partnerID);
+              console.log("Hey" + response.data);
               const partnerInfo = response.data;
               setPartID(partnerInfo.partnerID);
               setJob(jobNo);
@@ -152,6 +153,7 @@ const JobDetails = ({services, jobNo}) => {
             },
           })
           .then((response) => { 
+            console.log(response.data);
             if (Object.keys(response.data.job_files).length > 0) {
               setShowUpload(false);
             }
@@ -167,7 +169,17 @@ const JobDetails = ({services, jobNo}) => {
           .catch((error) => {
             console.error("Error fetching Partner Details", error);
           });
-
+          
+          api.get(`partner/jobs/${jobNo}`, {
+            headers: {
+              Authorization: token,
+            },
+          }).then(response => {
+            const specificJob = response.data;
+            setAccepted(response.data.Accepted);
+          }).catch((err) => {
+            console.error("Error in checking Accepted Status: ", err);
+          })
 
           
       }
@@ -230,10 +242,10 @@ const JobDetails = ({services, jobNo}) => {
         
         </Box>
       ))}
-      { upload && (<Typography variant="h5" sx={{ fontWeight: 'bold', py: '20px' }}>
+      { upload && isAccepted && (<Typography variant="h5" sx={{ fontWeight: 'bold', py: '20px' }}>
         Upload your Work
       </Typography> )}
-      { upload && (<FileBase64 multiple={true} onDone={getFiles} />)}
+      { upload && isAccepted && (<FileBase64 multiple={true} onDone={getFiles} />)}
       <Divider sx={{ my: '20px' }} />
       <Box
           key="Status"
@@ -264,7 +276,7 @@ const JobDetails = ({services, jobNo}) => {
         </Box>
     </Box>
       </Card>
-      { upload && (<Button
+      { upload && isAccepted && (<Button
             sx={{
               background: "#27AE60",
               position: "relative",

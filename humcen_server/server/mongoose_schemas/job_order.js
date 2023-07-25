@@ -30,6 +30,10 @@ const jobOrderSchema = new mongoose.Schema({
   },
   domain: { type: String },
   time_of_delivery: { type: String },
+  rejected_by: {
+    type:[Number],
+    default: [],
+  },
   Accepted: {
     type: Boolean,
     default: false,

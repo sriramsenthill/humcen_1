@@ -75,6 +75,9 @@ router.post(
 
 router.get("/api/user/job_files_details/:jobID", verifyToken, forms.getJobFilesDetailsForUsers);
 
+router.get("/api/user/job_files/:jobID", verifyToken,forms.getJobFilesForUsers);
+
+
 
 //Users_Settings
 
@@ -111,11 +114,11 @@ router.get("/api/admin/admin", data.getAdmins);
 
 router.get("/api/admin/job_order", data.getJobOrders);
 
-router.get("/api/admin/job_files/:jobID", data.getJobFiles);
+router.get("/api/admin/job_files/:jobID", data.getJobFiles);  // For getting 
 
-router.put("/api/admin/job_files_details/:jobID", data.updateJobFilesDetails);
+router.put("/api/admin/job_files_details/:jobID", data.updateJobFilesDetails); // For giving File access to the User, if Admin accepts Partner's Work, otherwise Admin deletes it
 
-router.get("/api/admin/job_files_details/:jobID", data.getJobFilesDetails);
+router.get("/api/admin/job_files_details/:jobID", data.getJobFilesDetails); // For getting Partner's Work from Admin Side
 
 //ADMIN_AUTH
 router.post("/api/auth/admin/signin", admin_auth.adminSignIn);
@@ -152,7 +155,7 @@ router.post("/api/auth/partner/signin", partner_auth.signInPartner);
 router.get("/api/partner/jobs/:id", verifyPartner, engine.getPartnerJobsById);
 router.get("/api/partner/job_order", verifyPartner, engine.getPartnerJobOrders);
 router.put("/api/accept/:jobId", verifyPartner, engine.acceptJobOrder);
-router.delete("/api/reject/:jobId", verifyPartner, engine.rejectJobOrder);
+router.delete("/api/reject/:service/:country/:jobId", verifyPartner, engine.rejectJobOrder);
 router.get("/api/partner/job_order/:services/:id", verifyPartner, engine.getFilesForPartners);
 router.get("/api/:services/:jobID", verifyPartner, engine.getJobDetailsForPartners);
 router.get("/api/partner-details/:services/:id", verifyPartner, engine.findPartnersWithJobNo);

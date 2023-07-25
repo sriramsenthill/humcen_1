@@ -11,6 +11,9 @@ const responseToFer = require("../mongoose_schemas/response_to_fer");
 const freedomToOperate = require("../mongoose_schemas/freedom_to_operate"); // Import the Freedom To Operate Search Model
 const patentIllustration = require("../mongoose_schemas/patent_illustration"); // Import Patent Illustration Model
 const Consultation = require("../mongoose_schemas/consultation");
+const Unassigned = require("../mongoose_schemas/unassigned"); // Import Unassigned Job Model
+const Drafting = require("../mongoose_schemas/patent_drafting");
+const Filing = require("../mongoose_schemas/patent_filing");
 
 
 const getPartnerJobsById = async (req, res) => {
@@ -103,7 +106,8 @@ const acceptJobOrder = async (req, res) => {
     if (!updatedJobOrder) {
       return res.status(404).json({ error: "Job order not found" });
     }
-
+    partner.in_progress_jobs = partner.in_progress_jobs + 1;
+    partner.save().then((response) => {console.log("Job added to In Progress section of Partner")})
     res.json({ message: "Job order accepted successfully" });
   } catch (error) {
     console.error("Error accepting job order:", error);
@@ -112,7 +116,9 @@ const acceptJobOrder = async (req, res) => {
 };
 
 const rejectJobOrder = async (req, res) => {
-  const { jobId } = req.params;
+  const jobId  = req.params.jobId;
+  const service = req.params.service;
+  const country = req.params.country;
   const userID = req.userID;
 
   try {
@@ -123,6 +129,8 @@ const rejectJobOrder = async (req, res) => {
       return res.status(404).json({ error: "Partner not found" });
     }
 
+    partner.rejected_jobs.push(jobId);
+    
     // Check if the job ID exists in the partner's jobs array
     if (!partner.jobs.includes(jobId)) {
       return res
@@ -145,12 +153,13 @@ const rejectJobOrder = async (req, res) => {
     await partner.save();
 
     // Find a partner with is_free set to true to assign the rejected job
-    const findPartner = await Partner.findOne({ is_free: true });
+
+    const findPartner = await Partner.findOne({ is_free: true, country: country,rejected_jobs: {$nin: [parseInt(jobId)]},['known_fields.' + service]: true  });
 
     if (!findPartner) {
-      return res.status(404).json({ error: "No available partner found" });
+      return res.status(404).json({ error: "No available partner found. Sending the Job Order to Unassigned Jobs" });
     }
-
+    console.log(findPartner);
     // Assign the rejected job to the new partner
     findPartner.jobs.push(jobId);
     findPartner.is_free = false;
@@ -174,7 +183,7 @@ const getFilesForPartners = async (req, res) => {
   try {
     // Retrieve job details from MongoDB using the provided job ID
     if (service === "Patent Drafting") {
-      const jobDetails = await JobOrder.findOne({ "_id.job_no": jobId });
+      const jobDetails = await Drafting.findOne({ "_id.job_no": jobId });
 
       // Check if job details exist and have invention details
       if (!jobDetails || !jobDetails.service_specific_files || !jobDetails.service_specific_files.invention_details) {
@@ -189,7 +198,7 @@ const getFilesForPartners = async (req, res) => {
         return res.status(404).json({ error: "File not found" });
       }
 
-      const { base64, name } = inventionDetails;
+      const { base64, name, type } = inventionDetails;
 
       // Set the appropriate headers for file download
       res.set({
@@ -198,12 +207,12 @@ const getFilesForPartners = async (req, res) => {
       });
 
       // Send the file data as a response to the frontend
-      res.json({ fileData: base64, fileName: name });
+      res.json({ fileData: [base64], fileName: [name] , fileMIME: [type]});
     } 
 
     // For Patent Filing
     else if (service === "Patent Filing") {
-      const jobDetails = await JobOrder.findOne({ "_id.job_no": jobId });
+      const jobDetails = await Filing.findOne({ "_id.job_no": jobId });
       if (!jobDetails || !jobDetails.service_specific_files || !jobDetails.service_specific_files.details || !jobDetails.service_specific_files.applicants || !jobDetails.service_specific_files.investors) {
         return res.status(404).json({ error: "File not found" });
       }
@@ -395,8 +404,18 @@ const getJobDetailsForPartners = async (req, res) => {
     let jobData;
     
 
-    if (serviceName === "Patent Drafting" || serviceName === "Patent Filing") {
-      jobData = await JobOrder.findOne({ "_id.job_no": jobID });
+    if (serviceName === "Patent Drafting") {
+      jobData = await Drafting.findOne({ "_id.job_no": jobID });
+      neededData = {
+        "Domain": jobData.domain,
+        "Country": jobData.country,
+        "Title": jobData.job_title,
+        "Keywords": jobData.keywords,
+        "Budget": jobData.budget,
+        "Time of Delivery": jobData.time_of_delivery
+      };
+    } else if (serviceName === "Patent Filing") {
+      jobData = await Filing.findOne({ "_id.job_no": jobID });
       neededData = {
         "Domain": jobData.domain,
         "Country": jobData.country,

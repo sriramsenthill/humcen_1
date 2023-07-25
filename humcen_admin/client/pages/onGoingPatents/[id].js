@@ -116,7 +116,7 @@ const  DynamicPage = () => {
         // Create temporary download link
         const link = document.createElement("a");
         link.href = dataURL;
-        link.download = Service + "_" +  jobId + ".zip"; // Set the desired filename and extension
+        link.download = Service + "_" +  jobId + "_Verification.zip"; // Set the desired filename and extension
     
         // Trigger the download
         link.click();
@@ -140,6 +140,7 @@ const  DynamicPage = () => {
             accessProvided: true,
             decision: true,
             verification: "Job completed Successfully",
+            reduction: true,
           },
           {
             headers: {
@@ -170,6 +171,7 @@ const  DynamicPage = () => {
             accessProvided: false,
             decision: true,
             verification: "You need to re-evaluate your Work. For more details, contact Admin.",
+            reduction: false,
             file: {},
           },
           {

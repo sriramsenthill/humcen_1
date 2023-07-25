@@ -140,6 +140,14 @@ const PartnerSchema = new mongoose.Schema({
   is_free: {
     type: Boolean,
   },
+  in_progress_jobs: {
+    type: Number,
+    default: 0,
+  },
+  rejected_jobs: {
+    type:[Number],
+    default: [],
+  },
   known_fields: {
     "Patent Consultation": { type: Boolean, default: false },
     "Patent Drafting": { type: Boolean, default: false },
