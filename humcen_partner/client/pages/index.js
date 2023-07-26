@@ -10,9 +10,48 @@ import withAuth from "@/components/withAuth";
 import NewCustomers from "@/components/Dashboard/eCommerce/NewCustomers";
 import axios from "axios";
 
+
+
+const api = axios.create({
+  baseURL: 'http://localhost:3000/api',
+});
+
+// Add an interceptor to include the token in the request headers
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers['Authorization'] = token;
+  }
+  return config;
+});
+
+
+async function fetchJobOrders() {
+  try {
+    const response = await api.get('/partner/job_order');
+    const { jobOrders } = response.data; // Extract the jobOrders array from the response data
+    console.log(jobOrders)
+    if (Array.isArray(jobOrders)) {
+      const filteredJobOrders = jobOrders.filter(order => order.Accepted === true);
+      // console.log(filteredJobOrders);
+      return filteredJobOrders;
+    } else {
+      console.error('Invalid data format: Expected an array');
+      return [];
+    }
+  } catch (error) {
+    console.error('Error fetching job orders:', error);
+    return [];
+  }
+}
+
+
+
+
 function eCommerce() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [partnerName, setPartnerName] = useState("");
+  const [getJobs,setJobs]=useState('');
   const open = Boolean(anchorEl);
 
   useEffect(() => {
@@ -32,6 +71,15 @@ function eCommerce() {
           console.error("Error fetching partner name:", error);
         });
     }
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchJobOrders();
+      setJobs(data);
+    };
+
+    fetchData();
   }, []);
 
   const handleClick = (event) => {
@@ -54,6 +102,8 @@ function eCommerce() {
           <li>home</li>
         </ul>
       </div>
+  {getJobs.length===0?null:
+  <>
       <NewOrder />
       <RecentOrders />
       <Grid
@@ -70,6 +120,9 @@ function eCommerce() {
           <NewCustomers />
         </Grid>
       </Grid>
+</>
+  }
+
       </div>
     </>
   );
