@@ -28,7 +28,7 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--bodyFontFamily) !important;
 }
 
-div, label, a, p, tspan, span, li, table, tbody, tfoot, thead, th, td, canvas, button, input, ::placeholder, abbr, address, blockquote, caption, cite, code, dd, dl, mark, option, pre, select, time, del {
+div, label, a, p, tspan, form,span, li, table, tbody, tfoot, thead, th, td, canvas, button, input, ::placeholder, abbr, address, blockquote, caption, cite, code, dd, dl, mark, option, pre, select, time, del {
   font-family: var(--bodyFontFamily) !important;
 }
 

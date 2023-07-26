@@ -29,6 +29,7 @@ const PatentDeliveryStatus = ({ jobNumber }) => {
 
   return (
     <>
+    <div className={'card'}>
       {/* Page title */}
       <div className={style.pageTitle}>
         <h1>Ongoing Patents</h1>
@@ -125,6 +126,7 @@ const PatentDeliveryStatus = ({ jobNumber }) => {
           <BasicTabs />
         </Grid>
       </Card>
+      </div>
     </>
   );
 };

@@ -79,10 +79,14 @@ export default function BasicTabs({ no, items }) {
               </Tabs>
             </Box>
             <TabPanel value={value} index={0}>
-              <Invoice />
+              <div className={'card'}>
+                <Invoice />
+              </div>
             </TabPanel>
             <TabPanel value={value} index={1}>
-              <TrackOrder />
+              <div className={'card'}>
+                <TrackOrder />
+              </div>
             </TabPanel>
           </Box>
         </Card>

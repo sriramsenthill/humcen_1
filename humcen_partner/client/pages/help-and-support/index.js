@@ -7,6 +7,7 @@ function Products() {
 
   return (
     <>
+    <div className={'card'}>
       {/* Page title */}
       <div className={styles.pageTitle}>
         
@@ -34,6 +35,7 @@ function Products() {
       <hr className={styles.line}></hr>
       </div>
       
+      </div>
       </div>
     </>
   );

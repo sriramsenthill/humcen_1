@@ -79,13 +79,19 @@ export default function BasicTabs({ jobData }) {
               </Tabs>
             </Box>
             <TabPanel value={value} index={0}>
-              <Invoice jobdata={jobData} />
+              <div className={'card'}>
+                <Invoice jobdata={jobData} />
+              </div>
             </TabPanel>
             <TabPanel value={value} index={1}>
-              <Verifications jobdata={jobData} />
+              <div className={'card'}>
+                <Verifications jobdata={jobData} />
+              </div>
             </TabPanel>
             <TabPanel value={value} index={2}>
-              <TrackOrder />
+              <div className={'card'}>
+                <TrackOrder />
+              </div>
             </TabPanel>
           </Box>
         </Card>

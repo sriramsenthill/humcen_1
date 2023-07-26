@@ -131,19 +131,29 @@ export default function BasicTabs({ no, items }) {
               </Tabs>
             </Box>
             <TabPanel value={value} index={0}>
-              <ProfileSettings />
+              <div className={'card'}>
+                <ProfileSettings />
+              </div>
             </TabPanel>
             <TabPanel value={value} index={1}>
-              <BillingSettings />
+              <div className={'card'}>
+                <BillingSettings />
+              </div>
             </TabPanel>
             <TabPanel value={value} index={2}>
-              <EmailNotifsSettings />
+              <div className={'card'}>
+                <EmailNotifsSettings />
+              </div>
             </TabPanel>
             <TabPanel value={value} index={3}>
+              <div className={'card'}>
               <ChangePassword />
+              </div>
             </TabPanel>
             <TabPanel value={value} index={4}>
+              <div className={'card'}>
               <AddServices />
+              </div>
             </TabPanel>
           </Box>
         </Card>

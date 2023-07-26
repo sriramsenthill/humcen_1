@@ -20,6 +20,7 @@ function Settings() {
 
   return (
     <>
+    <div className={'card'}>
       <Card
         sx={{
           boxShadow: "none",
@@ -46,6 +47,7 @@ function Settings() {
 
         <BasicTabs />
       </Card>
+      </div>
     </>
   );
 }

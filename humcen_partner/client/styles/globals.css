@@ -27,7 +27,7 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--bodyFontFamily) !important;
 }
 
-div, label, a, p, tspan, span, li, table, tbody, tfoot, thead, th, td, canvas, button, input, ::placeholder, abbr, address, blockquote, caption, cite, code, dd, dl, mark, option, pre, select, time, del {
+div, label,form, a, p, tspan, span, li, table, tbody, tfoot, thead, th, td, canvas, button, input, ::placeholder, abbr, address, blockquote, caption, cite, code, dd, dl, mark, option, pre, select, time, del {
   font-family: var(--bodyFontFamily) !important;
 }
 
@@ -104,7 +104,19 @@ img {
 .darkBgColor {
   background-color: var(--darkColor) !important;
 }
-
+.card{
+  animation: slideIn 0.5s ease-in-out;
+}
+@keyframes slideIn {
+  from {
+    transform: translateX(-35px); /* Start position, 30 pixels to the left */
+    opacity: 0; /* Start with opacity 0 */
+  }
+  to {
+    transform: translateX(0); /* End position, no horizontal movement */
+    opacity: 1; /* End with opacity 1 (fully visible) */
+  }
+}
 /* Badge custom style */
 .primaryBadge {
   background: rgba(117, 127, 239, 0.1);

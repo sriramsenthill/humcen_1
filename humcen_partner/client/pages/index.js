@@ -43,6 +43,7 @@ function eCommerce() {
   };
   return (
     <>
+    <div className={'card'}>
       {/* Page title */}
       <div className={styles.pageTitle}>
         <h1>Welcome Back, {partnerName}!</h1>
@@ -69,6 +70,7 @@ function eCommerce() {
           <NewCustomers />
         </Grid>
       </Grid>
+      </div>
     </>
   );
 }

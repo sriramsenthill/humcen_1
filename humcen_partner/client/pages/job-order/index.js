@@ -7,6 +7,7 @@ import withAuth from "@/components/withAuth";
  function Inbox() {
   return (
     <>
+    <div className={'card'}>
       {/* Page title */}
       <div className={styles.pageTitle}>
         <ul>
@@ -17,6 +18,7 @@ import withAuth from "@/components/withAuth";
         </ul>
       </div>
       <RecentOrders />
+      </div>
     </>
   );
 }

@@ -138,6 +138,7 @@ const DynamicPage = () => {
 
   return (
     <>
+    <div className={'card'}>
       {/* Page title */}
       <div className={style.pageTitle}>
         <ul>
@@ -247,10 +248,20 @@ const DynamicPage = () => {
                     </td>
 
               </tr>
-              <JobDetails services={Service} jobNo={jobno}/>
             </tbody>
           </table>
         </Grid>
+      </Card>
+
+      <Card
+        sx={{
+          boxShadow: "none",
+          borderRadius: "10px",
+          p: "25px",
+          mb: "15px",
+        }}
+      >
+        <JobDetails services={Service} jobNo={jobno}/>       
       </Card>
       <Features />
       <Card
@@ -265,6 +276,7 @@ const DynamicPage = () => {
           <BasicTabs />
         </Grid>
       </Card>
+      </div>
     </>
   );
 };

@@ -7,6 +7,7 @@ import withAuth from "@/components/withAuth";
 function ContactList() {
   return (
     <>
+    <div className={'card'}>
       {/* Page title */}
       <div className={styles.pageTitle}>
         <ul>
@@ -19,6 +20,7 @@ function ContactList() {
       <br></br>
       <MyIncome />
       <br></br>
+      </div>
     </>
   );
 }
