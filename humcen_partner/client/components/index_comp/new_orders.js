@@ -70,7 +70,7 @@ const NewOrder = () => {
   const handleRejectJob = async (jobId, service, country) => {
     try {
       await api.delete(`/reject/${service}/${country}/${jobId}`);
-      window.location.reload();
+      window.location.reload(true);
     } catch (error) {
       console.error('Error rejecting job order:', error);
     }

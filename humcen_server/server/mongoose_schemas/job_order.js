@@ -29,6 +29,12 @@ const jobOrderSchema = new mongoose.Schema({
     investors: { type: Object }
   },
   domain: { type: String },
+  steps_done: {
+    type:Number,
+  },
+  steps_done_user: {
+    type:Number,
+  },
   time_of_delivery: { type: String },
   rejected_by: {
     type:[Number],

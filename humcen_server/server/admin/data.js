@@ -88,12 +88,20 @@ const updateJobFilesDetails = async (req, res) => {
       jobFile.access_provided = req.body.accessProvided;
       jobFile.verification = req.body.verification;
       jobFile.job_files = req.body.file ? {} : jobFile.job_files;
+      jobFile.user_decided = req.body.userDeci;
       jobFile.decided = req.body.decision;
       if(req.body.reduction) {
         const workedPartner = await Partner.findOne( { jobs: {$in: [parseInt(jobID)]}} ); // Finding Partner based on the Job ID
         if(workedPartner) {
           console.log(workedPartner.in_progress_jobs);
-          workedPartner.in_progress_jobs = workedPartner.in_progress_jobs - 1;
+          const job = await JobOrder.findOne({"_id.job_no": jobID});
+          job.steps_done = 3;
+          job.steps_done_user = 5;
+          job.save().then((response) => {
+            console.log("Successfully updated the Timeline and Job Status");
+          }).catch((err) => {
+            console.error("Error in Updating Job Status and Timeline");
+          })
           workedPartner.save().then((response) => {
             console.log("Successfully updated in the Partner Schema.")
           }).catch((err) => {

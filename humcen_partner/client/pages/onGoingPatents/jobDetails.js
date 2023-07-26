@@ -154,17 +154,17 @@ const JobDetails = ({services, jobNo}) => {
           })
           .then((response) => { 
             console.log(response.data);
+            setStatus(response.data.verification);
             if (Object.keys(response.data.job_files).length > 0) {
               setShowUpload(false);
             }
             if(response.data.decided === true && response.data.access_provided === false) {
               setTextColor("red");
-            } else if(response.data.decided === false && response.data.access_provided === false) {
-              setTextColor("yellow");
-            } else {
+            } else if(response.data.decided === true && response.data.access_provided === true) {
               setTextColor("green");
+            } else {
+              setTextColor("orange");
             }
-            setStatus(response.data.verification);
           })
           .catch((error) => {
             console.error("Error fetching Partner Details", error);

@@ -74,6 +74,7 @@ export default function BasicTabs({ no, items }) {
                 aria-label="basic tabs example"
               >
                 <Tab label="Invoices" {...a11yProps(0)} />
+                <Tab label="Verification" {...a11yProps(1)} />
              
                 <Tab label="Activity Timeline" {...a11yProps(2)} />
               </Tabs>
@@ -85,8 +86,11 @@ export default function BasicTabs({ no, items }) {
             </TabPanel>
             <TabPanel value={value} index={1}>
               <div className={'card'}>
-                <TrackOrder />
+                <Verifications />
               </div>
+            </TabPanel>
+            <TabPanel value={value} index={2}>
+              <TrackOrder />
             </TabPanel>
           </Box>
         </Card>

@@ -139,8 +139,9 @@ const  DynamicPage = () => {
           {
             accessProvided: true,
             decision: true,
-            verification: "Job completed Successfully",
+            verification: "Job Files sent to User for Verification.",
             reduction: true,
+            userDeci: false,
           },
           {
             headers: {
@@ -172,6 +173,7 @@ const  DynamicPage = () => {
             decision: true,
             verification: "You need to re-evaluate your Work. For more details, contact Admin.",
             reduction: false,
+            userDeci: true,
             file: {},
           },
           {

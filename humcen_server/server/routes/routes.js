@@ -77,6 +77,9 @@ router.get("/api/user/job_files_details/:jobID", verifyToken, forms.getJobFilesD
 
 router.get("/api/user/job_files/:jobID", verifyToken,forms.getJobFilesForUsers);
 
+router.put("/api/user/job_order/approve/:jobID", verifyToken, forms.approveTheDoneWork); // Approval given by the User
+
+router.put("/api/user/job_order/reject/:jobID", verifyToken, forms.rejectTheDoneWork);
 
 
 //Users_Settings
@@ -92,7 +95,6 @@ router.put("/api/user/settings", verifyToken, userSettings.updateCustomerSetting
 router.put("/api/user/pref-settings", verifyToken, userSettings.updatePreferentialSettings);
 
 router.put("/api/user/password", verifyToken, userSettings.updateCustomerPassword);
-
 
 
 //User_SignInUp
@@ -155,6 +157,7 @@ router.post("/api/auth/partner/signin", partner_auth.signInPartner);
 router.get("/api/partner/jobs/:id", verifyPartner, engine.getPartnerJobsById);
 router.get("/api/partner/job_order", verifyPartner, engine.getPartnerJobOrders);
 router.put("/api/accept/:jobId", verifyPartner, engine.acceptJobOrder);
+
 router.delete("/api/reject/:service/:country/:jobId", verifyPartner, engine.rejectJobOrder);
 router.get("/api/partner/job_order/:services/:id", verifyPartner, engine.getFilesForPartners);
 router.get("/api/:services/:jobID", verifyPartner, engine.getJobDetailsForPartners);

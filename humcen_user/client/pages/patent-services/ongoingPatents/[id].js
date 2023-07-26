@@ -36,6 +36,7 @@ const DynamicPage = () => {
   const [downloadStatus, setDownloadStatus] = useState(false); // Initally, User is denied from downloading
   const [jobID, setJobID] = useState("");
   const [Service, setService] = useState("");
+  const [approval, setApproval] = useState(false);
 
   useEffect(() => {
     const fetchJobData = async () => {
@@ -71,6 +72,7 @@ const DynamicPage = () => {
         const response = await api.get(`/user/job_files_details/${jobID}`);
         console.log("Response from GET:", response.data);
         setDownloadStatus(response.data.access_provided);
+        setApproval(response.data.approval_given);
         const token = localStorage.getItem("token");
       } catch (error) {
         if (error.response && error.response.status === 401) {
@@ -125,7 +127,7 @@ const DynamicPage = () => {
         // Create temporary download link
         const link = document.createElement("a");
         link.href = dataURL;
-        link.download = Service + "_" +  jobId + ".zip"; // Set the desired filename and extension
+        link.download = Service + "_" +  jobId + "_Completed.zip"; // Set the desired filename and extension
     
         // Trigger the download
         link.click();
@@ -243,7 +245,7 @@ const DynamicPage = () => {
                 <td>
                 <Button
                       sx={{
-                        background: downloadStatus ? "#27AE60" : "#D3D3D3"  , 
+                        background: approval ? "#27AE60" : "#D3D3D3"  , 
                         color: "white",
                         borderRadius: "100px",
                         width: "100%",

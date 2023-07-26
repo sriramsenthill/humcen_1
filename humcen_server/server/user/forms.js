@@ -91,6 +91,20 @@ const createJobOrderPatentDrafting = async (req, res) => {
     let findCustomer = await Customer.findOne({ userID: userId });
     if (!findPartner) {
       findPartner = new Partner({ is_free: true, jobs: [] });
+      const newJobOrder = new JobOrder({
+        _id: { job_no: newDraftingNo },
+        service: "Patent Drafting",
+        userID: userId,
+        partnerID: findPartner.userID,
+        country: req.body.country,
+        start_date: startDate,
+        end_date: endDate,
+        steps_done: 1,
+        steps_done_user: 1,
+        status: "In Progress",
+        budget: "To be Allocated",
+        domain: req.body.field,
+      }).save();
     }
     console.log(findPartner);
     findPartner.jobs.push(draftingOrder._id.job_no);
@@ -111,6 +125,8 @@ const createJobOrderPatentDrafting = async (req, res) => {
       country: req.body.country,
       start_date: startDate,
       end_date: endDate,
+      steps_done: 2,
+      steps_done_user: 2,
       status: "In Progress",
       budget: "To be Allocated",
       domain: req.body.field,
@@ -817,6 +833,95 @@ const getJobFilesForUsers = async (req, res) => {
   }
 }
 
+const approveTheDoneWork = async(req, res) => {
+  const jobID = req.params.jobID;
+  const updatedData = req.body; // Getting the data sent through PUT request
+  try {
+    // Updating the Job Order Status
+    const job = await JobOrder.findOne({"_id.job_no": parseInt(jobID)});
+    if(!job) {
+      console.error("No Job found under Job Number " + jobID);
+    }
+    job.status = req.body.status;
+    job.steps_done = req.body.steps;
+    job.steps_done_user = 6;
+    job.save()
+    .then((response) => {
+      console.log("User's Approval Completed Successfully");
+    }).catch((error) => {
+      console.error("Error in accepting User's Approval: " + error);
+    });
+    
+    // Updating Job Files Status
+    const jobFile = await JobFiles.findOne({"_id.job_no": jobID});
+    if(!jobFile) {
+      console.error("No Job Files present for Job No : "+ jobID);
+    }
+    jobFile.verification = req.body.verif;
+    jobFile.approval_given = true;
+    jobFile.user_decided = true;
+    jobFile.save().then((response)=>{
+      console.log("Work status Updated for the Partner Successfully");
+    }).catch((error)=> {
+      console.error("Error in Updating Partner's Work Status: ", error);
+    });
+
+    // Updating Partner's In Progress Job Count
+    const workedPartner = await Partner.findOne({jobs: {$in: [parseInt(jobID)] }});
+    if(!workedPartner) {
+      console.error("Error in finding the Partner.")
+    }
+    workedPartner.in_progress_jobs = workedPartner.in_progress_jobs - 1;
+    workedPartner.save().then((response) => {
+      console.log("Partner's In Progress Job Count successfully Updated");
+    }).catch((error) => {
+      console.error("Error in updating Partner's In Progress Job Count: ", error);
+    })      
+    res.redirect("back");
+  } catch(error) {
+    console.error("Error in finding the Job: "+ error);
+  }
+
+}
+
+const rejectTheDoneWork = async(req, res) => {
+  const jobID = req.params.jobID;
+  const updatedData = req.body;
+  try {
+    // Updating the Job Order Status
+    const job = await JobOrder.findOne({"_id.job_no": parseInt(jobID)});
+    if(!job) {
+      console.error("No Job found under Job Number " + jobID);
+    }
+    job.status = req.body.status;
+    job.steps_done = req.body.steps;
+    job.save()
+    .then((response) => {
+      console.log("User's Rejection Completed Successfully");
+    }).catch((error) => {
+      console.error("Error in accepting User's Rejection: " + error);
+    });
+    
+    // Updating Job Files Status
+    const jobFile = await JobFiles.findOne({"_id.job_no": jobID});
+    if(!jobFile) {
+      console.error("No Job Files present for Job No : "+ jobID);
+    }
+    jobFile.verification = req.body.verif;
+    jobFile.decided = false;
+    jobFile.access_provided = false;
+    jobFile.user_decided = true;
+    jobFile.job_files = {};
+    jobFile.save().then((response)=>{
+      console.log("Work status Updated for the Partner Successfully");
+    }).catch((error)=> {
+      console.error("Error in Updating Partner's Work Status: ", error);
+    });
+
+  } catch(error) {
+    console.error("Error in finding the Job: "+ error);
+  }
+}
 
   module.exports = {
     getJobOrderOnID,
@@ -835,4 +940,6 @@ const getJobFilesForUsers = async (req, res) => {
     savePatentTranslationData,
     getJobFilesDetailsForUsers,
     getJobFilesForUsers,
+    approveTheDoneWork,
+    rejectTheDoneWork,
   };

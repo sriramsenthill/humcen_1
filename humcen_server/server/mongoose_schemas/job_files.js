@@ -22,6 +22,14 @@ const jobFilesSchema = new mongoose.Schema({
   decided: {
     type: Boolean,
     default: false,
+  },
+  approval_given: {
+    type: Boolean,
+    default: false,
+  },
+  user_decided: {
+    type: Boolean,
+    default: false,
   }
 });
 
