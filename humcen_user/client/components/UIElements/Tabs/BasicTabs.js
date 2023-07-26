@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
+import SearchForm from "@/components/_App/TopNavbar/SearchForm";
 import RecentOrders from "@/components/Dashboard/eCommerce/current";
 import CompletedOrders from "@/components/Dashboard/eCommerce/CompletedOrders";
 
@@ -66,6 +67,7 @@ export default function BasicTabs({ no, items }) {
         >
           <Box sx={{ width: "100%" }}>
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          
               <Tabs
                 value={value}
                 onChange={handleChange}

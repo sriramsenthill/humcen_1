@@ -34,8 +34,6 @@ const TopNavbar = ({ toogleActive }) => {
               </IconButton>
             </Tooltip>
 
-            {/* Search form */}
-            <SearchForm />
 
             <Typography component="div" sx={{ flexGrow: 1 }}></Typography>
 

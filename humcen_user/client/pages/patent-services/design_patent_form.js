@@ -52,6 +52,7 @@ export default function Inbox() {
   const [techDescription, setTechDescription] = useState("");
   const [country, setCountry] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
   const router = useRouter();
 
 
@@ -74,9 +75,27 @@ export default function Inbox() {
   const handleTechDescription = (event) => {
     setTechDescription(event.target.value);
   }
+  
+  const isFormValid = () => {
+    // Check if all the required fields are filled
+    return (
+      domain &&
+      patentInfo &&
+      commGoals &&
+      compLandscape &&
+      techDescription &&
+      country
+    );
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+if (!isFormValid()) {
+  setIsErrorDialogOpen(true);
+  return;
+}
+
 
     const formData = {
       field: domain,
@@ -449,6 +468,16 @@ export default function Inbox() {
           <Button onClick={handleOk}>OK</Button>
         </DialogActions>
       </Dialog>
+      <Dialog open={isErrorDialogOpen}>
+    <DialogTitle>Error</DialogTitle>
+    <DialogContent>
+      <p>Please fill all the required details before submitting the form.</p>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={() => setIsErrorDialogOpen(false)}>OK</Button>
+    </DialogActions>
+  </Dialog>
+
       </div>
     </>
   );

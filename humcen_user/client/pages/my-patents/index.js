@@ -20,7 +20,11 @@ api.interceptors.request.use((config) => {
 });
 
 const Inbox = () => {
-  const [checkJobs,setCheckJobs]=useState(null)
+  const [checkJobs,setCheckJobs]=useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const handleSearchSubmit = (value) => {
+    setSearchQuery(value);
+  };
   
   const customerDataResponse = async () => {
     try {
@@ -33,6 +37,8 @@ const Inbox = () => {
       console.error("Error fetching customer data:", error);
     }
   };
+
+
   customerDataResponse();
   return (
     <>
@@ -44,13 +50,12 @@ const Inbox = () => {
           // marginLeft: "1%",
       }}>
         <h1>My Patents</h1>
-        <SearchForm colorCom={"white"} />
+        <SearchForm onSearch={handleSearchSubmit} />
       </div>
       {checkJobs===0?"No Patents Found" :
       <Card sx={{
 }} >   
-        <RecentOrders sx={{
-}}></RecentOrders>
+ <RecentOrders searchQuery={searchQuery} />
       </Card>
       }
       </div>

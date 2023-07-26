@@ -52,6 +52,7 @@ export default function Inbox() {
   const [files, setFiles] = useState(null);
   const [additionalInfo,setAdditionalInfo]=useState("")
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
   const router = useRouter();
 
 
@@ -74,9 +75,20 @@ export default function Inbox() {
   const additionalInformation=(event)=>{
     setAdditionalInfo(event.target.value);
   }
-
+  const isFormValid = () => {
+    // Check if all the required fields are filled
+    return domain && sourceLanguage && targetLanguage && files && country;
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    
+if (!isFormValid()) {
+  setIsErrorDialogOpen(true);
+  return;
+}
+
+
 
     const formData = {
       domain: domain,
@@ -450,6 +462,17 @@ export default function Inbox() {
           <Button onClick={handleOk}>OK</Button>
         </DialogActions>
       </Dialog>
+      <Dialog open={isErrorDialogOpen}>
+    <DialogTitle>Error</DialogTitle>
+    <DialogContent>
+      <p>Please fill all the required details before submitting the form.</p>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={() => setIsErrorDialogOpen(false)}>OK</Button>
+    </DialogActions>
+  </Dialog>
+
+
       </div>
     </>
   );

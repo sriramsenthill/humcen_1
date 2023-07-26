@@ -64,6 +64,7 @@ export default function Inbox() {
   const [time, setTime] = useState("");
   const [budget, setBudget] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
   const router = useRouter();
 
 
@@ -92,9 +93,29 @@ export default function Inbox() {
     setInvestorsFile(files);
   };
 
+  const isFormValid = () => {
+    if (
+      domain.trim() === "" ||
+      country.trim() === "" ||
+      applicationType.trim() === "" ||
+      title.trim() === "" ||
+      detailsFile === null ||
+      applicantsFile === null ||
+      investorsFile === null ||
+      budget.trim() === "" ||
+      time.trim() === ""
+    ) {
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (!isFormValid()) {
+      setIsErrorDialogOpen(true);
+      return;
+    }
     const formData = {
       domain: domain, // Use the actual domain value from the state
       country: country,
@@ -619,6 +640,16 @@ export default function Inbox() {
           <Button onClick={handleOk}>OK</Button>
         </DialogActions>
       </Dialog>
+
+      <Dialog open={isErrorDialogOpen}>
+    <DialogTitle>Error</DialogTitle>
+    <DialogContent>
+      <p>Please fill all the required details before submitting the form.</p>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={() => setIsErrorDialogOpen(false)}>OK</Button>
+    </DialogActions>
+  </Dialog>
       </div>
     </>
   );

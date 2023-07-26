@@ -2,6 +2,7 @@ import * as React from "react";
 import { styled, alpha } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
+import { useState,useEffect } from "react";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -51,7 +52,19 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function SearchForm({ colorCom }) {
+export default function SearchForm({ onSearch }) {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearchChange = (event) => {
+    const { value } = event.target;
+    setSearchQuery(value);
+    onSearch(searchQuery);
+// Pass the search query to the parent component (BasicTabs) for filtering
+  };
+
+  
+  
+
   return (
     <>
       <Search className="search-form">
@@ -62,7 +75,10 @@ export default function SearchForm({ colorCom }) {
         <StyledInputBase
           placeholder="Search here.."
           inputProps={{ "aria-label": "search" }}
+          value={searchQuery}
+          onChange={handleSearchChange}
         />
+
       </Search>
     </>
   );

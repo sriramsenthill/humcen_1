@@ -144,22 +144,33 @@ async function fetchJobOrders() {
 }
 
 
-function RecentOrders() {
+function RecentOrders({searchQuery}) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [count, setCount] = useState(0);
   const [rows, setRows] = useState([]);
 
+  // Fetch data and update the rows based on the searchQuery
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchJobOrders();
-      const sortedData = data.sort((a, b) => b._id.job_no - a._id.job_no); // Sort by job_no in descending order
-      setCount(sortedData.length);
-      setRows(sortedData);
+      const sortedData = data.sort((a, b) => parseInt(b._id.job_no) - parseInt(a._id.job_no));
+// Sort by job_no in descending order
+
+      // Filter the data based on the searchQuery
+      const filteredData = searchQuery
+        ? sortedData.filter(
+            (row) =>
+              row.service.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+        : sortedData;
+
+      setCount(filteredData.length);
+      setRows(filteredData);
     };
 
     fetchData();
-  }, []);
+  }, [searchQuery]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

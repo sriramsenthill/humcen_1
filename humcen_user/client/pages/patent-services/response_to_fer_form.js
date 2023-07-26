@@ -51,6 +51,7 @@ export default function Inbox() {
   const [fer, setFer] = useState(null);
   const [specs, setSpecs] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
   const router = useRouter();
 
 
@@ -69,8 +70,19 @@ export default function Inbox() {
     setStrategy(event.target.value);
   };
 
+    const isFormValid = () => {
+      // Add any other required fields here and modify the condition as needed
+      return domain && fer && specs && strategy && country;
+    };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!isFormValid()) {
+      setIsErrorDialogOpen(true);
+      return;
+    }
+
 
     const formData = {
       field: domain,
@@ -413,6 +425,16 @@ export default function Inbox() {
           <Button onClick={handleOk}>OK</Button>
         </DialogActions>
       </Dialog>
+      <Dialog open={isErrorDialogOpen}>
+    <DialogTitle>Error</DialogTitle>
+    <DialogContent>
+      <p>Please fill all the required details before submitting the form.</p>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={() => setIsErrorDialogOpen(false)}>OK</Button>
+    </DialogActions>
+  </Dialog>
+
       </div>
     </>
   );
