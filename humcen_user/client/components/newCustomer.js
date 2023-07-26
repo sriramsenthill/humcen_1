@@ -2,40 +2,57 @@ import React from "react";
 import styles from "@/styles/nc.module.css";
 import { Typography, Card, CardContent, CardMedia, Grid } from "@mui/material";
 import Link from "next/link";
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+
 
 const GridCard = ({ title, imageSrc, applyLink }) => {
   return (
-    <Card>
-      <CardContent>
-        <Typography gutterBottom variant="h5" component="div">
-          {title}
+    <div>
+      <Typography className={styles.title} component="div">
+        {title}
+      </Typography>
+      <Link href={applyLink} className={styles.applyContainer}>
+        <Typography className={styles.apply} component="div">
+          Apply Now
+          <ArrowForwardIcon sx={{ fontSize: 18, marginLeft: 1 ,paddingTop: "5px" }} />
         </Typography>
-        {/* Add the "Apply Now" link for each card */}
-        <Link href={applyLink} passHref>
-          <Typography variant="body2" component="div">
-            Apply Now
-          </Typography>
-        </Link>
-      </CardContent>
-      <CardMedia component="img" height="140" image={imageSrc} alt={title} />
-    </Card>
+      </Link>
+        <Card sx={{ backgroundColor: '#F6F8FA',
+                  height: "100%",
+                  width: "80%",        
+                  borderRadius: '12px 12px 0 0',
+                  overflow: 'hidden',
+                  marginTop: '20px',
+                  boxShadow: '10px 15px 15px rgba(0, 0, 0, 0.3)',
+                   }}>
+        <CardMedia  component="img" 
+                    image={imageSrc} 
+                    alt={title}
+
+                    sx={{
+                    height: '120%',
+                    width: 'auto',
+                    objectFit: 'cover', // Maintain the aspect ratio and cover the entire area
+                  }} />
+      </Card>
+    </div>
   );
 };
 
 const cardsData = [
   {
     title: 'Patent Consultation',
-    imageSrc: '/path/to/image1.jpg',
+    imageSrc: '/images/pat.png',
     applyLink: '/patent-services/consultationform', // Add a separate applyLink for each card
   },
   {
     title: 'Patent Drafting',
-    imageSrc: '/path/to/image2.jpg',
+    imageSrc: '/images/draft.png',
     applyLink: '/patent-services/drafting-form', // Add a separate applyLink for each card
   },
   {
     title: 'Patent Filling',
-    imageSrc: '/path/to/image3.jpg',
+    imageSrc: '/images/fill.png',
     applyLink: '/patent-services/filing-form', // Add a separate applyLink for each card
   },
 ];

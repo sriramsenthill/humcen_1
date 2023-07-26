@@ -12,7 +12,22 @@
     background-color: #F6F8FA;
     padding: 30px 50px;
 }
-
+.title{
+  color: #00002B;
+  font-size: 25px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.applyContainer {
+  text-decoration: none; /* This removes the underline */
+  display: flex;
+  align-items: center;
+}
+.apply{
+  font-size: 18px ;
+  color: #1678FB;
+  margin-bottom: 1em;
+}
 .content {
   /* Add any styles for the main content area */
 }
@@ -22,6 +37,15 @@
     font-weight: 600;
     line-height: 31px;
     letter-spacing: -0.02em;
+}
+.container2 h1{
+  font-size: 34px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 33.6px;
+  color: #00002B;
+  margin-top: 10px;
+  margin-bottom: 1em;
 }
 
 .buttonContainer {
@@ -59,5 +83,5 @@
 .topLine {
   width: 100%;
   height: 3px; /* Adjust the height as needed */
-  background: linear-gradient(240deg, #d3d3d3 0%, #e6e6fa 60%, #e6e6fa 100%);/* Change to your desired color */
+  background: linear-gradient(240deg, #d3d3d3 0%, #e6e6fa 40%,#d3d3d3 60%, #e6e6fa 100%);/* Change to your desired color */
 }
