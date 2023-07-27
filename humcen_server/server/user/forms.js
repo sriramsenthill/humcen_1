@@ -174,14 +174,21 @@ const createJobOrderPatentFiling = async (req, res) => {
     // Find the partner and customer and update their jobs list
     let findPartner = await Partner.findOne({ is_free: true, ["known_fields.Patent Filing"]: true, country: req.body.country });
     let findCustomer = await Customer.findOne({ userID: userId });
+
     if (!findPartner) {
-      findPartner = new Partner({ is_free: true, jobs: [] });
+      // Handle the case when no partner is found
+      throw new Error("No partner found for the given criteria");
     }
-    console.log(findPartner);
+
+    if (!findCustomer) {
+      // Handle the case when no customer is found
+      throw new Error("No customer found for the given user ID");
+    }
+
     findPartner.jobs.push(filingOrder._id.job_no);
     findCustomer.jobs.push(filingOrder._id.job_no);
-
     findPartner.is_free = false;
+
     await Promise.all([findPartner.save(), findCustomer.save()]);
 
     const startDate = new Date();
@@ -193,29 +200,28 @@ const createJobOrderPatentFiling = async (req, res) => {
       service: "Patent Filing",
       userID: userId,
       partnerID: findPartner.userID,
+      partnerName: findPartner.first_name, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+      customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
       country: req.body.country,
       start_date: startDate,
       end_date: endDate,
+      steps_done: 2,
+      steps_done_user: 2,
       status: "In Progress",
       budget: "To be Allocated",
       domain: req.body.field,
-    }).save();
+    });
 
-    findPartner
-      .save()
-      .then((response) => {
-        console.log("Successfully Assigned Patent Filing Task to a Partner");
-      })
-      .catch((err) => {
-        console.log("Error in Assigning Patent Filing Task to the Partner");
-      });
+    await newJobOrder.save();
 
+    console.log("Successfully Assigned Patent Filing Task to a Partner");
     res.status(200).json(savedFiling);
   } catch (error) {
     console.error("Error creating Patent Filing Order:", error);
     res.status(500).send("Error creating Patent Filing Order");
   }
-}
+};
+
 
 
 const savePatentSearchData = async (req, res) => {
@@ -236,17 +242,24 @@ const savePatentSearchData = async (req, res) => {
     const searchOrder = new Search(searchData);
     searchOrder._id = { job_no: newSearchNo };
     const savedSearch = await searchOrder.save();
-    let findPartner = await Partner.findOne({ is_free: true, ["known_fields.Patent Search"] : true, country: req.body.country, in_progress_jobs: {$lt: 5} });
+
+    let findPartner = await Partner.findOne({ is_free: true, ["known_fields.Patent Search"]: true, country: req.body.country, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
 
     if (!findPartner) {
-      findPartner = new Partner({ is_free: true, jobs: [] });
+      // Handle the case when no partner is found
+      throw new Error("No partner found for the given criteria");
     }
-    console.log(findPartner);
+
+    if (!findCustomer) {
+      // Handle the case when no customer is found
+      throw new Error("No customer found for the given user ID");
+    }
+
     findPartner.jobs.push(searchOrder._id.job_no);
     findCustomer.jobs.push(searchOrder._id.job_no);
-
     findPartner.is_free = false;
+
     await Promise.all([findPartner.save(), findCustomer.save()]);
 
     const endDate = new Date();
@@ -257,29 +270,26 @@ const savePatentSearchData = async (req, res) => {
       service: "Patent Search",
       userID: userId,
       partnerID: findPartner.userID,
+      partnerName: findPartner.first_name, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+      customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
       start_date: new Date(),
       end_date: endDate,
       budget: "To be Allocated",
       status: "In Progress",
       country: req.body.country,
       domain: req.body.field,
-    }).save();
+    });
 
-    findPartner
-      .save()
-      .then((response) => {
-        console.log("Successfully Assigned Patent Search Task to a Partner");
-      })
-      .catch((err) => {
-        console.log("Error in Assigning Patent Search Task to the Partner");
-      });
+    await newJobOrder.save();
 
+    console.log("Successfully Assigned Patent Search Task to a Partner");
     res.status(200).json(savedSearch);
   } catch (error) {
     console.error("Error creating Search Order:", error);
     res.status(500).send("Error creating Search Order");
   }
 };
+
 
 const saveResponseToFerData = async (req, res) => {
   try {
@@ -301,16 +311,23 @@ const saveResponseToFerData = async (req, res) => {
     responseToFerOrder._id = { job_no: newResponseToFerNo };
     const savedResponseToFer = await responseToFerOrder.save();
 
-    let findPartner = await Partner.findOne({ is_free: true, ["known_fields.Response to FER/Office Action"]: true, country: req.body.country, in_progress_jobs: {$lt: 5} });
+    let findPartner = await Partner.findOne({ is_free: true, ["known_fields.Response to FER/Office Action"]: true, country: req.body.country, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
+
     if (!findPartner) {
-      findPartner = new Partner({ is_free: true, jobs: [] });
+      // Handle the case when no partner is found
+      throw new Error("No partner found for the given criteria");
     }
-    console.log(findPartner);
+
+    if (!findCustomer) {
+      // Handle the case when no customer is found
+      throw new Error("No customer found for the given user ID");
+    }
+
     findPartner.jobs.push(responseToFerOrder._id.job_no);
     findCustomer.jobs.push(responseToFerOrder._id.job_no);
-
     findPartner.is_free = false;
+
     await Promise.all([findPartner.save(), findCustomer.save()]);
 
     const endDate = new Date();
@@ -321,29 +338,26 @@ const saveResponseToFerData = async (req, res) => {
       service: "Response To FER Office Action",
       userID: userId,
       partnerID: findPartner.userID,
+      partnerName: findPartner.first_name, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+      customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
       country: req.body.country,
       start_date: new Date(),
       end_date: endDate,
       status: "In Progress",
       budget: "To be Allocated",
       domain: req.body.field,
-    }).save();
+    });
 
-    findPartner
-      .save()
-      .then((response) => {
-        console.log("Successfully Assigned Response to FER Task to a Partner");
-      })
-      .catch((err) => {
-        console.log("Error in Assigning Response to FER Task to the Partner");
-      });
+    await newJobOrder.save();
 
+    console.log("Successfully Assigned Response to FER Task to a Partner");
     res.status(200).json(savedResponseToFer);
   } catch (error) {
     console.error("Error creating Response To FER Order:", error);
     res.status(500).send("Error creating Response To FER Order");
   }
 };
+
 
 const saveFreedomToOperateData = async (req, res) => {
   try {
@@ -360,19 +374,25 @@ const saveFreedomToOperateData = async (req, res) => {
     freedomToOperateData._id = { job_no: newFTONo };
 
     const savedFTO = await freedomToOperate.create(freedomToOperateData);
-    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Freedom To Operate Search"]: true, in_progress_jobs: {$lt: 5} });
+
+    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Freedom To Operate Search"]: true, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
+
     if (!findPartner) {
-      findPartner = new Partner({ is_free: true, jobs: [] });
+      // Handle the case when no partner is found
+      throw new Error("No partner found for the given criteria");
     }
-    console.log(findPartner);
+
+    if (!findCustomer) {
+      // Handle the case when no customer is found
+      throw new Error("No customer found for the given user ID");
+    }
+
     findPartner.jobs.push(freedomToOperateData._id.job_no);
     findCustomer.jobs.push(freedomToOperateData._id.job_no);
-
     findPartner.is_free = false;
-    await Promise.all([findPartner.save(), findCustomer.save()]);
 
-    
+    await Promise.all([findPartner.save(), findCustomer.save()]);
 
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
@@ -382,6 +402,8 @@ const saveFreedomToOperateData = async (req, res) => {
       service: "Freedom To Operate",
       userID: userId,
       partnerID: findPartner.userID,
+      partnerName: findPartner.first_name, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+      customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
       country: req.body.country,
       start_date: new Date(),
       end_date: endDate,
@@ -392,8 +414,6 @@ const saveFreedomToOperateData = async (req, res) => {
 
     await newJobOrder.save();
 
-    await findPartner.save();
-
     console.log("Successfully Assigned Freedom To Operate Task to a Partner");
 
     res.status(200).send(savedFTO._id);
@@ -402,6 +422,7 @@ const saveFreedomToOperateData = async (req, res) => {
     res.status(500).send("Error creating Freedom to Operate");
   }
 };
+
 
 
 
@@ -424,16 +445,23 @@ const savePatentIllustrationData = async (req, res) => {
     savedJobOrder._id = { job_no: newJobNo };
     const savedPatentIllustration = await savedJobOrder.save();
 
-    let findPartner = await Partner.findOne({ is_free: true, ["known_fields.Patent Illustration"]: true, country: req.body.country, in_progress_jobs: {$lt: 5} });
+    let findPartner = await Partner.findOne({ is_free: true, ["known_fields.Patent Illustration"]: true, country: req.body.country, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
+
     if (!findPartner) {
-      findPartner = new Partner({ is_free: true, jobs: [] });
+      // Handle the case when no partner is found
+      throw new Error("No partner found for the given criteria");
     }
-    console.log(findPartner);
+
+    if (!findCustomer) {
+      // Handle the case when no customer is found
+      throw new Error("No customer found for the given user ID");
+    }
+
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findCustomer.jobs.push(savedJobOrder._id.job_no);
-
     findPartner.is_free = false;
+
     await Promise.all([findPartner.save(), findCustomer.save()]);
 
     const endDate = new Date();
@@ -444,22 +472,19 @@ const savePatentIllustrationData = async (req, res) => {
       service: "Patent Illustration",
       userID: userId,
       partnerID: findPartner.userID,
+      partnerName: findPartner.first_name, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+      customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
       domain: req.body.field,
       start_date: new Date(),
       end_date: endDate,
       country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
-    }).save();
+    });
 
-    findPartner
-      .save()
-      .then((response) => {
-        console.log("Successfully Assigned Patent Illustration to a Partner");
-      })
-      .catch((err) => {
-        console.log("Error in Assigning Patent Illustration to the Partner");
-      });
+    await newJobOrder.save();
+
+    console.log("Successfully Assigned Patent Illustration to a Partner");
 
     res.status(200).json(savedJobOrder._id);
   } catch (error) {
@@ -467,6 +492,7 @@ const savePatentIllustrationData = async (req, res) => {
     res.status(500).send("Error creating job order");
   }
 };
+
 
 const savePatentLandscapeData = async (req, res) => {
   try {
@@ -486,17 +512,25 @@ const savePatentLandscapeData = async (req, res) => {
     savedJobOrder._id = { job_no: newJobNo };
     const savedPatentLandscape = await savedJobOrder.save();
 
-    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Freedom to Patent Landscape"]: true, in_progress_jobs: {$lt: 5} });
+    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Freedom to Patent Landscape"]: true, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
+
     if (!findPartner) {
-      findPartner = new Partner({ is_free: true, jobs: [] });
+      // Handle the case when no partner is found
+      throw new Error("No partner found for the given criteria");
     }
-    console.log(findPartner);
+
+    if (!findCustomer) {
+      // Handle the case when no customer is found
+      throw new Error("No customer found for the given user ID");
+    }
+
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findCustomer.jobs.push(savedJobOrder._id.job_no);
-
     findPartner.is_free = false;
+
     await Promise.all([findPartner.save(), findCustomer.save()]);
+
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
 
@@ -505,22 +539,19 @@ const savePatentLandscapeData = async (req, res) => {
       service: "Freedom to Patent Landscape",
       userID: userId,
       partnerID: findPartner.userID,
+      partnerName: findPartner.first_name, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+      customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
       domain: req.body.field,
       start_date: new Date(),
       end_date: endDate,
       country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
-    }).save();
+    });
 
-    findPartner
-      .save()
-      .then((response) => {
-        console.log("Successfully Assigned Patent Landscape to a Partner");
-      })
-      .catch((err) => {
-        console.log("Error in Assigning Patent Landscape to the Partner");
-      });
+    await newJobOrder.save();
+
+    console.log("Successfully Assigned Patent Landscape to a Partner");
 
     res.status(200).json(savedJobOrder._id);
   } catch (error) {
@@ -547,16 +578,23 @@ const savePatentWatchData = async (req, res) => {
     savedJobOrder._id = { job_no: newJobNo };
     const savedPatentWatch = await savedJobOrder.save();
 
-    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Patent Watch"]: true, in_progress_jobs: {$lt: 5} });
+    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Patent Watch"]: true, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
-    if (!findPartner) {
-      findPartner = new Partner({ is_free: true, jobs: [] });
-    }
-    console.log(findPartner);
-    findPartner.jobs.push(patentWatchData._id.job_no);
-    findCustomer.jobs.push(patentWatchData._id.job_no);
 
+    if (!findPartner) {
+      // Handle the case when no partner is found
+      throw new Error("No partner found for the given criteria");
+    }
+
+    if (!findCustomer) {
+      // Handle the case when no customer is found
+      throw new Error("No customer found for the given user ID");
+    }
+
+    findPartner.jobs.push(savedJobOrder._id.job_no);
+    findCustomer.jobs.push(savedJobOrder._id.job_no);
     findPartner.is_free = false;
+
     await Promise.all([findPartner.save(), findCustomer.save()]);
 
     const endDate = new Date();
@@ -567,22 +605,19 @@ const savePatentWatchData = async (req, res) => {
       service: "Patent Watch",
       userID: userId,
       partnerID: findPartner.userID,
+      partnerName: findPartner.first_name, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+      customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
       domain: req.body.field,
       start_date: new Date(),
       end_date: endDate,
       country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
-    }).save();
+    });
 
-    findPartner
-      .save()
-      .then((response) => {
-        console.log("Successfully Assigned Patent Watch to a Partner");
-      })
-      .catch((err) => {
-        console.log("Error in Assigning Patent Watch to the Partner");
-      });
+    await newJobOrder.save();
+
+    console.log("Successfully Assigned Patent Watch to a Partner");
 
     res.status(200).json(savedJobOrder._id);
   } catch (error) {
@@ -609,17 +644,25 @@ const savePatentLicenseData = async (req, res) => {
     savedJobOrder._id = { job_no: newJobNo };
     const savedPatentLicense = await savedJobOrder.save();
 
-    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Patent Licensing and Commercialization Services"]: true, in_progress_jobs: {$lt: 5} });
+    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Patent Licensing and Commercialization Services"]: true, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
+
     if (!findPartner) {
-      findPartner = new Partner({ is_free: true, jobs: [] });
+      // Handle the case when no partner is found
+      throw new Error("No partner found for the given criteria");
     }
-    console.log(findPartner);
+
+    if (!findCustomer) {
+      // Handle the case when no customer is found
+      throw new Error("No customer found for the given user ID");
+    }
+
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findCustomer.jobs.push(savedJobOrder._id.job_no);
-
     findPartner.is_free = false;
+
     await Promise.all([findPartner.save(), findCustomer.save()]);
+
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
 
@@ -628,26 +671,19 @@ const savePatentLicenseData = async (req, res) => {
       service: "Patent Licensing and Commercialization Services",
       userID: userId,
       partnerID: findPartner.userID,
+      partnerName: findPartner.first_name, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+      customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
       domain: req.body.field,
       start_date: new Date(),
       end_date: endDate,
       country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
-    }).save();
+    });
 
-    findPartner
-      .save()
-      .then((response) => {
-        console.log(
-          "Successfully Assigned Patent Licensing and Commercialization Services Task to a Partner"
-        );
-      })
-      .catch((err) => {
-        console.log(
-          "Error in Assigning Patent Licensing and Commercialization Services Task to the Partner"
-        );
-      });
+    await newJobOrder.save();
+
+    console.log("Successfully Assigned Patent Licensing and Commercialization Services Task to a Partner");
 
     res.status(200).json(savedJobOrder._id);
   } catch (error) {
@@ -655,6 +691,7 @@ const savePatentLicenseData = async (req, res) => {
     res.status(500).send("Error creating job order");
   }
 };
+
 
 const savePatentPortfolioAnalysisData = async (req, res) => {
   try {
@@ -674,18 +711,25 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
     savedJobOrder._id = { job_no: newJobNo };
     const savedPatentPortfolio = await savedJobOrder.save();
 
-    
-    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Freedom to Patent Portfolio Analysis"]: true, in_progress_jobs: {$lt: 5} });
+    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Freedom to Patent Portfolio Analysis"]: true, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
+
     if (!findPartner) {
-      findPartner = new Partner({ is_free: true, jobs: [] });
+      // Handle the case when no partner is found
+      throw new Error("No partner found for the given criteria");
     }
-    console.log(findPartner);
+
+    if (!findCustomer) {
+      // Handle the case when no customer is found
+      throw new Error("No customer found for the given user ID");
+    }
+
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findCustomer.jobs.push(savedJobOrder._id.job_no);
-
     findPartner.is_free = false;
+
     await Promise.all([findPartner.save(), findCustomer.save()]);
+
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
 
@@ -694,26 +738,19 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
       service: "Patent Portfolio Analysis",
       userID: userId,
       partnerID: findPartner.userID,
+      partnerName: findPartner.first_name, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+      customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
       domain: req.body.field,
       start_date: new Date(),
       end_date: endDate,
       country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
-    }).save();
+    });
 
-    findPartner
-      .save()
-      .then((response) => {
-        console.log(
-          "Successfully Assigned Patent Portfolio Analysis Task to a Partner"
-        );
-      })
-      .catch((err) => {
-        console.log(
-          "Error in Assigning Patent Portfolio Analysis Task to the Partner"
-        );
-      });
+    await newJobOrder.save();
+
+    console.log("Successfully Assigned Patent Portfolio Analysis Task to a Partner");
 
     res.status(200).json(savedJobOrder._id);
   } catch (error) {
@@ -721,6 +758,7 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
     res.status(500).send("Error creating job order");
   }
 };
+
 
 const savePatentTranslationData = async (req, res) => {
   try {
@@ -740,17 +778,25 @@ const savePatentTranslationData = async (req, res) => {
     savedJobOrder._id = { job_no: newJobNo };
     const savedPatentTranslation = await savedJobOrder.save();
 
-    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Patent Translation Service"]: true, in_progress_jobs: {$lt: 5} });
+    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Patent Translation Service"]: true, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
+
     if (!findPartner) {
-      findPartner = new Partner({ is_free: true, jobs: [] });
+      // Handle the case when no partner is found
+      throw new Error("No partner found for the given criteria");
     }
-    console.log(findPartner);
+
+    if (!findCustomer) {
+      // Handle the case when no customer is found
+      throw new Error("No customer found for the given user ID");
+    }
+
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findCustomer.jobs.push(savedJobOrder._id.job_no);
-
     findPartner.is_free = false;
+
     await Promise.all([findPartner.save(), findCustomer.save()]);
+
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
 
@@ -759,26 +805,19 @@ const savePatentTranslationData = async (req, res) => {
       service: "Patent Translation Services",
       userID: userId,
       partnerID: findPartner.userID,
+      partnerName: findPartner.first_name, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+      customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
       domain: req.body.field,
       start_date: new Date(),
       end_date: endDate,
       country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
-    }).save();
+    });
 
-    findPartner
-      .save()
-      .then((response) => {
-        console.log(
-          "Successfully Assigned Patent Translation Services Task to a Partner"
-        );
-      })
-      .catch((err) => {
-        console.log(
-          "Error in Assigning Patent Translation Services Task to the Partner"
-        );
-      });
+    await newJobOrder.save();
+
+    console.log("Successfully Assigned Patent Translation Services Task to a Partner");
 
     res.status(200).json(savedJobOrder._id);
   } catch (error) {
@@ -786,6 +825,7 @@ const savePatentTranslationData = async (req, res) => {
     res.status(500).send("Error creating job order");
   }
 };
+
 
 // Fetch Partner's Work Files for User
 const getJobFilesDetailsForUsers = async(req, res) => {
