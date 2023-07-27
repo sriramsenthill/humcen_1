@@ -81,36 +81,40 @@ const createJobOrderPatentDrafting = async (req, res) => {
       ? latestDraftingOrder._id.job_no + 1
       : 1000;
 
+    // Find the partner and customer
+    const findPartner = await Partner.findOne({
+      is_free: true,
+      ["known_fields.Patent Drafting"]: true,
+      country: req.body.country
+    });
+
+    const findCustomer = await Customer.findOne({ userID: userId });
+
+    if (!findPartner) {
+      // Handle the case when no partner is found
+      throw new Error("No partner found for the given criteria");
+    }
+
+    if (!findCustomer) {
+      // Handle the case when no customer is found
+      throw new Error("No customer found for the given user ID");
+    }
+
     // Save the draftingData in the Drafting collection
     const draftingOrder = new Drafting(draftingData);
     draftingOrder._id = { job_no: newDraftingNo };
+
+    // Ensure findPartner and findCustomer are not null before accessing their properties
+    draftingOrder.partnerName = findPartner.full_name; // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+    draftingOrder.customerName = findCustomer.customerName; // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
+
     const savedDrafting = await draftingOrder.save();
 
-    // Find the partner and customer and update their jobs list
-    let findPartner = await Partner.findOne({ is_free: true, ["known_fields.Patent Drafting"]: true, country: req.body.country });
-    let findCustomer = await Customer.findOne({ userID: userId });
-    if (!findPartner) {
-      findPartner = new Partner({ is_free: true, jobs: [] });
-      const newJobOrder = new JobOrder({
-        _id: { job_no: newDraftingNo },
-        service: "Patent Drafting",
-        userID: userId,
-        partnerID: findPartner.userID,
-        country: req.body.country,
-        start_date: startDate,
-        end_date: endDate,
-        steps_done: 1,
-        steps_done_user: 1,
-        status: "In Progress",
-        budget: "To be Allocated",
-        domain: req.body.field,
-      }).save();
-    }
-    console.log(findPartner);
+    // Update partner and customer jobs lists
     findPartner.jobs.push(draftingOrder._id.job_no);
+    findPartner.is_free = false;
     findCustomer.jobs.push(draftingOrder._id.job_no);
 
-    findPartner.is_free = false;
     await Promise.all([findPartner.save(), findCustomer.save()]);
 
     const startDate = new Date();
@@ -122,6 +126,8 @@ const createJobOrderPatentDrafting = async (req, res) => {
       service: "Patent Drafting",
       userID: userId,
       partnerID: findPartner.userID,
+      partnerName: findPartner.first_name, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+      customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
       country: req.body.country,
       start_date: startDate,
       end_date: endDate,
@@ -130,23 +136,19 @@ const createJobOrderPatentDrafting = async (req, res) => {
       status: "In Progress",
       budget: "To be Allocated",
       domain: req.body.field,
-    }).save();
+    });
 
-    findPartner
-      .save()
-      .then((response) => {
-        console.log("Successfully Assigned Patent Drafting Task to a Partner");
-      })
-      .catch((err) => {
-        console.log("Error in Assigning Patent Drafting Task to the Partner");
-      });
+    await newJobOrder.save();
 
+    console.log("Successfully Assigned Patent Drafting Task to a Partner");
     res.status(200).json(savedDrafting);
   } catch (error) {
     console.error("Error creating Patent Drafting Order:", error);
     res.status(500).send("Error creating Patent Drafting Order");
   }
 };
+
+
 
 const createJobOrderPatentFiling = async (req, res) => {
   try {

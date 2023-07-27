@@ -10,6 +10,8 @@ const jobOrderSchema = new mongoose.Schema({
   end_date: { type: Date },
   expected_end_date: { type: Date },
   budget: { type: String   },
+  customerName: { type: String   },
+  partnerName: { type: String   },
   status: { type: String },
   pay_status: { type: String },
   amount: { type: Number },

@@ -145,7 +145,7 @@ const DynamicPage = () => {
     start_date,
     job_title,
     service,
-    userName,
+    customerName,
     partnerName,
     country,
     budget,
@@ -236,7 +236,7 @@ const DynamicPage = () => {
               </tr>
               <tr>
                 <td style={{ padding: "10px" }}>{service}</td>
-                <td style={{ padding: "10px" }}>{userName}</td>
+                <td style={{ padding: "10px" }}>{customerName}</td>
                 <td style={{ padding: "10px" }}>{partnerName}</td>
                 <td style={{ padding: "10px" }}>{country}</td>
                 <td style={{ padding: "10px" }}>{budget}</td>
