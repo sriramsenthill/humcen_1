@@ -5,6 +5,7 @@ import Link from "next/link";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 
+
 const GridCard = ({ title, imageSrc, applyLink }) => {
   return (
     <div>
@@ -19,14 +20,14 @@ const GridCard = ({ title, imageSrc, applyLink }) => {
       </Link>
         <Card sx={{ backgroundColor: '#F6F8FA',
                   height: "100%",
-                  width: "80%",        
+                  width: "80%",
                   borderRadius: '12px 12px 0 0',
                   overflow: 'hidden',
                   marginTop: '20px',
                   boxShadow: '10px 15px 15px rgba(0, 0, 0, 0.3)',
                    }}>
-        <CardMedia  component="img" 
-                    image={imageSrc} 
+        <CardMedia  component="img"
+                    image={imageSrc}
                     alt={title}
 
                     sx={{
@@ -57,7 +58,10 @@ const cardsData = [
   },
 ];
 
+
+
 const New_cus = () => {
+
   return (
     <>
       <div className={styles.topLine}></div>

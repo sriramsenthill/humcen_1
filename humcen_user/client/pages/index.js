@@ -33,7 +33,6 @@ const eCommerce = () => {
     try {
       const response = await api.get("/");
       const customerData = response.data;
-      console.log("Customer Data:", customerData);
       setCheckJobs(customerData.length);
       // Process the customer data as needed
     } catch (error) {
