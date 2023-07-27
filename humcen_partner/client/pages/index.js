@@ -3,14 +3,14 @@ import {useState, useEffect} from "react";
 import Grid from "@mui/material/Grid";
 import Link from "next/link";
 import styles from "@/styles/PageTitle.module.css";
+ import cardStyle from "@/styles/nc.module.css";
 import Performance from "@/components/Dashboard/eCommerce/Performance";
 import RecentOrders from "@/components/Dashboard/eCommerce/RecentOrders";
 import NewOrder from "@/components/index_comp/new_orders";
 import withAuth from "@/components/withAuth";
 import NewCustomers from "@/components/Dashboard/eCommerce/NewCustomers";
 import axios from "axios";
-
-
+import { Typography } from "@mui/material";
 
 const api = axios.create({
   baseURL: 'http://localhost:3000/api',
@@ -102,7 +102,19 @@ function eCommerce() {
           <li>home</li>
         </ul>
       </div>
-  {getJobs.length===0?null:
+  {getJobs.length===0? <div className={cardStyle.container}>
+        <div className={cardStyle.content}>
+          <h1>Your account is now active</h1>
+          <Typography className={cardStyle.text1}>
+            Browse our services and explore all the ways to use Humcen
+          </Typography>
+        </div>
+        <div className={cardStyle.buttonContainer}>
+        
+            <button className={cardStyle.button}>Active</button>
+      
+        </div>
+      </div>:
   <>
       <NewOrder />
       <RecentOrders />

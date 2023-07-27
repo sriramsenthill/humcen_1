@@ -128,6 +128,12 @@ const Profile = () => {
         <MenuItem>
           <Avatar src={profileImg} className="mr-1" />
           <Box>
+          <Link
+            href="/"
+            fontSize="13px"
+            color="inherit"
+            underline="none"
+          >
             <Typography sx={{ fontSize: "11px", color: "#757FEF" }}>
               User
             </Typography>
@@ -140,24 +146,13 @@ const Profile = () => {
             >
               {userName}
             </Typography>
+            </Link>
           </Box>
         </MenuItem>
 
         <Divider />
 
-        <MenuItem>
-          <ListItemIcon sx={{ mr: "-8px", mt: "-3px" }}>
-            <PersonIcon fontSize="small" />
-          </ListItemIcon>
-          <Link
-            href="/pages/profile/"
-            fontSize="13px"
-            color="inherit"
-            underline="none"
-          >
-            Profile
-          </Link>
-        </MenuItem>
+       
 
         {/* <MenuItem>
           <ListItemIcon sx={{ mr: "-8px", mt: "-3px" }}>

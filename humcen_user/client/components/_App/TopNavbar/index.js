@@ -42,7 +42,7 @@ const TopNavbar = ({ toogleActive }) => {
               <CurrentDate />
 
               {/* Notification */}
-              <Email />
+              <Notification/>
 
               {/* Notification */}
               {/* <Notification /> */}

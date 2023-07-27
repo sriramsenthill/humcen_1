@@ -30,12 +30,13 @@ const AddCard = ({ title, imageSrc, link }) => {
   };
 
   const imageStyle = {
-    width: "80%",
-    height: "61%",
-    objectFit: "cover",
+    width: "50%",
+    height: "40%",
     position: "relative",
     top: "55px",
-    left: "32px",
+    left: "35px",
+    marginLeft:"37px",
+    marginTop:"30px",
   };
   
 
