@@ -88,7 +88,6 @@ const Projects = () => {
     <div className={'card'}>
       {/* Page title */}
       <div className={styles.pageTitle}>
-        <h1>Why Us?</h1>
         <ul>
           <li>
             <Link href="/">Dashboard</Link>
@@ -96,6 +95,7 @@ const Projects = () => {
           <li>Why Us</li>
         </ul>
       </div>
+      <h1 className={styles.heading}>Why Us?</h1>
       <h2 style={{ marginTop: 20 }}>
         Unlock unparalleled opportunities as an IP professional by joining our
         IP marketplace.

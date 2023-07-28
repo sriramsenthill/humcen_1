@@ -4,9 +4,8 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import Link from "next/link";
 
-const ModernCard = ({ title, description, imageSrc, link }) => {
+const ModernCard = ({ title, description, imageSrc, }) => {
   const cardStyle = {
     marginTop: '20px',
     marginBottom: '40px',
@@ -39,7 +38,6 @@ const ModernCard = ({ title, description, imageSrc, link }) => {
 
   
   return (
-    <Link href={link} style={{ textDecoration: "none" }}>
     <Card style={cardStyle}>
       <img src={imageSrc} alt={title} style={imageStyle} />
       <div style={titleStyle}>
@@ -51,7 +49,6 @@ const ModernCard = ({ title, description, imageSrc, link }) => {
         </Typography>
       </div>
     </Card>
-    </Link>
   );
 };
 

@@ -94,27 +94,27 @@ function eCommerce() {
     <div className={'card'}>
       {/* Page title */}
       <div className={styles.pageTitle}>
-        <h1>Welcome Back, {partnerName}!</h1>
         <ul>
           <li>
             <Link href="/">Dashboard</Link>
           </li>
-          <li>home</li>
+          <li>Home</li>
         </ul>
       </div>
-  {getJobs.length===0? <div className={cardStyle.container}>
-        <div className={cardStyle.content}>
-          <h1>Your account is now active</h1>
+      <h1>Welcome Back, {partnerName}!</h1>
+      {getJobs.length===0? <div className={cardStyle.container}>
+      <div className={cardStyle.content}>
+        <h1>Your account is now active</h1>
           <Typography className={cardStyle.text1}>
             Browse our services and explore all the ways to use Humcen
           </Typography>
         </div>
-        <div className={cardStyle.buttonContainer}>
+      <div className={cardStyle.buttonContainer}>
         
-            <button className={cardStyle.button}>Active</button>
+          <button className={cardStyle.button}>Active</button>
       
-        </div>
-      </div>:
+      </div>
+    </div>:
   <>
       <NewOrder />
       <RecentOrders />

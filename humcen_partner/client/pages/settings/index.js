@@ -7,6 +7,8 @@ import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import BasicTabs from "./Tabs";
 import withAuth from "@/components/withAuth";
+import styles from "@/styles/PageTitle.module.css"
+import Link from "next/link";
 
 function Settings() {
   const handleSubmit = (event) => {
@@ -21,6 +23,14 @@ function Settings() {
   return (
     <>
     <div className={'card'}>
+      <div className={styles.pageTitle}>
+          <ul>
+            <li>
+              <Link href="/">Dashboard</Link>
+            </li>
+            <li>Settings</li>
+          </ul>
+        </div>
       <Card
         sx={{
           boxShadow: "none",
@@ -32,18 +42,10 @@ function Settings() {
           background: "white",
         }}
       >
-        <Typography
-          sx={{
-            fontFamily: "Inter",
-            fontStyle: "normal",
-            fontWeight: "400",
-            fontSize: "24px",
-            lineHeight: "140%",
-            color: "#00002B",
-          }}
-        >
-          Settings
-        </Typography>
+      <h1 className={styles.heading} style={{
+        marginTop: "14px" ,
+        marginLeft: "16px"
+      }}>Settings</h1>
 
         <BasicTabs />
       </Card>

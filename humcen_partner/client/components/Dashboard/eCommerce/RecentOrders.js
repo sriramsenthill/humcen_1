@@ -175,6 +175,7 @@ function RecentOrders() {
     rowsPerPage - Math.min(rowsPerPage, count - page * rowsPerPage);
     
   return (
+    <>
     <Box>
       <TableContainer component={Paper}>
         <Table>
@@ -248,6 +249,7 @@ function RecentOrders() {
         </Table>
       </TableContainer>
     </Box>
+    </>
   );
 }
 

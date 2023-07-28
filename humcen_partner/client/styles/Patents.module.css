@@ -16,7 +16,6 @@
     font-weight: 400;
     font-size: 16px;
     color: #828282;
-
 }
 
 .label1{
@@ -24,4 +23,7 @@
     font-size: 18px;
     color: #828282;
 
+}
+.tab{
+  margin-top: 2px;
 }

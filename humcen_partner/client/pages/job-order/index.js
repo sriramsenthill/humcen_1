@@ -3,8 +3,9 @@ import Link from "next/link";
 import styles from "@/styles/PageTitle.module.css";
 import RecentOrders from "@/components/Dashboard/eCommerce/RecentOrders";
 import withAuth from "@/components/withAuth";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
+import { Card } from "@mui/material";
 
 const api = axios.create({
   baseURL: 'http://localhost:3000/api',
@@ -18,7 +19,6 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
-
 
 async function fetchJobOrders() {
   try {
@@ -39,9 +39,8 @@ async function fetchJobOrders() {
   }
 }
 
-
- function Inbox() {
-  const [getJobs,setJobs]=useState('');
+function Inbox() {
+  const [getJobs, setJobs] = useState('');
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchJobOrders();
@@ -51,22 +50,29 @@ async function fetchJobOrders() {
     fetchData();
   }, []);
 
-
   return (
     <>
-    <div className={'card'}>
-      {/* Page title */}
-      <div className={styles.pageTitle}>
-        <ul>
-          <li>
-            <Link href="/">Dashboard</Link>
-          </li>
-          <li>Job Order</li>
-        </ul>
-      </div>{
-        getJobs.length===0?null:
-      
-      <RecentOrders />}
+      <div className={'card'}>
+        {/* Page title */}
+        <div className={styles.pageTitle}>
+          <ul>
+            <li>
+              <Link href="/">Dashboard</Link>
+            </li>
+            <li>Job Order</li>
+          </ul>
+        </div>
+        {getJobs.length === 0 ? null : ( // Add curly braces here
+          <><Card>
+            <h1 className={styles.heading2} style={{
+              marginBottom: "30px",
+              marginTop: "10px",
+              marginLeft: "12px"
+            }}>My Job orders</h1>
+            <RecentOrders />
+            </Card>
+          </>
+        )}
       </div>
     </>
   );

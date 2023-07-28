@@ -48,11 +48,11 @@ const MyPage = () => {
           <li>
             <Link href="/">Dashboard</Link>
           </li>
-          <li>My Patent Services</li>
+          <li>Patent Services</li>
         </ul>
       </div>
       <h1 className={styles.heading} style={{
-        marginBottom: "50px",
+        marginBottom: "30px",
         marginTop: "10px"
       }}>My Patent Services</h1>
       <Grid

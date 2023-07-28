@@ -21,6 +21,7 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
 import PropTypes from "prop-types";
+import styles from "@/styles/PageTitle.module.css"
 
 function formatDate(date) {
   const options = { month: "long", day: "numeric", year: "numeric" };
@@ -170,8 +171,12 @@ function MyIncome() {
 
   return (
     <Card>
-      <Box sx={{ p: 2 }}>
-        <Typography variant="h5">My Income</Typography>
+      <Box sx={{ p: 0 }}>
+        <h1 className={styles.heading2} style={{
+          marginBottom: "30px",
+          marginTop: "10px",
+          marginLeft: "12px"
+        }}>My Income History</h1>
         <TableContainer component={Paper}>
           <Table>
             <TableHead>

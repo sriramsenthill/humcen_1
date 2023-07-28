@@ -5,7 +5,7 @@ import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
 import axios from "axios";
 import Link from "@mui/material/Link";
-import { styled } from "@mui/system";
+
 
 function formatDate(date) {
   const options = { month: "long", day: "numeric", year: "numeric" };
@@ -88,14 +88,14 @@ const NewOrder = () => {
           width: "100%",
         }}
       >
-        <h3>New Order Requests</h3>
+        <h3 >New Order Requests</h3>
         <Grid>
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-            }}
-          >
+        <table
+          style={{
+            width: "100%",
+            borderCollapse: "separate", 
+            borderSpacing: "0 20px", 
+              }}>
             <thead>
               <tr>
                 <th className={styles.label} style={{ padding: "5px", textAlign: "left"}}>
@@ -122,8 +122,8 @@ const NewOrder = () => {
               </tr>
             </thead>
             <tbody>
-              {jobOrders.map((order) => (
-                <tr key={order._id}>
+              {jobOrders.map((order) => (             
+                <tr key={order._id}> 
                   <td className={styles.label} style={{ padding: "5px" }}>
                     {order._id.job_no}
                   </td>

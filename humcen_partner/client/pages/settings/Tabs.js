@@ -64,7 +64,7 @@ export default function BasicTabs({ no, items }) {
           sx={{
             boxShadow: "none",
             borderRadius: "10px",
-            p: "25px",
+            p: "10px 25px 20px 25px",
             mb: "15px",
             width: "100%",
           }}
@@ -131,27 +131,27 @@ export default function BasicTabs({ no, items }) {
               </Tabs>
             </Box>
             <TabPanel value={value} index={0}>
-              <div className={'card'}>
+              <div className={'cardTab'}>
                 <ProfileSettings />
               </div>
             </TabPanel>
             <TabPanel value={value} index={1}>
-              <div className={'card'}>
+              <div className={'cardTab'}>
                 <BillingSettings />
               </div>
             </TabPanel>
             <TabPanel value={value} index={2}>
-              <div className={'card'}>
+              <div className={'cardTab'}>
                 <EmailNotifsSettings />
               </div>
             </TabPanel>
             <TabPanel value={value} index={3}>
-              <div className={'card'}>
+              <div className={'cardTab'}>
               <ChangePassword />
               </div>
             </TabPanel>
             <TabPanel value={value} index={4}>
-              <div className={'card'}>
+              <div className={'cardTab'}>
               <AddServices />
               </div>
             </TabPanel>

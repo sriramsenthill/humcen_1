@@ -10,9 +10,6 @@ function Products() {
     <div className={'card'}>
       {/* Page title */}
       <div className={styles.pageTitle}>
-        
-        <h1 className={styles.pageh}>Help & Support</h1>
-        
         <ul>
           <li>
             <Link href="/">Dashboard</Link>
@@ -20,8 +17,9 @@ function Products() {
           <li>Help & support</li>
         </ul>
       </div>
+      <h1 className={styles.heading}>Help & Support</h1>
       <div>
-      <h2 className={styles.heading}>Contact Information</h2>
+      <h2 className={styles.heading2}>Contact Information</h2>
       <hr className={styles.line}></hr>
       </div>
       <div>
@@ -31,7 +29,7 @@ function Products() {
       </ul>
       <hr className={styles.line}></hr>
       <div>
-      <h2 className={styles.heading}>Frequently Asked Qusetions</h2>
+      <h2 className={styles.heading2}>Frequently Asked Qusetions</h2>
       <hr className={styles.line}></hr>
       </div>
       

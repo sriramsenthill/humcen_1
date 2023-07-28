@@ -1,20 +1,19 @@
 :root {
   --bodyFontFamily: "Inter"
   --bodyTextColor: #5B5B98;
-  --primaryColor: #757FEF;
-  --secondaryColor: #818093;
+  --primaryColor: #00ACF6;
+  --secondaryColor: #02E1B9;
   --successColor: #00B69B;
   --infoColor: #2DB6F5;
   --warningColor: #FFBC2B;
   --dangerColor: #EE368C;
-  --darkColor: #260944;
+  --darkColor: #02E1B9;
   --headingColor: #260944;
   --whiteColor: #ffffff;
   --fontSize: 15px;
   --transition: all ease .5s;
   --box-shadow: 0 0 20px 3px rgba(0, 0, 0, 0.05);
 }
-
 html, body {
   background-color: #F5F5F5 !important;
 }
@@ -105,6 +104,10 @@ img {
   background-color: var(--darkColor) !important;
 }
 .card{
+  animation: slideIn 0.5s ease-in-out;
+  margin-left: 30px;
+}
+.cardTab{
   animation: slideIn 0.5s ease-in-out;
 }
 @keyframes slideIn {
@@ -780,11 +783,19 @@ img {
 }
 
 .sidebarLinkActive {
-  background: linear-gradient(90deg, rgba(172, 169, 255, 0.6) 0%, rgba(172, 169, 255, 0.37) 91.25%);
+  background: linear-gradient(
+    90deg,
+    rgba(0, 172, 246, 0.8) 0%, /* Decreased opacity to 0.5 */
+    rgba(2, 225, 185, 0.79) 91.25% /* Decreased opacity to 0.75 */
+  );
 }
 
 .sidebarLinkActive2 {
-  background: linear-gradient(90deg, rgba(172, 169, 255, 0.6) 0%, rgba(172, 169, 255, 0.37) 91.25%);
+  background: linear-gradient(
+    270deg,
+    rgba(0, 172, 246, 0.95) 0%, /* Decreased opacity to 0.5 */
+    rgba(2, 225, 185, 0.75) 91.25% /* Decreased opacity to 0.75 */
+  );
 }
 
 .sidebarLinkActive2::before {
@@ -798,7 +809,7 @@ img {
 
 /* Main wrapper content */
 .main-wrapper-content {
-  padding-left: 330px;
+  padding-left: 300px;
   position: relative;
   transition: all 0.5s ease-out;
 }
