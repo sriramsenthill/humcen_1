@@ -114,7 +114,7 @@ const createJobOrderPatentDrafting = async (req, res) => {
       console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
       res.status(200).json(unassignedDraftingOrder);
 
-    } else {
+    } if(findPartner) {
       const latestDraftingOrder = await JobOrder.findOne()
       .sort({ "_id.job_no": -1 })
       .limit(1)
@@ -227,7 +227,7 @@ const createJobOrderPatentFiling = async (req, res) => {
       res.status(200).json(unassignedFilingOrder);
     }
 
-     else {
+     if(findPartner) {
       const latestFilingOrder = await JobOrder.findOne()
       .sort({ "_id.job_no": -1 })
       .limit(1)
@@ -397,11 +397,6 @@ const saveResponseToFerData = async (req, res) => {
     let findPartner = await Partner.findOne({ is_free: true, ["known_fields.Response to FER/Office Action"]: true, country: req.body.country, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
 
-    if (!findCustomer) {
-      // Handle the case when no customer is found
-      throw new Error("No customer found for the given user ID");
-    }
-
     if (!findPartner) {
       // Handle the case when no partner is found
       const latestUnassignedFEROrder = await Unassigned.findOne()
@@ -430,7 +425,12 @@ const saveResponseToFerData = async (req, res) => {
       res.status(200).json(unassignedFEROrder);
     }
 
-    else {
+    if (!findCustomer) {
+      // Handle the case when no customer is found
+      throw new Error("No customer found for the given user ID");
+    }
+
+    if(findPartner) {
       const latestResponseToFerOrder = await JobOrder.findOne()
       .sort({ "_id.job_no": -1 })
       .limit(1)
@@ -497,11 +497,6 @@ const saveFreedomToOperateData = async (req, res) => {
     let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Freedom To Operate Search"]: true, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
 
-    if (!findCustomer) {
-      // Handle the case when no customer is found
-      throw new Error("No customer found for the given user ID");
-    }
-
     if (!findPartner) {
       // Handle the case when no partner is found
       const latestUnassignedFTOOrder = await Unassigned.findOne()
@@ -529,7 +524,13 @@ const saveFreedomToOperateData = async (req, res) => {
       console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
       res.status(200).json(unassignedFTOOrder);
 
-    } else {
+    } 
+    if (!findCustomer) {
+      // Handle the case when no customer is found
+      throw new Error("No customer found for the given user ID");
+    }
+
+    if(findPartner) {
       const latestFTOOrder = await JobOrder.findOne()
       .sort({ "_id.job_no": -1 })
       .limit(1)
@@ -593,7 +594,45 @@ const savePatentIllustrationData = async (req, res) => {
     const illustrationData = req.body;
     illustrationData.userID = userId;
 
-    const latestJobOrder = await JobOrder.findOne()
+
+
+    let findPartner = await Partner.findOne({ is_free: true, ["known_fields.Patent Illustration"]: true, country: req.body.country, in_progress_jobs: { $lt: 5 } });
+    let findCustomer = await Customer.findOne({ userID: userId });
+
+    if (!findPartner) {
+      // Handle the case when no partner is found
+      const latestUnassignedPatentIllustrationOrder = await Unassigned.findOne()
+      .sort({ "_id.job_no": -1 })
+      .limit(1)
+      .exec();
+
+    const newUnassignedPatentIllustrationNo = latestUnassignedPatentIllustrationOrder
+      ? latestUnassignedPatentIllustrationOrder._id.job_no + 1
+      : 1000;
+
+
+      stepsInitial = 2;
+      const newPatentIllustrationData = illustrationData;
+      newPatentIllustrationData.service = "Patent Illustration";
+      newPatentIllustrationData.customerName = findCustomer.first_name;
+      newPatentIllustrationData.budget = "To be Allocated";
+      newPatentIllustrationData.status = "In Progress";
+      console.log(newPatentIllustrationData);
+      const unassignedPatentIllustrationOrder = new Unassigned(newPatentIllustrationData);
+      unassignedPatentIllustrationOrder._id.job_no =  newUnassignedPatentIllustrationNo ;
+      
+      unassignedPatentIllustrationOrder.save();
+      
+      console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
+      res.status(200).json(unassignedPatentIllustrationOrder);
+
+    }
+
+    if (!findCustomer) {
+      // Handle the case when no customer is found
+      throw new Error("No customer found for the given user ID");
+    } if(findPartner) {
+      const latestJobOrder = await JobOrder.findOne()
       .sort({ "_id.job_no": -1 })
       .limit(1)
       .exec();
@@ -605,19 +644,6 @@ const savePatentIllustrationData = async (req, res) => {
     savedJobOrder._id = { job_no: newJobNo };
     const savedPatentIllustration = await savedJobOrder.save();
 
-    let findPartner = await Partner.findOne({ is_free: true, ["known_fields.Patent Illustration"]: true, country: req.body.country, in_progress_jobs: { $lt: 5 } });
-    let findCustomer = await Customer.findOne({ userID: userId });
-
-    if (!findPartner) {
-      // Handle the case when no partner is found
-      stepsInitial = 2;
-      throw new Error("No partner found for the given criteria");
-    }
-
-    if (!findCustomer) {
-      // Handle the case when no customer is found
-      throw new Error("No customer found for the given user ID");
-    }
     stepsInitial = 3;
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findCustomer.jobs.push(savedJobOrder._id.job_no);
@@ -651,6 +677,9 @@ const savePatentIllustrationData = async (req, res) => {
     console.log("Successfully Assigned Patent Illustration to a Partner");
 
     res.status(200).json(savedJobOrder._id);
+
+    }
+    
   } catch (error) {
     console.error("Error creating job order:", error);
     res.status(500).send("Error creating job order");
@@ -665,7 +694,46 @@ const savePatentLandscapeData = async (req, res) => {
     const patentLandscapeData = req.body;
     patentLandscapeData.userID = userId;
 
-    const latestJobOrder = await JobOrder.findOne()
+
+    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Freedom to Patent Landscape"]: true, in_progress_jobs: { $lt: 5 } });
+    let findCustomer = await Customer.findOne({ userID: userId });
+
+    if (!findCustomer) {
+      // Handle the case when no customer is found
+      throw new Error("No customer found for the given user ID");
+    }
+
+    if (!findPartner) {
+      // Handle the case when no partner is found
+      const latestUnassignedPatentLandscapeOrder = await Unassigned.findOne()
+      .sort({ "_id.job_no": -1 })
+      .limit(1)
+      .exec();
+
+    const newUnassignedPatentLandscapeNo = latestUnassignedPatentLandscapeOrder
+      ? latestUnassignedPatentLandscapeOrder._id.job_no + 1
+      : 1000;
+
+
+      stepsInitial = 2;
+      const newPatentLandscapeData = patentLandscapeData;
+      newPatentLandscapeData.service = "Freedom to Patent Landscape";
+      newPatentLandscapeData.customerName = findCustomer.first_name;
+      newPatentLandscapeData.budget = "To be Allocated";
+      newPatentLandscapeData.status = "In Progress";
+      console.log(newPatentLandscapeData);
+      const unassignedPatentLandscapeOrder = new Unassigned(newPatentLandscapeData);
+      unassignedPatentLandscapeOrder._id.job_no =  newUnassignedPatentLandscapeNo ;
+      
+      unassignedPatentLandscapeOrder.save();
+      
+      console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
+      res.status(200).json(unassignedPatentLandscapeOrder);
+
+    }
+
+     if(findPartner) {
+      const latestJobOrder = await JobOrder.findOne()
       .sort({ "_id.job_no": -1 })
       .limit(1)
       .exec();
@@ -677,20 +745,7 @@ const savePatentLandscapeData = async (req, res) => {
     savedJobOrder._id = { job_no: newJobNo };
     const savedPatentLandscape = await savedJobOrder.save();
 
-    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Freedom to Patent Landscape"]: true, in_progress_jobs: { $lt: 5 } });
-    let findCustomer = await Customer.findOne({ userID: userId });
-
-    if (!findPartner) {
-      // Handle the case when no partner is found
-      stepsInitial = 2;
-      throw new Error("No partner found for the given criteria");
-    }
-
-    if (!findCustomer) {
-      // Handle the case when no customer is found
-      throw new Error("No customer found for the given user ID");
-    }
-    stepsInitial = 3;
+      stepsInitial = 3;
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findCustomer.jobs.push(savedJobOrder._id.job_no);
     findPartner.is_free = false;
@@ -723,6 +778,9 @@ const savePatentLandscapeData = async (req, res) => {
     console.log("Successfully Assigned Patent Landscape to a Partner");
 
     res.status(200).json(savedJobOrder._id);
+
+    }
+    
   } catch (error) {
     console.error("Error creating job order:", error);
     res.status(500).send("Error creating job order");
@@ -736,32 +794,58 @@ const savePatentWatchData = async (req, res) => {
     const patentWatchData = req.body;
     patentWatchData.userID = userId;
 
-    const latestJobOrder = await JobOrder.findOne()
-      .sort({ "_id.job_no": -1 })
-      .limit(1)
-      .exec();
-
-    const newJobNo = latestJobOrder ? latestJobOrder._id.job_no + 1 : 1000;
-    patentWatchData._id = { job_no: newJobNo };
-
-    const savedJobOrder = new patentWatch(patentWatchData);
-    savedJobOrder._id = { job_no: newJobNo };
-    const savedPatentWatch = await savedJobOrder.save();
 
     let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Patent Watch"]: true, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
-
-    if (!findPartner) {
-      // Handle the case when no partner is found
-      stepsInitial = 2;
-      throw new Error("No partner found for the given criteria");
-    }
 
     if (!findCustomer) {
       // Handle the case when no customer is found
       throw new Error("No customer found for the given user ID");
     }
-    stepsInitial = 3;
+
+    if (!findPartner) {
+      // Handle the case when no partner is found
+      const latestUnassignedPatentWatchOrder = await Unassigned.findOne()
+      .sort({ "_id.job_no": -1 })
+      .limit(1)
+      .exec();
+
+    const newUnassignedPatentWatchNo = latestUnassignedPatentWatchOrder
+      ? latestUnassignedPatentWatchOrder._id.job_no + 1
+      : 1000;
+
+
+      stepsInitial = 2;
+      const newPatentWatchData = patentWatchData;
+      newPatentWatchData.service = "Patent Watch";
+      newPatentWatchData.customerName = findCustomer.first_name;
+      newPatentWatchData.budget = "To be Allocated";
+      newPatentWatchData.status = "In Progress";
+      console.log(newPatentWatchData);
+      const unassignedPatentWatchOrder = new Unassigned(newPatentWatchData);
+      unassignedPatentWatchOrder._id.job_no =  newUnassignedPatentWatchNo ;
+      
+      unassignedPatentWatchOrder.save();
+      
+      console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
+      res.status(200).json(unassignedPatentWatchOrder);
+    }
+
+    if (findPartner) {
+
+      const latestJobOrder = await JobOrder.findOne()
+      .sort({ "_id.job_no": -1 })
+      .limit(1)
+      .exec();
+
+      const newJobNo = latestJobOrder ? latestJobOrder._id.job_no + 1 : 1000;
+      patentWatchData._id = { job_no: newJobNo };
+  
+      const savedJobOrder = new patentWatch(patentWatchData);
+      savedJobOrder._id = { job_no: newJobNo };
+      const savedPatentWatch = await savedJobOrder.save();
+
+      stepsInitial = 3;
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findCustomer.jobs.push(savedJobOrder._id.job_no);
     findPartner.is_free = false;
@@ -794,6 +878,11 @@ const savePatentWatchData = async (req, res) => {
     console.log("Successfully Assigned Patent Watch to a Partner");
 
     res.status(200).json(savedJobOrder._id);
+
+    }
+
+    
+    
   } catch (error) {
     console.error("Error creating job order:", error);
     res.status(500).send("Error creating job order");
@@ -807,7 +896,45 @@ const savePatentLicenseData = async (req, res) => {
     const patentLicenseData = req.body;
     patentLicenseData.userID = userId;
 
-    const latestJobOrder = await JobOrder.findOne()
+
+    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Patent Licensing and Commercialization Services"]: true, in_progress_jobs: { $lt: 5 } });
+    let findCustomer = await Customer.findOne({ userID: userId });
+
+    if (!findCustomer) {
+      // Handle the case when no customer is found
+      throw new Error("No customer found for the given user ID");
+    }
+
+    if (!findPartner) {
+      // Handle the case when no partner is found
+      const latestUnassignedPatentLicenseOrder = await Unassigned.findOne()
+      .sort({ "_id.job_no": -1 })
+      .limit(1)
+      .exec();
+
+    const newUnassignedPatentLicenseNo = latestUnassignedPatentLicenseOrder
+      ? latestUnassignedPatentLicenseOrder._id.job_no + 1
+      : 1000;
+
+
+      stepsInitial = 2;
+      const newPatentLicenseData = patentLicenseData;
+      newPatentLicenseData.service = "Patent Licensing and Commercialization Services";
+      newPatentLicenseData.customerName = findCustomer.first_name;
+      newPatentLicenseData.budget = "To be Allocated";
+      newPatentLicenseData.status = "In Progress";
+      console.log(newPatentLicenseData);
+      const unassignedPatentLicenseOrder = new Unassigned(newPatentLicenseData);
+      unassignedPatentLicenseOrder._id.job_no =  newUnassignedPatentLicenseNo ;
+      
+      unassignedPatentLicenseOrder.save();
+      
+      console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
+      res.status(200).json(unassignedPatentLicenseOrder);
+    }
+
+    if(findPartner) {
+      const latestJobOrder = await JobOrder.findOne()
       .sort({ "_id.job_no": -1 })
       .limit(1)
       .exec();
@@ -819,19 +946,6 @@ const savePatentLicenseData = async (req, res) => {
     savedJobOrder._id = { job_no: newJobNo };
     const savedPatentLicense = await savedJobOrder.save();
 
-    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Patent Licensing and Commercialization Services"]: true, in_progress_jobs: { $lt: 5 } });
-    let findCustomer = await Customer.findOne({ userID: userId });
-
-    if (!findPartner) {
-      // Handle the case when no partner is found
-      stepsInitial = 2;
-      throw new Error("No partner found for the given criteria");
-    }
-
-    if (!findCustomer) {
-      // Handle the case when no customer is found
-      throw new Error("No customer found for the given user ID");
-    }
     stepsInitial = 3;
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findCustomer.jobs.push(savedJobOrder._id.job_no);
@@ -865,6 +979,10 @@ const savePatentLicenseData = async (req, res) => {
     console.log("Successfully Assigned Patent Licensing and Commercialization Services Task to a Partner");
 
     res.status(200).json(savedJobOrder._id);
+    }
+
+
+    
   } catch (error) {
     console.error("Error creating job order:", error);
     res.status(500).send("Error creating job order");
@@ -879,7 +997,44 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
     const patentPortfolioData = req.body;
     patentPortfolioData.userID = userId;
 
-    const latestJobOrder = await JobOrder.findOne()
+    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Freedom to Patent Portfolio Analysis"]: true, in_progress_jobs: { $lt: 5 } });
+    let findCustomer = await Customer.findOne({ userID: userId });
+
+    if (!findCustomer) {
+      // Handle the case when no customer is found
+      throw new Error("No customer found for the given user ID");
+    }
+    
+    if (!findPartner) {
+      // Handle the case when no partner is found
+      const latestUnassignedPatentPortfolioOrder = await Unassigned.findOne()
+      .sort({ "_id.job_no": -1 })
+      .limit(1)
+      .exec();
+
+    const newUnassignedPatentPortfolioNo = latestUnassignedPatentPortfolioOrder
+      ? latestUnassignedPatentPortfolioOrder._id.job_no + 1
+      : 1000;
+
+
+      stepsInitial = 2;
+      const newPatentPortfolioData = patentPortfolioData;
+      newPatentPortfolioData.service = "Patent Portfolio Analysis";
+      newPatentPortfolioData.customerName = findCustomer.first_name;
+      newPatentPortfolioData.budget = "To be Allocated";
+      newPatentPortfolioData.status = "In Progress";
+      console.log(newPatentPortfolioData);
+      const unassignedPatentPortfolioOrder = new Unassigned(newPatentPortfolioData);
+      unassignedPatentPortfolioOrder._id.job_no =  newUnassignedPatentPortfolioNo ;
+      
+      unassignedPatentPortfolioOrder.save();
+      
+      console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
+      res.status(200).json(unassignedPatentPortfolioOrder);
+    }
+
+    if(findPartner) {
+      const latestJobOrder = await JobOrder.findOne()
       .sort({ "_id.job_no": -1 })
       .limit(1)
       .exec();
@@ -891,20 +1046,7 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
     savedJobOrder._id = { job_no: newJobNo };
     const savedPatentPortfolio = await savedJobOrder.save();
 
-    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Freedom to Patent Portfolio Analysis"]: true, in_progress_jobs: { $lt: 5 } });
-    let findCustomer = await Customer.findOne({ userID: userId });
-
-    if (!findPartner) {
-      // Handle the case when no partner is found
-      stepsInitial = 2;
-      throw new Error("No partner found for the given criteria");
-    }
-
-    if (!findCustomer) {
-      // Handle the case when no customer is found
-      throw new Error("No customer found for the given user ID");
-    }
-    stepsInitial = 3;
+      stepsInitial = 3;
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findCustomer.jobs.push(savedJobOrder._id.job_no);
     findPartner.is_free = false;
@@ -937,6 +1079,11 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
     console.log("Successfully Assigned Patent Portfolio Analysis Task to a Partner");
 
     res.status(200).json(savedJobOrder._id);
+
+    }
+
+    
+    
   } catch (error) {
     console.error("Error creating job order:", error);
     res.status(500).send("Error creating job order");
@@ -951,7 +1098,45 @@ const savePatentTranslationData = async (req, res) => {
     const patentTranslationData = req.body;
     patentTranslationData.userID = userId;
 
-    const latestJobOrder = await JobOrder.findOne()
+
+    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Patent Translation Service"]: true, in_progress_jobs: { $lt: 5 } });
+    let findCustomer = await Customer.findOne({ userID: userId });
+
+    if (!findCustomer) {
+      // Handle the case when no customer is found
+      throw new Error("No customer found for the given user ID");
+    }
+    
+    if (!findPartner) {
+      // Handle the case when no partner is found
+      const latestUnassignedPatentTranslationOrder = await Unassigned.findOne()
+      .sort({ "_id.job_no": -1 })
+      .limit(1)
+      .exec();
+
+    const newUnassignedPatentTranslationNo = latestUnassignedPatentTranslationOrder
+      ? latestUnassignedPatentTranslationOrder._id.job_no + 1
+      : 1000;
+
+
+      stepsInitial = 2;
+      const newPatentTranslationData = patentTranslationData;
+      newPatentTranslationData.service = "Patent Translation Services";
+      newPatentTranslationData.customerName = findCustomer.first_name;
+      newPatentTranslationData.budget = "To be Allocated";
+      newPatentTranslationData.status = "In Progress";
+      console.log(newPatentTranslationData);
+      const unassignedPatentTranslationOrder = new Unassigned(newPatentTranslationData);
+      unassignedPatentTranslationOrder._id.job_no =  newUnassignedPatentTranslationNo ;
+      
+      unassignedPatentTranslationOrder.save();
+      
+      console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
+      res.status(200).json(unassignedPatentTranslationOrder);
+    }
+
+    if(findPartner) {
+      const latestJobOrder = await JobOrder.findOne()
       .sort({ "_id.job_no": -1 })
       .limit(1)
       .exec();
@@ -963,19 +1148,6 @@ const savePatentTranslationData = async (req, res) => {
     savedJobOrder._id = { job_no: newJobNo };
     const savedPatentTranslation = await savedJobOrder.save();
 
-    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Patent Translation Service"]: true, in_progress_jobs: { $lt: 5 } });
-    let findCustomer = await Customer.findOne({ userID: userId });
-
-    if (!findPartner) {
-      // Handle the case when no partner is found
-      stepsInitial = 2;
-      throw new Error("No partner found for the given criteria");
-    }
-
-    if (!findCustomer) {
-      // Handle the case when no customer is found
-      throw new Error("No customer found for the given user ID");
-    }
     stepsInitial = 3;
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findCustomer.jobs.push(savedJobOrder._id.job_no);
@@ -1009,6 +1181,10 @@ const savePatentTranslationData = async (req, res) => {
     console.log("Successfully Assigned Patent Translation Services Task to a Partner");
 
     res.status(200).json(savedJobOrder._id);
+
+    }
+
+    
   } catch (error) {
     console.error("Error creating job order:", error);
     res.status(500).send("Error creating job order");
