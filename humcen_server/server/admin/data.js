@@ -95,8 +95,9 @@ const updateJobFilesDetails = async (req, res) => {
         if(workedPartner) {
           console.log(workedPartner.in_progress_jobs);
           const job = await JobOrder.findOne({"_id.job_no": jobID});
-          job.steps_done = 3;
-          job.steps_done_user = 5;
+          job.steps_done = req.body.steps_done;
+          job.steps_done_user = req.body.steps_done_user;
+          job.steps_done_activity = req.body.steps_done_activity;
           job.save().then((response) => {
             console.log("Successfully updated the Timeline and Job Status");
           }).catch((err) => {
@@ -139,6 +140,18 @@ const getJobFilesDetails = async(req, res) => {
   }
 }
 
+const getJobOrderById = async (req, res) => {
+  const jobId = req.params.jobID
+  try {
+    const jobOrders = await JobOrder.find({"_id.job_no": jobId});
+    console.log("jo: " + jobOrders);
+    res.json(jobOrders);
+  } catch (error) {
+    console.error("Error fetching job orders:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 
 module.exports = {
   getUsers,
@@ -148,4 +161,5 @@ module.exports = {
   getJobFiles,
   updateJobFilesDetails,
   getJobFilesDetails,
+  getJobOrderById,
 };

@@ -68,6 +68,7 @@ const createPatentConsultation = async (req, res) => {
 const createJobOrderPatentDrafting = async (req, res) => {
   try {
     const userId = req.userId;
+    let stepsInitial = 0;
     const draftingData = req.body;
     console.log(draftingData);
     draftingData.userID = userId;
@@ -92,6 +93,7 @@ const createJobOrderPatentDrafting = async (req, res) => {
 
     if (!findPartner) {
       // Handle the case when no partner is found
+      stepsInitial = 2;
       throw new Error("No partner found for the given criteria");
     }
 
@@ -99,7 +101,7 @@ const createJobOrderPatentDrafting = async (req, res) => {
       // Handle the case when no customer is found
       throw new Error("No customer found for the given user ID");
     }
-
+    stepsInitial = 3;
     // Save the draftingData in the Drafting collection
     const draftingOrder = new Drafting(draftingData);
     draftingOrder._id = { job_no: newDraftingNo };
@@ -131,8 +133,9 @@ const createJobOrderPatentDrafting = async (req, res) => {
       country: req.body.country,
       start_date: startDate,
       end_date: endDate,
-      steps_done: 2,
-      steps_done_user: 2,
+      steps_done: stepsInitial - 1, 
+      steps_done_user: stepsInitial,
+      steps_done_activity: stepsInitial + 1,
       status: "In Progress",
       budget: "To be Allocated",
       domain: req.body.field,
@@ -154,6 +157,7 @@ const createJobOrderPatentFiling = async (req, res) => {
   try {
     const userId = req.userId;
     const filingData = req.body;
+    let stepsInitial = 0;
     console.log(filingData);
     filingData.userID = userId;
 
@@ -177,6 +181,7 @@ const createJobOrderPatentFiling = async (req, res) => {
 
     if (!findPartner) {
       // Handle the case when no partner is found
+      stepsInitial = 2;
       throw new Error("No partner found for the given criteria");
     }
 
@@ -184,7 +189,7 @@ const createJobOrderPatentFiling = async (req, res) => {
       // Handle the case when no customer is found
       throw new Error("No customer found for the given user ID");
     }
-
+    stepsInitial = 3;
     findPartner.jobs.push(filingOrder._id.job_no);
     findCustomer.jobs.push(filingOrder._id.job_no);
     findPartner.is_free = false;
@@ -205,8 +210,9 @@ const createJobOrderPatentFiling = async (req, res) => {
       country: req.body.country,
       start_date: startDate,
       end_date: endDate,
-      steps_done: 2,
-      steps_done_user: 2,
+      steps_done: stepsInitial - 1, 
+      steps_done_user: stepsInitial,
+      steps_done_activity: stepsInitial + 1,
       status: "In Progress",
       budget: "To be Allocated",
       domain: req.body.field,
@@ -227,6 +233,7 @@ const createJobOrderPatentFiling = async (req, res) => {
 const savePatentSearchData = async (req, res) => {
   try {
     const userId = req.userId;
+    let stepsInitial = 0;
     const searchData = req.body;
     searchData.userID = userId;
 
@@ -248,6 +255,7 @@ const savePatentSearchData = async (req, res) => {
 
     if (!findPartner) {
       // Handle the case when no partner is found
+      stepsInitial = 2;
       throw new Error("No partner found for the given criteria");
     }
 
@@ -255,7 +263,7 @@ const savePatentSearchData = async (req, res) => {
       // Handle the case when no customer is found
       throw new Error("No customer found for the given user ID");
     }
-
+    stepsInitial = 3;
     findPartner.jobs.push(searchOrder._id.job_no);
     findCustomer.jobs.push(searchOrder._id.job_no);
     findPartner.is_free = false;
@@ -274,6 +282,9 @@ const savePatentSearchData = async (req, res) => {
       customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
       start_date: new Date(),
       end_date: endDate,
+      steps_done: stepsInitial - 1, 
+      steps_done_user: stepsInitial,
+      steps_done_activity: stepsInitial + 1,
       budget: "To be Allocated",
       status: "In Progress",
       country: req.body.country,
@@ -294,6 +305,7 @@ const savePatentSearchData = async (req, res) => {
 const saveResponseToFerData = async (req, res) => {
   try {
     const userId = req.userId;
+    let stepsInitial = 0;
     const responseToFerData = req.body;
     console.log(responseToFerData);
     responseToFerData.userID = userId;
@@ -316,6 +328,7 @@ const saveResponseToFerData = async (req, res) => {
 
     if (!findPartner) {
       // Handle the case when no partner is found
+      stepsInitial = 2;
       throw new Error("No partner found for the given criteria");
     }
 
@@ -323,7 +336,7 @@ const saveResponseToFerData = async (req, res) => {
       // Handle the case when no customer is found
       throw new Error("No customer found for the given user ID");
     }
-
+    stepsInitial = 3;
     findPartner.jobs.push(responseToFerOrder._id.job_no);
     findCustomer.jobs.push(responseToFerOrder._id.job_no);
     findPartner.is_free = false;
@@ -343,6 +356,9 @@ const saveResponseToFerData = async (req, res) => {
       country: req.body.country,
       start_date: new Date(),
       end_date: endDate,
+      steps_done: stepsInitial - 1, 
+      steps_done_user: stepsInitial,
+      steps_done_activity: stepsInitial + 1,
       status: "In Progress",
       budget: "To be Allocated",
       domain: req.body.field,
@@ -362,6 +378,7 @@ const saveResponseToFerData = async (req, res) => {
 const saveFreedomToOperateData = async (req, res) => {
   try {
     const userId = req.userId;
+    let stepsInitial = 0;
     const freedomToOperateData = req.body;
     freedomToOperateData.userID = userId;
 
@@ -380,6 +397,7 @@ const saveFreedomToOperateData = async (req, res) => {
 
     if (!findPartner) {
       // Handle the case when no partner is found
+      stepsInitial = 2;
       throw new Error("No partner found for the given criteria");
     }
 
@@ -387,7 +405,7 @@ const saveFreedomToOperateData = async (req, res) => {
       // Handle the case when no customer is found
       throw new Error("No customer found for the given user ID");
     }
-
+    stepsInitial = 3;
     findPartner.jobs.push(freedomToOperateData._id.job_no);
     findCustomer.jobs.push(freedomToOperateData._id.job_no);
     findPartner.is_free = false;
@@ -407,6 +425,9 @@ const saveFreedomToOperateData = async (req, res) => {
       country: req.body.country,
       start_date: new Date(),
       end_date: endDate,
+      steps_done: stepsInitial - 1, 
+      steps_done_user: stepsInitial,
+      steps_done_activity: stepsInitial + 1,
       status: "In Progress",
       budget: "To be Allocated",
       domain: req.body.field,
@@ -430,6 +451,7 @@ const saveFreedomToOperateData = async (req, res) => {
 const savePatentIllustrationData = async (req, res) => {
   try {
     const userId = req.userId;
+    let stepsInitial = 0;
     const illustrationData = req.body;
     illustrationData.userID = userId;
 
@@ -450,6 +472,7 @@ const savePatentIllustrationData = async (req, res) => {
 
     if (!findPartner) {
       // Handle the case when no partner is found
+      stepsInitial = 2;
       throw new Error("No partner found for the given criteria");
     }
 
@@ -457,7 +480,7 @@ const savePatentIllustrationData = async (req, res) => {
       // Handle the case when no customer is found
       throw new Error("No customer found for the given user ID");
     }
-
+    stepsInitial = 3;
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findCustomer.jobs.push(savedJobOrder._id.job_no);
     findPartner.is_free = false;
@@ -477,6 +500,9 @@ const savePatentIllustrationData = async (req, res) => {
       domain: req.body.field,
       start_date: new Date(),
       end_date: endDate,
+      steps_done: stepsInitial - 1, 
+      steps_done_user: stepsInitial,
+      steps_done_activity: stepsInitial + 1,
       country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
@@ -497,6 +523,7 @@ const savePatentIllustrationData = async (req, res) => {
 const savePatentLandscapeData = async (req, res) => {
   try {
     const userId = req.userId;
+    let stepsInitial = 0;
     const patentLandscapeData = req.body;
     patentLandscapeData.userID = userId;
 
@@ -517,6 +544,7 @@ const savePatentLandscapeData = async (req, res) => {
 
     if (!findPartner) {
       // Handle the case when no partner is found
+      stepsInitial = 2;
       throw new Error("No partner found for the given criteria");
     }
 
@@ -524,7 +552,7 @@ const savePatentLandscapeData = async (req, res) => {
       // Handle the case when no customer is found
       throw new Error("No customer found for the given user ID");
     }
-
+    stepsInitial = 3;
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findCustomer.jobs.push(savedJobOrder._id.job_no);
     findPartner.is_free = false;
@@ -544,6 +572,9 @@ const savePatentLandscapeData = async (req, res) => {
       domain: req.body.field,
       start_date: new Date(),
       end_date: endDate,
+      steps_done: stepsInitial - 1, 
+      steps_done_user: stepsInitial,
+      steps_done_activity: stepsInitial + 1,
       country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
@@ -563,6 +594,7 @@ const savePatentLandscapeData = async (req, res) => {
 const savePatentWatchData = async (req, res) => {
   try {
     const userId = req.userId;
+    let stepsInitial = 0;
     const patentWatchData = req.body;
     patentWatchData.userID = userId;
 
@@ -583,6 +615,7 @@ const savePatentWatchData = async (req, res) => {
 
     if (!findPartner) {
       // Handle the case when no partner is found
+      stepsInitial = 2;
       throw new Error("No partner found for the given criteria");
     }
 
@@ -590,7 +623,7 @@ const savePatentWatchData = async (req, res) => {
       // Handle the case when no customer is found
       throw new Error("No customer found for the given user ID");
     }
-
+    stepsInitial = 3;
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findCustomer.jobs.push(savedJobOrder._id.job_no);
     findPartner.is_free = false;
@@ -610,6 +643,9 @@ const savePatentWatchData = async (req, res) => {
       domain: req.body.field,
       start_date: new Date(),
       end_date: endDate,
+      steps_done: stepsInitial - 1, 
+      steps_done_user: stepsInitial,
+      steps_done_activity: stepsInitial + 1,
       country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
@@ -629,6 +665,7 @@ const savePatentWatchData = async (req, res) => {
 const savePatentLicenseData = async (req, res) => {
   try {
     const userId = req.userId;
+    let stepsInitial = 0;
     const patentLicenseData = req.body;
     patentLicenseData.userID = userId;
 
@@ -649,6 +686,7 @@ const savePatentLicenseData = async (req, res) => {
 
     if (!findPartner) {
       // Handle the case when no partner is found
+      stepsInitial = 2;
       throw new Error("No partner found for the given criteria");
     }
 
@@ -656,7 +694,7 @@ const savePatentLicenseData = async (req, res) => {
       // Handle the case when no customer is found
       throw new Error("No customer found for the given user ID");
     }
-
+    stepsInitial = 3;
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findCustomer.jobs.push(savedJobOrder._id.job_no);
     findPartner.is_free = false;
@@ -676,6 +714,9 @@ const savePatentLicenseData = async (req, res) => {
       domain: req.body.field,
       start_date: new Date(),
       end_date: endDate,
+      steps_done: stepsInitial - 1, 
+      steps_done_user: stepsInitial,
+      steps_done_activity: stepsInitial + 1,
       country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
@@ -696,6 +737,7 @@ const savePatentLicenseData = async (req, res) => {
 const savePatentPortfolioAnalysisData = async (req, res) => {
   try {
     const userId = req.userId;
+    let stepsInitial = 0;
     const patentPortfolioData = req.body;
     patentPortfolioData.userID = userId;
 
@@ -716,6 +758,7 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
 
     if (!findPartner) {
       // Handle the case when no partner is found
+      stepsInitial = 2;
       throw new Error("No partner found for the given criteria");
     }
 
@@ -723,7 +766,7 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
       // Handle the case when no customer is found
       throw new Error("No customer found for the given user ID");
     }
-
+    stepsInitial = 3;
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findCustomer.jobs.push(savedJobOrder._id.job_no);
     findPartner.is_free = false;
@@ -743,6 +786,9 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
       domain: req.body.field,
       start_date: new Date(),
       end_date: endDate,
+      steps_done: stepsInitial - 1, 
+      steps_done_user: stepsInitial,
+      steps_done_activity: stepsInitial + 1,
       country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
@@ -763,6 +809,7 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
 const savePatentTranslationData = async (req, res) => {
   try {
     const userId = req.userId;
+    let stepsInitial = 0;
     const patentTranslationData = req.body;
     patentTranslationData.userID = userId;
 
@@ -783,6 +830,7 @@ const savePatentTranslationData = async (req, res) => {
 
     if (!findPartner) {
       // Handle the case when no partner is found
+      stepsInitial = 2;
       throw new Error("No partner found for the given criteria");
     }
 
@@ -790,7 +838,7 @@ const savePatentTranslationData = async (req, res) => {
       // Handle the case when no customer is found
       throw new Error("No customer found for the given user ID");
     }
-
+    stepsInitial = 3;
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findCustomer.jobs.push(savedJobOrder._id.job_no);
     findPartner.is_free = false;
@@ -810,6 +858,9 @@ const savePatentTranslationData = async (req, res) => {
       domain: req.body.field,
       start_date: new Date(),
       end_date: endDate,
+      steps_done: stepsInitial - 1, 
+      steps_done_user: stepsInitial,
+      steps_done_activity: stepsInitial + 1,
       country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
@@ -886,7 +937,8 @@ const approveTheDoneWork = async(req, res) => {
     }
     job.status = req.body.status;
     job.steps_done = req.body.steps;
-    job.steps_done_user = 6;
+    job.steps_done_user = req.body.user_steps;
+    job.steps_done_activity = req.body.activity;
     job.save()
     .then((response) => {
       console.log("User's Approval Completed Successfully");
@@ -937,6 +989,8 @@ const rejectTheDoneWork = async(req, res) => {
     }
     job.status = req.body.status;
     job.steps_done = req.body.steps;
+    job.steps_done_user = req.body.user_steps;
+    job.steps_done_activity = req.body.activity;
     job.save()
     .then((response) => {
       console.log("User's Rejection Completed Successfully");

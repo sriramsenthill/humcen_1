@@ -70,6 +70,9 @@ const DynamicPage = () => {
     const fetchJobFileData = async (jobID) => {
       try {
         const response = await api.get(`/user/job_files_details/${jobID}`);
+        if(!response.data){
+          setDownloadStatus(false);
+        }
         console.log("Response from GET:", response.data);
         setDownloadStatus(response.data.access_provided);
         setApproval(response.data.approval_given);
@@ -256,7 +259,7 @@ const DynamicPage = () => {
                         },
                       }}
                       onClick={()=>onClickDownload(job._id.job_no)}
-                      disabled={!downloadStatus}
+                      disabled={!approval}
                     >
                       Download now
                     </Button>
@@ -264,12 +267,6 @@ const DynamicPage = () => {
               </tr>
               <tr>
                 <td style={{ padding: "10px" }}></td>
-                <td style={{ padding: "10px" }}>
-                  <Link href="/">Mail</Link>
-                </td>
-                <td style={{ padding: "10px" }}>
-                  <Link href="/">Mail</Link>
-                </td>
                 <td style={{ padding: "10px" }}></td>
                 <td style={{ padding: "10px" }}></td>
                 <td style={{ padding: "10px" }}></td>

@@ -4,7 +4,24 @@ import { Box, Typography } from "@mui/material";
 import Card from "@mui/material/Card";
 import styles from "@/components/eCommerce/OrderDetails/TrackOrder/TrackOrder.module.css";
 import { useTransition, animated } from "react-spring";
+import axios from "axios";
+import { useRouter } from "next/router";
 
+
+// Create an Axios instance
+const api = axios.create({
+  baseURL: "http://localhost:3000/api",
+});
+
+
+// Add an interceptor to include the token in the request headers
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers['Authorization'] = token;
+  }
+  return config;
+});
 
 
 const ActivityTimelineData = [
@@ -39,31 +56,30 @@ const ActivityTimelineData = [
     completed: false,
   },
   {
-    id: "4",
+    id: "6",
     title: "Quality Check Completed",
     date: "April 16, 2023",
     completed: false,
   },
   {
-    id: "5",
+    id: "7",
     title: "Draft Sent for Client Approval",
     date: "April 18, 2023",
     completed: false,
   },
   {
-    id: "6",
+    id: "8",
     title: "Client Feedback",
     date: "April 19, 2023",
     completed: false,
   },
   {
-    id: "7",
+    id: "9",
     title: "Revisions and Finalization",
-    date: "April 20, 2023",
     completed: false,
   },
   {
-    id: "8",
+    id: "10",
     title: "Final Draft Delivery",
     date: "April 21, 2023",
     completed: false,
@@ -74,6 +90,37 @@ const ActivityTimelineData = [
 
 const TrackOrder = () => {
   const [timelineData, setTimelineData] = useState(ActivityTimelineData);
+  const router = useRouter();
+  const { id } = router.query;
+  const [job, setJob] = useState(null);
+  const [stepsNo, setSteps] = useState(null);
+
+  useEffect(() => {
+    const fetchStepData = async () => {
+      try {
+        const response = await api.get(`job_order/${id}`);
+        const job = response.data;
+        const stepCount = job.steps_done_activity; // For choosing the last Step done
+        setSteps(stepCount);
+        const updatedTimelineData = ActivityTimelineData.map((timeline) => {
+          if (parseInt(timeline.id) <= stepCount) {
+            return { ...timeline, completed: true };
+          } else {
+            return { ...timeline, completed: false };
+          }
+        });
+        setTimelineData(updatedTimelineData);
+      } catch (error) {
+        console.error("Error fetching job order data:", error);
+        setJob(null);
+      }
+    };
+
+    fetchStepData();
+    
+
+  }, [id, stepsNo]);
+
 
   const timelineTransitions = useTransition(timelineData, {
     key: (item) => item.id,

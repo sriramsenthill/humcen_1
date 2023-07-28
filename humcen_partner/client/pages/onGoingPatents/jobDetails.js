@@ -20,6 +20,7 @@ const api = axios.create({
 const JobDetails = ({services, jobNo}) => {
     const [jobData,setJobData]=useState(null);
     const [files, setFiles] = useState(null);
+    const [jobNum, setJobNum] = useState("");
     const [job, setJob] = useState("");
     const [tokens, setTokens] = useState("");
     const [partID, setPartID] = useState(null);
@@ -78,7 +79,7 @@ const JobDetails = ({services, jobNo}) => {
         );
     
         console.log("Job Files Updated:", response.data);
-    
+
   
         }
       
@@ -87,20 +88,48 @@ const JobDetails = ({services, jobNo}) => {
         // For example, you can show a success message and redirect the user to another page
         
         // After successful submission, you can redirect the user to another page
-        router.push("/"); // Replace "/success-page" with your desired route
-    
       } catch (error) {
         console.error("Error in Updating Job Files", error);
         // Handle the error, show an error message, or implement any other error handling logic
       }
 
+
+
     }
   };
   
 
-  const handleOk = () => {
+  const handleOk = async() => {
     setIsSubmitted(false);
-    router.push("/");
+    try {
+      const token = localStorage.getItem("token");
+    
+      if (!token) {
+        // Handle the case when the user is not authenticated
+        console.error("User not authenticated");
+        return;
+      }
+      // Update the Timeline
+      const timelineResponse = await api.put(
+        "partner/uploaded",
+        {
+          job_no: job,
+          activity: 5,
+        },
+        {
+          headers: {
+            "Authorization": token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      console.log("Timeline Updated:", timelineResponse.data);
+
+    } catch(error) {
+      console.error("Error updating timeline:", error);
+    }
+
   };
 
   const handleOkClick = () => {
@@ -110,6 +139,7 @@ const JobDetails = ({services, jobNo}) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
+        setJobNum(jobNo);
         api
           .get(`${services}/${jobNo}`, {
             headers: {
@@ -301,7 +331,7 @@ const JobDetails = ({services, jobNo}) => {
           <p>Your Work has been submitted successfully.</p>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleOk}>OK</Button>
+          <Button onClick={() => {handleOk(); router.push("/");}}>OK</Button>
         </DialogActions>
       </Dialog>
       <Dialog open={isEmpty}>

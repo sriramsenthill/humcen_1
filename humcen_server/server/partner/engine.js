@@ -593,6 +593,52 @@ const getJobFilesDetailsForPartners = async(req, res) => {
   }
 }
 
+const updateTimelineForUpload = async (req, res) => {
+  try {
+    const userID = req.userID;
+
+
+    const timeLineStatus = req.body.activity;
+    console.log(timeLineStatus);
+    const jobNumber = req.body.job_no; // Get the job number from the URL parameter
+
+    // Fetch the partner document based on the user ID
+    const partner = await Partner.findOne({ userID: userID });
+    console.log("partner:", partner); // Check the fetched partner document
+
+    if (!partner) {
+      return res.status(404).json({ error: "Partner not found" });
+    }
+
+    // Check if the partner has access to the provided job number
+    const hasAccess = partner.jobs.includes(jobNumber);
+    if (!hasAccess) {
+      return res.status(401).json({ error: "Unauthorized access" });
+    }
+
+    // Fetch the job order details for the provided job number
+    const specificJob = await JobOrder.findOne({ "_id.job_no": jobNumber });
+
+
+    if (!specificJob) {
+      return res
+        .status(404)
+        .json({ error: "No job found with the provided job number" });
+    } else {
+      specificJob.steps_done_activity = timeLineStatus;
+      specificJob.save().then((response)=> {
+        console.log("Timeline Updated Successfully for Partner Work Upload" + response);
+      }).catch((error) => {
+        console.error("Error in Updating Partner Activity Timeline Status: " + error);
+      });
+      console.log(specificJob);
+    }
+
+  } catch (error) {
+    console.error("Error fetching job order:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 
 module.exports = {
@@ -605,4 +651,5 @@ module.exports = {
   findPartnersWithJobNo,
   addJobFiles,
   getJobFilesDetailsForPartners,
+  updateTimelineForUpload,
 };

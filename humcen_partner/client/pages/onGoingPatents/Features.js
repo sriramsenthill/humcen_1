@@ -23,7 +23,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-const steps = [
+let steps = [
   "Invention Disclosure Submitted",
   "Job assigned to IP partner",
   "Complete Quality Check",
@@ -35,6 +35,8 @@ export default function Features() {
   const { id } = router.query;
   const [job, setJob] = useState(null);
   const [stepsNo, setSteps] = useState(null);
+  const [finalDate, setDate] = useState(null);
+  const [text, setStepsText] = useState(steps);
 
   useEffect(() => {
     const fetchStepData = async () => {
@@ -42,8 +44,12 @@ export default function Features() {
         const response = await api.get(`partner/jobs/${id}`);
         const job = response.data;
         const stepCount = job.steps_done;
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
         setSteps(stepCount); // For choosing the last Step done
-        console.log(stepsNo);
+        setDate(new Date(job.end_date).toLocaleDateString(undefined, options));
+        const updatedSteps = [...steps]; // Create a copy of the current steps array
+        updatedSteps[3] = "Patent Filled Success (" + finalDate + ")";
+        setStepsText(updatedSteps);
       } catch (error) {
         console.error("Error fetching job order data:", error);
         setJob(null);
@@ -80,7 +86,7 @@ export default function Features() {
 
         <Box sx={{ width: "100%" }}>
           <Stepper activeStep={stepsNo} alternativeLabel className="direction-ltr">
-            {steps.map((label) => (
+            {text.map((label) => (
               <Step key={label}>
                 <StepLabel>{label}</StepLabel>
               </Step>

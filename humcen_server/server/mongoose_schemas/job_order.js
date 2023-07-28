@@ -33,9 +33,15 @@ const jobOrderSchema = new mongoose.Schema({
   domain: { type: String },
   steps_done: {
     type:Number,
+    default: 0,
   },
   steps_done_user: {
     type:Number,
+    default: 0,
+  },
+  steps_done_activity: {
+    type: Number,
+    default: 0,
   },
   time_of_delivery: { type: String },
   rejected_by: {

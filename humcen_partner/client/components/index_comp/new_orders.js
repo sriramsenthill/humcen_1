@@ -154,7 +154,7 @@ const NewOrder = () => {
                           background: "linear-gradient(90deg,#00308F  0%, #7FFFD4 100%)",
                         },
                       }}
-                      onClick={() => handleRejectJob(order._id.job_no, order.service, order.country)}
+                      onClick={() => {window.location.reload(true); handleRejectJob(order._id.job_no, order.service, order.country)}}
                     >
                       Reject
                     </Button>

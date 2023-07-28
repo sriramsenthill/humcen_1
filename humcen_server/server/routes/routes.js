@@ -122,6 +122,8 @@ router.put("/api/admin/job_files_details/:jobID", data.updateJobFilesDetails); /
 
 router.get("/api/admin/job_files_details/:jobID", data.getJobFilesDetails); // For getting Partner's Work from Admin Side
 
+router.get("/api/admin/job_order/:jobID", data.getJobOrderById); // For getting Job Details from Admin Side
+
 //ADMIN_AUTH
 router.post("/api/auth/admin/signin", admin_auth.adminSignIn);
 
@@ -157,6 +159,8 @@ router.post("/api/auth/partner/signin", partner_auth.signInPartner);
 router.get("/api/partner/jobs/:id", verifyPartner, engine.getPartnerJobsById);
 router.get("/api/partner/job_order", verifyPartner, engine.getPartnerJobOrders);
 router.put("/api/accept/:jobId", verifyPartner, engine.acceptJobOrder);
+router.put("/api/partner/uploaded", verifyPartner, engine.updateTimelineForUpload);
+
 
 router.delete("/api/reject/:service/:country/:jobId", verifyPartner, engine.rejectJobOrder);
 router.get("/api/partner/job_order/:services/:id", verifyPartner, engine.getFilesForPartners);

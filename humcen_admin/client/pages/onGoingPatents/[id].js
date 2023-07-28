@@ -11,6 +11,28 @@ import CrossAssign from "./CrossAssign";
 import Features from "./Features";
 import withAuth from "@/components/withAuth";
 import JSZip from "jszip";
+import TextField from "@mui/material/TextField";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import { styled } from "@mui/system";
+
+const ColorButton = styled(Button)(({ theme }) => ({
+  color: "white",
+  width: "120%",
+  height: "60px",
+  borderRadius: "100px",
+  marginBottom: "30px",
+  background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
+  "&:hover": {
+    background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
+  },
+  textTransform: "none",
+  fontSize: "14px",
+  fontWeight: "400",
+}));
 
 const  DynamicPage = () => {
   const router = useRouter();
@@ -20,8 +42,10 @@ const  DynamicPage = () => {
   const [Service, setService] = useState("");
   const [jobID, setJobID] = useState("");
   const [access, setButtonAccess] = useState(false);
-  const [downloadStatus, setDownloadStatus] = useState(true);
+  const [downloadStatus, setDownloadStatus] = useState(false);
   const [isComponentLoaded, setComponentLoaded] = useState(false);
+  const [reasons, setReasons] = useState("");
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const fetchJobData = async () => {
@@ -61,8 +85,15 @@ const  DynamicPage = () => {
         const token = localStorage.getItem("token");
         if (token) {
           const response = await axios.get(`http://localhost:3000/api/admin/job_files_details/${jobID}`);
+          if(!response.data){
+            setDownloadStatus(false);
+            setButtonAccess(false);
+          } else {
+            setDownloadStatus(true);
+          }
           console.log("Response from GET:", response.data);
           setButtonAccess(response.data.decided);
+          
         }
       } catch (error) {
         if (error.response && error.response.status === 401) {
@@ -83,6 +114,21 @@ const  DynamicPage = () => {
   if (!job) {
     return <div>No job found with the provided job number.</div>;
   }
+
+
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    console.log('Reasons:', reasons);
+    setOpen(false);
+  };
+
+  const handleReasonsChange = (event) => {
+    setReasons(event.target.value);
+  };
 
   const onClickDownload = async (jobId) => {
     console.log(access);
@@ -142,6 +188,9 @@ const  DynamicPage = () => {
             verification: "Job Files sent to User for Verification.",
             reduction: true,
             userDeci: false,
+            steps_done: 3,
+            steps_user: 5,
+            steps_activity: 7,
           },
           {
             headers: {
@@ -153,7 +202,6 @@ const  DynamicPage = () => {
       }
       setButtonAccess(!access);
       setDownloadStatus(true);
-      window.location.reload(true);
       console.log("Coming" + response.data);
     } catch(error) {
       console.error("Error in giving access for the User to download the File.", error);
@@ -162,7 +210,7 @@ const  DynamicPage = () => {
   }
 
   // Function to reject Partner's Work
-  const onPartnerNotif = async (jobId) => {
+  const onPartnerNotif = async (jobId, reasons) => {
     try {
       const token = localStorage.getItem("token");
       if(token) {
@@ -171,10 +219,13 @@ const  DynamicPage = () => {
           {
             accessProvided: false,
             decision: true,
-            verification: "You need to re-evaluate your Work. For more details, contact Admin.",
+            verification: reasons,
             reduction: false,
             userDeci: true,
             file: {},
+            steps_done: 3,
+            steps_user: 4,
+            steps_activity: 6,
           },
           {
             headers: {
@@ -341,7 +392,7 @@ const  DynamicPage = () => {
             </tbody>
           </table>
 
-  { !access && (<Grid container spacing={2}>
+  { (downloadStatus && !access) && (<Grid container spacing={2}>
           <Grid item xs={12} sm={6} md={6}>
           </Grid>
           <Grid
@@ -358,7 +409,7 @@ const  DynamicPage = () => {
             }} >Partner's Work Access Management</h2>
           </Grid>
           </Grid>)}
-        { !access &&  (<Grid container spacing={2}>
+        { (downloadStatus && !access) &&  (<Grid container spacing={2}>
           <Grid
             item
             xs={12}
@@ -404,7 +455,7 @@ const  DynamicPage = () => {
                           background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
                         },
                       }}
-                      onClick={()=>{ window.location.reload(true) ;onPartnerNotif(job._id.job_no) }}
+                      onClick={()=>{ handleClickOpen(); }}  
                     >
                       Reject the Work
                 </Button>
@@ -415,6 +466,28 @@ const  DynamicPage = () => {
       <div>{isComponentLoaded && <CrossAssign />}</div>
       {/* side stepper component */}
       <Features />
+      <Dialog open={open} onClose={()=>{ handleClose(); }}>
+        <DialogTitle>Type your reasons to inform the IP Partner</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Email Address"
+            type="email"
+            fullWidth
+            variant="standard"
+            placeholder="Type your reasons"
+            value={reasons}
+            onChange={handleReasonsChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <ColorButton sx={{ width: "15%" }} onClick={()=> {window.location.reload(true); onPartnerNotif(jobID, reasons)}}>
+            Submit
+          </ColorButton>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

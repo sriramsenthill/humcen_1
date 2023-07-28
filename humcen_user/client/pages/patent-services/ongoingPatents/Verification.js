@@ -65,6 +65,7 @@ const Verifications = ({ jobNumber }) => {
   const [approval, setApprovalStatus] = useState(false); // Initially User won't approve the Work
   const [reasons, setReasons] = useState("") // Initially User won't give any reason
   const [decisions, setDecisions] = useState(false);
+  const [jobs, setJobOrder] = useState("");
 
   useEffect(() => {
     const fetchJobData = async () => {
@@ -75,6 +76,7 @@ const Verifications = ({ jobNumber }) => {
         if (specificJob) {
           setJobID(id);
           setService(specificJob.service);
+          setJobOrder(specificJob);
         } else {
           console.log("No job found with the provided job number:", id);
         }
@@ -118,14 +120,13 @@ const Verifications = ({ jobNumber }) => {
 
   const {
     jobName,
-    patentType,
+    service,
     customerName,
     partnerName,
-    location,
+    country,
     budget,
-    assigned,
     status,
-  } = job;
+  } = jobs;
 
   const [open, setOpen] = useState(false);
 
@@ -151,6 +152,8 @@ const Verifications = ({ jobNumber }) => {
         const response = await api.put(`user/job_order/approve/${jobID}`, {
           status: "Completed",
           steps: 4,
+          activity: 10,
+          user_steps: 6,
           verif: "Job Completed Successfully",
         },
       {
@@ -175,6 +178,8 @@ const Verifications = ({ jobNumber }) => {
         const response = await api.put(`user/job_order/reject/${jobID}`, {
           status: "In Progress",
           steps: 3,
+          activity: 4,
+          user_steps: 3,
           verif: rejectionInfo,
         },
       {
@@ -239,7 +244,7 @@ const Verifications = ({ jobNumber }) => {
 
   return (
     <>
-      <Card
+     { downloadStatus ? (<Card
         sx={{
           boxShadow: "none",
           borderRadius: "10px",
@@ -304,12 +309,12 @@ const Verifications = ({ jobNumber }) => {
                 </td>
               </tr>
               <tr>
-                <td style={{ padding: "5px" }}>{patentType}</td>
+                <td style={{ padding: "5px" }}>{service}</td>
                 <td style={{ padding: "5px" }}>{customerName}</td>
                 <td style={{ padding: "5px" }}>{partnerName}</td>
-                <td style={{ padding: "5px" }}>{location}</td>
+                <td style={{ padding: "5px" }}>{country}</td>
                 <td style={{ padding: "5px" }}>{budget}</td>
-                <td style={{ padding: "5px" }}>{assigned}</td>
+                <td style={{ padding: "5px" }}>Yes</td>
                 <td style={{ padding: "5px" }}>{status}</td>
                 {decisions ? (
                 <td style={{ padding: "5px" }}>Given</td>
@@ -338,7 +343,6 @@ const Verifications = ({ jobNumber }) => {
                       minHeight: "15px",
                     }}
                     onClick={() => {
-                      window.location.reload(true);
                       handleClickOpen();
                     }}
                   >
@@ -350,8 +354,10 @@ const Verifications = ({ jobNumber }) => {
             </tbody>
           </table>
         </Grid>
-      </Card>
-      <Dialog open={open} onClose={()=>{window.location.reload(true);handleClose(); handleReject(jobID, reasons)}}>
+      </Card>) : (
+      <div>No Access given by the Admin. Please Wait.</div>
+    )}
+      <Dialog open={open} onClose={()=>{ handleClose(); }}>
         <DialogTitle>Type your reasons to inform the IP Partner</DialogTitle>
         <DialogContent>
           <TextField
@@ -368,12 +374,11 @@ const Verifications = ({ jobNumber }) => {
           />
         </DialogContent>
         <DialogActions>
-          <ColorButton sx={{ width: "15%" }} onClick={()=> {window.location.reload(true); handleClose() ;handleReject()}}>
+          <ColorButton sx={{ width: "15%" }} onClick={()=> {window.location.reload(true); handleReject(jobID, reasons)}}>
             Submit
           </ColorButton>
         </DialogActions>
       </Dialog>
-      ;
     </>
   );
 };

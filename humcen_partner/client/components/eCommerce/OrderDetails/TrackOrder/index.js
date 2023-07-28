@@ -1,62 +1,138 @@
-import React from "react";
+import {React, useState, useEffect} from "react";
+import { useRouter } from "next/router";
+import axios from "axios";
 import { Box, Typography } from "@mui/material";
 import Card from "@mui/material/Card";
 import styles from "@/components/eCommerce/OrderDetails/TrackOrder/TrackOrder.module.css";
+import { useTransition, animated } from "react-spring";
+
+// Create an Axios instance
+const api = axios.create({
+  baseURL: "http://localhost:3000/api",
+});
+
+
+// Add an interceptor to include the token in the request headers
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers['Authorization'] = token;
+  }
+  return config;
+});
+
 
 const ActivityTimelineData = [
   {
     id: "1",
     title: "Order Placement",
     date: "April 14, 2023",
+    completed: false,
   },
   {
     id: "2",
     title: "Invention Disclosure received",
     date: "April 14, 2023",
+    completed: false,
   },
   {
     id: "3",
     title: "IP Partner Assigned",
     date: "April 14, 2023",
+    completed: false,
   },
   {
     id: "4",
     title: "Payment",
     date: "April 15, 2023",
+    completed: false,
   },
   {
     id: "5",
     title: "Draft Completed",
     date: "April 16, 2023",
-  },
-  {
-    id: "4",
-    title: "Quality Check Completed",
-    date: "April 16, 2023",
-  },
-  {
-    id: "5",
-    title: "Draft Sent for Client Approval",
-    date: "April 18, 2023",
+    completed: false,
   },
   {
     id: "6",
-    title: "Client Feedback",
-    date: "April 19, 2023",
+    title: "Quality Check Completed",
+    date: "April 16, 2023",
+    completed: false,
   },
   {
     id: "7",
-    title: "Revisions and Finalization",
-    date: "April 20, 2023",
+    title: "Draft Sent for Client Approval",
+    date: "April 18, 2023",
+    completed: false,
   },
   {
     id: "8",
+    title: "Client Feedback",
+    date: "April 19, 2023",
+    completed: false,
+  },
+  {
+    id: "9",
+    title: "Revisions and Finalization",
+    date: "April 20, 2023",
+    completed: false,
+  },
+  {
+    id: "10",
     title: "Final Draft Delivery",
     date: "April 21, 2023",
+    completed: false,
   },
 ];
 
 const TrackOrder = () => {
+  const [timelineData, setTimelineData] = useState(ActivityTimelineData);
+  const router = useRouter();
+  const { id } = router.query;
+  const [job, setJob] = useState(null);
+  const [stepsNo, setSteps] = useState(null);
+
+  useEffect(() => {
+    const fetchStepData = async () => {
+      try {
+        const response = await api.get(`partner/jobs/${id}`);
+        const job = response.data;
+        const stepCount = job.steps_done_activity; // For choosing the last Step done
+        setSteps(stepCount);
+        const updatedTimelineData = ActivityTimelineData.map((timeline) => {
+          if (parseInt(timeline.id) <= stepCount) {
+            return { ...timeline, completed: true };
+          } else {
+            return { ...timeline, completed: false };
+          }
+        });
+        setTimelineData(updatedTimelineData);
+      } catch (error) {
+        console.error("Error fetching job order data:", error);
+        setJob(null);
+      }
+    };
+
+    fetchStepData();
+    
+
+  }, [id, stepsNo]);
+
+  const timelineTransitions = useTransition(timelineData, {
+    key: (item) => item.id,
+    from: { opacity: 0, transform: "translateX(-100%)" },
+    enter: { opacity: 1, transform: "translateX(0%)" },
+    leave: { opacity: 0, transform: "translateX(100%)" },
+  });
+
+  const handleProcessCompleted = (id) => {
+    setTimelineData((prevData) =>
+      prevData.map((item) =>
+        item.id === id ? { ...item, completed: true } : item
+      )
+    );
+  };
+
   return (
     <>
       <Card
@@ -109,13 +185,21 @@ const TrackOrder = () => {
         </ul>
         <div style={{ marginLeft: "30%" }}>
           <div className={styles.timelineList}>
-            {ActivityTimelineData.slice(0, 10).map((timeline) => (
-              <div className={styles.tList} key={timeline.id}>
+          {timelineTransitions((style, timeline) => (
+            <animated.div
+              style={{
+                ...style,
+                filter: timeline.completed ? "none" : "blur(1px)",
+              }}
+              key={timeline.id}
+            >
+              <div className={styles.tList}>
                 <h4>{timeline.title}</h4>
                 <p className={styles.date}>{timeline.date}</p>
                 <p className={styles.text}>{timeline.text}</p>
               </div>
-            ))}
+            </animated.div>
+          ))}
           </div>
         </div>
       </Card>
