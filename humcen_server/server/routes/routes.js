@@ -112,6 +112,9 @@ router.get("/api/admin/user", data.getUsers);
 
 router.get("/api/admin/partner", data.getPartners);
 
+
+router.get("/api/admin/Unassigned",data.getUnassignedJobOrders)
+
 router.get("/api/admin/admin", data.getAdmins);
 
 router.get("/api/admin/job_order", data.getJobOrders);
@@ -123,6 +126,8 @@ router.put("/api/admin/job_files_details/:jobID", data.updateJobFilesDetails); /
 router.get("/api/admin/job_files_details/:jobID", data.getJobFilesDetails); // For getting Partner's Work from Admin Side
 
 router.get("/api/admin/job_order/:jobID", data.getJobOrderById); // For getting Job Details from Admin Side
+
+router.get("/api/Unassigned/:jobID", data.getUnassignedJobById); // For getting Job Details from Admin Side
 
 //ADMIN_AUTH
 router.post("/api/auth/admin/signin", admin_auth.adminSignIn);

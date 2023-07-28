@@ -84,6 +84,7 @@ const getPartnerJobOrders = async (req, res) => {
   }
 };
 
+
 const acceptJobOrder = async (req, res) => {
   const { jobId } = req.params;
   const userID = req.userID;
@@ -651,5 +652,5 @@ module.exports = {
   findPartnersWithJobNo,
   addJobFiles,
   getJobFilesDetailsForPartners,
-  updateTimelineForUpload,
+  updateTimelineForUpload
 };

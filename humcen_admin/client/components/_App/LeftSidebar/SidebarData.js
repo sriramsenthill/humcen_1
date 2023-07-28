@@ -38,6 +38,13 @@ export const SidebarData = [
     iconOpened: <KeyboardArrowDownIcon />,
   },
   {
+    title: "Un-Assigned Jobs",
+    path: "/UnAssignedJobs",
+    icon: <LayersIcon/>,
+    iconClosed: <KeyboardArrowRightIcon />,
+    iconOpened: <KeyboardArrowDownIcon />,
+  },
+  {
     title: "Partners",
     path: "/partners/",
     icon: <CopyAllIcon />,

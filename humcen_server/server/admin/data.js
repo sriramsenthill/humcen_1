@@ -3,7 +3,7 @@ const Admin = require("../mongoose_schemas/admin"); // Import the Admin model
 const Partner = require("../mongoose_schemas/partner"); // Import the Admin model
 const User = require("../mongoose_schemas/user"); // Import the User model
 const JobFiles = require("../mongoose_schemas/job_files"); // Import Job Files Model
-
+const Unassigned=require("../mongoose_schemas/unassigned");
 const getUsers = async (req, res) => {
   try {
     const users = await User.find({});
@@ -23,6 +23,20 @@ const getPartners = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+const getUnassignedJobOrders = async (req, res) => {
+  try {
+    // Assuming you have a MongoDB model named "JobOrder"
+    const unassignedJobOrders = await Unassigned.find({ });
+    res.send(unassignedJobOrders);
+  } catch (error) {
+    console.error("Error fetching unassigned job orders:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
+
 
 const getAdmins = async (req, res) => {
   try {
@@ -152,6 +166,18 @@ const getJobOrderById = async (req, res) => {
   }
 };
 
+const getUnassignedJobById = async (req, res) => {
+  const jobId = req.params.jobID
+  console.log(jobId)
+  try {
+    const jobOrders = await Unassigned.find({"_id.job_no": jobId});
+    console.log("jo: " + jobOrders);
+    res.json(jobOrders);
+  } catch (error) {
+    console.error("Error fetching job orders:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 module.exports = {
   getUsers,
@@ -162,4 +188,6 @@ module.exports = {
   updateJobFilesDetails,
   getJobFilesDetails,
   getJobOrderById,
+  getUnassignedJobOrders,
+  getUnassignedJobById
 };
