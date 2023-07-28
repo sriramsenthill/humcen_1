@@ -52,6 +52,9 @@ export default function Inbox() {
   const [techDrawings, setTechDrawings] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
+  const [isErrorDialogOpenStatus, setIsErrorDialogOpenStatus] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
   const router = useRouter();
 
 
@@ -106,7 +109,8 @@ if (!isFormValid()) {
       console.log(data);
       setIsSubmitted(true);
     } catch (error) {
-      console.error("Error submitting Search Form:", error);
+      setErrorMessage(error.response.data);
+      setIsErrorDialogOpenStatus(true);
     }
   };
 
@@ -429,6 +433,16 @@ if (!isFormValid()) {
       <Button onClick={() => setIsErrorDialogOpen(false)}>OK</Button>
     </DialogActions>
   </Dialog>
+
+  <Dialog open={isErrorDialogOpenStatus}>
+  <DialogTitle>Error</DialogTitle>
+  <DialogContent>
+    <p>{errorMessage}</p>
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setIsErrorDialogOpenStatus(false)}>OK</Button>
+  </DialogActions>
+</Dialog>
 
       </div>
     </>

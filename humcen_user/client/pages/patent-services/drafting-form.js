@@ -56,6 +56,8 @@ export default function Inbox() {
   const [files, setFiles] = useState(null);
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isErrorDialogOpenStatus, setIsErrorDialogOpenStatus] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
 
 
@@ -115,8 +117,9 @@ export default function Inbox() {
       console.log("Form submitted successfully");
       console.log(data);
       setIsSubmitted(true);
-    } catch (error) {
-      console.error("Error submitting form:", error);
+    }catch (error) {
+      setErrorMessage(error.response.data);
+      setIsErrorDialogOpenStatus(true);
     }
   };
 
@@ -545,7 +548,7 @@ export default function Inbox() {
         </Card>
       </form>
 </Card>
-      <Dialog open={isSubmitted}>
+     <Dialog open={isSubmitted}>
         <DialogTitle>Success</DialogTitle>
         <DialogContent>
           <p>Your form has been submitted successfully.</p>
@@ -563,6 +566,16 @@ export default function Inbox() {
       <Button onClick={() => setIsErrorDialogOpen(false)}>OK</Button>
     </DialogActions>
   </Dialog>
+
+  <Dialog open={isErrorDialogOpenStatus}>
+  <DialogTitle>Error</DialogTitle>
+  <DialogContent>
+    <p>{errorMessage}</p>
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setIsErrorDialogOpenStatus(false)}>OK</Button>  
+  </DialogActions>
+</Dialog>
       </div>
     </>
   );

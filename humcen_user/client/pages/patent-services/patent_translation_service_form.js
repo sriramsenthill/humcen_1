@@ -53,6 +53,8 @@ export default function Inbox() {
   const [additionalInfo,setAdditionalInfo]=useState("")
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
+  const [isErrorDialogOpenStatus, setIsErrorDialogOpenStatus] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
 
 
@@ -105,8 +107,9 @@ if (!isFormValid()) {
       console.log("Form submitted successfully");
       console.log(data);
       setIsSubmitted(true);
-    } catch (error) {
-      console.error("Error submitting form:", error);
+    }catch (error) {
+      setErrorMessage(error.response.data);
+      setIsErrorDialogOpenStatus(true);
     }
   };
 
@@ -472,6 +475,16 @@ if (!isFormValid()) {
     </DialogActions>
   </Dialog>
 
+
+  <Dialog open={isErrorDialogOpenStatus}>
+  <DialogTitle>Error</DialogTitle>
+  <DialogContent>
+    <p>{errorMessage}</p>
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setIsErrorDialogOpenStatus(false)}>OK</Button>
+  </DialogActions>
+</Dialog>
 
       </div>
     </>
