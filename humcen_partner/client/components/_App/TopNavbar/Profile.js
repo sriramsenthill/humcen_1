@@ -123,7 +123,9 @@ const Profile = () => {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         className="for-dark-top-navList"
       >
+      <Link href="/" style={{textDecoration:"none"}}>
         <MenuItem>
+        
           <Avatar src={partnerAvatar} className="mr-1" />
           <Box>
             <Typography sx={{ fontSize: "11px", color: "#757FEF" }}>
@@ -139,8 +141,9 @@ const Profile = () => {
               {partnerName}
             </Typography>
           </Box>
+      
         </MenuItem>
-
+</Link>
         <Divider />
 
         <MenuItem>
