@@ -183,10 +183,12 @@ const rejectJobOrder = async (req, res) => {
             // Clone the rejectedJob object and remove _id.job_no property
             const unassigned = { ...rejectedJob };
             unassigned._id.job_no = newUnassignedDraftingNo; // Set the new job number as a string
+            unassigned.status = jobOrderDetails.status;
+            unassigned.budget = jobOrderDetails.budget;
+            unassigned.service = service;
 
             const rejectedDrafting = new Unassigned(unassigned);  
-            rejectedDrafting.status = jobOrderDetails.status;
-            rejectedDrafting.budget = jobOrderDetails.budget;
+            
 
             rejectedDrafting.save()
             .then(() => {
@@ -228,9 +230,683 @@ const rejectJobOrder = async (req, res) => {
       }
 
       // For Patent Filing Rejection
+      else if(service === "Patent Filing") {
+        // Getting the Filing Details
+        const rejectedJob = await Filing.findOne({"_id.job_no": parseInt(jobId)}).lean();
+        if(!rejectedJob) {
+          console.error("No Job Details present for Job Number " + jobId);
+        } else {
+          // Getting the Job Order details
+          const jobOrderDetails = await JobOrder.findOne({"_id.job_no": parseInt(jobId)});
+          if(!jobOrderDetails) {
+            console.error("No Job Details present for Job Number " + jobId);
+          } else {
+            const latestUnassignedFilingOrder = await Unassigned.findOne()
+            .sort({ "_id.job_no": -1 })
+            .select({ "_id.job_no": 1 }) // Select only the _id.job_no field
+            .lean();
 
+            const newUnassignedFilingNo = latestUnassignedFilingOrder
+            ? latestUnassignedFilingOrder._id.job_no + 1
+            : 1000;
 
-      return res.status(404).json({ error: "No available partner found. Sending the Job Order to Unassigned Jobs" });
+            // Clone the rejectedJob object and remove _id.job_no property
+            const unassigned = { ...rejectedJob };
+            unassigned._id.job_no = newUnassignedFilingNo; // Set the new job number as a string
+            unassigned.status = jobOrderDetails.status;
+            unassigned.budget = jobOrderDetails.budget;
+            unassigned.service = service;
+          
+            const rejectedFiling = new Unassigned(unassigned);  
+          
+
+            rejectedFiling.save()
+            .then(() => {
+              console.log("Rejected Filing Successfully sent to Unassigned Jobs");
+              })
+            .catch((err) => {
+              console.error("Failed to reject the Filing Job:", err);
+              });
+
+              // Deleting JobOrder traces
+              JobOrder.findOneAndDelete({ "_id.job_no": jobId })
+              .then((deletedJob) => {
+                if (deletedJob) {
+                  console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
+                } else {
+                  console.log(`Job with job number ${jobId} not found`);
+                }
+              })
+              .catch((error) => {
+                console.error("Error deleting job from Job Order:", error);
+              });
+
+              // Deleting Filing traces
+              Filing.findOneAndDelete({ "_id.job_no": jobId })
+              .then((deletedJob) => {
+                if (deletedJob) {
+                  console.log(`Successfully deleted job from Filing with job number ${jobId}`);
+                } else {
+                  console.log(`Job with job number ${jobId} not found`);
+                }
+              })
+              .catch((error) => {
+                console.error("Error deleting job from Filing:", error);
+              });
+          }
+        }
+      }
+
+      // Patent Search Rejection
+
+      else if(service === "Patent Search") {
+        // Getting the Patent Search Details
+        const rejectedJob = await Search.findOne({"_id.job_no": parseInt(jobId)}).lean();
+        if(!rejectedJob) {
+          console.error("No Job Details present for Job Number " + jobId);
+        } else {
+          // Getting the Job Order details
+          const jobOrderDetails = await JobOrder.findOne({"_id.job_no": parseInt(jobId)});
+          if(!jobOrderDetails) {
+            console.error("No Job Details present for Job Number " + jobId);
+          } else {
+            const latestUnassignedSearchOrder = await Unassigned.findOne()
+            .sort({ "_id.job_no": -1 })
+            .select({ "_id.job_no": 1 }) // Select only the _id.job_no field
+            .lean();
+
+            const newUnassignedSearchNo = latestUnassignedSearchOrder
+            ? latestUnassignedSearchOrder._id.job_no + 1
+            : 1000;
+
+            // Clone the rejectedJob object and remove _id.job_no property
+            const unassigned = { ...rejectedJob };
+            unassigned._id.job_no = newUnassignedSearchNo; // Set the new job number as a string
+            unassigned.status = jobOrderDetails.status;
+            unassigned.budget = jobOrderDetails.budget;
+            unassigned.service = service;
+
+            const rejectedSearch = new Unassigned(unassigned);  
+            
+
+            rejectedSearch.save()
+            .then(() => {
+              console.log("Rejected Patent Search Successfully sent to Unassigned Jobs");
+              })
+            .catch((err) => {
+              console.error("Failed to reject the Patent Search Job:", err);
+              });
+
+              // Deleting JobOrder traces
+              JobOrder.findOneAndDelete({ "_id.job_no": jobId })
+              .then((deletedJob) => {
+                if (deletedJob) {
+                  console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
+                } else {
+                  console.log(`Job with job number ${jobId} not found`);
+                }
+              })
+              .catch((error) => {
+                console.error("Error deleting job from Job Order:", error);
+              });
+
+              // Deleting Patent Search traces
+              Search.findOneAndDelete({ "_id.job_no": jobId })
+              .then((deletedJob) => {
+                if (deletedJob) {
+                  console.log(`Successfully deleted job from Patent Search with job number ${jobId}`);
+                } else {
+                  console.log(`Job with job number ${jobId} not found`);
+                }
+              })
+              .catch((error) => {
+                console.error("Error deleting job from Patent Search:", error);
+              });
+          }
+        }
+      }      
+
+      // Response to FER Office Action Rejection
+
+      else if(service === "Response To FER Office Action") {
+        // Getting the Response to FER Details
+        const rejectedJob = await responseToFer.findOne({"_id.job_no": parseInt(jobId)}).lean();
+        if(!rejectedJob) {
+          console.error("No Job Details present for Job Number " + jobId);
+        } else {
+          // Getting the Job Order details
+          const jobOrderDetails = await JobOrder.findOne({"_id.job_no": parseInt(jobId)});
+          if(!jobOrderDetails) {
+            console.error("No Job Details present for Job Number " + jobId);
+          } else {
+            const latestUnassignedFEROrder = await Unassigned.findOne()
+            .sort({ "_id.job_no": -1 })
+            .select({ "_id.job_no": 1 }) // Select only the _id.job_no field
+            .lean();
+
+            const newUnassignedFERNo = latestUnassignedFEROrder
+            ? latestUnassignedFEROrder._id.job_no + 1
+            : 1000;
+
+            // Clone the rejectedJob object and remove _id.job_no property
+            const unassigned = { ...rejectedJob };
+            unassigned._id.job_no = newUnassignedFERNo; // Set the new job number as a string
+            unassigned.status = jobOrderDetails.status;
+            unassigned.budget = jobOrderDetails.budget;
+            unassigned.service = service;
+
+            const rejectedFER = new Unassigned(unassigned);  
+            
+
+            rejectedFER.save()
+            .then(() => {
+              console.log("Rejected Response To FER Successfully sent to Unassigned Jobs");
+              })
+            .catch((err) => {
+              console.error("Failed to reject the Response To FER Job:", err);
+              });
+
+              // Deleting JobOrder traces
+              JobOrder.findOneAndDelete({ "_id.job_no": jobId })
+              .then((deletedJob) => {
+                if (deletedJob) {
+                  console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
+                } else {
+                  console.log(`Job with job number ${jobId} not found`);
+                }
+              })
+              .catch((error) => {
+                console.error("Error deleting job from Job Order:", error);
+              });
+
+              // Deleting Response To FER traces
+              responseToFer.findOneAndDelete({ "_id.job_no": jobId })
+              .then((deletedJob) => {
+                if (deletedJob) {
+                  console.log(`Successfully deleted job from Response To FER with job number ${jobId}`);
+                } else {
+                  console.log(`Job with job number ${jobId} not found`);
+                }
+              })
+              .catch((error) => {
+                console.error("Error deleting job from Response To FER:", error);
+              });
+          }
+        }
+      }
+
+      // Freedom to Operate Search Rejection
+      else if(service === "Freedom To Operate") {
+        // Getting the Freedom To Operate Search Details
+        const rejectedJob = await freedomToOperate.findOne({"_id.job_no": parseInt(jobId)}).lean();
+        if(!rejectedJob) {
+          console.error("No Job Details present for Job Number " + jobId);
+        } else {
+          // Getting the Job Order details
+          const jobOrderDetails = await JobOrder.findOne({"_id.job_no": parseInt(jobId)});
+          if(!jobOrderDetails) {
+            console.error("No Job Details present for Job Number " + jobId);
+          } else {
+            const latestUnassignedFTOOrder = await Unassigned.findOne()
+            .sort({ "_id.job_no": -1 })
+            .select({ "_id.job_no": 1 }) // Select only the _id.job_no field
+            .lean();
+
+            const newUnassignedFTONo = latestUnassignedFTOOrder
+            ? latestUnassignedFTOOrder._id.job_no + 1
+            : 1000;
+
+            // Clone the rejectedJob object and remove _id.job_no property
+            const unassigned = { ...rejectedJob };
+            unassigned._id.job_no = newUnassignedFTONo; // Set the new job number as a string
+            unassigned.status = jobOrderDetails.status;
+            unassigned.budget = jobOrderDetails.budget;
+            unassigned.service = service;
+
+            const rejectedFTO = new Unassigned(unassigned);  
+            
+            rejectedFTO.save()
+            .then(() => {
+              console.log("Rejected Freedom To Operate Successfully sent to Unassigned Jobs");
+              })
+            .catch((err) => {
+              console.error("Failed to reject the Freedom To Operate Job:", err);
+              });
+
+              // Deleting JobOrder traces
+              JobOrder.findOneAndDelete({ "_id.job_no": jobId })
+              .then((deletedJob) => {
+                if (deletedJob) {
+                  console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
+                } else {
+                  console.log(`Job with job number ${jobId} not found`);
+                }
+              })
+              .catch((error) => {
+                console.error("Error deleting job from Job Order:", error);
+              });
+
+              // Deleting Freedom To Operate Search traces
+              freedomToOperate.findOneAndDelete({ "_id.job_no": jobId })
+              .then((deletedJob) => {
+                if (deletedJob) {
+                  console.log(`Successfully deleted job from Freedom To Operate with job number ${jobId}`);
+                } else {
+                  console.log(`Job with job number ${jobId} not found`);
+                }
+              })
+              .catch((error) => {
+                console.error("Error deleting job from Freedom To Operate:", error);
+              });
+          }
+        }
+      }
+
+      // Freedom to Patent Landscape Rejection
+      else if(service === "Freedom to Patent Landscape") {
+        // Getting the Freedom to Patent Landscape Details
+        const rejectedJob = await patentLandscape.findOne({"_id.job_no": parseInt(jobId)}).lean();
+        if(!rejectedJob) {
+          console.error("No Job Details present for Job Number " + jobId);
+        } else {
+          // Getting the Job Order details
+          const jobOrderDetails = await JobOrder.findOne({"_id.job_no": parseInt(jobId)});
+          if(!jobOrderDetails) {
+            console.error("No Job Details present for Job Number " + jobId);
+          } else {
+            const latestUnassignedLandscapeOrder = await Unassigned.findOne()
+            .sort({ "_id.job_no": -1 })
+            .select({ "_id.job_no": 1 }) // Select only the _id.job_no field
+            .lean();
+
+            const newUnassignedLandscapeNo = latestUnassignedLandscapeOrder
+            ? latestUnassignedLandscapeOrder._id.job_no + 1
+            : 1000;
+
+            // Clone the rejectedJob object and remove _id.job_no property
+            const unassigned = { ...rejectedJob };
+            unassigned._id.job_no = newUnassignedLandscapeNo; // Set the new job number as a string
+            unassigned.status = jobOrderDetails.status;
+            unassigned.budget = jobOrderDetails.budget;
+            unassigned.service = service;
+
+            const rejectedLandscape = new Unassigned(unassigned);  
+           
+            rejectedLandscape.save()
+            .then(() => {
+              console.log("Rejected Freedom to Patent Landscape Successfully sent to Unassigned Jobs");
+              })
+            .catch((err) => {
+              console.error("Failed to reject the Freedom to Patent Landscape Job:", err);
+              });
+
+              // Deleting JobOrder traces
+              JobOrder.findOneAndDelete({ "_id.job_no": jobId })
+              .then((deletedJob) => {
+                if (deletedJob) {
+                  console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
+                } else {
+                  console.log(`Job with job number ${jobId} not found`);
+                }
+              })
+              .catch((error) => {
+                console.error("Error deleting job from Job Order:", error);
+              });
+
+              // Deleting Freedom to Patent Landscape traces
+              patentLandscape.findOneAndDelete({ "_id.job_no": jobId })
+              .then((deletedJob) => {
+                if (deletedJob) {
+                  console.log(`Successfully deleted job from Freedom to Patent Landscape with job number ${jobId}`);
+                } else {
+                  console.log(`Job with job number ${jobId} not found`);
+                }
+              })
+              .catch((error) => {
+                console.error("Error deleting job from Freedom to Patent Landscape :", error);
+              });
+          }
+        }
+      }      
+
+      // Freedom to Patent Portfolio Rejection
+      else if(service === "Patent Portfolio Analysis") {
+        // Getting the Patent Portfolio Analysis Details
+        const rejectedJob = await patentPortfolioAnalysis.findOne({"_id.job_no": parseInt(jobId)}).lean();
+        if(!rejectedJob) {
+          console.error("No Job Details present for Job Number " + jobId);
+        } else {
+          // Getting the Job Order details
+          const jobOrderDetails = await JobOrder.findOne({"_id.job_no": parseInt(jobId)});
+          if(!jobOrderDetails) {
+            console.error("No Job Details present for Job Number " + jobId);
+          } else {
+            const latestUnassignedPortfolioOrder = await Unassigned.findOne()
+            .sort({ "_id.job_no": -1 })
+            .select({ "_id.job_no": 1 }) // Select only the _id.job_no field
+            .lean();
+
+            const newUnassignedPortfolioNo = latestUnassignedPortfolioOrder
+            ? latestUnassignedPortfolioOrder._id.job_no + 1
+            : 1000;
+
+            // Clone the rejectedJob object and remove _id.job_no property
+            const unassigned = { ...rejectedJob };
+            unassigned._id.job_no = newUnassignedPortfolioNo; // Set the new job number as a string
+            unassigned.status = jobOrderDetails.status;
+            unassigned.budget = jobOrderDetails.budget;
+            unassigned.service = service;
+
+            const rejectedPortfolio = new Unassigned(unassigned);  
+
+            rejectedPortfolio.save()
+            .then(() => {
+              console.log("Rejected Patent Portfolio Analysis Successfully sent to Unassigned Jobs");
+              })
+            .catch((err) => {
+              console.error("Failed to reject the Patent Portfolio Analysis Job:", err);
+              });
+
+              // Deleting JobOrder traces
+              JobOrder.findOneAndDelete({ "_id.job_no": jobId })
+              .then((deletedJob) => {
+                if (deletedJob) {
+                  console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
+                } else {
+                  console.log(`Job with job number ${jobId} not found`);
+                }
+              })
+              .catch((error) => {
+                console.error("Error deleting job from Job Order:", error);
+              });
+
+              // Deleting Patent Portfolio Analysis traces
+              patentPortfolioAnalysis.findOneAndDelete({ "_id.job_no": jobId })
+              .then((deletedJob) => {
+                if (deletedJob) {
+                  console.log(`Successfully deleted job from Patent Portfolio Analysis with job number ${jobId}`);
+                } else {
+                  console.log(`Job with job number ${jobId} not found`);
+                }
+              })
+              .catch((error) => {
+                console.error("Error deleting job from Patent Portfolio Analysis :", error);
+              });
+          }
+        }
+      }
+      // Patent Translation Services Rejection 
+      else if(service === "Patent Translation Services") {
+        // Getting the Patent Portfolio Analysis Details
+        const rejectedJob = await patentTranslation.findOne({"_id.job_no": parseInt(jobId)}).lean();
+        if(!rejectedJob) {
+          console.error("No Job Details present for Job Number " + jobId);
+        } else {
+          // Getting the Job Order details
+          const jobOrderDetails = await JobOrder.findOne({"_id.job_no": parseInt(jobId)});
+          if(!jobOrderDetails) {
+            console.error("No Job Details present for Job Number " + jobId);
+          } else {
+            const latestUnassignedTranslationOrder = await Unassigned.findOne()
+            .sort({ "_id.job_no": -1 })
+            .select({ "_id.job_no": 1 }) // Select only the _id.job_no field
+            .lean();
+
+            const newUnassignedTranslationNo = latestUnassignedTranslationOrder
+            ? latestUnassignedTranslationOrder._id.job_no + 1
+            : 1000;
+
+            // Clone the rejectedJob object and remove _id.job_no property
+            const unassigned = { ...rejectedJob };
+            unassigned._id.job_no = newUnassignedTranslationNo; // Set the new job number as a string
+            unassigned.status = jobOrderDetails.status;
+            unassigned.budget = jobOrderDetails.budget;
+            unassigned.service = service;
+
+            const rejectedTranslation = new Unassigned(unassigned);  
+
+            rejectedTranslation.save()
+            .then(() => {
+              console.log("Rejected Patent Translation Services Successfully sent to Unassigned Jobs");
+              })
+            .catch((err) => {
+              console.error("Failed to reject the Patent Translation Services Job:", err);
+              });
+
+              // Deleting JobOrder traces
+              JobOrder.findOneAndDelete({ "_id.job_no": jobId })
+              .then((deletedJob) => {
+                if (deletedJob) {
+                  console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
+                } else {
+                  console.log(`Job with job number ${jobId} not found`);
+                }
+              })
+              .catch((error) => {
+                console.error("Error deleting job from Job Order:", error);
+              });
+
+              // Deleting Patent Translation Services traces
+              patentTranslation.findOneAndDelete({ "_id.job_no": jobId })
+              .then((deletedJob) => {
+                if (deletedJob) {
+                  console.log(`Successfully deleted job from Patent Translation Services with job number ${jobId}`);
+                } else {
+                  console.log(`Job with job number ${jobId} not found`);
+                }
+              })
+              .catch((error) => {
+                console.error("Error deleting job from Patent Translation Services :", error);
+              });
+          }
+        }
+      }      
+
+      // Patent Illustration Rejection
+      else if(service === "Patent Illustration") {
+        // Getting the Patent Portfolio Analysis Details
+        const rejectedJob = await patentIllustration.findOne({"_id.job_no": parseInt(jobId)}).lean();
+        if(!rejectedJob) {
+          console.error("No Job Details present for Job Number " + jobId);
+        } else {
+          // Getting the Job Order details
+          const jobOrderDetails = await JobOrder.findOne({"_id.job_no": parseInt(jobId)});
+          if(!jobOrderDetails) {
+            console.error("No Job Details present for Job Number " + jobId);
+          } else {
+            const latestUnassignedIllustrationOrder = await Unassigned.findOne()
+            .sort({ "_id.job_no": -1 })
+            .select({ "_id.job_no": 1 }) // Select only the _id.job_no field
+            .lean();
+
+            const newUnassignedIllustrationNo = latestUnassignedIllustrationOrder
+            ? latestUnassignedIllustrationOrder._id.job_no + 1
+            : 1000;
+
+            // Clone the rejectedJob object and remove _id.job_no property
+            const unassigned = { ...rejectedJob };
+            unassigned._id.job_no = newUnassignedIllustrationNo; // Set the new job number as a string
+            unassigned.status = jobOrderDetails.status;
+            unassigned.budget = jobOrderDetails.budget;
+            unassigned.service = service;
+
+            const rejectedIllustration = new Unassigned(unassigned);  
+           
+
+            rejectedIllustration.save()
+            .then(() => {
+              console.log("Rejected Patent Illustration Successfully sent to Unassigned Jobs");
+              })
+            .catch((err) => {
+              console.error("Failed to reject the Patent Illustration Job:", err);
+              });
+
+              // Deleting JobOrder traces
+              JobOrder.findOneAndDelete({ "_id.job_no": jobId })
+              .then((deletedJob) => {
+                if (deletedJob) {
+                  console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
+                } else {
+                  console.log(`Job with job number ${jobId} not found`);
+                }
+              })
+              .catch((error) => {
+                console.error("Error deleting job from Job Order:", error);
+              });
+
+              // Deleting Patent Illustration traces
+              patentIllustration.findOneAndDelete({ "_id.job_no": jobId })
+              .then((deletedJob) => {
+                if (deletedJob) {
+                  console.log(`Successfully deleted job from Patent Illustration with job number ${jobId}`);
+                } else {
+                  console.log(`Job with job number ${jobId} not found`);
+                }
+              })
+              .catch((error) => {
+                console.error("Error deleting job from Patent Illustration :", error);
+              });
+          }
+        }
+      }
+      // Patent Watch Rejection
+      else if(service === "Patent Watch") {
+        // Getting the Patent Watch Details
+        const rejectedJob = await patentWatch.findOne({"_id.job_no": parseInt(jobId)}).lean();
+        if(!rejectedJob) {
+          console.error("No Job Details present for Job Number " + jobId);
+        } else {
+          // Getting the Job Order details
+          const jobOrderDetails = await JobOrder.findOne({"_id.job_no": parseInt(jobId)});
+          if(!jobOrderDetails) {
+            console.error("No Job Details present for Job Number " + jobId);
+          } else {
+            const latestUnassignedWatchOrder = await Unassigned.findOne()
+            .sort({ "_id.job_no": -1 })
+            .select({ "_id.job_no": 1 }) // Select only the _id.job_no field
+            .lean();
+
+            const newUnassignedWatchNo = latestUnassignedWatchOrder
+            ? latestUnassignedWatchOrder._id.job_no + 1
+            : 1000;
+
+            // Clone the rejectedJob object and remove _id.job_no property
+            const unassigned = { ...rejectedJob };
+            unassigned._id.job_no = newUnassignedWatchNo; // Set the new job number as a string
+            unassigned.status = jobOrderDetails.status;
+            unassigned.budget = jobOrderDetails.budget;
+            unassigned.service = service;
+
+            const rejectedWatch = new Unassigned(unassigned);  
+
+            rejectedWatch.save()
+            .then(() => {
+              console.log("Rejected Patent Watch Successfully sent to Unassigned Jobs");
+              })
+            .catch((err) => {
+              console.error("Failed to reject the Patent Watch Job:", err);
+              });
+
+              // Deleting JobOrder traces
+              JobOrder.findOneAndDelete({ "_id.job_no": jobId })
+              .then((deletedJob) => {
+                if (deletedJob) {
+                  console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
+                } else {
+                  console.log(`Job with job number ${jobId} not found`);
+                }
+              })
+              .catch((error) => {
+                console.error("Error deleting job from Job Order:", error);
+              });
+
+              // Deleting Patent Watch traces
+              patentWatch.findOneAndDelete({ "_id.job_no": jobId })
+              .then((deletedJob) => {
+                if (deletedJob) {
+                  console.log(`Successfully deleted job from Patent Watch with job number ${jobId}`);
+                } else {
+                  console.log(`Job with job number ${jobId} not found`);
+                }
+              })
+              .catch((error) => {
+                console.error("Error deleting job from Patent Watch :", error);
+              });
+          }
+        }
+      }
+      // Patent Licensing and Commercialization Services Rejection
+      else if(service === "Patent Licensing and Commercialization Services") {
+        // Getting the Patent Watch Details
+        const rejectedJob = await patentLicense.findOne({"_id.job_no": parseInt(jobId)}).lean();
+        if(!rejectedJob) {
+          console.error("No Job Details present for Job Number " + jobId);
+        } else {
+          // Getting the Job Order details
+          const jobOrderDetails = await JobOrder.findOne({"_id.job_no": parseInt(jobId)});
+          if(!jobOrderDetails) {
+            console.error("No Job Details present for Job Number " + jobId);
+          } else {
+            const latestUnassignedLicenseOrder = await Unassigned.findOne()
+            .sort({ "_id.job_no": -1 })
+            .select({ "_id.job_no": 1 }) // Select only the _id.job_no field
+            .lean();
+
+            const newUnassignedLicenseNo = latestUnassignedLicenseOrder
+            ? latestUnassignedLicenseOrder._id.job_no + 1
+            : 1000;
+
+            // Clone the rejectedJob object and remove _id.job_no property
+            const unassigned = { ...rejectedJob };
+            unassigned._id.job_no = newUnassignedLicenseNo; // Set the new job number as a string
+            unassigned.status = jobOrderDetails.status;
+            unassigned.budget = jobOrderDetails.budget;
+            unassigned.service = service;
+
+            const rejectedLicense = new Unassigned(unassigned);  
+
+            rejectedLicense.save()
+            .then(() => {
+              console.log("Rejected Patent Licensing Successfully sent to Unassigned Jobs");
+              })
+            .catch((err) => {
+              console.error("Failed to reject the Patent Licensing Job:", err);
+              });
+
+              // Deleting JobOrder traces
+              JobOrder.findOneAndDelete({ "_id.job_no": jobId })
+              .then((deletedJob) => {
+                if (deletedJob) {
+                  console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
+                } else {
+                  console.log(`Job with job number ${jobId} not found`);
+                }
+              })
+              .catch((error) => {
+                console.error("Error deleting job from Job Order:", error);
+              });
+
+              // Deleting Patent Licensing traces
+              patentLicense.findOneAndDelete({ "_id.job_no": jobId })
+              .then((deletedJob) => {
+                if (deletedJob) {
+                  console.log(`Successfully deleted job from Patent Licensing with job number ${jobId}`);
+                } else {
+                  console.log(`Job with job number ${jobId} not found`);
+                }
+              })
+              .catch((error) => {
+                console.error("Error deleting job from Patent Licensing :", error);
+              });
+          }
+        }
+      }
+      
+      
+
+      
+
+      return res.status(200).json({ error: "No available partner found. Sending the Job Order to Unassigned Jobs" });
     }
     console.log(findPartner);
     // Assign the rejected job to the new partner
