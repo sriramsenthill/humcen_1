@@ -14,6 +14,7 @@ import DialogActions from "@mui/material/DialogActions";
 import FileBase64 from "react-file-base64";
 import axios from "axios";
 import { useRouter } from "next/router";
+import Upload from "../../components/Upload";
 import BannerCard from "@/components/BannerCard";
 
 
@@ -53,7 +54,7 @@ export default function Inbox() {
   const [keyword, setKeyword] = useState("");
   const [country, setCountry] = useState("");
   const [budget, setBudget] = useState("");
-  const [files, setFiles] = useState(null);
+  const [files, setFileData] = useState(null);
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isErrorDialogOpenStatus, setIsErrorDialogOpenStatus] = useState(false);
@@ -61,8 +62,8 @@ export default function Inbox() {
   const router = useRouter();
 
 
-  const getFiles = (files) => {
-    setFiles(files);
+  const getFiles = (fileData) => {
+    setFileData(fileData);
   };
 
   const handleDomainChange = (value) => {
@@ -93,7 +94,6 @@ export default function Inbox() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
 
     if (!isFormValid()) {
       setIsErrorDialogOpen(true);
