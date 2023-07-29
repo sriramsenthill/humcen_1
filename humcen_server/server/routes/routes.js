@@ -175,5 +175,5 @@ router.put("/api/partner/job-files", verifyPartner, engine.addJobFiles);
 router.get("/api/partner/job_files_details/:jobID", verifyPartner, engine.getJobFilesDetailsForPartners);
 
 
-
+router.post("/api/find-partner", data.getPartnersData);
 module.exports = router;

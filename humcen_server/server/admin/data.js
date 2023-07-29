@@ -38,6 +38,24 @@ const getUnassignedJobOrders = async (req, res) => {
 
 
 
+
+const getPartnersData= async  (req, res) => {
+  try {
+    const { country, knownFields} = req.body; // Assuming you have fields named "country" and "known_fields" in your Partner schema
+    const partners = await Partner.find({
+      country: country,
+      ["known_fields." + knownFields]: true,
+
+    });
+
+    res.json(partners);
+  } catch (error) {
+    console.error("Error finding partners:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
 const getAdmins = async (req, res) => {
   try {
     const admins = await Admin.find({});
@@ -189,5 +207,6 @@ module.exports = {
   getJobFilesDetails,
   getJobOrderById,
   getUnassignedJobOrders,
-  getUnassignedJobById
+  getUnassignedJobById,
+  getPartnersData
 };

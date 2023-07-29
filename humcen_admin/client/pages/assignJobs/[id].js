@@ -7,7 +7,7 @@ import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import withAuth from "@/components/withAuth";
 import { Typography } from "@mui/material";
-import { Button, Checkbox, FormControlLabel } from "@mui/material";
+import { Button, Checkbox, FormControl, InputLabel, MenuItem, Select,FormControlLabel } from "@mui/material";
 import axios from "axios";
 import JSZip from "jszip";
 
@@ -78,20 +78,40 @@ const DynamicPage = () =>{
   const [Service, setService] = useState("");
   const [approval, setApproval] = useState(false);
   const [getCountry, setCountry] = useState("");
-    const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
-  
+    const [selectedCheckboxes, setSelectedCheckboxes] = useState("");
+
+ const [listOfPartner,setListOfPartner]=useState("");
+ const [showPartnerDropdown, setShowPartnerDropdown] = useState(false);
+
     const handleCheckboxChange = (event) => {
       const { value } = event.target;
-      setSelectedCheckboxes((prevSelected) => {
-        if (prevSelected.includes(value)) {
-          return prevSelected.filter((selected) => selected !== value);
-        } else {
-          return [...prevSelected, value];
-        }
-      });
+      setSelectedCheckboxes(value); // Update selectedCheckboxes with an array containing only the clicked checkbox value
     };
+    
 
-  console.log(selectedCheckboxes)
+
+
+    const onClickFindPartner = async () => {
+      try {
+        const requestData = {
+          country: getCountry,
+          knownFields: selectedCheckboxes,
+        };
+  
+        // Make the API call to find the partner based on selected country and checkboxes
+        const response = await api.post(`/find-partner`, requestData);
+        setListOfPartner(response.data);
+        setShowPartnerDropdown(true);
+     
+        // Handle the API response here, e.g., display the partner data or take any other action
+      } catch (error) {
+        console.error("Error finding the partner:", error);
+        // Handle any errors that occurred during the API call
+      }
+    };
+ 
+    console.log(listOfPartner);
+
   useEffect(() => {
     const fetchJobData = async () => {
       try {
@@ -526,7 +546,61 @@ const DynamicPage = () =>{
         </Grid>
       ))}
     </Grid>
+    <td style={{marginLeft:"25px",marginTop:"15px"}}>
+              <Button
+                      sx={{
+                        background: approval ? "#27AE60" : "#D3D3D3"  , 
+                        color: "white",
+                        borderRadius: "100px",
+                        width: "100%",
+                        height: "88%",
+                        textTransform: "none",
+                        "&:hover": {
+                          background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
+                        },
+                      }}
+                    
+                      onClick={onClickFindPartner}
+                    >
+                      Find Partner
+                    </Button>
+                    </td>
+
+{showPartnerDropdown&&
+<>
+{listOfPartner.length>0?
+  <Grid item xs={12}>
+         <FormControl style={{marginTop:"17px",marginLeft:"16px", width:260}} fullWidth>
+      <InputLabel id="partner-dropdown-label">Select a partner</InputLabel>
+      <Select
+        labelId="partner-dropdown-label"
+        id="partner-dropdown"
+        value=""
+        label="Select a partner"
+      >
+        {
+          listOfPartner.map((partner) => (
+            <MenuItem key={partner._id} value={partner._id}>
+              {partner.first_name+" "+partner.last_name} {/* Replace "name" with the actual field in the partner object that contains the partner's name */}
+            </MenuItem>
+          ))
+        }
+      </Select>
+    </FormControl>
     </Grid>
+    :    <Grid item xs={12}><Typography
+            as="h3"
+            sx={{
+              fontSize: 18,
+              fontWeight: 500,
+              mb: "30px",
+              ml:"15px",
+              mt:"10px",
+            }}
+          >
+            No Partners Found
+          </Typography></Grid>}</>}
+            </Grid>
       </Card>
       </div>
     </>
