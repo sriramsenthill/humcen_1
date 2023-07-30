@@ -39,7 +39,7 @@ export const SidebarData = [
   },
   {
     title: "Un-Assigned Jobs",
-    path: "/UnAssignedJobs",
+    path: "/UnAssignedJobs/",
     icon: <LayersIcon/>,
     iconClosed: <KeyboardArrowRightIcon />,
     iconOpened: <KeyboardArrowDownIcon />,
