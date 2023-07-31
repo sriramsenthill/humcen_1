@@ -148,7 +148,8 @@ img {
 }
 .card{
   animation: slideIn 0.5s ease-in-out;
-  margin-left: 30px;
+  padding-left: 30px;
+  padding-right: 30px;
 }
 .cardTab{
   animation: slideIn 0.5s ease-in-out;
@@ -826,7 +827,7 @@ img {
   padding-right: 30px;
 }
 .main-wrapper-content .main-content {
-  padding-right: 30px;
+  padding-right: 0px;
 }
 
 @media only screen and (max-width: 767px) {
@@ -1079,9 +1080,10 @@ img {
   font-size: 20px !important;
 }
 
-/* Authentication box */
-.main-wrapper-content:has(div.authenticationBox) {
-  padding: 0;
+ /* Authentication box  */
+ .main-wrapper-content:has(div.authenticationBox) {
+  padding: 0px ;
+  margin: 0;
 }
 
 /* End Authentication box */
