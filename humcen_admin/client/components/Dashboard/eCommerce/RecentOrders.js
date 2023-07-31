@@ -150,7 +150,7 @@ function RecentOrders() {
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, count - page * rowsPerPage);
-  
+    const sortedData = rows.sort((a, b) => parseInt(b._id.job_no) - parseInt(a._id.job_no));
 
   return (
     <Card>
@@ -176,7 +176,7 @@ function RecentOrders() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows
+              {sortedData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
                   <TableRow key={row._id.job_no}>

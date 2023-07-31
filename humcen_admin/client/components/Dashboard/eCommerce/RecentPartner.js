@@ -14,6 +14,8 @@ import {
   TableRow,
   IconButton,
   useTheme,
+  Tooltip
+
 } from "@mui/material";
 import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
@@ -135,6 +137,22 @@ function RecentPartners() {
   const [count, setCount] = useState(0);
   const [rows, setRows] = useState([]);
 
+  const [expandedRows, setExpandedRows] = useState([]);
+
+  const handleShowMoreJobs = (userID) => {
+    setExpandedRows((prevExpandedRows) => {
+      if (prevExpandedRows.includes(userID)) {
+        // If the row is already expanded, remove it from the expandedRows
+        return prevExpandedRows.filter((id) => id !== userID);
+      } else {
+        // If the row is not expanded, add it to the expandedRows
+        return [...prevExpandedRows, userID];
+      }
+    });
+  };
+
+
+
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchPartnerData();
@@ -156,6 +174,15 @@ function RecentPartners() {
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, count - page * rowsPerPage);
+    const sortedData = [...rows].sort((a, b) => {
+      // Check if the full_name property is undefined in either a or b
+      if (a.full_name === undefined || b.full_name === undefined) {
+        // Keep the original order if any of the full_name properties is undefined
+        return 0;
+      } else {
+        return a.full_name.localeCompare(b.full_name);
+      }
+    });
 
   return (
     <Card>
@@ -186,11 +213,11 @@ function RecentPartners() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows
+              {sortedData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
-                  <TableRow key={row._id.userID}>
-                    <TableCell>{row._id.userID}</TableCell>
+                  <TableRow key={row.userID}>
+                    <TableCell>{row.userID}</TableCell>
                     <TableCell>{row.full_name}</TableCell>
                     <TableCell>{row.age}</TableCell>
                     <TableCell>{row.domain}</TableCell>
@@ -205,7 +232,24 @@ function RecentPartners() {
                     <TableCell>{row.years_of_exp}</TableCell>
                     <TableCell>{row.expertise_in}</TableCell>
                     <TableCell>{row.can_handle}</TableCell>
-                    <TableCell>{row.jobs.join(", ")}</TableCell>
+                    <TableCell>
+  {/* Show only some jobs initially, and all jobs when "Show More" is clicked */}
+  {expandedRows.includes(row.userID) ? (
+    row.jobs.join(", ")
+  ) : (
+    <div>
+      {row.jobs.slice(0, 3).join(", ")}
+      {row.jobs.length > 3 && (
+        <Tooltip title="More">
+          <span onClick={() => handleShowMoreJobs(row.userID)} style={{cursor:"pointer"}}>...
+          </span>
+          </Tooltip>
+    
+      )}
+    </div>
+  )}
+</TableCell>
+
                     <TableCell>
                       <StyledRating name="read-only" value="2.5" readOnly />
                     </TableCell>

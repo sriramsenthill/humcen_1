@@ -112,6 +112,7 @@ router.get("/api/admin/user", data.getUsers);
 
 router.get("/api/admin/partner", data.getPartners);
 
+router.get("/api/admin/customer",data.getCustomers);
 
 router.get("/api/admin/Unassigned",data.getUnassignedJobOrders)
 

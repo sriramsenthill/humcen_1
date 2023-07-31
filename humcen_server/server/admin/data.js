@@ -5,6 +5,7 @@ const User = require("../mongoose_schemas/user"); // Import the User model
 const JobFiles = require("../mongoose_schemas/job_files"); // Import Job Files Model
 const Unassigned=require("../mongoose_schemas/unassigned");
 const Drafting = require("../mongoose_schemas/patent_drafting");
+const Customer=require("../mongoose_schemas/customer");
 const getUsers = async (req, res) => {
   try {
     const users = await User.find({});
@@ -14,6 +15,18 @@ const getUsers = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+
+const getCustomers = async (req, res) => {
+  try {
+    const users = await Customer.find({});
+    res.send(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 
 const getPartners = async (req, res) => {
   try {
@@ -310,4 +323,5 @@ module.exports = {
   getUnassignedJobById,
   getPartnersData,
   assignTask,
+  getCustomers
 };

@@ -161,6 +161,8 @@ function UnAssignedJob() {
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, count - page * rowsPerPage);
 
+    const sortedData = rows.sort((a, b) => parseInt(b._id.job_no) - parseInt(a._id.job_no));
+
   return (
     <Card>
       <Box sx={{ p: 2 }}>
@@ -179,7 +181,7 @@ function UnAssignedJob() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows
+              {sortedData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
                   <TableRow key={row._id.userID}>

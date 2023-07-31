@@ -130,6 +130,18 @@ function RecentAdmins() {
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, count - page * rowsPerPage);
 
+
+    const sortedData = [...rows].sort((a, b) => {
+      // Check if the full_name property is undefined in either a or b
+      if (a.name === undefined || b.name === undefined) {
+        // Keep the original order if any of the full_name properties is undefined
+        return 0;
+      } else {
+        return a.name.localeCompare(b.name);
+      }
+    });
+
+
   return (
     <Card>
       <Box sx={{ p: 2 }}>
@@ -145,7 +157,7 @@ function RecentAdmins() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows
+              {sortedData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
                   <TableRow key={row._id["$oid"]}>

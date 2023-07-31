@@ -108,7 +108,7 @@ RecentUser.propTypes = {
 
 async function fetchUserData() {
   try {
-    const response = await fetch("http://localhost:3000/api/admin/user");
+    const response = await fetch("http://localhost:3000/api/admin/customer");
     const data = await response.json();
     console.log(data);
     return data;
@@ -145,7 +145,17 @@ function RecentUsers() {
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, count - page * rowsPerPage);
+    const sortedData = [...rows].sort((a, b) => {
+      // Check if the full_name property is undefined in either a or b
+      if (a.first_name === undefined || b.first_name === undefined) {
+        // Keep the original order if any of the full_name properties is undefined
+        return 0;
+      } else {
+        return a.first_name.localeCompare(b.first_name);
+      }
+    });
 
+    
   return (
     <Card>
       <Box sx={{ p: 2 }}>
@@ -155,52 +165,49 @@ function RecentUsers() {
               <TableRow>
                 <TableCell>User ID</TableCell>
                 <TableCell>Name</TableCell>
-                <TableCell>Type</TableCell>
                 <TableCell>Email</TableCell>
-                <TableCell>Phone Number</TableCell>
-                <TableCell>Street</TableCell>
+                <TableCell>Phone No</TableCell>
                 <TableCell>City</TableCell>
+                <TableCell>Street</TableCell>
                 <TableCell>State</TableCell>
                 <TableCell>Zip Code</TableCell>
-                <TableCell>Preferences</TableCell>
                 <TableCell>Tax ID</TableCell>
                 <TableCell>Website</TableCell>
                 <TableCell>Industry Sector</TableCell>
                 <TableCell>Employee Name</TableCell>
                 <TableCell>Employee Surname</TableCell>
                 <TableCell>Employee Position</TableCell>
+              
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows
+              {sortedData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
                   <TableRow key={row._id.$oid}>
                     <TableCell>{row.userID}</TableCell>
-                    <TableCell>{row.name}</TableCell>
-                    <TableCell>{row.type}</TableCell>
+                    <TableCell>{row.first_name+" "+row.last_name}</TableCell>
                     <TableCell>{row.email}</TableCell>
                     <TableCell>{row.phno}</TableCell>
-                    <TableCell>{row.street}</TableCell>
                     <TableCell>{row.city}</TableCell>
+                    <TableCell>{row.street}</TableCell>
                     <TableCell>{row.state}</TableCell>
                     <TableCell>{row.zipcode}</TableCell>
-                    <TableCell>{JSON.stringify(row.pref, null, 2)}</TableCell>
-                    <TableCell>{row.user_specific_data.tax_ID}</TableCell>
+                    <TableCell>{row.user_specific_data?.tax_ID??"To be assigned"}</TableCell>
                     <TableCell>
-                      {row.user_specific_data.website || "To be assigned"}
+                      {row.user_specific_data?.website ?? "To be assigned"}
                     </TableCell>
                     <TableCell>
-                      {row.user_specific_data.ind_sec || "To be assigned"}
+                      {row.user_specific_data?.ind_sec ?? "To be assigned"}
                     </TableCell>
                     <TableCell>
-                      {row.user_specific_data.emp_name || "To be assigned"}
+                      {row.user_specific_data?.emp_name ?? "To be assigned"}
                     </TableCell>
                     <TableCell>
-                      {row.user_specific_data.emp_surname || "To be assigned"}
+                      {row.user_specific_data?.emp_surname ?? "To be assigned"}
                     </TableCell>
                     <TableCell>
-                      {row.user_specific_data.emp_pos || "To be assigned"}
+                      {row.user_specific_data?.emp_pos ?? "To be assigned"}
                     </TableCell>
                   </TableRow>
                 ))}
