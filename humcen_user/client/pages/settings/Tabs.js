@@ -113,17 +113,17 @@ export default function BasicTabs({ no, items }) {
               </Tabs>
             </Box>
             <TabPanel value={value} index={0}>
-              <div className={'card'}>
+              <div className={'cardTab'}>
                 <ProfileSettings />
               </div>
             </TabPanel>
             <TabPanel value={value} index={1}>
-              <div className={'card'}>
+              <div className={'cardTab'}>
                 <EmailNotifsSettings />
               </div>
             </TabPanel>
             <TabPanel value={value} index={2}>
-              <div className={'card'}>
+              <div className={'cardTab'}>
                 <ChangePassword />
               </div>
             </TabPanel>

@@ -1,6 +1,6 @@
 .sidebarLink {
   display: flex;
-  color: #260944;
+  color: #00002B;
   justify-content: space-between;
   align-items: center;
   padding: 9px 20px;
@@ -17,7 +17,12 @@
   top: 2px;
 }
 .sidebarLink:hover {
-  background: linear-gradient(90deg, rgba(172, 169, 255, 0.6) 0%, rgba(172, 169, 255, 0.37) 91.25%);
+  background: linear-gradient(
+    90deg,
+    rgba(0, 172, 246, 0.8) 0%, /* Decreased opacity to 0.5 */
+    rgba(2, 225, 185, 0.79) 91.25% /* Decreased opacity to 0.75 */
+  );
+  
 }
 .sidebarLink2 {
   display: block;
