@@ -199,7 +199,7 @@ const rejectJobOrder = async (req, res) => {
               });
 
               // Deleting JobOrder traces
-              JobOrder.findOneAndDelete({ "_id.job_no": jobId })
+              JobOrder.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
                   console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
@@ -212,7 +212,7 @@ const rejectJobOrder = async (req, res) => {
               });
 
               // Deleting Drafting traces
-              Drafting.findOneAndDelete({ "_id.job_no": jobId })
+              Drafting.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
                   console.log(`Successfully deleted job from Drafting with job number ${jobId}`);
@@ -269,7 +269,7 @@ const rejectJobOrder = async (req, res) => {
               });
 
               // Deleting JobOrder traces
-              JobOrder.findOneAndDelete({ "_id.job_no": jobId })
+              JobOrder.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
                   console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
@@ -282,7 +282,7 @@ const rejectJobOrder = async (req, res) => {
               });
 
               // Deleting Filing traces
-              Filing.findOneAndDelete({ "_id.job_no": jobId })
+              Filing.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
                   console.log(`Successfully deleted job from Filing with job number ${jobId}`);
@@ -338,7 +338,7 @@ const rejectJobOrder = async (req, res) => {
               });
 
               // Deleting JobOrder traces
-              JobOrder.findOneAndDelete({ "_id.job_no": jobId })
+              JobOrder.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
                   console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
@@ -351,7 +351,7 @@ const rejectJobOrder = async (req, res) => {
               });
 
               // Deleting Patent Search traces
-              Search.findOneAndDelete({ "_id.job_no": jobId })
+              Search.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
                   console.log(`Successfully deleted job from Patent Search with job number ${jobId}`);
@@ -407,7 +407,7 @@ const rejectJobOrder = async (req, res) => {
               });
 
               // Deleting JobOrder traces
-              JobOrder.findOneAndDelete({ "_id.job_no": jobId })
+              JobOrder.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
                   console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
@@ -420,7 +420,7 @@ const rejectJobOrder = async (req, res) => {
               });
 
               // Deleting Response To FER traces
-              responseToFer.findOneAndDelete({ "_id.job_no": jobId })
+              responseToFer.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
                   console.log(`Successfully deleted job from Response To FER with job number ${jobId}`);
@@ -474,7 +474,7 @@ const rejectJobOrder = async (req, res) => {
               });
 
               // Deleting JobOrder traces
-              JobOrder.findOneAndDelete({ "_id.job_no": jobId })
+              JobOrder.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
                   console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
@@ -487,7 +487,7 @@ const rejectJobOrder = async (req, res) => {
               });
 
               // Deleting Freedom To Operate Search traces
-              freedomToOperate.findOneAndDelete({ "_id.job_no": jobId })
+              freedomToOperate.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
                   console.log(`Successfully deleted job from Freedom To Operate with job number ${jobId}`);
@@ -541,7 +541,7 @@ const rejectJobOrder = async (req, res) => {
               });
 
               // Deleting JobOrder traces
-              JobOrder.findOneAndDelete({ "_id.job_no": jobId })
+              JobOrder.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
                   console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
@@ -554,7 +554,7 @@ const rejectJobOrder = async (req, res) => {
               });
 
               // Deleting Freedom to Patent Landscape traces
-              patentLandscape.findOneAndDelete({ "_id.job_no": jobId })
+              patentLandscape.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
                   console.log(`Successfully deleted job from Freedom to Patent Landscape with job number ${jobId}`);
@@ -608,7 +608,7 @@ const rejectJobOrder = async (req, res) => {
               });
 
               // Deleting JobOrder traces
-              JobOrder.findOneAndDelete({ "_id.job_no": jobId })
+              JobOrder.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
                   console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
@@ -621,7 +621,7 @@ const rejectJobOrder = async (req, res) => {
               });
 
               // Deleting Patent Portfolio Analysis traces
-              patentPortfolioAnalysis.findOneAndDelete({ "_id.job_no": jobId })
+              patentPortfolioAnalysis.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
                   console.log(`Successfully deleted job from Patent Portfolio Analysis with job number ${jobId}`);
@@ -674,7 +674,7 @@ const rejectJobOrder = async (req, res) => {
               });
 
               // Deleting JobOrder traces
-              JobOrder.findOneAndDelete({ "_id.job_no": jobId })
+              JobOrder.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
                   console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
@@ -687,7 +687,7 @@ const rejectJobOrder = async (req, res) => {
               });
 
               // Deleting Patent Translation Services traces
-              patentTranslation.findOneAndDelete({ "_id.job_no": jobId })
+              patentTranslation.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
                   console.log(`Successfully deleted job from Patent Translation Services with job number ${jobId}`);
@@ -742,7 +742,7 @@ const rejectJobOrder = async (req, res) => {
               });
 
               // Deleting JobOrder traces
-              JobOrder.findOneAndDelete({ "_id.job_no": jobId })
+              JobOrder.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
                   console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
@@ -755,7 +755,7 @@ const rejectJobOrder = async (req, res) => {
               });
 
               // Deleting Patent Illustration traces
-              patentIllustration.findOneAndDelete({ "_id.job_no": jobId })
+              patentIllustration.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
                   console.log(`Successfully deleted job from Patent Illustration with job number ${jobId}`);
@@ -808,7 +808,7 @@ const rejectJobOrder = async (req, res) => {
               });
 
               // Deleting JobOrder traces
-              JobOrder.findOneAndDelete({ "_id.job_no": jobId })
+              JobOrder.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
                   console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
@@ -821,7 +821,7 @@ const rejectJobOrder = async (req, res) => {
               });
 
               // Deleting Patent Watch traces
-              patentWatch.findOneAndDelete({ "_id.job_no": jobId })
+              patentWatch.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
                   console.log(`Successfully deleted job from Patent Watch with job number ${jobId}`);
@@ -874,7 +874,7 @@ const rejectJobOrder = async (req, res) => {
               });
 
               // Deleting JobOrder traces
-              JobOrder.findOneAndDelete({ "_id.job_no": jobId })
+              JobOrder.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
                   console.log(`Successfully deleted job from Job Order with job number ${jobId}`);
@@ -887,7 +887,7 @@ const rejectJobOrder = async (req, res) => {
               });
 
               // Deleting Patent Licensing traces
-              patentLicense.findOneAndDelete({ "_id.job_no": jobId })
+              patentLicense.deleteOne({ "_id.job_no": jobId })
               .then((deletedJob) => {
                 if (deletedJob) {
                   console.log(`Successfully deleted job from Patent Licensing with job number ${jobId}`);

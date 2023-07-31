@@ -10,6 +10,8 @@ import { Typography } from "@mui/material";
 import { Button, Checkbox, FormControl, InputLabel, MenuItem, Select,FormControlLabel } from "@mui/material";
 import axios from "axios";
 import JSZip from "jszip";
+import { styled } from "@mui/system";
+import { headers } from "next.config";
 
 // Create an Axios instance
 
@@ -52,6 +54,21 @@ const serviceList = [
   },
 ];
 
+const ColorButton = styled(Button)(({ theme }) => ({
+  color: "white",
+  width: "120%",
+  height: "52px",
+  borderRadius: "100px",
+  marginBottom: "30px",
+  background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
+  "&:hover": {
+    background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
+  },
+  textTransform: "none",
+  fontSize: "14px",
+  fontWeight: "400",
+}));
+
 
 const api = axios.create({
   baseURL: "http://localhost:3000/api",
@@ -78,41 +95,17 @@ const DynamicPage = () =>{
   const [Service, setService] = useState("");
   const [approval, setApproval] = useState(false);
   const [getCountry, setCountry] = useState("");
-    const [selectedCheckboxes, setSelectedCheckboxes] = useState("");
+  const [clicked, setClicked] = useState(false); 
+  const [partners, setPartners] = useState(false);
+  const [selectedPartner, setSelectedPartner] = useState('');
+  const [submit, setSubmit] = useState(false);
 
- const [listOfPartner,setListOfPartner]=useState("");
- const [showPartnerDropdown, setShowPartnerDropdown] = useState(false);
-
-    const handleCheckboxChange = (event) => {
-      const { value } = event.target;
-      setSelectedCheckboxes(value); // Update selectedCheckboxes with an array containing only the clicked checkbox value
-    };
+ const [listOfPartner,setListOfPartner]=useState([]);
     
 
 
-
-    const onClickFindPartner = async () => {
-      try {
-        const requestData = {
-          country: getCountry,
-          knownFields: selectedCheckboxes,
-        };
-  
-        // Make the API call to find the partner based on selected country and checkboxes
-        const response = await api.post(`/find-partner`, requestData);
-        setListOfPartner(response.data);
-        setShowPartnerDropdown(true);
-     
-        // Handle the API response here, e.g., display the partner data or take any other action
-      } catch (error) {
-        console.error("Error finding the partner:", error);
-        // Handle any errors that occurred during the API call
-      }
-    };
- 
-    console.log(listOfPartner);
-
   useEffect(() => {
+    console.log("Here " + id);
     const fetchJobData = async () => {
       try {
         const response = await api.get(`/Unassigned/${id}`);
@@ -124,6 +117,7 @@ const DynamicPage = () =>{
           setJob(specificJob[0]);
           setJobID(specificJob.job_no);
           setService(specificJob.service);
+          setCountry(specificJob.country);
         } else {
           console.log("No job found with the provided job number:", id);
           setJob(null);
@@ -134,7 +128,7 @@ const DynamicPage = () =>{
       }
     };
 
-    fetchJobData();
+    fetchJobData(id);
 
     // Clean up the effect by resetting the job state when the component is unmounted
     return () => {
@@ -172,6 +166,58 @@ const DynamicPage = () =>{
 
   if (!job) {
     return <div>No job found with the provided job number.</div>;
+  }
+
+  const onClickFindPartner = async (Service, getCountry) => {
+    try {
+
+      // Make the API call to find the partner based on selected country and checkboxes
+      setClicked(true);
+      const response = await api.get(`/find-partner/${Service}/${getCountry}`);
+      const partnerList = response.data
+      setListOfPartner(partnerList);
+      if(partnerList.length === 0 ) {
+        setPartners(false);
+      } else {
+        setPartners(true);
+      }
+
+   
+      // Handle the API response here, e.g., display the partner data or take any other action
+    } catch (error) {
+      console.error("Error finding the partner:", error);
+      // Handle any errors that occurred during the API call
+    }
+  };
+
+  const handlePartnerSelection = (event) => {
+    if (!event.target.value) {
+      setSubmit(false);
+    } else {
+      setSubmit(true);
+      setSelectedPartner(event.target.value); // Update the state with the selected value
+      console.log(event.target.value);
+    }
+
+  };
+
+  // To give Assign Request
+  const handleSubmit = async(e) => {
+    e.preventDefault();
+    console.log(selectedPartner);
+    try {
+      const assignResponse = await api.post("/assign", {
+        uaJobID: job._id.job_no,
+        partID: selectedPartner,
+        service: job.service,
+      }).then((response) => {
+        console.log("Successfully sent to the API endpoint: " + response.data);
+      })
+
+    } catch(error) {
+        console.error("Error in Assigning Task : " + error);
+    }
+  
   }
 
   const onClickDownload = async (jobId) => {
@@ -250,11 +296,11 @@ const DynamicPage = () =>{
           <li>
             <Link href="/">Dashboard</Link>
           </li>
-          <li>assignjobs</li>
-          <li>status</li>
+          <li>Assign Jobs</li>
+          <li>Status</li>
         </ul>
       </div>
-      <h1>Details</h1>
+      <h1>Job Details</h1>
       <Card
         sx={{
           boxShadow: "none",
@@ -276,7 +322,7 @@ const DynamicPage = () =>{
             textAlign="right"
           >
             <h2>
-              <span className={styles.label1}>Job no : </span>
+              <span className={styles.label1}>Job No(UA) : </span>
               {id}
             </h2>
           </Grid>
@@ -315,6 +361,9 @@ const DynamicPage = () =>{
                 <td className={styles.label} style={{ padding: "10px" }}>
                   Status
                 </td>
+                <td className={styles.label} style={{ padding: "10px" }}>
+                  Customer Files
+                </td>
               </tr>
               <tr>
                 <td style={{ padding: "10px" }}>{customerName}</td>
@@ -328,7 +377,7 @@ const DynamicPage = () =>{
                 <td>
                 <Button
                       sx={{
-                        background: approval ? "#27AE60" : "#D3D3D3"  , 
+                        background:  "#27AE60"  , 
                         color: "white",
                         borderRadius: "100px",
                         width: "100%",
@@ -354,233 +403,30 @@ const DynamicPage = () =>{
               </tr>
             </tbody>
           </table>
-        </Grid>
-      </Card>
-      <Card
-        sx={{
-          boxShadow: "none",
-          borderRadius: "10px",
-          p: "25px",
-          mb: "15px",
-        }}
-      >
         <Grid container spacing={2}>
-      {/* Heading */}
-      <Grid item xs={2}>
-        <h1>Assign</h1>
-      
-      </Grid>
-
-      {/* Card */}
-      <Grid item xs={12}>
-        <Card
-          sx={{
-            boxShadow: "none",
-            borderRadius: "10px",
-            p: "25px",
-        
-          }}
-        >
-          <Typography
-            as="h3"
-            sx={{
-              fontSize: 18,
-              fontWeight: 500,
-              mb:"30px",
-            }}
+          <Grid item xs={12} sm={6} md={6}>
+          <h1>Admin's Job Assigner : </h1>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={6}
           >
-            Select the Country
-          </Typography>
-          {/* Buttons for country selection */}
-          <Button
-            style={{
-              background: getCountry === "India" ? "#68BDFD" : "#F8FCFF",
-              color: getCountry === "India" ? "white" : "#BFBFBF",
-              width: "13%",
-              marginRight: "2%",
-              height: "40px",
-              textTransform: "none",
-            }}
-            onClick={() => {
-              setCountry("India");
-            }}
-          >
-            <img
-              src="https://hatscripts.github.io/circle-flags/flags/in.svg"
-              width="24"
-            />
-            &nbsp;&nbsp;India
-          </Button>
-          <Button
-            style={{
-              background: getCountry === "United States" ? "#68BDFD" : "#F8FCFF",
-              color: getCountry === "United States" ? "white" : "#BFBFBF",
-              width: "13%",
-              marginRight: "2%",
-              height: "40px",
-              textTransform: "none",
-            }}
-            onClick={() => {
-              setCountry("United States");
-            }}
-          >
-            <img
-              src="https://hatscripts.github.io/circle-flags/flags/us.svg"
-              width="24"
-            />
-            &nbsp;&nbsp;United States
-          </Button>
-          <Button
-            style={{
-              background: getCountry === "Germany" ? "#68BDFD" : "#F8FCFF",
-              color: getCountry === "Germany" ? "white" : "#BFBFBF",
-              width: "13%",
-              marginRight: "2%",
-              height: "40px",
-              textTransform: "none",
-            }}
-            onClick={() => {
-              setCountry("Germany");
-            }}
-          >
-            <img
-              src="https://hatscripts.github.io/circle-flags/flags/de.svg"
-              width="24"
-            />
-            &nbsp;&nbsp;Germany
-          </Button>
-          <Button
-              style={{
-                background: getCountry === "China" ? "#68BDFD" : "#F8FCFF",
-                color: getCountry === "China" ? "white" : "#BFBFBF",
-                width: "13%",
-                marginRight: "2%",
-                height: "40px",
-                textTransform: "none",
-              }}
-              onClick={() => {
-                setCountry("China");
-              }}
-            >
-              <img
-                src="https://hatscripts.github.io/circle-flags/flags/cn.svg"
-                width="24"
-              />
-              &nbsp;&nbsp;China
-            </Button>
-            <Button
-              style={{
-                background: getCountry === "UAE" ? "#68BDFD" : "#F8FCFF",
-                color: getCountry === "UAE" ? "white" : "#BFBFBF",
-                width: "13%",
-                marginRight: "2%",
-                height: "40px",
-                textTransform: "none",
-              }}
-              onClick={() => {
-                setCountry("UAE");
-              }}
-            >
-              <img
-                src="https://hatscripts.github.io/circle-flags/flags/ae.svg"
-                width="24"
-              />
-              &nbsp;&nbsp;UAE
-            </Button>
-            <Button
-              style={{
-                background: getCountry === "Japan" ? "#68BDFD" : "#F8FCFF",
-                color: getCountry === "Japan" ? "white" : "#BFBFBF",
-                width: "13%",
-                marginRight: "2%",
-                height: "40px",
-                textTransform: "none",
-              }}
-              onClick={() => {
-                setCountry("Japan");
-              }}
-            >
-              <img
-                src="https://hatscripts.github.io/circle-flags/flags/jp.svg"
-                width="24"
-              />
-              &nbsp;&nbsp;Japan
-            </Button>
-          </Card>
-          <Card
-            sx={{
-              boxShadow: "none",
-              borderRadius: "10px",
-              p: "25px",
-              mb: "10px",
-            }}
-          >
-           
-        </Card>
-      </Grid>
-      <Typography
-            as="h3"
-            sx={{
-              fontSize: 18,
-              fontWeight: 500,
-              mb: "30px",
-              ml:"35px",
-              mt:"10px",
-            }}
-          >
-            Known Fields
-          </Typography>
-          <Grid container spacing={2} style={{marginLeft:"20px"}}>
-      {serviceList.map((service, index) => (
-        <Grid item xs={size} key={index}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={selectedCheckboxes.includes(service.title)}
-                onChange={handleCheckboxChange}
-                value={service.title}
-              />
-            }
-            label={service.title}
-          />
-        </Grid>
-      ))}
-    </Grid>
-    <td style={{marginLeft:"25px",marginTop:"15px"}}>
-              <Button
-                      sx={{
-                        background: approval ? "#27AE60" : "#D3D3D3"  , 
-                        color: "white",
-                        borderRadius: "100px",
-                        width: "100%",
-                        height: "88%",
-                        textTransform: "none",
-                        "&:hover": {
-                          background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
-                        },
-                      }}
-                    
-                      onClick={onClickFindPartner}
-                    >
-                      Find Partner
-                    </Button>
-                    </td>
-
-{showPartnerDropdown&&
-<>
-{listOfPartner.length>0?
-  <Grid item xs={12}>
-         <FormControl style={{marginTop:"17px",marginLeft:"16px", width:260}} fullWidth>
+  { clicked ? ( partners ? (
+    <Grid item xs={12}>
+         <FormControl style={{marginTop:"17px",marginLeft:"16px", width:260, position: "relative", right: "35%"}} fullWidth>
       <InputLabel id="partner-dropdown-label">Select a partner</InputLabel>
       <Select
         labelId="partner-dropdown-label"
         id="partner-dropdown"
-        value=""
+        value={selectedPartner}
         label="Select a partner"
+        onChange={handlePartnerSelection}
       >
         {
           listOfPartner.map((partner) => (
-            <MenuItem key={partner._id} value={partner._id}>
+            <MenuItem key={partner._id} value={partner.userID}>
               {partner.first_name+" "+partner.last_name} {/* Replace "name" with the actual field in the partner object that contains the partner's name */}
             </MenuItem>
           ))
@@ -588,20 +434,57 @@ const DynamicPage = () =>{
       </Select>
     </FormControl>
     </Grid>
-    :    <Grid item xs={12}><Typography
-            as="h3"
-            sx={{
-              fontSize: 18,
-              fontWeight: 500,
-              mb: "30px",
-              ml:"15px",
-              mt:"10px",
-            }}
-          >
-            No Partners Found
-          </Typography></Grid>}</>}
-            </Grid>
+  ) : (
+    <h3 style={{
+          position: "relative",
+          top: "17%",
+          fontWeight: "22px",
+          right: "20%",
+        }}>No Partners available to do the Task</h3>
+  ) ) : (
+    <Button
+        sx={{
+        background: "#27AE60"  , 
+        color: "white",
+        position: "relative",
+        top: "33%",
+        right: "30%",
+        borderRadius: "100px",
+        width: "32%",
+        height: "40%",
+        textTransform: "none",
+        "&:hover": {
+          background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
+        },
+        }}
+        onClick={() => onClickFindPartner(job.service, job.country)}
+      >
+        Find Partner
+      </Button>
+  )}
+          </Grid>
+        </Grid>
+
+<>
+</>
+      </Grid>
+      
+  
       </Card>
+    {submit && (<ColorButton
+                sx={{ 
+                  width: "10%",
+                  height: "10%",
+                  position: "relative",
+                  left: "33%",
+                  "&:hover": {
+                          background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
+                        }, }}
+                type="submit"
+                onClick={handleSubmit}
+              >
+                Assign Job
+      </ColorButton> )}
       </div>
     </>
   );

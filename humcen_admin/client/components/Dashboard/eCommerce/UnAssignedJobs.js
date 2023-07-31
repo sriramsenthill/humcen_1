@@ -33,6 +33,7 @@ function formatDate(date) {
   return new Date(date).toLocaleDateString(undefined, options);
 }
 
+
 function getStatusColor(status) {
   if (status === "In Progress") {
     return "Gold"; // Set the color to yellow for "in progress" status
@@ -171,11 +172,8 @@ function UnAssignedJob() {
                 <TableCell>Job No</TableCell>
                 <TableCell>Full Name</TableCell>
                 <TableCell>service</TableCell>
-                <TableCell>Domain</TableCell>
                 <TableCell>Country</TableCell>
-                <TableCell>Job Title</TableCell>
                 <TableCell>Budget</TableCell>
-                <TableCell>Time Of Delivery</TableCell>
                 <TableCell>Status</TableCell>
                 
               </TableRow>
@@ -188,18 +186,22 @@ function UnAssignedJob() {
                     <TableCell>{row._id.job_no}</TableCell>
                     <TableCell>{row.customerName}</TableCell>
                     <TableCell>{row.service}</TableCell>
-                    <TableCell>{row.domain}</TableCell>
                     <TableCell>{row.country}</TableCell>
-                    <TableCell>{row.job_title}</TableCell>
                     <TableCell>{row.budget}</TableCell>
-                    <TableCell>{row.time_of_delivery}</TableCell>
-                    <TableCell>{row.status}</TableCell>
+                    <TableCell
+                      style={{
+                        color: getStatusColor(row.status),
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {row.status}
+                    </TableCell>
                   
                   <TableCell>
                   <Link href={`assignJobs/${row._id.job_no}`} passHref>
                     <Button
                       sx={{
-                        background: "#D3D3D3"  , 
+                        background: "#27AE60"  , 
                         color: "white",
                         borderRadius: "100px",
                         width: "100%",

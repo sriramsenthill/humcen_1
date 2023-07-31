@@ -1,12 +1,12 @@
 import React from "react";
 import Link from "next/link";
 import styles from "@/styles/PageTitle.module.css";
-
+import DefaultSelect from "@/components/Forms/AdvancedElements/DefaultSelect";
 import UnAssignedJobs from "@/components/Dashboard/eCommerce/UnAssignedJobs";
 
 import withAuth from "@/components/withAuth";
 
-const Projects = () => {
+const UAJobs = () => {
   return (
     <>
       {/* Page title */}
@@ -24,4 +24,4 @@ const Projects = () => {
   );
 };
 
-export default withAuth(Projects);
+export default withAuth(UAJobs);

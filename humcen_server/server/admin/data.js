@@ -41,13 +41,14 @@ const getUnassignedJobOrders = async (req, res) => {
 
 const getPartnersData= async  (req, res) => {
   try {
-    const { country, knownFields} = req.body; // Assuming you have fields named "country" and "known_fields" in your Partner schema
+    const { country, services} = req.params; // Assuming you have fields named "country" and "known_fields" in your Partner schema
+    console.log("Here " + country + services);
     const partners = await Partner.find({
       country: country,
-      ["known_fields." + knownFields]: true,
+      ["known_fields." + services]: true,
 
     });
-
+    console.log(partners);
     res.json(partners);
   } catch (error) {
     console.error("Error finding partners:", error);
@@ -186,9 +187,9 @@ const getJobOrderById = async (req, res) => {
 
 const getUnassignedJobById = async (req, res) => {
   const jobId = req.params.jobID
-  console.log(jobId)
+  console.log(jobId);
   try {
-    const jobOrders = await Unassigned.find({"_id.job_no": jobId});
+    const jobOrders = await Unassigned.find({"_id.job_no": Number(jobId)});
     console.log("jo: " + jobOrders);
     res.json(jobOrders);
   } catch (error) {
@@ -196,6 +197,36 @@ const getUnassignedJobById = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+const assignTask = async(req, res) => {
+  const unassignedJobID = req.body.uaJobID;
+  const partnerID = req.body.partID;
+  const patentService = req.body.service;
+
+  // Fetching Data from Unassigned Schema
+  if(patentService === "Patent Drafting") {
+    const unassignedDraftingData = await Unassigned.findOne({"_id.job_no": parseInt(unassignedJobID)});
+    const latestDraftingOrder = await JobOrder.findOne()
+      .sort({ "_id.job_no": -1 })
+      .limit(1)
+      .exec();
+
+      const newDraftingNo = latestDraftingOrder
+      ? latestDraftingOrder._id.job_no + 1
+      : 1000;
+    const jobOrderDoc = {
+      "_id.job_no": newDraftingNo,
+      
+    }
+  }
+
+  // Creating a new Job Order Document
+
+  // Creating a new Service Document
+
+  // Deleting the Old Unassigned Document
+
+}
 
 module.exports = {
   getUsers,
@@ -208,5 +239,6 @@ module.exports = {
   getJobOrderById,
   getUnassignedJobOrders,
   getUnassignedJobById,
-  getPartnersData
+  getPartnersData,
+  assignTask,
 };
