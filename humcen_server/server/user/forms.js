@@ -1280,6 +1280,7 @@ const approveTheDoneWork = async(req, res) => {
       console.error("Error in finding the Partner.")
     }
     workedPartner.in_progress_jobs = workedPartner.in_progress_jobs - 1;
+    workedPartner.is_free = true;
     workedPartner.save().then((response) => {
       console.log("Partner's In Progress Job Count successfully Updated");
     }).catch((error) => {

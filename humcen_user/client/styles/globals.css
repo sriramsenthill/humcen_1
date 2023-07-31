@@ -148,6 +148,11 @@ img {
 }
 .card{
   animation: slideIn 0.5s ease-in-out;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+.cardTab{
+  animation: slideIn 0.5s ease-in-out;
 }
 @keyframes slideIn {
   from {
@@ -781,11 +786,19 @@ img {
 }
 
 .sidebarLinkActive {
-  background: linear-gradient(90deg, rgba(172, 169, 255, 0.6) 0%, rgba(172, 169, 255, 0.37) 91.25%);
+  background: linear-gradient(
+    90deg,
+    rgba(0, 172, 246, 0.8) 0%, /* Decreased opacity to 0.5 */
+    rgba(2, 225, 185, 0.79) 91.25% /* Decreased opacity to 0.75 */
+  );
 }
 
 .sidebarLinkActive2 {
-  background: linear-gradient(90deg, rgba(172, 169, 255, 0.6) 0%, rgba(172, 169, 255, 0.37) 91.25%);
+  background: linear-gradient(
+    90deg,
+    rgba(0, 172, 246, 0.8) 0%, /* Decreased opacity to 0.5 */
+    rgba(2, 225, 185, 0.79) 91.25% /* Decreased opacity to 0.75 */
+  );
 }
 
 .sidebarLinkActive2::before {
@@ -799,7 +812,7 @@ img {
 
 /* Main wrapper content */
 .main-wrapper-content {
-  padding-left: 330px;
+  padding-left: 300px;
   position: relative;
   transition: all 0.5s ease-out;
 }
@@ -814,7 +827,7 @@ img {
   padding-right: 30px;
 }
 .main-wrapper-content .main-content {
-  padding-right: 30px;
+  padding-right: 0px;
 }
 
 @media only screen and (max-width: 767px) {
@@ -1067,9 +1080,10 @@ img {
   font-size: 20px !important;
 }
 
-/* Authentication box */
-.main-wrapper-content:has(div.authenticationBox) {
-  padding: 0;
+ /* Authentication box  */
+ .main-wrapper-content:has(div.authenticationBox) {
+  padding: 0px ;
+  margin: 0;
 }
 
 /* End Authentication box */

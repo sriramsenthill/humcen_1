@@ -97,9 +97,6 @@ const SignUpForm = () => {
                   Sign in
                 </Link>
               </Typography>
-
-           
-       
             
               <Box component="form" noValidate onSubmit={handleSubmit}>
                 <Box
