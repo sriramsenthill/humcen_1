@@ -36,13 +36,16 @@ const DynamicPage = () => {
   const [job, setJob] = useState(null); // Initialize job state as null
   const [jobno,setjobno]=useState(null);
   const [Service,setService]=useState(null);
+  const [noFile, setFile] = useState(true);
   
   useEffect(() => {
     const fetchJobData = async () => {
       try {
+        const noFileInputServices = ['Patent Licensing and Commercialization Services', "Patent Watch", "Freedom to Patent Landscape" ];
         const response = await api.get(`partner/jobs/${id}`);
         const specificJob = response.data;
         setService(specificJob.service);
+        setFile(noFileInputServices.includes(specificJob.service));
         const {job_no}=specificJob._id;
         setjobno(job_no);
         if (specificJob) {
@@ -231,7 +234,7 @@ const DynamicPage = () => {
                 <td>
                 <Button
                       sx={{
-                        background: "#27AE60", 
+                        background: noFile ?  "#D3D3D3" : "#27AE60", 
                         color: "white",
                         borderRadius: "100px",
                         width: "100%",
@@ -242,6 +245,7 @@ const DynamicPage = () => {
                         },
                       }}
                       onClick={()=>onClickDownload(job._id.job_no)}
+                      disabled={noFile}
                     >
                       Download now
                     </Button>
