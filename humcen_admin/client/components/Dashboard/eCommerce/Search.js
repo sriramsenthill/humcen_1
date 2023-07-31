@@ -51,6 +51,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function SearchFormInner() {
+
+
   return (
     <>
       <Search className="search-form">
@@ -61,6 +63,7 @@ export default function SearchFormInner() {
         <StyledInputBase
           placeholder="Search here.."
           inputProps={{ "aria-label": "search" }}
+        
         />
       </Search>
     </>
