@@ -4,6 +4,7 @@ const Partner = require("../mongoose_schemas/partner"); // Import the Admin mode
 const User = require("../mongoose_schemas/user"); // Import the User model
 const JobFiles = require("../mongoose_schemas/job_files"); // Import Job Files Model
 const Unassigned=require("../mongoose_schemas/unassigned");
+const Drafting = require("../mongoose_schemas/patent_drafting");
 const getUsers = async (req, res) => {
   try {
     const users = await User.find({});
@@ -206,6 +207,7 @@ const assignTask = async(req, res) => {
   // Fetching Data from Unassigned Schema
   if(patentService === "Patent Drafting") {
     const unassignedDraftingData = await Unassigned.findOne({"_id.job_no": parseInt(unassignedJobID)});
+    const assignedPartner = await Partner.findOne({userID: parseInt(partnerID)});
     const latestDraftingOrder = await JobOrder.findOne()
       .sort({ "_id.job_no": -1 })
       .limit(1)
@@ -214,10 +216,75 @@ const assignTask = async(req, res) => {
       const newDraftingNo = latestDraftingOrder
       ? latestDraftingOrder._id.job_no + 1
       : 1000;
-    const jobOrderDoc = {
+
+      const startDate = new Date();
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() + 7);
+
+    // Creating a new Job Order Document
+
+      const jobOrderDoc = {
       "_id.job_no": newDraftingNo,
-      
+      service: patentService,
+      country: unassignedDraftingData.country,
+      start_date: startDate,
+      end_date: endDate,
+      budget: unassignedDraftingData.budget,
+      status: unassignedDraftingData.status,
+      domain: unassignedDraftingData.domain,
+      customerName: unassignedDraftingData.customerName,
+      partnerName: assignedPartner.first_name,
+      rejected_by: [],
+      steps_done: 2, 
+      steps_done_user: 3,
+      steps_done_activity: 4,
+      Accepted: true,
+      userID: unassignedDraftingData.userID,
     }
+
+    const jobSchemaDoc = await new JobOrder(jobOrderDoc).save().then((response) => {
+      console.log("Job Order " + newDraftingNo + " saved successfully in Job Order Schema" );
+    }).catch((error) => {
+      console.error("Error in saving Document inside Job Order Schema : " + error);
+    });
+
+      // Creating a new Service Document
+
+      const draftingDoc = {
+        "_id.job_no": newDraftingNo,
+        country: unassignedDraftingData.country,
+        budget: unassignedDraftingData.budget,
+        userID: unassignedDraftingData.userID,
+        job_title: unassignedDraftingData.job_title,
+        keywords: unassignedDraftingData.keywords,
+        Accepted: true,
+        service_specific_files: unassignedDraftingData.service_specific_files,
+        domain: unassignedDraftingData.domain,
+        time_of_delivery: unassignedDraftingData.time_of_delivery,
+      }
+
+      const draftingSchemaDoc = await new Drafting(draftingDoc).save().then((response) => {
+        console.log("Job Order " + newDraftingNo + " saved successfully in Drafting Schema" );
+      }).catch((error) => {
+        console.error("Error in saving Document inside Drafting Schema : " + error);
+      });
+
+      // Deleting the Old Unassigned Document
+      const noLongerUnassigned = await Unassigned.deleteOne({"_id.job_no": parseInt(unassignedJobID)}).then((response) => {
+        console.log("Unassigned Task with Job Number " + unassignedJobID + " has been deleted successfully");
+      }).catch((error) => {
+        console.error("Error in deleting the Unassigned Task : " + error);
+      })
+
+      // Pushing the Job Number to Partner's Jobs Array
+      assignedPartner.jobs.push(newDraftingNo);
+      assignedPartner.save().then((response) => {
+        console.log("Job Number " + newDraftingNo + " successfully pushed to the Partner");
+      }).catch((error) => {
+        console.log("Error in Pushing the Job to the Partner : " + error);
+      });
+
+    
   }
 
   // Creating a new Job Order Document
@@ -225,6 +292,8 @@ const assignTask = async(req, res) => {
   // Creating a new Service Document
 
   // Deleting the Old Unassigned Document
+
+  // Pushing the Job Number to Partner's Jobs Array
 
 }
 

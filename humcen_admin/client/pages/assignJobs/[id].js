@@ -202,8 +202,7 @@ const DynamicPage = () =>{
   };
 
   // To give Assign Request
-  const handleSubmit = async(e) => {
-    e.preventDefault();
+  const handleSubmit = async() => {
     console.log(selectedPartner);
     try {
       const assignResponse = await api.post("/assign", {
@@ -481,7 +480,7 @@ const DynamicPage = () =>{
                           background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
                         }, }}
                 type="submit"
-                onClick={handleSubmit}
+                onClick={() => {window.location.href = "/"; handleSubmit()}}
               >
                 Assign Job
       </ColorButton> )}
