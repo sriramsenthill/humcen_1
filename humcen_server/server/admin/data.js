@@ -243,6 +243,18 @@ const assignTask = async(req, res) => {
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
 
+     // Push job details to the Customer 
+    const findCustomer = await Customer.findOne({userID: unassignedDraftingData.userID})
+    if(!findCustomer) {
+      console.error("No Customer exists with ID " + unassignedDraftingData.userID);
+    }
+    findCustomer.jobs.push(newDraftingNo);
+    findCustomer.save().then(() => {
+      console.log("Job Number pushed to Customer Schema");
+    }).catch((err) => {
+      console.error("Error in pushing the Job to Customer Schema: " + err);
+    });  
+
     // Creating a new Job Order Document
 
       const jobOrderDoc = {
@@ -324,6 +336,18 @@ const assignTask = async(req, res) => {
       const startDate = new Date();
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
+
+       // Push job details to the Customer 
+    const findCustomer = await Customer.findOne({userID: unassignedFilingData.userID})
+    if(!findCustomer) {
+      console.error("No Customer exists with ID " + unassignedFilingData.userID);
+    }
+    findCustomer.jobs.push(newFilingNo);
+    findCustomer.save().then(() => {
+      console.log("Job Number pushed to Customer Schema");
+    }).catch((err) => {
+      console.error("Error in pushing the Job to Customer Schema: " + err);
+    }); 
 
       // Creating a new Job Order Document
 
@@ -408,6 +432,18 @@ const assignTask = async(req, res) => {
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
 
+       // Push job details to the Customer 
+    const findCustomer = await Customer.findOne({userID: unassignedSearchData.userID})
+    if(!findCustomer) {
+      console.error("No Customer exists with ID " + unassignedSearchData.userID);
+    }
+    findCustomer.jobs.push(newSearchNo);
+    findCustomer.save().then(() => {
+      console.log("Job Number pushed to Customer Schema");
+    }).catch((err) => {
+      console.error("Error in pushing the Job to Customer Schema: " + err);
+    }); 
+
       // Creating a new Job Order Document
 
       const jobOrderDoc = {
@@ -488,6 +524,18 @@ const assignTask = async(req, res) => {
       const startDate = new Date();
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
+
+       // Push job details to the Customer 
+    const findCustomer = await Customer.findOne({userID: unassignedFERData.userID})
+    if(!findCustomer) {
+      console.error("No Customer exists with ID " + unassignedFERData.userID);
+    }
+    findCustomer.jobs.push(newFERNo);
+    findCustomer.save().then(() => {
+      console.log("Job Number pushed to Customer Schema");
+    }).catch((err) => {
+      console.error("Error in pushing the Job to Customer Schema: " + err);
+    }); 
 
       // Creating a new Job Order Document
 
@@ -570,6 +618,17 @@ const assignTask = async(req, res) => {
       const startDate = new Date();
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
+       // Push job details to the Customer 
+    const findCustomer = await Customer.findOne({userID: unassignedFTOData.userID})
+    if(!findCustomer) {
+      console.error("No Customer exists with ID " + unassignedFTOData.userID);
+    }
+    findCustomer.jobs.push(newFTONo);
+    findCustomer.save().then(() => {
+      console.log("Job Number pushed to Customer Schema");
+    }).catch((err) => {
+      console.error("Error in pushing the Job to Customer Schema: " + err);
+    }); 
 
       // Creating a new Job Order Document
 
@@ -651,6 +710,18 @@ const assignTask = async(req, res) => {
       const startDate = new Date();
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
+
+       // Push job details to the Customer 
+    const findCustomer = await Customer.findOne({userID: unassignedLandscapeData.userID})
+    if(!findCustomer) {
+      console.error("No Customer exists with ID " + unassignedLandscapeData.userID);
+    }
+    findCustomer.jobs.push(newLandscapeNo);
+    findCustomer.save().then(() => {
+      console.log("Job Number pushed to Customer Schema");
+    }).catch((err) => {
+      console.error("Error in pushing the Job to Customer Schema: " + err);
+    }); 
 
       // Creating a new Job Order Document
 
@@ -735,6 +806,18 @@ const assignTask = async(req, res) => {
 
       // Creating a new Job Order Document
 
+       // Push job details to the Customer 
+    const findCustomer = await Customer.findOne({userID: unassignedPortfolioData.userID})
+    if(!findCustomer) {
+      console.error("No Customer exists with ID " + unassignedPortfolioData.userID);
+    }
+    findCustomer.jobs.push(newPortfolioNo);
+    findCustomer.save().then(() => {
+      console.log("Job Number pushed to Customer Schema");
+    }).catch((err) => {
+      console.error("Error in pushing the Job to Customer Schema: " + err);
+    }); 
+
       const jobOrderDoc = {
         "_id.job_no": newPortfolioNo,
         service: patentService,
@@ -815,6 +898,18 @@ const assignTask = async(req, res) => {
 
       // Creating a new Job Order Document
 
+       // Push job details to the Customer 
+    const findCustomer = await Customer.findOne({userID: unassignedTranslationData.userID})
+    if(!findCustomer) {
+      console.error("No Customer exists with ID " + unassignedTranslationData.userID);
+    }
+    findCustomer.jobs.push(newTranslationNo);
+    findCustomer.save().then(() => {
+      console.log("Job Number pushed to Customer Schema");
+    }).catch((err) => {
+      console.error("Error in pushing the Job to Customer Schema: " + err);
+    }); 
+
       const jobOrderDoc = {
         "_id.job_no": newTranslationNo,
         service: patentService,
@@ -893,6 +988,18 @@ const assignTask = async(req, res) => {
       const startDate = new Date();
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
+
+       // Push job details to the Customer 
+    const findCustomer = await Customer.findOne({userID: unassignedIllustrationData.userID})
+    if(!findCustomer) {
+      console.error("No Customer exists with ID " + unassignedIllustrationData.userID);
+    }
+    findCustomer.jobs.push(newIllustrationNo);
+    findCustomer.save().then(() => {
+      console.log("Job Number pushed to Customer Schema");
+    }).catch((err) => {
+      console.error("Error in pushing the Job to Customer Schema: " + err);
+    }); 
 
       // Creating a new Job Order Document
 
@@ -976,6 +1083,18 @@ const assignTask = async(req, res) => {
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
 
+       // Push job details to the Customer 
+    const findCustomer = await Customer.findOne({userID: unassignedWatchData.userID})
+    if(!findCustomer) {
+      console.error("No Customer exists with ID " + unassignedWatchData.userID);
+    }
+    findCustomer.jobs.push(newWatchNo);
+    findCustomer.save().then(() => {
+      console.log("Job Number pushed to Customer Schema");
+    }).catch((err) => {
+      console.error("Error in pushing the Job to Customer Schema: " + err);
+    }); 
+
       // Creating a new Job Order Document
 
       const jobOrderDoc = {
@@ -1058,6 +1177,18 @@ const assignTask = async(req, res) => {
       const startDate = new Date();
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
+
+       // Push job details to the Customer 
+    const findCustomer = await Customer.findOne({userID: unassignedLicenseData.userID})
+    if(!findCustomer) {
+      console.error("No Customer exists with ID " + unassignedLicenseData.userID);
+    }
+    findCustomer.jobs.push(newLicenseNo);
+    findCustomer.save().then(() => {
+      console.log("Job Number pushed to Customer Schema");
+    }).catch((err) => {
+      console.error("Error in pushing the Job to Customer Schema: " + err);
+    }); 
 
       // Creating a new Job Order Document
 
