@@ -25,13 +25,13 @@ const serviceLists = [
     },
     {
       image: "/images/patent_img/4.jpg",
-      title: "Response to FER/Office Action",
+      title: "Response to FER Office Action",
       desc: "Amplify your chances of patent grant with our expert Response to FER service.",
       link: "/patent-services/response_to_fer_form",
     },
     {
       image: "/images/patent_img/6.jpg",
-      title: "Freedom To Operate Search",
+      title: "Freedom To Operate",
       desc: "Avoid potential legal roadblocks and minimize risks with our thorough FTO Search service.",
       link: "/patent-services/freedom_to_operate_form",
     },
@@ -43,13 +43,13 @@ const serviceLists = [
     },
     {
       image: "/images/patent_img/8.jpg",
-      title: "Freedom to Patent Portfolio Analysis",
+      title: "Patent Portfolio Analysis",
       desc: "Maximize the value of your IP assets with our comprehensive Patent Portfolio Analysis service.",
       link: "/patent-services/patent_portfolio_analysis_form",
     },
     {
       image: "/images/patent_img/9.jpg",
-      title: "Patent Translation Service",
+      title: "Patent Translation Services",
       desc: "Bridge the language gap and expand your patent's global reach with our precise Patent Translation Service.",
       link: "/patent-services/patent_translation_service_form",
     },
