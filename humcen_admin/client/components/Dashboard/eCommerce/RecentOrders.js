@@ -15,6 +15,7 @@ import {
   TableRow,
   IconButton,
   useTheme,
+  Button,
 } from "@mui/material";
 import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
@@ -111,7 +112,7 @@ async function fetchJobOrders() {
   try {
     const response = await fetch("http://localhost:3000/api/admin/job_order");
     const data = await response.json();
-    console.log(data);
+   console.log(data)
     return data;
   } catch (error) {
     console.error("Error fetching job orders:", error);
@@ -119,11 +120,14 @@ async function fetchJobOrders() {
   }
 }
 
+
 function RecentOrders() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [count, setCount] = useState(0);
   const [rows, setRows] = useState([]);
+ 
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -133,7 +137,7 @@ function RecentOrders() {
     };
 
     fetchData();
-  }, []);
+  },[]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -146,6 +150,7 @@ function RecentOrders() {
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, count - page * rowsPerPage);
+  
 
   return (
     <Card>
@@ -190,18 +195,28 @@ function RecentOrders() {
                       {row.status}
                     </TableCell>
                     <TableCell>{row.userID || "To be assigned"}</TableCell>
-                    <TableCell>{row.userName || "To be assigned"}</TableCell>
+                    <TableCell>{row.customerName || "To be assigned"}</TableCell>
                     <TableCell>{row.partnerID || "To be assigned"}</TableCell>
                     <TableCell>{row.partnerName || "To be assigned"}</TableCell>
                     <TableCell>{row.job_title || "To be assigned"}</TableCell>
                     <TableCell>{row.job_desc || "To be assigned"}</TableCell>
                     <TableCell>
                       <Link href={`onGoingPatents/${row._id.job_no}`} passHref>
+                      <Button  sx={{
+                       background: "#01ACF6",
+                      color: "white",
+                      borderRadius: "100px",
+                      width: "100%",
+                      height: "90%",
+                      textTransform: "none",
+                      }}>
                         Details
+                        </Button>
                       </Link>
                     </TableCell>
                   </TableRow>
                 ))}
+
               {emptyRows > 0 && (
                 <TableRow style={{ height: 53 * emptyRows }}>
                   <TableCell colSpan={13} />

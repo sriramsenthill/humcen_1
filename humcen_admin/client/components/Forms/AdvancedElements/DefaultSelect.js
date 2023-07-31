@@ -10,7 +10,9 @@ export default function DefaultSelect() {
   const [filter, setFilter] = React.useState("");
 
   const handleChange = (event) => {
-    setFilter(event.target.value);
+    const value = event.target.value;
+    setFilter(value);
+   // Call the onChange callback function with the selected value
   };
 
   return (
