@@ -134,6 +134,8 @@ router.get("/api/find-partner/:services/:country", data.getPartnersData); // Fet
 
 router.post("/api/assign", data.assignTask); // To manually assign Task to a Partner
 
+router.get("/api/admin/user_files/:services/:id", data.getUnassignedJobFilesForAdmin); // To fetch Unassigned User Files for Admin
+
 
 //ADMIN_AUTH
 router.post("/api/auth/admin/signin", admin_auth.adminSignIn);

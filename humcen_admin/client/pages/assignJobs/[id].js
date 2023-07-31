@@ -94,6 +94,7 @@ const DynamicPage = () =>{
   const [jobID, setJobID] = useState("");
   const [Service, setService] = useState("");
   const [approval, setApproval] = useState(false);
+  const [noFile, setFile] = useState(true);
   const [getCountry, setCountry] = useState("");
   const [clicked, setClicked] = useState(false); 
   const [partners, setPartners] = useState(false);
@@ -108,6 +109,7 @@ const DynamicPage = () =>{
     console.log("Here " + id);
     const fetchJobData = async () => {
       try {
+        const noFileInputServices = ['Patent Licensing and Commercialization Services', "Patent Watch", "Freedom to Patent Landscape" ];
         const response = await api.get(`/Unassigned/${id}`);
 
         const specificJob = response.data;
@@ -116,8 +118,9 @@ const DynamicPage = () =>{
         if (specificJob) {
           setJob(specificJob[0]);
           setJobID(specificJob.job_no);
-          setService(specificJob.service);
+          setService(specificJob[0].service);
           setCountry(specificJob.country);
+          setFile(noFileInputServices.includes(specificJob[0].service));
         } else {
           console.log("No job found with the provided job number:", id);
           setJob(null);
@@ -135,34 +138,7 @@ const DynamicPage = () =>{
       setJob(null);
     };
   }, [id]);
-
-  useEffect(() => {
-    const fetchJobFileData = async (jobID) => {
-      try {
-        const response = await api.get(`/user/job_files_details/${jobID}`);
-        if(!response.data){
-          setDownloadStatus(false);
-        }
-        console.log("Response from GET:", response.data);
-        setDownloadStatus(response.data.access_provided);
-        setApproval(response.data.approval_given);
-        const token = localStorage.getItem("token");
-      } catch (error) {
-        if (error.response && error.response.status === 401) {
-          console.error("Unauthorized: You do not have access to this resource.", error);
-        } else {
-          console.error("Error in giving access for the User to download the File.", error);
-        }
-      }
-    };
-
-    if (jobID) {
-      fetchJobFileData(jobID);
-    }
-
-  }, [jobID]);
   
-
 
   if (!job) {
     return <div>No job found with the provided job number.</div>;
@@ -219,55 +195,44 @@ const DynamicPage = () =>{
   
   }
 
-  const onClickDownload = async (jobId) => {
-    const {service_specific_files}=job;
-    const {invention_details}=service_specific_files
-    console.log(invention_details)
+  const onClickDownload = async (Service, jobId) => {
     try {
-      if (!invention_details || invention_details.length === 0) {
-        throw new Error('No file data found in "invention_details"');
-      }
-  
-      const fileData = invention_details[0].base64;
-      const fileName = invention_details[0].name;
-      const fileMIME = invention_details[0].type;
+      const response = await api.get(`admin/user_files/${Service}/${jobId}`);
+      const fileData = response.data.fileData;
+      const fileName = response.data.fileName;
+      const fileMIME = response.data.fileMIME;
       const zip = new JSZip();
-  
-      const base64Data = fileData.split(",")[1];
-  
-      // Convert base64 data to binary
-      const binaryString = window.atob(base64Data);
-  
-      // Create Uint8Array from binary data
-      const bytes = new Uint8Array(binaryString.length);
-      for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
+      
+      for(let totalFiles=0; totalFiles < fileData.length; totalFiles++) {
+        const base64Data = fileData[totalFiles].split(",")[1];
+
+        // Convert base64 data to binary
+        const binaryString = window.atob(base64Data);
+    
+        // Create Uint8Array from binary data
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+    
+        // Create Blob object from binary data
+        const blob = new Blob([bytes], { type: fileMIME[totalFiles] }); // Replace "application/pdf" with the appropriate MIME type for your file
+        zip.file(fileName[totalFiles] || `file_${totalFiles}.txt`, blob);
       }
-  
-      // Create Blob object from binary data
-      const blob = new Blob([bytes], { type: fileMIME });
-  
-      // Create a default filename if fileName is missing
-      const defaultFilename = `file_${jobId}.txt`;
-      const finalFilename = fileName || defaultFilename;
-      zip.file(finalFilename, blob);
-  
-      zip.generateAsync({ type: "blob" }).then(function(content) {
+      const content = await zip.generateAsync({ type: "blob" });
         const dataURL = URL.createObjectURL(content);
         // Create temporary download link
         const link = document.createElement("a");
         link.href = dataURL;
-        link.download = `${service}_${jobId}.zip`; // Set the desired filename and extension
-  
+        link.download = Service + "_" +  jobId + "_Unassigned_User_Files.zip"; // Set the desired filename and extension
+    
         // Trigger the download
         link.click();
-  
+    
         // Clean up the temporary link
-        URL.revokeObjectURL(dataURL);
-      });
-  
+        URL.revokeObjectURL(link.href);  
     } catch (error) {
-      console.error('Error downloading file:', error.message);
+      console.error('Error downloading file:', error);
     }
   };
   
@@ -376,7 +341,7 @@ const DynamicPage = () =>{
                 <td>
                 <Button
                       sx={{
-                        background:  "#27AE60"  , 
+                        background: noFile ?  "#D3D3D3" : "#27AE60" , 
                         color: "white",
                         borderRadius: "100px",
                         width: "100%",
@@ -386,7 +351,8 @@ const DynamicPage = () =>{
                           background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
                         },
                       }}
-                      onClick={()=>onClickDownload(job._id.job_no)}
+                      onClick={()=>onClickDownload(job.service , job._id.job_no)}
+                      disabled={noFile}
                       
                     >
                       Download now
