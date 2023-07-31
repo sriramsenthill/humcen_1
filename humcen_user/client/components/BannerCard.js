@@ -10,9 +10,9 @@ const BannerCard = ({ title, description, imageSrc, color}) => {
   const cardStyle = {
     marginTop: '20px',
     marginBottom: '40px',
-    marginLeft: '20px',
-    marginRight: '40px',
-    width: '100%',
+    marginLeft: '2%',
+    marginRight: '2%',
+    width: '95%',
     height: '275px',
     position: 'relative',
     borderRadius: '16px',

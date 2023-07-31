@@ -121,7 +121,7 @@ if (!isFormValid()) {
 
   return (
     <>
-      {/* Page title */}
+      <div className="card">
       <div className={style.pageTitle}>
 
         <ul>
@@ -151,7 +151,7 @@ if (!isFormValid()) {
       >
         Let's get started with the basic details for Patent Translation Service
       </p> */}
-      <Card variant="outlined" sx={{ margin: "5% 2%", width: "100%", borderRadius: "15px" }}>
+      <Card variant="outlined" sx={{ marginLeft: "2%", marginRight: "2%", width: "95%", borderRadius: "15px" }}>
     
       <form onSubmit={handleSubmit}>
       <Card variant="outlined" sx={{ margin: "5% 12%" }}>
@@ -486,6 +486,7 @@ if (!isFormValid()) {
   </DialogActions>
 </Dialog>
 
+      </div>
       </div>
     </>
   );

@@ -117,6 +117,7 @@ export default function Inbox() {
 
   return (
     <>
+      <div className="card">
       {/* Page title */}
       <div className={style.pageTitle}>
 
@@ -147,7 +148,7 @@ export default function Inbox() {
       >
         Let's get started with the basic details for Patent Portfolio Analysis
       </p> */}
-      <Card variant="outlined" sx={{ margin: "5% 2%", width: "100%", borderRadius: "15px" }}>
+      <Card variant="outlined" sx={{ marginLeft: "2%", marginRight: "2%", width: "95%", borderRadius: "15px" }}>
     
       <form onSubmit={handleSubmit}>
       <Card variant="outlined" sx={{ margin: "5% 12%" }}>
@@ -451,7 +452,7 @@ export default function Inbox() {
     <Button onClick={() => setIsErrorDialogOpenStatus(false)}>OK</Button>
   </DialogActions>
 </Dialog>
-
+      </div>
       </div>
     </>
   );

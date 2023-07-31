@@ -169,8 +169,8 @@ const SignInForm = () => {
                     </Typography>
                   )}
 
-                  <Grid container alignItems="center" spacing={2}>
-                    <Grid item xs={6} sm={6}>
+                  <Grid container alignItems="center" spacing={2} >
+                    <Grid item xs={5} sm={5} ml="20px">
                       <FormControlLabel
                         control={
                           <Checkbox value="allowExtraEmails" color="primary" />
@@ -179,7 +179,7 @@ const SignInForm = () => {
                       />
                     </Grid>
 
-                    <Grid item xs={6} sm={6} textAlign="end">
+                    <Grid item xs={5} sm={5} textAlign="end" ml="20px">
                       <Link
                         href="/authentication/forgot-password"
                         className="primaryColor text-decoration-none"
@@ -194,18 +194,21 @@ const SignInForm = () => {
                     fullWidth
                     variant="contained"
                     sx={{
-                      mt: 2,
+                      mt: "20px",
                       textTransform: "capitalize",
-                      borderRadius: "8px",
+                      borderRadius: "100px", /* Changed to 100px for circular button */
                       fontWeight: "500",
                       fontSize: "16px",
-                      padding: "12px 10px",
+                      marginLeft: "20px",                      padding: "14px 0px 14px 0px", /* Adjust the padding as needed */
                       color: "#fff !important",
+                      width: "465px", /* Set the width to 483px */
+                      height: "48px", /* Set the height to 48px */
+                      background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
                     }}
                   >
                     Sign In
                   </Button>
-                  <Typography fontSize="15px" mb="30px">
+                  <Typography fontSize="15px" mb="30px" mt="50px">
                   Don't have an account?{" "}
                   <Link
                     href="/authentication/sign-up"

@@ -115,7 +115,7 @@ export default function Inbox() {
 
   return (
     <>
-      {/* Page title */}
+        <div className="card">
       <div className={style.pageTitle}>
 
         <ul>
@@ -145,7 +145,7 @@ export default function Inbox() {
       >
         Let's get started with the basic details to response to FER
       </p> */}
-      <Card variant="outlined" sx={{ margin: "5% 2%", width: "100%", borderRadius: "15px" }}>
+      <Card variant="outlined" sx={{ marginLeft: "2%", marginRight: "2%", width: "95%", borderRadius: "15px" }}>
     
       <form onSubmit={handleSubmit}>
       <Card variant="outlined" sx={{ margin: "5% 12%" }}>
@@ -447,6 +447,7 @@ export default function Inbox() {
     <Button onClick={() => setIsErrorDialogOpenStatus(false)}>OK</Button>
   </DialogActions>
 </Dialog>
+      </div>
       </div>
     </>
   );

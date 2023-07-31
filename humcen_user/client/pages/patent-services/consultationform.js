@@ -73,6 +73,7 @@ export default function Inbox() {
   return (
     <>
       {/* Page title */}
+      <div className="card">
       <div className={style.pageTitle}>
 
         <ul>
@@ -125,7 +126,7 @@ export default function Inbox() {
           ensuring your intellectual assets are shielded in the ever-evolving
           landscape of intellectual property.
         </p> */}
-        <Card variant="outlined" sx={{ margin: "2%", width: "100%", borderRadius: "15px" }}>
+        <Card variant="outlined" sx={{ margin: "2%", width: "80%", borderRadius: "15px" }}>
 
         <form onSubmit={handleSubmit}>
         <Card variant="outlined" sx={{ margin: "5% 12%",padding:"30px",}}>
@@ -221,6 +222,7 @@ export default function Inbox() {
           </Card>
         </form>
         </Card>
+      </div>
       </div>
     </>
   );

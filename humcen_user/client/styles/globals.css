@@ -1084,6 +1084,7 @@ img {
  .main-wrapper-content:has(div.authenticationBox) {
   padding: 0px ;
   margin: 0;
+
 }
 
 /* End Authentication box */
