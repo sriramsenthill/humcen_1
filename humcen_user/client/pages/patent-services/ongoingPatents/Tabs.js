@@ -85,9 +85,9 @@ export default function BasicTabs({ no, items }) {
               </div>
             </TabPanel>
             <TabPanel value={value} index={1}>
-              <div className={'card'}>
+              
                 <Verifications />
-              </div>
+             
             </TabPanel>
             <TabPanel value={value} index={2}>
               <TrackOrder />

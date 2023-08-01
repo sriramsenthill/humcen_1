@@ -117,6 +117,7 @@ const Invoice = ({jobNumber}) => {
           borderRadius: "10px",
           border: "1px solid black",
           p: "0.5% 0.5%",
+          mt:'45px',
           mb: "15px",
           width: "100%",
         }}
@@ -154,8 +155,8 @@ const Invoice = ({jobNumber}) => {
                     sx={{
                       background: "#00ACF6",
                       color: "white",
-                      borderRadius: "100px",
-                      width: "85%",
+                      borderRadius: "40px",
+                      width: "90%",
                       height: "80%",
                       textTransform: "none",
                     }}
@@ -169,7 +170,6 @@ const Invoice = ({jobNumber}) => {
                 <td style={{ padding: "5px" }}>{service}</td>
                 <td style={{ padding: "5px" }}>{country}</td>
                 <td style={{ padding: "5px" }}>{budget}</td>
-              
                 <td style={{ padding: "5px" }}>{status}</td>
               </tr>
             </tbody>

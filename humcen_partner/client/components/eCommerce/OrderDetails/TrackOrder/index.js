@@ -135,20 +135,28 @@ const TrackOrder = () => {
 
   return (
     <>
+
       <Card
         sx={{
-          boxShadow: "none",
+          
           borderRadius: "10px",
-          p: "25px 100px",
-          mb: "15px",
+          boxShadow: "none",
+          p: "15px",
+          pr:"20px",
+          mb: "20px",
+          width:"100%",
         }}
       >
+             <Box sx={{ padding: '5px', backgroundColor: '#F7FAFF', borderRadius: "20px", mb:"59px",
+}}>
         <Typography
           as="h1"
-          sx={{
+          sx={{  
             fontSize: "36",
             fontWeight: 500,
             mb: "20px",
+            mt:"20px",
+            ml:"10px",
           }}
         >
           Apple Watch: Design Patent
@@ -168,7 +176,7 @@ const TrackOrder = () => {
             <h3 className={styles.emailheading}>Country</h3>
           </li>
           <li>
-            <p className={styles.email}>United Kingdom</p>
+            <p className={styles.email} style={{paddingRight:"15px"}}>United Kingdom</p>
           </li>
         </ul>
         <hr className={styles.line} style={{ width: "100%" }}></hr>
@@ -177,12 +185,13 @@ const TrackOrder = () => {
             <h3 className={styles.emailheading}>Activity Timeline</h3>
           </li>
           <li>
-            <p className={styles.email}>
+            <p className={styles.email} style={{paddingRight:"120px"}}>
               Expected Completion
-              <br /> April 18, 2023
+               April 18, 2023
             </p>
           </li>
         </ul>
+        </Box>
         <div style={{ marginLeft: "30%" }}>
           <div className={styles.timelineList}>
           {timelineTransitions((style, timeline) => (
