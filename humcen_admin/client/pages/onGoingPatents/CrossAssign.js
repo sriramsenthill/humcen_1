@@ -1,368 +1,326 @@
-import React, { useState } from "react";
-import { Box, Typography } from "@mui/material";
-import Card from "@mui/material/Card";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import styles from "@/styles/Patents.module.css";
+import style from "@/styles/PageTitle.module.css";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
+import Card from "@mui/material/Card";
+import withAuth from "@/components/withAuth";
+import { Typography } from "@mui/material";
+import { Button, Checkbox, FormControl, InputLabel, MenuItem, Select,FormControlLabel } from "@mui/material";
+import axios from "axios";
+import JSZip from "jszip";
+import { styled } from "@mui/system";
+import { headers } from "next.config";
 
-import dynamic from "next/dynamic";
-const RichTextEditor = dynamic(() => import("@mantine/rte"), {
-  ssr: false,
+// Create an Axios instance
+
+const serviceList = [
+  {
+    title: "Patent Consultation",
+  },
+  {
+    title: "Patent Drafting",
+  },
+  {
+    title: "Patent Filing",
+  },
+  {
+    title: "Patent Search",
+  },
+  {
+    title: "Response to FER/Office Action",
+  },
+  {
+    title: "Freedom To Operate Search",
+  },
+  {
+    title: "Freedom to Patent Landscape",
+  },
+  {
+    title: "Freedom to Patent Portfolio Analysis",
+  },
+  {
+    title: "Patent Translation Service",
+  },
+  {
+    title: "Patent Illustration",
+  },
+  {
+    title: "Patent Watch",
+  },
+  {
+    title: "Patent Licensing and Commercialization Services",
+  },
+];
+
+const ColorButton = styled(Button)(({ theme }) => ({
+  color: "white",
+  width: "120%",
+  height: "52px",
+  borderRadius: "100px",
+  marginBottom: "30px",
+  background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
+  "&:hover": {
+    background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
+  },
+  textTransform: "none",
+  fontSize: "14px",
+  fontWeight: "400",
+}));
+
+
+const api = axios.create({
+  baseURL: "http://localhost:3000/api",
 });
 
-const CrossAssign = () => {
-  const [confirmationOpen, setConfirmationOpen] = useState(false); // State to manage the confirmation popup
 
-  const handleConfirm = () => {
-    setConfirmationOpen(false);
-    handleSubmit(); // Call the form submit function
-  };
+// Add an interceptor to include the token in the request headers
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers['Authorization'] = token;
+  }
+  return config;
+});
 
-  const handleSubmit = () => {
-    // Handle form submission logic here
-    const data = {
-      email: "example@example.com", // Replace with actual form data
-      password: "password123",
+
+const DynamicPage = () =>{
+  const router = useRouter();
+  const { id } = router.query;
+
+
+  const [job, setJob] = useState(null); // Initialize job state as null
+  const [downloadStatus, setDownloadStatus] = useState(false); // Initally, User is denied from downloading
+  const [jobID, setJobID] = useState("");
+  const [Service, setService] = useState("");
+  const [approval, setApproval] = useState(false);
+  const [noFile, setFile] = useState(true);
+  const [getCountry, setCountry] = useState("");
+  const [clicked, setClicked] = useState(false); 
+  const [partners, setPartners] = useState(false);
+  const [selectedPartner, setSelectedPartner] = useState('');
+  const [submit, setSubmit] = useState(false);
+  const [prevPartner, setPrevPartner] = useState("");
+
+ const [listOfPartner,setListOfPartner]=useState([]);
+    
+
+
+  useEffect(() => {
+    setJobID(jobID);
+    console.log("Here " + id);
+    const fetchJobData = async (id) => {
+      try {
+        const noFileInputServices = ['Patent Licensing and Commercialization Services', "Patent Watch", "Freedom to Patent Landscape" ];
+        const response = await api.get(`admin/job_order/${id}`);
+
+        const specificJob = response.data;
+        console.log(specificJob);
+
+        if (specificJob) {
+          setJob(specificJob[0]);
+          setJobID(specificJob[0].job_no);
+          setPrevPartner(specificJob[0].partnerID);
+          setService(specificJob[0].service);
+          setCountry(specificJob[0].country);
+          setFile(noFileInputServices.includes(specificJob[0].service));
+        } else {
+          console.log("No job found with the provided job number:", id);
+          setJob(null);
+        }
+      } catch (error) {
+        console.error("Error fetching job order data:", error);
+        setJob(null);
+      }
     };
-    console.log(data);
+
+    fetchJobData(id);
+
+    // Clean up the effect by resetting the job state when the component is unmounted
+    return () => {
+      setJob(null);
+    };
+  }, [id]);
+  
+
+  if (!job) {
+    return <div>No job found with the provided job number.</div>;
+  }
+
+  const onClickFindPartner = async (Service, getCountry) => {
+    try {
+
+      // Make the API call to find the partner based on selected country and checkboxes
+      setClicked(true);
+      const response = await api.get(`cross-assign/find-partner/${Service}/${getCountry}/${prevPartner}`);
+      const partnerList = response.data
+      setListOfPartner(partnerList);
+      console.log(listOfPartner);
+      if(partnerList.length === 0 ) {
+        setPartners(false);
+      } else {
+        setPartners(true);
+      }
+
+   
+      // Handle the API response here, e.g., display the partner data or take any other action
+    } catch (error) {
+      console.error("Error finding the partner:", error);
+      // Handle any errors that occurred during the API call
+    }
   };
 
-  // Select Priority
-  const [priority, setPriority] = React.useState("");
-  const handleChange = (event) => {
-    setPriority(event.target.value);
+  const handlePartnerSelection = (event) => {
+    if (!event.target.value) {
+      setSubmit(false);
+    } else {
+      setSubmit(true);
+      setSelectedPartner(event.target.value); // Update the state with the selected value
+      console.log(event.target.value);
+    }
+
   };
 
-  const handleCrossAssignClick = () => {
-    setConfirmationOpen(true); // Open the confirmation popup
-  };
+  // To give Assign Request
+  const handleSubmit = async() => {
+    console.log(selectedPartner);
+    try {
+      const assignResponse = await api.post("/cross_assign", {
+        JobID: id,
+        newPartID: selectedPartner,
+        prevPartID: prevPartner,
+        service: Service,
+      }).then((response) => {
+        console.log("Successfully sent to the API endpoint: " + response.data);
+      })
 
-  const handleCancelConfirm = () => {
-    setConfirmationOpen(false); // Close the confirmation popup
-  };
-
+    } catch(error) {
+        console.error("Error in Assigning Task : " + error);
+    }
+  
+  }
+  
+  const checkboxesPerRow = 3; // Number of checkboxes to show per row
+  const size = 4; // 
+  
   return (
     <>
+      <div className={'card'}>
+      {/* Page title */}
       <Card
         sx={{
           boxShadow: "none",
           borderRadius: "10px",
-          p: "25px 20px 15px",
+          p: "25px",
           mb: "15px",
         }}
       >
-        <Box component="form" noValidate onSubmit={handleSubmit}>
-          <Grid container alignItems="center" spacing={2}>
-            <Grid xs={12} sm={4} md={3} lg={3}>
-              <Typography
-                as="h5"
-                sx={{
-                  fontWeight: "500",
-                  fontSize: "14px",
-                  mb: "12px",
-                  mt: "16.5px",
-                  ml: "16px",
-                }}
-              >
-                Select Reason
-              </Typography>
-
-              <FormControl
-                style={{
-                  borderRadius: "8px",
-                  marginLeft: "16px",
-                  width: "95%",
-                }}
-                fullWidth
-                variant="standard"
-                id="standard-required"
-              >
-                <InputLabel id="demo-simple-select-label">Priority</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={priority}
-                  label="Select Reason"
-                  onChange={handleChange}
-                >
-                  <MenuItem value={10}>High</MenuItem>
-                  <MenuItem value={20}>Medium</MenuItem>
-                  <MenuItem value={30}>Low</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={4}>
-              <Typography
-                as="h5"
-                sx={{
-                  fontWeight: "500",
-                  fontSize: "14px",
-                  mb: "12px",
-                }}
-              >
-                Type Your Reason
-              </Typography>
-              <TextField
-                autoComplete="project-name"
-                name="projectName"
-                required
-                fullWidth
-                variant="standard"
-                id="standard-required"
-                label="Your Reason"
-                autoFocus
-                style={{
-                  borderRadius: "8px",
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={4}>
-              <Typography
-                as="h5"
-                sx={{
-                  fontWeight: "500",
-                  fontSize: "14px",
-                  mb: "12px",
-                }}
-              >
-                Any Notes for customer
-              </Typography>
-              <TextField
-                autoComplete="project-name"
-                name="projectName"
-                required
-                fullWidth
-                variant="standard"
-                id="standard-required"
-                label="Type Here"
-                autoFocus
-                style={{
-                  borderRadius: "8px",
-                }}
-              />
-            </Grid>
-            <Grid xs={12} sm={4} md={3} lg={3}>
-              <Typography
-                as="h5"
-                sx={{
-                  fontWeight: "500",
-                  fontSize: "14px",
-                  mb: "12px",
-                  mt: "16.5px",
-                  ml: "16px",
-                }}
-              >
-                Select Partner
-              </Typography>
-
-              <FormControl
-                style={{
-                  borderRadius: "8px",
-                  marginLeft: "16px",
-                  width: "95%",
-                }}
-                fullWidth
-                variant="standard"
-                id="standard-required"
-              >
-                <InputLabel id="demo-simple-select-label">Priority</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={priority}
-                  label="New Assignee"
-                  onChange={handleChange}
-                >
-                  <MenuItem value={10}>High</MenuItem>
-                  <MenuItem value={20}>Medium</MenuItem>
-                  <MenuItem value={30}>Low</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={12} sm={4} md={2} lg={2}>
-              <Typography
-                as="h5"
-                sx={{
-                  fontWeight: "500",
-                  fontSize: "14px",
-                  mb: "12px",
-                  mt: "17.4px",
-                }}
-              >
-                Delivery Date
-              </Typography>
-              <TextField
-                autoComplete="start-date"
-                name="startDate"
-                required
-                variant="standard"
-                id="standard-required"
-                fullWidth
-                type="date"
-                autoFocus
-                InputProps={{
-                  style: { borderRadius: 8 },
-                }}
-              />
-            </Grid>
-            <Grid xs={12} sm={4} md={2} lg={2}>
-              <Typography
-                as="h5"
-                sx={{
-                  fontWeight: "500",
-                  fontSize: "14px",
-                  mb: "12px",
-                  mt: "16.5px",
-                  ml: "16px",
-                }}
-              >
-                Select Reason
-              </Typography>
-
-              <FormControl
-                style={{
-                  borderRadius: "8px",
-                  marginLeft: "16px",
-                  width: "95%",
-                }}
-                fullWidth
-                variant="standard"
-                id="standard-required"
-              >
-                <InputLabel id="demo-simple-select-label">Priority</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={priority}
-                  label="Select Reason"
-                  onChange={handleChange}
-                >
-                  <MenuItem value={10}>High</MenuItem>
-                  <MenuItem value={20}>Medium</MenuItem>
-                  <MenuItem value={30}>Low</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={12} sm={6} md={4} lg={4}>
-              <Typography
-                as="h5"
-                sx={{
-                  fontWeight: "500",
-                  fontSize: "14px",
-                  mb: "12px",
-                }}
-              >
-                Budget
-              </Typography>
-              <TextField
-                autoComplete="budget"
-                name="budget"
-                required
-                fullWidth
-                variant="standard"
-                id="standard-required"
-                label="Enter rate"
-                autoFocus
-                InputProps={{
-                  style: { borderRadius: 8 },
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} textAlign="center">
-              <Button
-                type="button"
-                variant="contained"
-                sx={{
-                  mt: 1,
-                  textTransform: "capitalize",
-                  borderRadius: "60px",
-                  fontWeight: "500",
-                  fontSize: "15px",
-                  padding: "12px 20px",
-                  color: "#fff !important",
-                  width: "140px",
-                  height: "46px",
-                }}
-                onClick={handleCrossAssignClick}
-              >
-                Cross Assign
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{
-                  ml: "10px",
-                  mt: 1,
-                  textTransform: "capitalize",
-                  borderRadius: "60px",
-                  fontWeight: "550",
-                  fontSize: "15px",
-                  padding: "12px 20px",
-                  color: "#fff !important",
-                  width: "140px",
-                  height: "46px",
-                }}
-              >
-                Cancel
-              </Button>
-            </Grid>
-          </Grid>
-        </Box>
-      </Card>
-
-      {/* Confirmation Popup */}
-      {confirmationOpen && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            background: "rgba(0, 0, 0, 0.5)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <div
+        <Grid container spacing={2}>
+        </Grid>
+        <Grid>
+          <table
             style={{
-              background: "#fff",
-              borderRadius: "8px",
-              padding: "20px",
-              maxWidth: "400px",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
+              width: "100%",
+              borderCollapse: "collapse",
+              padding: "10px",
             }}
           >
-            <Typography variant="h6" gutterBottom>
-              Are you sure you want to proceed?
-            </Typography>
-            <div>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleConfirm}
-                style={{ marginRight: "10px" }}
+            <tbody>
+              
+              <tr>
+                <td style={{ padding: "10px" }}></td>
+                <td style={{ padding: "10px" }}></td>
+                <td style={{ padding: "10px" }}></td>
+                <td style={{ padding: "10px" }}></td>
+              </tr>
+            </tbody>
+          </table>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6} md={6}>
+          <h1>Cross Assign : </h1>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={6}
+          >
+  { clicked ? ( partners ? (
+    <Grid item xs={12}>
+         <FormControl style={{marginTop:"17px",marginLeft:"16px", width:260, position: "relative", right: "35%"}} fullWidth>
+      <InputLabel id="partner-dropdown-label">Select a partner</InputLabel>
+      <Select
+        labelId="partner-dropdown-label"
+        id="partner-dropdown"
+        value={selectedPartner}
+        label="Select a partner"
+        onChange={handlePartnerSelection}
+      >
+        {
+          listOfPartner.map((partner) => (
+            <MenuItem key={partner._id} value={partner.userID}>
+              {partner.first_name+" "+partner.last_name} {/* Replace "name" with the actual field in the partner object that contains the partner's name */}
+            </MenuItem>
+          ))
+        }
+      </Select>
+    </FormControl>
+    </Grid>
+  ) : (
+    <h3 style={{
+          position: "relative",
+          top: "17%",
+          fontWeight: "22px",
+          right: "20%",
+        }}>No Partners available to do the Task</h3>
+  ) ) : (
+    <Button
+        sx={{
+        background: "#27AE60"  , 
+        color: "white",
+        position: "relative",
+        top: "33%",
+        right: "30%",
+        borderRadius: "100px",
+        width: "32%",
+        height: "40%",
+        textTransform: "none",
+        "&:hover": {
+          background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
+        },
+        }}
+        onClick={() => onClickFindPartner(Service, getCountry)}
+      >
+        Find Partner
+      </Button>
+  )}
+          </Grid>
+        </Grid>
+
+<>
+</>
+      </Grid>
+      
+  
+      </Card>
+    {submit && (<ColorButton
+                sx={{ 
+                  width: "10%",
+                  height: "10%",
+                  position: "relative",
+                  left: "33%",
+                  "&:hover": {
+                          background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
+                        }, }}
+                type="submit"
+                onClick={() => {window.location.href = "/"; handleSubmit()}}
               >
-                Yes
-              </Button>
-              <Button variant="contained" onClick={handleCancelConfirm}>
-                No
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+                Assign Job
+      </ColorButton> )}
+      </div>
     </>
   );
-};
+          }
 
-export default CrossAssign;
+export default withAuth(DynamicPage);

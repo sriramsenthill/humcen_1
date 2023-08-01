@@ -138,6 +138,9 @@ router.post("/api/assign", data.assignTask); // To manually assign Task to a Par
 
 router.get("/api/admin/user_files/:services/:id", data.getUnassignedJobFilesForAdmin); // To fetch Unassigned User Files for Admin
 
+router.get("/api/cross-assign/find-partner/:services/:country/:partID", data.getPartnersDataForCrossAssign); // Fetching out Available Partners to Cross Assign the Task
+
+router.post("/api/cross_assign", data.crossAssignTask); // To manually assign Task to a Partner
 
 //ADMIN_AUTH
 router.post("/api/auth/admin/signin", admin_auth.adminSignIn);

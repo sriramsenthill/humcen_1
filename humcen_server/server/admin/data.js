@@ -1475,6 +1475,112 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
   }
 };
 
+const crossAssignTask = async(req, res) => {
+  const jobID = req.body.JobID;
+  const patentService = req.body.service;
+  const newlyAssignedPartner = req.body.newPartID;
+  const previousPartner = req.body.prevPartID;
+
+  console.log("Cross Assign " + jobID + patentService + newlyAssignedPartner + previousPartner);
+
+
+
+  // Update Job Order , Respective Schema along with Job Files in that way
+  // Change Start Date, End Date, Partner ID, Partner Name, Timeline Status in Job Order
+try {
+  const thatJobOrder = await JobOrder.findOne({"_id.job_no": parseInt(jobID)});
+  if(!thatJobOrder) {
+    console.error("No Job Orders found with Job Order " + jobID );
+  } else {
+    const startDate = new Date();
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + 7);
+
+      // Finding the previous Partner
+    const previousPartnerDetails = await Partner.findOne({userID: parseInt(previousPartner)});
+    if(!previousPartner) {
+      console.error("No Partner found with Partner ID " + previousPartner);
+    } else {
+      // Removing the Job ID from the Previous Partner's Jobs List
+      previousPartnerDetails.jobs = previousPartnerDetails.jobs.filter(item => item !== parseInt(jobID));
+      previousPartnerDetails.is_free = true;
+      previousPartnerDetails.in_progress_jobs = previousPartnerDetails.in_progress_jobs - 1;
+      previousPartnerDetails.save().then(() => {
+        console.log("Successfully Updated in the Previous Partner's Details");
+      }).catch((error) => {
+        console.error("Error in updating the details in Previous Partner's Details: " + error);
+      });
+    }    
+    
+    // Finding the Newly Assigned Partner
+    const newPartner = await Partner.findOne({userID: parseInt(newlyAssignedPartner)});
+    if(!newPartner) {
+      console.error("No Partner found with Partner ID " + newlyAssignedPartner);
+    } else {
+      const newPartnerName = newPartner.first_name;
+      // Updating the Job Order
+      thatJobOrder.start_date = startDate;
+      thatJobOrder.end_date = endDate;
+      thatJobOrder.partnerName = newPartnerName;
+      thatJobOrder.partnerID = newlyAssignedPartner;
+      thatJobOrder.steps_done = 2 
+      thatJobOrder.steps_done_user = 3;
+      thatJobOrder.steps_done_activity =  4;
+      thatJobOrder.Accepted = true;
+      thatJobOrder.save().then(() => {
+        console.log("Job Order successfully Updated with Cross Assign");
+      }).catch((error) => {
+        console.error("Error in Updating Job Order after Cross Assign: " + error);
+      })
+      newPartner.jobs.push(parseInt(jobID));
+      newPartner.is_free = false;
+      newPartner.in_progress_jobs = newPartner.in_progress_jobs + 1;
+      newPartner.save().then(() => {
+        console.log("Job pushed and Updated Successfully in Newly Assigned Partner's Details");
+      }).catch((error) => {
+        console.error("Error in Updating the Newly assigned Partner's Details : " + error)
+      })
+    }
+
+    // Removing the files if the Old Partner had done some work and uploaded it to the Database
+    const thatJobFile = await JobFiles.findOne({"_id.job_no": parseInt(jobID)});
+    if(!thatJobFile) {
+      console.log("Partner didn't upload his Work. Therefore, Leaving it without any changes.");
+    } else {
+      const deleteThatOne = await JobFiles.deleteOne({"_id.job_no": parseInt(jobID)});
+      deleteThatOne.save().then(() => {
+        console.log("Deleted the Job FIles with Job Number " + jobID);
+      }).catch((error) => {
+        console.error("Error in deleting the Job Files with Job Number " + jobID + error);
+      })
+    }
+    
+  }
+
+} catch(error) {
+  console.error("Error in performing Cross Assign to the Partner : " + error);
+}
+
+}
+
+const getPartnersDataForCrossAssign = async  (req, res) => {
+  try {
+    const { country, services, partID} = req.params; // Assuming you have fields named "country" and "known_fields" in your Partner schema
+    console.log("Here " + country + services);
+    const partners = await Partner.find({
+      country: country,
+      userID: {$ne: parseInt(partID)},
+      ["known_fields." + services]: true,
+
+    });
+    console.log(partners);
+    res.json(partners);
+  } catch (error) {
+    console.error("Error finding partners:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 
 module.exports = {
   getUsers,
@@ -1491,4 +1597,6 @@ module.exports = {
   assignTask,
   getCustomers,
   getUnassignedJobFilesForAdmin,
+  crossAssignTask,
+  getPartnersDataForCrossAssign
 };
