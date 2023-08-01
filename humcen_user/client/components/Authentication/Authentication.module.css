@@ -6,19 +6,28 @@
   display: flex;
   height: 100vh;
 }
+
 .favicon {
-  padding: 30px; 
+  padding-top: 30px; 
+  padding-left: 6%;
   height: auto;
-  width: 30%; 
-  color:white;
+  width: 32%; 
+}
+
+.sign {
+  height: auto;
+  width: 78%; 
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border-top-left-radius: 18px;
+  box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.5);
 }
 
 .leftContainer {
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
 }
 
 .rightContainer {
@@ -29,26 +38,66 @@
   justify-content: center;
   background-color: white;
 }
-.rightContainer h1 {
-font-size: 64px ;
-font-family: Inter;
-font-weight: 550;
-line-height: 58px;
-letter-spacing: -2px;
-margin: 0px 0px 20px 0px;
 
+.rightContainer h1 {
+  font-size: 64px;
+  font-weight: 550;
+  line-height: 58px;
+  letter-spacing: -2px;
+  margin: 0px 0px 20px 0px;
 }
 
 .topContainer {
   flex: 6;
   display: flex;
   width: 100%;
-  background-color: #00ACF6; /* Change this color as needed */
+  background-color: #00ACF6;
+  position: relative;
 }
 
 .bottomContainer {
   flex: 4;
   display: flex;
   background-color: #00002B;
-  width: 100%; /* Change this color as needed */
+  width: 100%;
+}
+
+
+.floatingCard {
+  position: absolute;
+  width: 200px;
+  height: 100px;
+  padding-left: 10px;
+  margin-top: 23%;
+  margin-left: 10%;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.text{      
+  text-align: left;
+  font-size: 40px;
+  letter-spacing: 0px;
+  color: #FFFFFF;
+  padding-left: 6%;
+  font-weight: 250;
+  line-height: 43px;
+ }
+
+ .text2{
+  text-align:left;
+  color: #FFFFFF;
+  padding-left: 6%;
+  font-weight: 100;
+}
+.text5{
+  position: relative;
+  width: 100%;
+  margin-top: 20%;
+  text-align: center;
+  font-size: 12px;
+  color: #676B5F;
+  line-height: 18px;
+  font-weight: 500;
 }

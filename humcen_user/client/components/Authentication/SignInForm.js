@@ -3,7 +3,7 @@ import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Grid from "@mui/material/Grid";
-import { Typography } from "@mui/material";
+import { Card, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -76,9 +76,17 @@ const SignInForm = () => {
       <div className="authenticationBox">
       <div className={styles.container}>
           <div className={styles.leftContainer}>
-            <div className={styles.topContainer}>
-              {/* Content for the top container */}
-            </div>
+              <div className={styles.topContainer}>
+                    <img
+                      src="/images/sign.png"
+                      alt="favicon"
+                      className={styles.sign}
+                    />
+                    <Card className={styles.floatingCard}>
+                      <h2>Applied patent</h2>
+                      <p>215</p>
+                    </Card>
+                </div>
             <div className={styles.bottomContainer}>
                 <Typography as="h1" fontSize="28px" fontWeight="700" mb="5px">
                   <img
@@ -86,12 +94,15 @@ const SignInForm = () => {
                     alt="favicon"
                     className={styles.favicon}
                   />
-                </Typography>
+                <h1 className={styles.text}>Let's Empower your <strong>cross <br></br> border patent</strong> seamlessly </h1>
+                <p className={styles.text2}>Blockchain Driven One Stop IP platform to protect your <br></br>Inventions Globally.</p>
+                </Typography>  
+
             </div>
           </div>
           <div className={styles.rightContainer}>
-              <Box>
-                <h1>Login Your account</h1>                      
+          <h1>Login Your Account</h1>  
+              <Box>                    
                 <Box component="form" noValidate onSubmit={handleSubmit}>
                   <Box
                     sx={{
@@ -201,14 +212,14 @@ const SignInForm = () => {
                       fontSize: "16px",
                       marginLeft: "20px",                      padding: "14px 0px 14px 0px", /* Adjust the padding as needed */
                       color: "#fff !important",
-                      width: "465px", /* Set the width to 483px */
+                      width: "450px", /* Set the width to 483px */
                       height: "48px", /* Set the height to 48px */
                       background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
                     }}
                   >
                     Sign In
                   </Button>
-                  <Typography fontSize="15px" mb="30px" mt="50px">
+                  <Typography fontSize="15px" mb="30px" mt="50px" ml="28px">
                   Don't have an account?{" "}
                   <Link
                     href="/authentication/sign-up"
@@ -217,6 +228,7 @@ const SignInForm = () => {
                     Sign up
                   </Link>
                 </Typography>
+                <p className={styles.text5}>2023 Copyrights. All Rights Reserved</p>
                 </Box>
               </Box>
           </div>
