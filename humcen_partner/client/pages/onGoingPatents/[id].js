@@ -221,23 +221,22 @@ const DynamicPage = () => {
                 <td style={{ padding: "10px" }}>{status}</td>
               </tr>
               <tr>
-                <td style={{ padding: "10px" }}></td>
-                <td style={{ padding: "10px" }}>
-                  <Link href="/">Mail</Link>
-                </td>
-                <td style={{ padding: "10px" }}>
-                  <Link href="/">Mail</Link>
-                </td>
-                <td style={{ padding: "10px" }}></td>
-                <td style={{ padding: "10px" }}></td>
-                <td style={{ padding: "10px" }}></td>
-                <td>
+             
+         
+              </tr>
+            </tbody>
+          </table>
+          
+        </Grid>
+        <div style={{textAlign:'right'}}> 
+        <div style={{ width: "200px",margin: "0 auto",}}>
                 <Button
                       sx={{
                         background: noFile ?  "#D3D3D3" : "#27AE60", 
                         color: "white",
                         borderRadius: "100px",
                         width: "100%",
+      
                         height: "88%",
                         textTransform: "none",
                         "&:hover": {
@@ -249,13 +248,10 @@ const DynamicPage = () => {
                     >
                       Download now
                     </Button>
-                    </td>
-
-              </tr>
-            </tbody>
-          </table>
-        </Grid>
+                </div>
+                </div>
       </Card>
+      
 
       <Card
         sx={{

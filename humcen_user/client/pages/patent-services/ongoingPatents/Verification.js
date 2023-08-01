@@ -249,18 +249,26 @@ const Verifications = ({ jobNumber }) => {
           boxShadow: "none",
           borderRadius: "10px",
           border: "1px solid black",
-          p: "0.5% 0.5%",
           mb: "15px",
           width: "100%",
+        padding:"5px",
+         margin: "0 auto",
+         mt:'45px',
+         ml:"10px",
+         mr:"10px",
         }}
+      
       >
-        <Grid>
-          <table
+        <Grid
+        >
+        <table
             style={{
               width: "100%",
               borderCollapse: "collapse",
+              padding: "8px",
             }}
           >
+          
             <tbody>
               <tr>
                 <td className={styles.label} style={{ padding: "5px" }}>
@@ -287,6 +295,7 @@ const Verifications = ({ jobNumber }) => {
                 <td className={styles.label} style={{ paddingRight: "10px" }}>
                   Approval
                 </td>
+              
                 <td
                   className={styles.label}
                   style={{ padding: "5px" }}
@@ -296,8 +305,8 @@ const Verifications = ({ jobNumber }) => {
                       background: !decisions ?  "#00ACF6" : "#D3D3D3"   , 
                       color: "white",
                       borderRadius: "100px",
-                      width: "100%",
-                      height: "80%",
+                      width:"108%",
+                      height:"100%",
                       textTransform: "none",
                     }}
                     onClick={()=>onClickDownload(jobID)}
@@ -309,17 +318,18 @@ const Verifications = ({ jobNumber }) => {
                 </td>
               </tr>
               <tr>
-                <td style={{ padding: "5px" }}>{service}</td>
-                <td style={{ padding: "5px" }}>{customerName}</td>
-                <td style={{ padding: "5px" }}>{partnerName}</td>
-                <td style={{ padding: "5px" }}>{country}</td>
-                <td style={{ padding: "5px" }}>{budget}</td>
-                <td style={{ padding: "5px" }}>Yes</td>
-                <td style={{ padding: "5px" }}>{status}</td>
+                <td style={{ padding: "5px", }}>{service}</td>
+                <td style={{ padding: "5px", }}>{customerName}</td>
+                <td style={{ padding: "5px", }}>{partnerName}</td>
+                <td style={{ padding: "5px", }}>{country}</td>
+                <td style={{ padding: "5px", }}>{budget}</td>
+                <td style={{ padding: "5px", }}>Yes</td>
+                <td style={{ padding: "5px", }}>{status}</td>
+              
                 {decisions ? (
-                <td style={{ padding: "5px" }}>Given</td>
+                <td style={{ padding: "5px", }}>Given</td>
               ) : (
-                <td style={{ padding: "5px" }}>
+                <td style={{ padding: "5px", }}>
                   <Button
                     style={{
                       maxWidth: "15px",

@@ -31,6 +31,7 @@ async function fetchJobOrders() {
 
     if (Array.isArray(jobOrders)) {
       const filteredJobOrders = jobOrders.filter(order => !order.Accepted);
+   
       return filteredJobOrders;
     } else {
       console.error('Invalid data format: Expected an array');
@@ -75,6 +76,11 @@ const NewOrder = () => {
       console.error('Error rejecting job order:', error);
     }
   };
+
+  if (jobOrders.length===0){
+    return null
+  }
+  else{
 
   return (
     <>
@@ -205,6 +211,7 @@ const NewOrder = () => {
       </Card>
     </>
   );
+ }
 };
 
 export default NewOrder;
