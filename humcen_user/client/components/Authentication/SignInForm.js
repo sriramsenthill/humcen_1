@@ -11,10 +11,10 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import styles from "@/components/Authentication/Authentication.module.css";
 
-
 const SignInForm = () => {
   const router = useRouter();
   const [error, setError] = useState("");
+  const [jobOrderData, setJobOrderData] = useState(null); // To store the data from the "/api/admin/job_order" endpoint
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -32,9 +32,22 @@ const SignInForm = () => {
           localStorage.removeItem("token");
         });
     }
+
+    // Fetch data from the "/api/admin/job_order" endpoint
+    axios
+      .get("http://localhost:3000/api/all/job_order")
+      .then((response) => {
+        // Get the data and count the number of job orders in the "jobOrders" array
+        const { data } = response;
+        const itemCount = Array.isArray(data.jobOrders) ? data.jobOrders.length : 0;
+        setJobOrderData({ total: data.total, itemCount });
+        console.log(itemCount);
+      })
+      .catch((error) => {
+        console.error("Error fetching job order data:", error);
+      });
   }, []);
 
- 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -42,10 +55,13 @@ const SignInForm = () => {
     const userpassword = data.get("password");
 
     try {
-      const response = await axios.post("http://localhost:3000/api/auth/signin", {
-        email: useremail,
-        password: userpassword,
-      });
+      const response = await axios.post(
+        "http://localhost:3000/api/auth/signin",
+        {
+          email: useremail,
+          password: userpassword,
+        },
+      );
 
       const { token } = response.data;
 
@@ -70,156 +86,173 @@ const SignInForm = () => {
       }
     }
   };
-  
+
   return (
     <>
       <div className="authenticationBox">
-      <div className={styles.container}>
+        <div className={styles.container}>
           <div className={styles.leftContainer}>
-              <div className={styles.topContainer}>
-                    <img
-                      src="/images/sign.png"
-                      alt="favicon"
-                      className={styles.sign}
-                    />
-                    <Card className={styles.floatingCard}>
-                      <h2>Applied patent</h2>
-                      <p>215</p>
-                    </Card>
-                </div>
+            <div className={styles.topContainer}>
+              <img
+                src="/images/sign.png"
+                alt="favicon"
+                className={styles.sign}
+              />
+                 {jobOrderData !== null ? ( // Check if jobOrderData is not null before rendering the Card
+                <Card className={styles.floatingCard}>
+                  <h2>Applied patent</h2>
+                  <p>{jobOrderData.itemCount}</p>
+                </Card>
+              ) : (
+                // Render a loading state or placeholder if jobOrderData is null
+                <p>Loading...</p>
+              )}
+            </div>
             <div className={styles.bottomContainer}>
-                <Typography as="h1" fontSize="28px" fontWeight="700" mb="5px">
-                  <img
-                    src="/images/logo-white.png"
-                    alt="favicon"
-                    className={styles.favicon}
-                  />
-                <h1 className={styles.text}>Let's Empower your <strong>cross <br></br> border patent</strong> seamlessly </h1>
-                <p className={styles.text2}>Blockchain Driven One Stop IP platform to protect your <br></br>Inventions Globally.</p>
-                </Typography>  
-
+              <Typography as="h1" fontSize="28px" fontWeight="700" mb="5px">
+                <img
+                  src="/images/logo-white.png"
+                  alt="favicon"
+                  className={styles.favicon}
+                />
+                <h1 className={styles.text}>
+                  Let's Empower your{" "}
+                  <strong>
+                    cross <br></br> border patent
+                  </strong>{" "}
+                  seamlessly{" "}
+                </h1>
+                <p className={styles.text2}>
+                  Blockchain Driven One Stop IP platform to protect your{" "}
+                  <br></br>Inventions Globally.
+                </p>
+              </Typography>
             </div>
           </div>
           <div className={styles.rightContainer}>
-          <h1>Login Your Account</h1>  
-              <Box>                    
-                <Box component="form" noValidate onSubmit={handleSubmit}>
-                  <Box
-                    sx={{
-                      background: "#fff",
-                      padding: "30px 20px",
-                      borderRadius: "10px",
-                      mb: "20px",
-                    }}
-                    className="bg-black"
-                  >
-                    <Grid container alignItems="center" spacing={2}>
-                      <Grid item xs={12}>
-                        <Typography
-                          component="label"
-                          sx={{
-                            fontWeight: "500",
-                            fontSize: "14px",
-                            mb: "10px",
-                            display: "block",
-                          }}
-                        >
-                          Email
-                        </Typography>
+            <h1>Login Your Account</h1>
+            <Box>
+              <Box component="form" noValidate onSubmit={handleSubmit}>
+                <Box
+                  sx={{
+                    background: "#fff",
+                    padding: "30px 20px",
+                    borderRadius: "10px",
+                    mb: "20px",
+                  }}
+                  className="bg-black"
+                >
+                  <Grid container alignItems="center" spacing={2}>
+                    <Grid item xs={12}>
+                      <Typography
+                        component="label"
+                        sx={{
+                          fontWeight: "500",
+                          fontSize: "14px",
+                          mb: "10px",
+                          display: "block",
+                        }}
+                      >
+                        Email
+                      </Typography>
 
-                        <TextField
-                          required
-                          fullWidth
-                          id="email"
-                          label="Email Address"
-                          name="email"
-                          autoComplete="email"
-                          InputProps={{
-                            style: { borderRadius: 8 },
-                          }}
-                        />
-                      </Grid>
-
-                      <Grid item xs={12}>
-                        <Typography
-                          component="label"
-                          sx={{
-                            fontWeight: "500",
-                            fontSize: "14px",
-                            mb: "10px",
-                            display: "block",
-                          }}
-                        >
-                          Password
-                        </Typography>
-
-                        <TextField
-                          required
-                          fullWidth
-                          name="password"
-                          label="Password"
-                          type="password"
-                          id="password"
-                          autoComplete="new-password"
-                          InputProps={{
-                            style: { borderRadius: 8 },
-                          }}
-                        />
-                      </Grid>
-                    </Grid>
-                  </Box>
-
-                  {error && (
-                    <Typography
-                      variant="body2"
-                      color="error"
-                      align="center"
-                      sx={{ mb: 2 }}
-                    >
-                      {error}
-                    </Typography>
-                  )}
-
-                  <Grid container alignItems="center" spacing={2} >
-                    <Grid item xs={5} sm={5} ml="20px">
-                      <FormControlLabel
-                        control={
-                          <Checkbox value="allowExtraEmails" color="primary" />
-                        }
-                        label="Remember me."
+                      <TextField
+                        required
+                        fullWidth
+                        id="email"
+                        label="Email Address"
+                        name="email"
+                        autoComplete="email"
+                        InputProps={{
+                          style: { borderRadius: 8 },
+                        }}
                       />
                     </Grid>
 
-                    <Grid item xs={5} sm={5} textAlign="end" ml="20px">
-                      <Link
-                        href="/authentication/forgot-password"
-                        className="primaryColor text-decoration-none"
+                    <Grid item xs={12}>
+                      <Typography
+                        component="label"
+                        sx={{
+                          fontWeight: "500",
+                          fontSize: "14px",
+                          mb: "10px",
+                          display: "block",
+                        }}
                       >
-                        Forgot your password?
-                      </Link>
+                        Password
+                      </Typography>
+
+                      <TextField
+                        required
+                        fullWidth
+                        name="password"
+                        label="Password"
+                        type="password"
+                        id="password"
+                        autoComplete="new-password"
+                        InputProps={{
+                          style: { borderRadius: 8 },
+                        }}
+                      />
                     </Grid>
                   </Grid>
+                </Box>
 
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    sx={{
-                      mt: "20px",
-                      textTransform: "capitalize",
-                      borderRadius: "100px", /* Changed to 100px for circular button */
-                      fontWeight: "500",
-                      fontSize: "16px",
-                      marginLeft: "20px",                      padding: "14px 0px 14px 0px", /* Adjust the padding as needed */
-                      color: "#fff !important",
-                      width: "450px", /* Set the width to 483px */
-                      height: "48px", /* Set the height to 48px */
-                      background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
-                    }}
+                {error && (
+                  <Typography
+                    variant="body2"
+                    color="error"
+                    align="center"
+                    sx={{ mb: 2 }}
                   >
-                    Sign In
-                  </Button>
-                  <Typography fontSize="15px" mb="30px" mt="50px" ml="28px">
+                    {error}
+                  </Typography>
+                )}
+
+                <Grid container alignItems="center" spacing={2}>
+                  <Grid item xs={5} sm={5} ml="20px">
+                    <FormControlLabel
+                      control={
+                        <Checkbox value="allowExtraEmails" color="primary" />
+                      }
+                      label="Remember me."
+                    />
+                  </Grid>
+
+                  <Grid item xs={5} sm={5} textAlign="end" ml="20px">
+                    <Link
+                      href="/authentication/forgot-password"
+                      className="primaryColor text-decoration-none"
+                    >
+                      Forgot your password?
+                    </Link>
+                  </Grid>
+                </Grid>
+
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{
+                    mt: "20px",
+                    textTransform: "capitalize",
+                    borderRadius:
+                      "100px" /* Changed to 100px for circular button */,
+                    fontWeight: "500",
+                    fontSize: "16px",
+                    marginLeft: "20px",
+                    padding:
+                      "14px 0px 14px 0px" /* Adjust the padding as needed */,
+                    color: "#fff !important",
+                    width: "450px" /* Set the width to 483px */,
+                    height: "48px" /* Set the height to 48px */,
+                    background:
+                      "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
+                  }}
+                >
+                  Sign In
+                </Button>
+                <Typography fontSize="15px" mb="30px" mt="50px" ml="28px">
                   Don't have an account?{" "}
                   <Link
                     href="/authentication/sign-up"
@@ -228,9 +261,11 @@ const SignInForm = () => {
                     Sign up
                   </Link>
                 </Typography>
-                <p className={styles.text5}>2023 Copyrights. All Rights Reserved</p>
-                </Box>
+                <p className={styles.text5}>
+                  2023 Copyrights. All Rights Reserved
+                </p>
               </Box>
+            </Box>
           </div>
         </div>
       </div>

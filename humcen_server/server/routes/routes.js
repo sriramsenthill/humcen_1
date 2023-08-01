@@ -17,6 +17,8 @@ router.get("/api/job_order/:id", verifyToken, forms.getJobOrderOnID);
 
 router.get("/api/job_order", verifyToken, forms.getJobOrders);
 
+router.get("/api/all/job_order", forms.getallJobOrders);
+
 router.post(
   "/api/consultation",
   verifyToken,

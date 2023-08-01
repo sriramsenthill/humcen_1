@@ -49,6 +49,17 @@ const getJobOrders = async (req, res) => {
   }
 };
 
+const getallJobOrders = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const jobOrders = await JobOrder.find({});
+    res.json({ jobOrders });
+  } catch (error) {
+    console.error("Error fetching job orders:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 const createPatentConsultation = async (req, res) => {
   try {
     const { service, email, meeting_date_time } = req.body;
@@ -1337,6 +1348,7 @@ const rejectTheDoneWork = async(req, res) => {
   module.exports = {
     getJobOrderOnID,
     getJobOrders,
+    getallJobOrders,
     createPatentConsultation,
     createJobOrderPatentDrafting,
     createJobOrderPatentFiling,

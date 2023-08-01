@@ -34,6 +34,7 @@ const eCommerce = () => {
       const response = await api.get("/");
       const customerData = response.data;
       setCheckJobs(customerData.length);
+      console.log(checkJobs);
       // Process the customer data as needed
     } catch (error) {
       console.error("Error fetching customer data:", error);
