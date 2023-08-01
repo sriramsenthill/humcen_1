@@ -74,21 +74,17 @@ export default function BasicTabs({ jobData }) {
                 aria-label="basic tabs example"
               >
                 <Tab label="Invoices" {...a11yProps(0)} />
-                <Tab label="Verifications" {...a11yProps(1)} />
-                <Tab label="Activity Timeline" {...a11yProps(2)} />
+              
+                <Tab label="Activity Timeline" {...a11yProps(1)} />
               </Tabs>
             </Box>
             <TabPanel value={value} index={0}>
-              <div className={'card'}>
+              
                 <Invoice jobdata={jobData} />
-              </div>
+  
             </TabPanel>
+           
             <TabPanel value={value} index={1}>
-              <div className={'card'}>
-                <Verifications jobdata={jobData} />
-              </div>
-            </TabPanel>
-            <TabPanel value={value} index={2}>
               <div className={'card'}>
                 <TrackOrder />
               </div>

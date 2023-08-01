@@ -15,6 +15,7 @@ import {
   TableRow,
   IconButton,
   useTheme,
+  Button,
 } from "@mui/material";
 import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
@@ -187,6 +188,7 @@ function MyIncome() {
                 <TableCell>Amount</TableCell>
                 <TableCell>Delivery Date</TableCell>
                 <TableCell>Status</TableCell>
+                <TableCell>Download Files</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -204,6 +206,18 @@ function MyIncome() {
                     >
                       {row.pay_status}
                     </TableCell>
+                    <TableCell> <Button
+                    sx={{
+                      background: "#00ACF6",
+                      color: "white",
+                      borderRadius: "100px",
+                      width: "100%",
+                      height: "80%",
+                      textTransform: "none",
+                    }}
+                  >
+                  Download Invoice
+                  </Button></TableCell>
                   </TableRow>
                 ))}
               {emptyRows > 0 && (

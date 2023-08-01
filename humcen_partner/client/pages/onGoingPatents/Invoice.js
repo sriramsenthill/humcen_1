@@ -5,7 +5,8 @@ import style from "@/styles/PageTitle.module.css";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import { Box } from "@mui/material";
-import { useState } from "react";
+import { useState,useEffect } from "react";
+import axios from "axios";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { jobData } from "./patentData";
@@ -20,7 +21,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { styled } from "@mui/system";
 import { OpenInBrowserOutlined } from "@mui/icons-material";
-
+import { useRouter } from "next/router";
 const ColorButton = styled(Button)(({ theme }) => ({
   color: "white",
   width: "120%",
@@ -36,8 +37,58 @@ const ColorButton = styled(Button)(({ theme }) => ({
   fontWeight: "400",
 }));
 
+
+
+
+const api = axios.create({
+  baseURL: "http://localhost:3000/api",
+});
+
+
+// Add an interceptor to include the token in the request headers
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers['Authorization'] = token;
+  }
+  return config;
+});
+
 const Invoice = ({ jobdata }) => {
-  const job = jobdata;
+
+  const [job, setJob] = useState(null); 
+
+  const router = useRouter();
+  const { id } = router.query;
+
+  useEffect(() => {
+    const fetchJobData = async () => {
+      try {
+        const response = await api.get(`/partner/jobs/${id}`);
+        const specificJob = response.data;
+        console.log(specificJob)
+
+        if (specificJob) {
+          setJob(specificJob);
+        } else {
+          console.log("No job found with the provided job number:", id);
+          setJob(null);
+        }
+      } catch (error) {
+        console.error("Error fetching job order data:", error);
+        setJob(null);
+      }
+    };
+
+    fetchJobData();
+
+    // Clean up the effect by resetting the job state when the component is unmounted
+    return () => {
+      setJob(null);
+    };
+  }, [id]);
+
+ 
 
   if (!job) {
     return <div>No job found with the provided job number.</div>;
@@ -65,6 +116,7 @@ const Invoice = ({ jobdata }) => {
           p: "0.5% 0.5%",
           mb: "15px",
           width: "100%",
+          mt:"45px",
         }}
       >
         <Grid>
@@ -72,6 +124,7 @@ const Invoice = ({ jobdata }) => {
             style={{
               width: "100%",
               borderCollapse: "collapse",
+             
             }}
           >
             <tbody>
@@ -109,7 +162,7 @@ const Invoice = ({ jobdata }) => {
                       textTransform: "none",
                     }}
                   >
-                    Pay Invoice
+                  Request Payment
                   </Button>
                 </td>
               </tr>
@@ -119,13 +172,13 @@ const Invoice = ({ jobdata }) => {
                 <td style={{ padding: "5px" }}>{country}</td>
                 <td style={{ padding: "5px" }}>{budget}</td>
                 <td style={{ padding: "5px" }}>Done</td>
-                <td style={{ padding: "5px" }}>{status}</td>
+                <td style={{ padding: "5px" }}>Un Paid</td>
               </tr>
             </tbody>
           </table>
         </Grid>
       </Card>
-      ;
+      
     </>
   );
 };
