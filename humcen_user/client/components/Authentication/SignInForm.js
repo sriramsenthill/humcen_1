@@ -85,30 +85,37 @@ const SignInForm = () => {
                   />
                   <Card className={styles.floatingCard} >
                     <h2>Applied patent</h2>
-                    <p>215</p>
+                    <p>200<strong>+ </strong> </p>
                   </Card>
                 </div>
               </div>
             <div className={styles.bottomContainer}>
-                <Typography as="h1" fontSize="28px" fontWeight="700" mb="5px">
+                <Typography as="h1" mb="5px">
                   <img
                     src="/images/logo-white.png"
                     alt="favicon"
                     className={styles.favicon}
-                  />
-                  
-                </Typography>  
-
+                  /> 
+                  <Typography className={styles.textt}>
+                  Let's Empower your <strong>cross </strong>
+                  </Typography>
+                  <Typography className={styles.text}>
+                    <strong> border patent</strong> seamlessly 
+                  </Typography>
+                  <Typography className={styles.text2}>
+                  Blockchain Driven One Stop IP platform to protect your <br></br>Inventions Globally. 
+                  </Typography>                
+                </Typography>
             </div>
           </div>
           <div className={styles.rightContainer}>
-              <Box>
-                <h1>Login Your account</h1>                      
+          <h1>Login Your account</h1>  
+              <Box>                    
                 <Box component="form" noValidate onSubmit={handleSubmit}>
                   <Box
                     sx={{
                       background: "#fff",
-                      padding: "30px 20px",
+                      padding: "  30px 20px",
                       borderRadius: "10px",
                       mb: "20px",
                     }}
@@ -213,14 +220,14 @@ const SignInForm = () => {
                       fontSize: "16px",
                       marginLeft: "20px",                      padding: "14px 0px 14px 0px", /* Adjust the padding as needed */
                       color: "#fff !important",
-                      width: "465px", /* Set the width to 483px */
+                      width: "450px", /* Set the width to 483px */
                       height: "48px", /* Set the height to 48px */
                       background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
                     }}
                   >
-                    Sign In
+                    Log In
                   </Button>
-                  <Typography fontSize="15px" mb="30px" mt="50px">
+                  <Typography fontSize="15px" mb="30px" mt="15px" ml="30px">
                   Don't have an account?{" "}
                   <Link
                     href="/authentication/sign-up"
@@ -228,7 +235,9 @@ const SignInForm = () => {
                   >
                     Sign up
                   </Link>
-                  {/* <Typography className={styles.text5}>2023 Copyrights. All Rights Reserved</Typography> */}
+                </Typography>
+                <Typography fontSize="12px" mt="20%" textAlign="center" color="#676B5F">
+                  2023 Copyrights. All Rights Reserved
                 </Typography>
                 </Box>
               </Box>
