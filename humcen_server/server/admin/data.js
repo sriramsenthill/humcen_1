@@ -146,6 +146,9 @@ const updateJobFilesDetails = async (req, res) => {
       jobFile.job_files = req.body.file ? {} : jobFile.job_files;
       jobFile.user_decided = req.body.userDeci;
       jobFile.decided = req.body.decision;
+      const userCount = req.body.users;
+      const activityCount = req.body.activity;
+      const partnerCount = req.body.partners;
       if(req.body.reduction) {
         const workedPartner = await Partner.findOne( { jobs: {$in: [parseInt(jobID)]}} ); // Finding Partner based on the Job ID
         if(workedPartner) {
@@ -154,6 +157,16 @@ const updateJobFilesDetails = async (req, res) => {
           job.steps_done = req.body.steps_done;
           job.steps_done_user = req.body.steps_done_user;
           job.steps_done_activity = req.body.steps_done_activity;
+          const options = { year: 'numeric', month: 'long', day: 'numeric' };
+          userCount.map((user) => {
+            job.date_user[user] = new Date().toLocaleDateString(undefined, options);
+          })
+          activityCount.map((activity) => {
+            job.date_activity[activity] = new Date().toLocaleDateString(undefined, options);
+          })
+          partnerCount.map((partner) => {
+            job.date_partner[partner] = new Date().toLocaleDateString(undefined, options);
+          })
           job.save().then((response) => {
             console.log("Successfully updated the Timeline and Job Status");
           }).catch((err) => {

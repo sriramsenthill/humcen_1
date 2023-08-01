@@ -191,6 +191,9 @@ const  DynamicPage = () => {
             steps_done: 3,
             steps_user: 5,
             steps_activity: 7,
+            partners: [2],
+            users: [2, 3, 4],
+            activity: [5, 6],
           },
           {
             headers: {
@@ -226,6 +229,9 @@ const  DynamicPage = () => {
             steps_done: 3,
             steps_user: 4,
             steps_activity: 6,
+            users: [3, 4],
+            activity: [5],
+            partners: [2],
           },
           {
             headers: {

@@ -35,13 +35,25 @@ const jobOrderSchema = new mongoose.Schema({
     type:Number,
     default: 0,
   },
+  date_partner: {
+    type: [String],
+    default: [],
+  },
   steps_done_user: {
     type:Number,
     default: 0,
   },
+  date_user: {
+    type: [String],
+    default: [],
+  },
   steps_done_activity: {
     type: Number,
     default: 0,
+  },
+  date_activity: {
+    type: [String],
+    default: [],
   },
   time_of_delivery: { type: String },
   rejected_by: {

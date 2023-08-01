@@ -39,19 +39,19 @@ export default function Features() {
   const [finalDate, setFinalDate] = useState(null);
   const [stepsNo, setSteps] = useState(null);
   const [text, setStepsText] = useState(steps);
-
   useEffect(() => {
     const fetchStepData = async () => {
       try {
         const response = await api.get(`job_order/${id}`);
         const job = response.data;
         console.log(job);
-        const stepCount = job.steps_done_user;        
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        const stepCount = job.steps_done_user;
+        const dates = job.date_user;        
         setSteps(stepCount); // For choosing the last Step done
-        setFinalDate(new Date(job.end_date).toLocaleDateString(undefined, options));
-        const updatedSteps = [...steps]; // Create a copy of the current steps array
-        updatedSteps[5] = "Patent Filled Success (" + finalDate + ")";
+        const updatedSteps = []; // Create a copy of the current steps array
+        for(let totalSteps=0; totalSteps < steps.length; totalSteps++) {
+          updatedSteps.push(steps[totalSteps] + " (" + dates[totalSteps] + ")");
+        }
         setStepsText(updatedSteps);
       } catch (error) {
         console.error("Error fetching job order data:", error);

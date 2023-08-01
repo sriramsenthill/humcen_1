@@ -17,7 +17,6 @@ router.get("/api/job_order/:id", verifyToken, forms.getJobOrderOnID);
 
 router.get("/api/job_order", verifyToken, forms.getJobOrders);
 
-router.get("/api/all/job_order", forms.getallJobOrders);
 
 router.post(
   "/api/consultation",
@@ -141,6 +140,8 @@ router.get("/api/admin/user_files/:services/:id", data.getUnassignedJobFilesForA
 router.get("/api/cross-assign/find-partner/:services/:country/:partID", data.getPartnersDataForCrossAssign); // Fetching out Available Partners to Cross Assign the Task
 
 router.post("/api/cross_assign", data.crossAssignTask); // To manually assign Task to a Partner
+
+router.get("/api/admin/user_files/:services/:id", data.getUnassignedJobFilesForAdmin); // To fetch Unassigned User Files for Admin
 
 //ADMIN_AUTH
 router.post("/api/auth/admin/signin", admin_auth.adminSignIn);

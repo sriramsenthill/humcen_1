@@ -99,6 +99,10 @@ const TrackOrder = () => {
         const job = response.data;
         const stepCount = job.steps_done_activity; // For choosing the last Step done
         setSteps(stepCount);
+        const dates = job.date_activity;
+        for(let totalDates=0; totalDates<dates.length; totalDates++) {
+          ActivityTimelineData[totalDates].date = dates[totalDates];
+        }
         const updatedTimelineData = ActivityTimelineData.map((timeline) => {
           if (parseInt(timeline.id) <= stepCount) {
             return { ...timeline, completed: true };

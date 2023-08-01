@@ -49,17 +49,6 @@ const getJobOrders = async (req, res) => {
   }
 };
 
-const getallJobOrders = async (req, res) => {
-  try {
-    const userId = req.userId;
-    const jobOrders = await JobOrder.find({});
-    res.json({ jobOrders });
-  } catch (error) {
-    console.error("Error fetching job orders:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-};
-
 const createPatentConsultation = async (req, res) => {
   try {
     const { service, email, meeting_date_time } = req.body;
@@ -156,6 +145,9 @@ const createJobOrderPatentDrafting = async (req, res) => {
       const startDate = new Date();
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
+
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      new Date().toLocaleDateString(undefined, options);
   
       const newJobOrder = new JobOrder({
         _id: { job_no: newDraftingNo },
@@ -167,9 +159,12 @@ const createJobOrderPatentDrafting = async (req, res) => {
         country: req.body.country,
         start_date: startDate,
         end_date: endDate,
-        steps_done: stepsInitial - 1, 
+        steps_done: stepsInitial - 1,
         steps_done_user: stepsInitial,
         steps_done_activity: stepsInitial + 1,
+        date_partner: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " "], 
+        date_user: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " "],
+        date_activity: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " ", " ", " ", " "],
         status: "In Progress",
         budget: req.body.budget,
         domain: req.body.field,
@@ -264,6 +259,9 @@ const createJobOrderPatentFiling = async (req, res) => {
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
 
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    new Date().toLocaleDateString(undefined, options);
+
     const newJobOrder = new JobOrder({
       _id: { job_no: newFilingNo },
       service: "Patent Filing",
@@ -277,6 +275,9 @@ const createJobOrderPatentFiling = async (req, res) => {
       steps_done: stepsInitial - 1, 
       steps_done_user: stepsInitial,
       steps_done_activity: stepsInitial + 1,
+      date_partner: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " "], 
+      date_user: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " "],
+      date_activity: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " ", " ", " ", " "],
       status: "In Progress",
       budget: req.body.budget,
       domain: req.body.field,
@@ -362,6 +363,9 @@ const savePatentSearchData = async (req, res) => {
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
 
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    new Date().toLocaleDateString(undefined, options);
+
     const newJobOrder = new JobOrder({
       _id: { job_no: newSearchNo },
       service: "Patent Search",
@@ -374,6 +378,9 @@ const savePatentSearchData = async (req, res) => {
       steps_done: stepsInitial - 1, 
       steps_done_user: stepsInitial,
       steps_done_activity: stepsInitial + 1,
+      date_partner: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " "], 
+      date_user: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " "],
+      date_activity: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " ", " ", " ", " "],
       budget: "To be Allocated",
       status: "In Progress",
       country: req.body.country,
@@ -465,6 +472,9 @@ const saveResponseToFerData = async (req, res) => {
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
 
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    new Date().toLocaleDateString(undefined, options);
+
     const newJobOrder = new JobOrder({
       _id: { job_no: newResponseToFerNo },
       service: "Response To FER Office Action",
@@ -478,6 +488,9 @@ const saveResponseToFerData = async (req, res) => {
       steps_done: stepsInitial - 1, 
       steps_done_user: stepsInitial,
       steps_done_activity: stepsInitial + 1,
+      date_partner: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " "], 
+      date_user: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " "],
+      date_activity: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " ", " ", " ", " "],
       status: "In Progress",
       budget: "To be Allocated",
       domain: req.body.field,
@@ -560,6 +573,9 @@ const saveFreedomToOperateData = async (req, res) => {
   
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
+
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      new Date().toLocaleDateString(undefined, options);
   
       const newJobOrder = new JobOrder({
         _id: { job_no: newFTONo },
@@ -574,6 +590,9 @@ const saveFreedomToOperateData = async (req, res) => {
         steps_done: stepsInitial - 1, 
         steps_done_user: stepsInitial,
         steps_done_activity: stepsInitial + 1,
+        date_partner: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " "], 
+        date_user: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " "],
+        date_activity: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " ", " ", " ", " "],
         status: "In Progress",
         budget: "To be Allocated",
         domain: req.body.field,
@@ -665,6 +684,9 @@ const savePatentIllustrationData = async (req, res) => {
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
 
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    new Date().toLocaleDateString(undefined, options);
+
     const newJobOrder = new JobOrder({
       _id: { job_no: newJobNo },
       service: "Patent Illustration",
@@ -678,6 +700,9 @@ const savePatentIllustrationData = async (req, res) => {
       steps_done: stepsInitial - 1, 
       steps_done_user: stepsInitial,
       steps_done_activity: stepsInitial + 1,
+      date_partner: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " "], 
+      date_user: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " "],
+      date_activity: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " ", " ", " ", " "],
       country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
@@ -766,6 +791,9 @@ const savePatentLandscapeData = async (req, res) => {
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
 
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    new Date().toLocaleDateString(undefined, options);
+
     const newJobOrder = new JobOrder({
       _id: { job_no: newJobNo },
       service: "Freedom to Patent Landscape",
@@ -779,6 +807,9 @@ const savePatentLandscapeData = async (req, res) => {
       steps_done: stepsInitial - 1, 
       steps_done_user: stepsInitial,
       steps_done_activity: stepsInitial + 1,
+      date_partner: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " "], 
+      date_user: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " "],
+      date_activity: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " ", " ", " ", " "],
       country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
@@ -866,6 +897,9 @@ const savePatentWatchData = async (req, res) => {
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
 
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    new Date().toLocaleDateString(undefined, options);
+
     const newJobOrder = new JobOrder({
       _id: { job_no: newJobNo },
       service: "Patent Watch",
@@ -879,6 +913,9 @@ const savePatentWatchData = async (req, res) => {
       steps_done: stepsInitial - 1, 
       steps_done_user: stepsInitial,
       steps_done_activity: stepsInitial + 1,
+      date_partner: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " "], 
+      date_user: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " "],
+      date_activity: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " ", " ", " ", " "],
       country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
@@ -967,6 +1004,9 @@ const savePatentLicenseData = async (req, res) => {
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
 
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    new Date().toLocaleDateString(undefined, options);
+
     const newJobOrder = new JobOrder({
       _id: { job_no: newJobNo },
       service: "Patent Licensing and Commercialization Services",
@@ -980,6 +1020,9 @@ const savePatentLicenseData = async (req, res) => {
       steps_done: stepsInitial - 1, 
       steps_done_user: stepsInitial,
       steps_done_activity: stepsInitial + 1,
+      date_partner: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " "], 
+      date_user: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " "],
+      date_activity: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " ", " ", " ", " "],
       country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
@@ -1067,6 +1110,9 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
 
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    new Date().toLocaleDateString(undefined, options);
+
     const newJobOrder = new JobOrder({
       _id: { job_no: newJobNo },
       service: "Patent Portfolio Analysis",
@@ -1080,6 +1126,9 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
       steps_done: stepsInitial - 1, 
       steps_done_user: stepsInitial,
       steps_done_activity: stepsInitial + 1,
+      date_partner: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " "], 
+      date_user: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " "],
+      date_activity: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " ", " ", " ", " "],
       country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
@@ -1169,6 +1218,9 @@ const savePatentTranslationData = async (req, res) => {
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
 
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    new Date().toLocaleDateString(undefined, options);
+
     const newJobOrder = new JobOrder({
       _id: { job_no: newJobNo },
       service: "Patent Translation Services",
@@ -1182,6 +1234,9 @@ const savePatentTranslationData = async (req, res) => {
       steps_done: stepsInitial - 1, 
       steps_done_user: stepsInitial,
       steps_done_activity: stepsInitial + 1,
+      date_partner: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " "], 
+      date_user: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " "],
+      date_activity: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " ", " ", " ", " "],
       country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
@@ -1260,10 +1315,18 @@ const approveTheDoneWork = async(req, res) => {
     if(!job) {
       console.error("No Job found under Job Number " + jobID);
     }
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const done_activity = [7, 8, 9];
     job.status = req.body.status;
     job.steps_done = req.body.steps;
     job.steps_done_user = req.body.user_steps;
     job.steps_done_activity = req.body.activity;
+    done_activity.map((elem) => {
+      job.date_activity[elem]  = new Date().toLocaleDateString(undefined, options);
+    });
+    job.date_partner[3] = new Date().toLocaleDateString(undefined, options);
+    job.date_user[5] = new Date().toLocaleDateString(undefined, options);
+
     job.save()
     .then((response) => {
       console.log("User's Approval Completed Successfully");
@@ -1307,6 +1370,7 @@ const approveTheDoneWork = async(req, res) => {
 const rejectTheDoneWork = async(req, res) => {
   const jobID = req.params.jobID;
   const updatedData = req.body;
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
   try {
     // Updating the Job Order Status
     const job = await JobOrder.findOne({"_id.job_no": parseInt(jobID)});
@@ -1317,6 +1381,17 @@ const rejectTheDoneWork = async(req, res) => {
     job.steps_done = req.body.steps;
     job.steps_done_user = req.body.user_steps;
     job.steps_done_activity = req.body.activity;
+
+    job.date_partner[3] = " ";
+    
+    job.date_activity[3] = new Date().toLocaleDateString(undefined, options);
+    for(let remSteps=4; remSteps<10; remSteps++) {
+      job.date_activity[remSteps] = " "
+    }
+    job.date_user[2] = new Date().toLocaleDateString(undefined, options);
+    for(let remSteps=3; remSteps<6; remSteps++) {
+      job.date_user[remSteps] = " ";
+    }
     job.save()
     .then((response) => {
       console.log("User's Rejection Completed Successfully");
@@ -1348,7 +1423,6 @@ const rejectTheDoneWork = async(req, res) => {
   module.exports = {
     getJobOrderOnID,
     getJobOrders,
-    getallJobOrders,
     createPatentConsultation,
     createJobOrderPatentDrafting,
     createJobOrderPatentFiling,

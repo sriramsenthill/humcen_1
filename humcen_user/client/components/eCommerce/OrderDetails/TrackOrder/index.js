@@ -101,6 +101,10 @@ const TrackOrder = () => {
         const response = await api.get(`job_order/${id}`);
         const job = response.data;
         const stepCount = job.steps_done_activity; // For choosing the last Step done
+        const dates = job.date_activity;
+        for(let totalDates=0; totalDates<dates.length; totalDates++) {
+          ActivityTimelineData[totalDates].date = dates[totalDates];
+        }
         setSteps(stepCount);
         const updatedTimelineData = ActivityTimelineData.map((timeline) => {
           if (parseInt(timeline.id) <= stepCount) {
@@ -120,7 +124,6 @@ const TrackOrder = () => {
     
 
   }, [id, stepsNo]);
-
 
   const timelineTransitions = useTransition(timelineData, {
     key: (item) => item.id,

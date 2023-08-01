@@ -1374,7 +1374,10 @@ const updateTimelineForUpload = async (req, res) => {
         .status(404)
         .json({ error: "No job found with the provided job number" });
     } else {
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
       specificJob.steps_done_activity = timeLineStatus;
+      specificJob.date_activity[4] = new Date().toLocaleDateString(undefined, options);
+
       specificJob.save().then((response)=> {
         console.log("Timeline Updated Successfully for Partner Work Upload" + response);
       }).catch((error) => {
@@ -1388,7 +1391,6 @@ const updateTimelineForUpload = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 
 module.exports = {
   getPartnerJobsById,
