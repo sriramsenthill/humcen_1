@@ -1,5 +1,6 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
@@ -30,6 +31,20 @@ const ColorButton = styled(Button)(({ theme }) => ({
   fontWeight: "400",
 }));
 
+const api = axios.create({
+  baseURL: "http://localhost:3000/api",
+});
+
+
+// Add an interceptor to include the token in the request headers
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers['Authorization'] = token;
+  }
+  return config;
+});
+
 export default function Profile() {
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -41,6 +56,45 @@ export default function Profile() {
   };
 
   const [editMode, setEditMode] = useState(false);
+
+  const [formData, setFormData] = useState({
+    applicant_type: " ",
+    business_name: " ",
+    company_id: " ",
+    vat_payer: " ",
+    name: " ",
+    surname: " ",
+    email: " ",
+    phone: " ",
+    position: " ",
+    street: " ",
+    town: " ",
+    postcode: " ",
+    country: " ",
+  });
+
+  useEffect(() => {
+    const fetchAdminProfileSettings = async() => {
+      const response = await api.get("admin/settings").then((response) => {
+        const applicantSettings = response.data.applicant_details;
+        setFormData(applicantSettings);
+      }).catch((error) => {
+        console.error("Error in fetching Admin's Profile Settings");
+      });
+
+    }
+
+    fetchAdminProfileSettings();
+
+  }, []);
+
+  const updateApplicantSettings = async(applicantDetails) => {
+    const response = await api.put("admin/applicant-settings", applicantDetails).then((response) => {
+      console.log("Admin's Applicant Details Settings Successfully Updated : " + response.data);
+    }).catch((error) => {
+      console.error("Error in sending the Admin's Updated Applicant Settings : " + error);
+    })
+  }
 
   return (
     <>
@@ -100,10 +154,17 @@ export default function Profile() {
                           id="applicant_type"
                           label="Applicant Type"
                           name="applicant_type"
+                          value={formData.applicant_type}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                applicant_type: e.target.value
+                              })
+                            })}
                         />
                       ) : (
                         <Typography>
-                          Business Entity (LLC, PLC, etc.)
+                          {formData.applicant_type}
                         </Typography>
                       )}
                     </TableCell>
@@ -140,9 +201,16 @@ export default function Profile() {
                           id="business_name"
                           label="Business Name"
                           name="business_name"
+                          value={formData.business_name}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                business_name: e.target.value
+                              })
+                            })}
                         />
                       ) : (
-                        <Typography>LBK Blockchain Co. Ltd.</Typography>
+                        <Typography>{formData.business_name}</Typography>
                       )}
                     </TableCell>
                   </TableRow>
@@ -178,9 +246,16 @@ export default function Profile() {
                           id="companyID"
                           label="Company ID"
                           name="companyID"
+                          value={formData.company_id}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                company_Id: e.target.value
+                              })
+                            })}
                         />
                       ) : (
-                        <Typography>1987587</Typography>
+                        <Typography>{formData.company_id}</Typography>
                       )}
                     </TableCell>
                   </TableRow>
@@ -216,9 +291,16 @@ export default function Profile() {
                           id="vat"
                           label="VAT Payer"
                           name="name"
+                          value={formData.vat_payer}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                vat_payer: e.target.value
+                              })
+                            })}
                         />
                       ) : (
-                        <Typography>x</Typography>
+                        <Typography>{formData.vat_payer}</Typography>
                       )}
                     </TableCell>
                   </TableRow>
@@ -254,9 +336,16 @@ export default function Profile() {
                           id="name"
                           label="Name"
                           name="name"
+                          value={formData.name}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                name: e.target.value
+                              })
+                            })}
                         />
                       ) : (
-                        <Typography>Bibin</Typography>
+                        <Typography>{formData.name}</Typography>
                       )}
                     </TableCell>
                   </TableRow>
@@ -292,9 +381,16 @@ export default function Profile() {
                           id="surname"
                           label="Surname"
                           name="surname"
+                          value={formData.surname}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                surname: e.target.value
+                              })
+                            })}
                         />
                       ) : (
-                        <Typography>Matthew</Typography>
+                        <Typography>{formData.surname}</Typography>
                       )}
                     </TableCell>
                   </TableRow>
@@ -330,10 +426,17 @@ export default function Profile() {
                           id="email"
                           label="Email"
                           name="email"
+                          value={formData.email}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                email: e.target.value
+                              })
+                            })}
                         />
                       ) : (
                         <Typography>
-                          trademark.humcenglobal@gmail.com
+                          {formData.email}
                         </Typography>
                       )}
                     </TableCell>
@@ -373,9 +476,16 @@ export default function Profile() {
                           id="phno"
                           label="Phone"
                           name="phno"
+                          value={formData.phone}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                phone: e.target.value
+                              })
+                            })}
                         />
                       ) : (
-                        <Typography>+91 81242-81241</Typography>
+                        <Typography>{formData.phone}</Typography>
                       )}
                     </TableCell>
                   </TableRow>
@@ -411,9 +521,16 @@ export default function Profile() {
                           id="position"
                           label="Position"
                           name="position"
+                          value={formData.position}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                position: e.target.value
+                              })
+                            })}
                         />
                       ) : (
-                        <Typography>Chief Executive Officer</Typography>
+                        <Typography>{formData.position}</Typography>
                       )}
                     </TableCell>
                   </TableRow>
@@ -449,11 +566,17 @@ export default function Profile() {
                           id="street"
                           label="Street"
                           name="street"
+                          value={formData.street}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                street: e.target.value
+                              })
+                            })}
                         />
                       ) : (
                         <Typography>
-                          30 de Castro Street, Wickham's Cay 1, P.O. Box 4519,
-                          Road Town,
+                          {formData.street}
                         </Typography>
                       )}
                     </TableCell>
@@ -491,9 +614,16 @@ export default function Profile() {
                           id="town"
                           label="Town"
                           name="town"
+                          value={formData.town}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                town: e.target.value
+                              })
+                            })}
                         />
                       ) : (
-                        <Typography>Tortola</Typography>
+                        <Typography>{formData.town}</Typography>
                       )}
                     </TableCell>
                   </TableRow>
@@ -529,9 +659,16 @@ export default function Profile() {
                           id="street"
                           label="Street"
                           name="street"
+                          value={formData.postcode}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                postcode: e.target.value
+                              })
+                            })}
                         />
                       ) : (
-                        <Typography>VG1110</Typography>
+                        <Typography>{formData.postcode}</Typography>
                       )}
                     </TableCell>
                   </TableRow>
@@ -567,9 +704,16 @@ export default function Profile() {
                           id="street"
                           label="Street"
                           name="street"
+                          value={formData.country}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                country: e.target.value
+                              })
+                            })}
                         />
                       ) : (
-                        <Typography>British Virgin Islands</Typography>
+                        <Typography>{formData.country}</Typography>
                       )}
                     </TableCell>
                   </TableRow>
@@ -597,6 +741,8 @@ export default function Profile() {
               onClick={() => {
                 if (editMode === true) {
                   setEditMode(false);
+
+                  updateApplicantSettings(formData);
                 } else {
                   setEditMode(true);
                 }

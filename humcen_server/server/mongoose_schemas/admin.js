@@ -3,43 +3,113 @@ const mongoose = require('mongoose');
 const AdminSchema = new mongoose.Schema({
   _id: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
   },
   name: {
     type: String,
-    required: true,
+
   },
   surname: {
     type: String,
-    required: true,
+
   },
   email: {
     type: String,
-    required: true,
+
   },
   password: {
     type: String,
   },
   phone: {
     type: String,
-    required: true,
+
   },
+  billing: {
+    bank_name: {
+      type: String,
+    },
+    account_number: {
+      type: String,
+    },
+    account_name: {
+      type: String,
+    },
+    branch: {
+      type: String,
+    },
+    ifsc_code: {
+      type: String,
+    },
+    address: {
+      type: String,
+    },
+    town: {
+      type: String,
+    },
+    postcode: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
+  },
+  applicant_details: {
+    applicant_type: {
+      type: String,
+    },
+    business_name: {
+      type: String,
+    },
+    company_id: {
+      type: String,
+    },
+    vat_payer: {
+      type: String,
+    },
+    name: {
+      type: String,
+    },
+    surname: {
+      type: String,
+    },
+    email: {
+      type: String,
+    },
+    phone: {
+      type: String,
+    },
+    position: {
+      type: String,
+    },
+    street: {
+      type: String,
+    },
+    town: {
+      type: String,
+    },
+    postcode: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
+  },
+
   pref: {
     essential_emails: {
       type: Boolean,
-      required: true,
+      default: false,
     },
     order_updates: {
       type: Boolean,
-      required: true,
+      default: false,
     },
     marketing_emails: {
       type: Boolean,
-      required: true,
+      default: false,
     },
     newsletter: {
       type: Boolean,
-      required: true,
+      default: false,
     },
   },
 });

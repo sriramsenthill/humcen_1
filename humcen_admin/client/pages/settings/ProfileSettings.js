@@ -1,5 +1,6 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
@@ -30,6 +31,22 @@ const ColorButton = styled(Button)(({ theme }) => ({
   fontWeight: "400",
 }));
 
+
+const api = axios.create({
+  baseURL: "http://localhost:3000/api",
+});
+
+
+// Add an interceptor to include the token in the request headers
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers['Authorization'] = token;
+  }
+  return config;
+});
+
+
 export default function Profile() {
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -41,6 +58,36 @@ export default function Profile() {
   };
 
   const [editMode, setEditMode] = useState(false);
+  const [name, setName] = useState("");
+  const [surname, setSurName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+
+  useEffect(() => {
+    const fetchAdminProfileSettings = async() => {
+      const response = await api.get("admin/settings").then((response) => {
+        const personalSettings = response.data
+        setName(personalSettings.name);
+        setSurName(personalSettings.surname);
+        setEmail(personalSettings.email);
+        setPhone(personalSettings.phone);
+      }).catch((error) => {
+        console.error("Error in fetching Admin's Profile Settings");
+      });
+
+    }
+
+    fetchAdminProfileSettings();
+
+  }, []);
+
+  const updateAdminPersonalDetails = async(details) => {
+    const response = await api.put("admin/settings", details).then((response) => {
+      console.log("Admin's Personal Information Successfully Updated." + response.data);
+    }).catch((error) => {
+      console.error("Error in updating Admin's Personal Information Settings : " + error);
+    }) 
+  }
 
   return (
     <>
@@ -100,9 +147,11 @@ export default function Profile() {
                           id="name"
                           label="Name"
                           name="name"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
                         />
                       ) : (
-                        <Typography>Bibin</Typography>
+                        <Typography>{name}</Typography>
                       )}
                     </TableCell>
                   </TableRow>
@@ -139,9 +188,11 @@ export default function Profile() {
                           id="surname"
                           label="Surname"
                           name="surname"
+                          value={surname}
+                          onChange={(e) => setSurName(e.target.value)}
                         />
                       ) : (
-                        <Typography>Matthew</Typography>
+                        <Typography>{surname}</Typography>
                       )}
                     </TableCell>
                   </TableRow>
@@ -178,10 +229,12 @@ export default function Profile() {
                           id="email"
                           label="Email"
                           name="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
                         />
                       ) : (
                         <Typography>
-                          trademark.humcenglobal@gmail.com
+                          {email}
                         </Typography>
                       )}
                     </TableCell>
@@ -223,9 +276,11 @@ export default function Profile() {
                           id="phno"
                           label="Phone"
                           name="phno"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
                         />
                       ) : (
-                        <Typography>+91 81242-81241</Typography>
+                        <Typography>{phone}</Typography>
                       )}
                     </TableCell>
                   </TableRow>
@@ -253,6 +308,15 @@ export default function Profile() {
               onClick={() => {
                 if (editMode === true) {
                   setEditMode(false);
+                  const updatedSettings = {
+                    name: name,
+                    surname: surname,
+                    email: email,
+                    phone: phone,
+                  }
+                  updateAdminPersonalDetails(updatedSettings);
+                  window.location.reload(true);
+
                 } else {
                   setEditMode(true);
                 }

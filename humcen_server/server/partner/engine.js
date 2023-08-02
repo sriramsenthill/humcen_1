@@ -1299,9 +1299,10 @@ const addJobFiles = async (req, res) => {
           service: job.service, 
           country: job.country, 
           partnerID: job.partnerID, 
-          partnerName: job.partnerName, 
+          partnerName: job.partnerName,
+          decided: false, 
           job_files: job.job_files,
-          verification: "File submitted Successfully",
+          verification: "Job Files sent to the Admin Successfully for Verification",
     }).save().then((response) => {
       console.log("Job Files added Successfully");
     }).catch((err) => {
@@ -1309,6 +1310,7 @@ const addJobFiles = async (req, res) => {
     });
     } else {
         jobFile.job_files = job.job_files;
+        jobFile.decided = false;
         jobFile.verification = "Job Files sent to the Admin Successfully for Verification";
         jobFile.save()
         .then((response) => {

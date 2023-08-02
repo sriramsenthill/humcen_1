@@ -1,4 +1,6 @@
 import * as React from "react";
+import {useState, useEffect} from "react";
+import axios from "axios";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
@@ -82,8 +84,64 @@ const ColorButton = styled(Button)(({ theme }) => ({
   fontWeight: "400",
 }));
 
+const api = axios.create({
+  baseURL: "http://localhost:3000/api",
+});
+
+
+// Add an interceptor to include the token in the request headers
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers['Authorization'] = token;
+  }
+  return config;
+});
+
+
+
 export default function Profile() {
   const [editMode, setEditMode] = React.useState(false);
+
+  const [formData, setFormData] = useState({
+    essential_emails: false,
+    order_updates: false,
+    marketing_emails: false,
+    newsletter: false,
+  });
+
+  useEffect(() => {
+    const fetchAdminProfileSettings = async() => {
+      const response = await api.get("admin/settings").then((response) => {
+        const emailNotifSettings = response.data.pref;
+        console.log(emailNotifSettings);
+        const newForm = {
+          essential_emails: emailNotifSettings.essential_emails,
+          order_updates: emailNotifSettings.order_updates,
+          marketing_emails: emailNotifSettings.marketing_emails,
+          newsletter: emailNotifSettings.newsletter
+        };
+        setFormData(newForm);
+      }).catch((error) => {
+        console.error("Error in Fetching Admin's Billing Settings : " + error);
+      });
+    }
+
+    fetchAdminProfileSettings();
+
+  }, []);
+
+  const updateEmailNotifSettings = async(formData) => {
+    try {
+      const response = await api.put("admin/pref-settings", formData).then((response) => {
+        console.log("Updated Email Notification Settings of Admin sent successfully : " + response.data);
+      }).catch((error) => {
+        console.error("Error in sending the Updated Email Notification Settings of Admin : " + error)
+      })
+    } catch(error) {
+      console.error("Error in sending Admin's Updated Email Notification Settings : " + error);
+    }
+  }
 
   return (
     <>
@@ -146,7 +204,13 @@ export default function Profile() {
                           <IOSSwitch
                             sx={{ m: 1 }}
                             disabled={!editMode}
-                            defaultChecked
+                            checked={formData.essential_emails}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                essential_emails: !(formData.essential_emails),
+                              })
+                            })}
                           />
                         }
                       />
@@ -188,7 +252,13 @@ export default function Profile() {
                           <IOSSwitch
                             sx={{ m: 1 }}
                             disabled={!editMode}
-                            defaultChecked
+                            checked={formData.order_updates}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                order_updates: !(formData.order_updates),
+                              })
+                            })}
                           />
                         }
                       />
@@ -230,7 +300,13 @@ export default function Profile() {
                           <IOSSwitch
                             sx={{ m: 1 }}
                             disabled={!editMode}
-                            defaultChecked
+                            checked={formData.marketing_emails}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                marketing_emails: !(formData.marketing_emails)
+                              })
+                            })}
                           />
                         }
                       />
@@ -271,7 +347,13 @@ export default function Profile() {
                           <IOSSwitch
                             sx={{ m: 1 }}
                             disabled={!editMode}
-                            defaultChecked
+                            checked={formData.newsletter}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                newsletter: !(formData.newsletter),
+                              })
+                            })}
                           />
                         }
                       />
@@ -299,8 +381,14 @@ export default function Profile() {
                 backgroundColor: "#ECFCFF",
               }}
               onClick={() => {
-                if (editMode) setEditMode(false);
-                else setEditMode(true);
+                if (editMode) {
+                  setEditMode(false);
+                  updateEmailNotifSettings(formData);
+                  window.location.reload(true);
+                  }
+                else {
+                  setEditMode(true)
+                  };
               }}
             >
               <EditIcon style={{ color: "#79E0F3" }} />

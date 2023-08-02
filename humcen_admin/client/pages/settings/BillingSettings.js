@@ -1,5 +1,6 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
@@ -30,11 +31,25 @@ const ColorButton = styled(Button)(({ theme }) => ({
   fontWeight: "400",
 }));
 
+const api = axios.create({
+  baseURL: "http://localhost:3000/api",
+});
+
+
+// Add an interceptor to include the token in the request headers
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers['Authorization'] = token;
+  }
+  return config;
+});
+
+
 export default function BillingSettings() {
   const [editMode, setEditMode] = useState(false);
 
   const [formData, setFormData] = useState({
-    email: "",
     bankName: "",
     accountNumber: "",
     accountName: "",
@@ -46,38 +61,60 @@ export default function BillingSettings() {
     country: "",
   });
 
+  useEffect(() => {
+    const fetchAdminProfileSettings = async() => {
+      const response = await api.get("admin/settings").then((response) => {
+        const billingSettings = response.data.billing;
+        console.log(billingSettings);
+        const newForm = {
+          bankName: billingSettings.bank_name,
+          accountNumber: billingSettings.account_number,
+          accountName: billingSettings.account_name,
+          branch: billingSettings.branch,
+          ifscCode: billingSettings.ifsc_code,
+          address: billingSettings.address,
+          town: billingSettings.town,
+          postcode: billingSettings.postcode,
+          country: billingSettings.country,
+        };
+        setFormData(newForm);
+      }).catch((error) => {
+        console.error("Error in Fetching Admin's Billing Settings : " + error);
+      });
+    }
+
+    fetchAdminProfileSettings();
+
+  }, []);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const updateBilling = async(formData) => {
+    try {
+      const response = await api.put("admin/billing-settings", formData).then((response) => {
+        console.log("Updated Billing Settings of Admin sent successfully : " + response.data);
+      }).catch((error) => {
+        console.error("Error in sending the Updated Billing Settings of Admin : " + error)
+      })
+    } catch(error) {
+      console.error("Error in sending Admin's Updated Billing Information Settings : " + error);
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    updateBilling(formData);
     console.log(e);
     console.log("inside handleSubmit");
     setEditMode(false);
+    window.location.reload(true);
 
-    try {
-      await axios.post("/update-partner", formData);
+    
 
-      alert("Partner information updated successfully");
-
-      setFormData({
-        email: "",
-        bankName: "",
-        accountNumber: "",
-        accountName: "",
-        branch: "",
-        ifscCode: "",
-        address: "",
-        town: "",
-        postcode: "",
-        country: "",
-      });
-    } catch (error) {
-      console.error(error);
-      alert("An error occurred");
-    }
+    
   };
 
   return (
@@ -141,6 +178,13 @@ export default function BillingSettings() {
                             id="bank_name"
                             label="Bank Name"
                             name="bank_name"
+                            value={formData.bankName}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                bankName: e.target.value
+                              })
+                            })}
                           />
                         </TableCell>
                       </TableRow>
@@ -177,6 +221,13 @@ export default function BillingSettings() {
                             id="acc_no"
                             label="Account Number"
                             name="acc_no"
+                            value={formData.accountNumber}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                accountNumber: e.target.value
+                              })
+                            })}
                           />
                         </TableCell>
                       </TableRow>
@@ -213,6 +264,13 @@ export default function BillingSettings() {
                             id="acc_name"
                             label="Account Name"
                             name="acc_name"
+                            value={formData.accountName}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                accountName: e.target.value
+                              })
+                            })}
                           />
                         </TableCell>
                       </TableRow>
@@ -249,6 +307,13 @@ export default function BillingSettings() {
                             id="branch"
                             label="Branch Name"
                             name="branch"
+                            value={formData.branch}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                branch: e.target.value
+                              })
+                            })}
                           />
                         </TableCell>
                       </TableRow>
@@ -285,6 +350,13 @@ export default function BillingSettings() {
                             id="ifsc"
                             label="IFSC Code"
                             name="ifsc"
+                            value={formData.ifscCode}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                ifscCode: e.target.value
+                              })
+                            })}
                           />
                         </TableCell>
                       </TableRow>
@@ -321,6 +393,13 @@ export default function BillingSettings() {
                             id="address"
                             label="Address"
                             name="address"
+                            value={formData.address}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                address: e.target.value
+                              })
+                            })}
                           />
                         </TableCell>
                       </TableRow>
@@ -357,6 +436,13 @@ export default function BillingSettings() {
                             id="town"
                             label="Town"
                             name="town"
+                            value={formData.town}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                town: e.target.value
+                              })
+                            })}
                           />
                         </TableCell>
                       </TableRow>
@@ -393,6 +479,13 @@ export default function BillingSettings() {
                             id="postcode"
                             label="Postcode"
                             name="postcode"
+                            value={formData.postcode}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                postcode: e.target.value
+                              })
+                            })}
                           />
                         </TableCell>
                       </TableRow>
@@ -429,6 +522,13 @@ export default function BillingSettings() {
                             id="country"
                             label="Country"
                             name="country"
+                            value={formData.country}
+                            onChange={(e) => setFormData((formData) => {
+                              return({
+                                ...formData,
+                                country: e.target.value
+                              })
+                            })}
                           />
                         </TableCell>
                       </TableRow>
@@ -503,7 +603,7 @@ export default function BillingSettings() {
                           color: "#828282",
                         }}
                       >
-                        <Typography>XYZ Bank</Typography>
+                        <Typography>{formData.bankName}</Typography>
                       </TableCell>
                     </TableRow>
                     <TableRow
@@ -533,7 +633,7 @@ export default function BillingSettings() {
                           color: "#828282",
                         }}
                       >
-                        <Typography>123456789710345</Typography>
+                        <Typography>{formData.accountNumber}</Typography>
                       </TableCell>
                     </TableRow>
                     <TableRow
@@ -563,7 +663,7 @@ export default function BillingSettings() {
                           color: "#828282",
                         }}
                       >
-                        <Typography>Bibin Matthew</Typography>
+                        <Typography>{formData.accountName}</Typography>
                       </TableCell>
                     </TableRow>
                     <TableRow
@@ -593,7 +693,7 @@ export default function BillingSettings() {
                           color: "#828282",
                         }}
                       >
-                        <Typography>Ambattur</Typography>
+                        <Typography>{formData.branch}</Typography>
                       </TableCell>
                     </TableRow>
                     <TableRow
@@ -623,7 +723,7 @@ export default function BillingSettings() {
                           color: "#828282",
                         }}
                       >
-                        <Typography>1246XYZ314</Typography>
+                        <Typography>{formData.ifscCode}</Typography>
                       </TableCell>
                     </TableRow>
                     <TableRow
@@ -654,8 +754,7 @@ export default function BillingSettings() {
                         }}
                       >
                         <Typography>
-                          Olympia Technology Park, Level 2,Altius Block,No.1,
-                          SIDCO Industrial Estate
+                          {formData.address}
                         </Typography>
                       </TableCell>
                     </TableRow>
@@ -686,7 +785,7 @@ export default function BillingSettings() {
                           color: "#828282",
                         }}
                       >
-                        <Typography>Chennai</Typography>
+                        <Typography>{formData.town}</Typography>
                       </TableCell>
                     </TableRow>
                     <TableRow
@@ -716,7 +815,7 @@ export default function BillingSettings() {
                           color: "#828282",
                         }}
                       >
-                        <Typography>600032</Typography>
+                        <Typography>{formData.postcode}</Typography>
                       </TableCell>
                     </TableRow>
                     <TableRow
@@ -746,7 +845,7 @@ export default function BillingSettings() {
                           color: "#828282",
                         }}
                       >
-                        <Typography>India</Typography>
+                        <Typography>{formData.country}</Typography>
                       </TableCell>
                     </TableRow>
                   </TableBody>

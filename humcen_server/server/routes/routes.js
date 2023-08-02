@@ -4,7 +4,8 @@ const verifyToken = require("../verify_token/verifyToken");
 const forms = require("../user/forms");
 const userSettings = require("../user/settings");
 const user_auth = require("../user/signInUp");
-const data = require("../admin/data")
+const data = require("../admin/data");
+const adminSettings = require("../admin/settings");
 const verifyAdmin = require("../verify_token/verifyAdmin");
 const admin_auth = require("../admin/signInUp");
 const partnerSetttings = require("../partner/settings");
@@ -142,6 +143,19 @@ router.get("/api/cross-assign/find-partner/:services/:country/:partID", data.get
 router.post("/api/cross_assign", data.crossAssignTask); // To manually assign Task to a Partner
 
 router.get("/api/admin/user_files/:services/:id", data.getUnassignedJobFilesForAdmin); // To fetch Unassigned User Files for Admin
+
+// ADMIN SETTINGS
+router.get("/api/admin/settings", verifyAdmin, adminSettings.getAdminProfileSettings); // For fetching Admin's Profile Settings
+
+router.put("/api/admin/settings", verifyAdmin, adminSettings.updateAdminPersonalProfileSettings); // For Updating Admin's Personal Information Settings
+
+router.put("/api/admin/billing-settings", verifyAdmin, adminSettings.updateAdminBillingDetails); // For Updating Admin's Billing Information Settings
+
+router.put("/api/admin/applicant-settings", verifyAdmin, adminSettings.updateAdminApplicantDetails) // For Updating Admin's Applicant Details Settings
+
+router.put("/api/admin/pref-settings", verifyAdmin, adminSettings.updateAdminEmailNotifDetails) // For Updating Admin's Email Notification Settings
+
+router.put("/api/admin/password", verifyPartner, adminSettings.updateAdminPassword); // For Updating Admin's Password
 
 //ADMIN_AUTH
 router.post("/api/auth/admin/signin", admin_auth.adminSignIn);

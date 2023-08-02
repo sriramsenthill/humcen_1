@@ -1,4 +1,6 @@
 import * as React from "react";
+import {useState, useEffect} from "react";
+import axios from "axios";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
@@ -29,6 +31,22 @@ const ColorButton = styled(Button)(({ theme }) => ({
   fontWeight: "400",
 }));
 
+const api = axios.create({
+  baseURL: "http://localhost:3000/api",
+});
+
+
+// Add an interceptor to include the token in the request headers
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers['Authorization'] = token;
+  }
+  return config;
+});
+
+
+
 export default function Profile() {
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -39,7 +57,16 @@ export default function Profile() {
     });
   };
 
-  const [editMode, setEditMode] = React.useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [password, setPassword] = useState("");
+
+  const updatePassword = async(pass) => {
+    const response = await api.put("admin/password", password).then(() => {
+      console.log("Admin's New Password Saved Successfully");
+    }).catch((error) => {
+      console.error("Error in Saving the Admin's new Password");
+    })
+  }
 
   return (
     <>
@@ -100,6 +127,7 @@ export default function Profile() {
                           label="Password"
                           name="pwd"
                           type="password"
+                          onChange = {(e) => setPassword(e.target.value)}
                         />
                       ) : (
                         <Typography>********</Typography>
@@ -128,8 +156,15 @@ export default function Profile() {
                 backgroundColor: "#ECFCFF",
               }}
               onClick={() => {
-                if (editMode) setEditMode(false);
-                else setEditMode(true);
+                if (editMode) { 
+                  setEditMode(false);
+
+                  updatePassword(password);
+                  window.location.reload(true); 
+                  }
+                else { 
+                  setEditMode(true)
+                   }
               }}
             >
               <EditIcon style={{ color: "#79E0F3" }} />
