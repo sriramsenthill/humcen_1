@@ -155,8 +155,8 @@ const updateJobFilesDetails = async (req, res) => {
           console.log(workedPartner.in_progress_jobs);
           const job = await JobOrder.findOne({"_id.job_no": jobID});
           job.steps_done = req.body.steps_done;
-          job.steps_done_user = req.body.steps_done_user;
-          job.steps_done_activity = req.body.steps_done_activity;
+          job.steps_done_user = req.body.steps_user;
+          job.steps_done_activity = req.body.steps_activity;
           const options = { year: 'numeric', month: 'long', day: 'numeric' };
           userCount.map((user) => {
             job.date_user[user] = new Date().toLocaleDateString(undefined, options);

@@ -45,6 +45,7 @@ const  DynamicPage = () => {
   const [downloadStatus, setDownloadStatus] = useState(false);
   const [isComponentLoaded, setComponentLoaded] = useState(false);
   const [reasons, setReasons] = useState("");
+  const [states, setStates] = useState("");
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -60,6 +61,7 @@ const  DynamicPage = () => {
           setJob(specificJob);
           setService(specificJob.service);
           setJobID(specificJob._id.job_no);
+          setStates(specificJob.status);
         } else {
           console.log("No job found with the provided job number:", id);
           setJob(null);
@@ -388,12 +390,11 @@ const  DynamicPage = () => {
                 <td style={{ padding: "10px" }}></td>
                 <td style={{ padding: "10px" }}></td>
                 <td style={{ padding: "10px" }}></td>
-                <td style={{ padding: "10px" }}>
+                { states !== "Completed" &&<td style={{ padding: "10px" }}>
                   <Link href="#" onClick={loadComponent}>
                     Cross-Assign
                   </Link>
-                </td>
-
+                </td> }
               </tr>
             </tbody>
           </table>
