@@ -6,6 +6,7 @@ import FileBase64 from "react-file-base64";
 import Link from "next/link";
 import { Button } from "@mui/material";
 import { styled } from "@mui/system";
+import styles from "@/components/eCommerce/OrderDetails/TrackOrder/TrackOrder.module.css";
 import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { useRouter } from "next/router";
 
@@ -40,7 +41,6 @@ const CenteredDialogActions = styled(DialogActions)({
   justifyContent: 'center',
   flexDirection:'column',
 });
-
 
 
 
@@ -259,37 +259,45 @@ const JobDetails = ({services, jobNo}) => {
           p: "25px",
           mb: "15px",
         }}
-      >
-        <Box
-          sx={{
-            borderBottom: "1px solid #EEF0F7",
-            paddingBottom: "10px",
-            mb: "20px",
-          }}
-          className="for-dark-bottom-border"
-        >
-          <Typography
-            as="h3"
-            sx={{
-              fontSize: 18,
-              fontWeight: 500,
-            }}
-          >
-            Job Details
-          </Typography>
-        </Box>
-        
-        <Box sx={{ padding: '20px', backgroundColor: '#F7FAFF',}}>
+      > 
+        <Box sx={{ padding: '20px'}}>
         {personalInfo.map((info) => (
-        <Box
-          key={info.title}
-          sx={{
-           display:'flex',
-            borderBottom: '1px solid #E1E7F5',
-            
-            py: '10px',
-          }}
-        >
+        <Box sx={{ padding: '5px', backgroundColor: '#fff', borderRadius: "20px" }} className={styles.containerBox}>
+
+          <ul className={styles.list}>
+            <li style={{
+              textAlign: "left",
+            }}>
+              <h3 className={styles.emailheading}>{info.title}</h3>
+            </li>
+            <li style={{
+              textAlign: "right",
+            }}>
+              <p className={styles.email} >{info.text}</p>
+            </li>
+          </ul>
+
+          <hr className={styles.line} style={{ width: "100%" }} />
+
+        </Box>))}
+   
+          {/* <ul className={styles.list}>
+            <li style={{
+              textAlign: "left"
+            }}>
+              <h3 className={styles.emailheading} style={{
+              textAlign: "right"
+            }}>{info.title}</h3>
+            </li>
+            <li style={{
+              textAlign: "right"
+            }}>
+              <p className={styles.email} style={{
+              textAlign: "right"
+            }}>{info.text}</p>
+            </li>
+          </ul> */}
+{/* 
           <Typography
             variant="h6"
             sx={{
@@ -301,15 +309,27 @@ const JobDetails = ({services, jobNo}) => {
             {info.title}
           </Typography>
 
-          <Typography>{info.text}</Typography>
-        
-        </Box>
-      ))}
-      { upload && isAccepted && (<Typography variant="h5" sx={{ fontWeight: 'bold', py: '20px' }}>
-        Upload your Work
-      </Typography> )}
-      { upload && isAccepted && (<FileBase64 multiple={true} onDone={getFiles} />)}
-      <Divider sx={{ my: '20px' }} />
+          <Typography>{info.text}</Typography> */}
+          { upload && isAccepted && 
+          (<ul className={styles.list}>
+            <li style={{
+              position: "relative",
+              right: "4%",
+              textAlign: "left",
+              width: "200px",
+            }}>
+              <h3 className={styles.emailheading}>Upload Your Work</h3>
+            </li>
+            <li style={{
+              position: "relative",
+              right: "3%",
+              textAlign: "right",
+              bottom: "50%",
+              width: "150px",
+            }}>
+              <p className={styles.email} ><FileBase64 multiple={true} onDone={getFiles} /></p>
+            </li>
+          </ul>)}
       <Box
           key="Status"
           sx={{
@@ -319,23 +339,6 @@ const JobDetails = ({services, jobNo}) => {
             py: '10px',
           }}
         >
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: 'bold',
-              width: '100px',
-              pr: '10px',
-            }}
-          >
-            Status
-          </Typography>
-
-          <Typography
-          sx={{
-            color: textColor,
-            }}
-          >{status}</Typography>
-        
         </Box>
     </Box>
       </Card>
@@ -343,11 +346,12 @@ const JobDetails = ({services, jobNo}) => {
             sx={{
               background: "#27AE60",
               position: "relative",
-              left: "30px",
+              bottom: "10%",
+              left: "40%",
               bottom: "15px", 
               color: "white",
               borderRadius: "100px",
-              width: "35%",
+              width: "10%",
               height: "88%",
               textTransform: "none",
               "&:hover": {

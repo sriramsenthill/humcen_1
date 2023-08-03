@@ -9,9 +9,9 @@ import withAuth from "@/components/withAuth";
 import Features from "./Features";
 import BasicTabs from "./Tabs";
 import axios from "axios";
+import JobsTabs from "./jobTabs";
 import JSZip from "jszip";
 import Button from "@mui/material/Button";
-import JobDetails from "./jobDetails";
 
 // Create an Axios instance
 const api = axios.create({
@@ -261,7 +261,7 @@ const DynamicPage = () => {
           mb: "15px",
         }}
       >
-        <JobDetails services={Service} jobNo={jobno}/>       
+        <JobsTabs service={Service} number={jobno}/>       
       </Card>
       <Features />
       <Card
