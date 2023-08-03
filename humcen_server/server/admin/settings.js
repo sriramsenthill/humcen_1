@@ -112,15 +112,30 @@ const updateAdminPassword = async (req, res) => {
         if (!adminProfileDetails) {
             console.log("No Admin Found with that particular ID");
         } else {
-            adminProfileDetails.password = Object.keys(req.body)[0];
-            adminProfileDetails
-            .save()
+            const saltRounds = 10;
+            bcrypt.genSalt(saltRounds, (err, salt) => {
+              if (err) {
+                console.error(err);
+                return res.status(500).send("Error creating/updating Partner");
+              }
+          
+              bcrypt.hash(Object.keys(req.body)[0], salt, async (err, hashedPassword) => {
+                if (err) {
+                  console.error(err);
+                  return res.status(500).send("Error creating/updating Partner");
+                }
+          
+                adminProfileDetails.password = hashedPassword;
+                adminProfileDetails
+                  .save()
                   .then((res) =>
-                    console.log("Successfully Updated the Admin's Password")
+                    console.log("Successfully Updated the Partner's Password")
                   )
                   .catch((error) =>
-                    console.error("Error in updating Admin's Password: ", error)
+                    console.error("Error in updating Partner's Password: ", error)
                   );
+              });
+            });
               }
             }
         catch {

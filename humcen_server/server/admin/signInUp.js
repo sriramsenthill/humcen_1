@@ -1,6 +1,6 @@
 const Admin = require("../mongoose_schemas/admin"); // Import the Admin model
 const jwt = require("jsonwebtoken");
-
+const bcrypt = require("bcrypt");
 
 const adminSignIn = async (req, res) => {
   try {
@@ -12,8 +12,10 @@ const adminSignIn = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
     // Check if the entered password matches the password stored in the database
-    if (user.password !== password) {
+    if (!isPasswordValid) {
       // Incorrect password, return an error response
       return res.status(401).json({ message: "Invalid password" });
     }
