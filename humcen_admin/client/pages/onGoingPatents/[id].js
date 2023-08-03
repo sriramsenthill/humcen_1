@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import axios from "axios";
-import { Button } from "@mui/material";
+import { Button,Box } from "@mui/material";
 import { useRouter } from "next/router";
 import styles from "@/styles/Patents.module.css";
 import style from "@/styles/PageTitle.module.css";
@@ -32,7 +32,50 @@ const ColorButton = styled(Button)(({ theme }) => ({
   textTransform: "none",
   fontSize: "14px",
   fontWeight: "400",
+  textAlign:'center',
+ height:"48px",
 }));
+
+const CenteredDialogActions = styled(DialogActions)({
+  display: 'flex',
+  justifyContent: 'center',
+  flexDirection:'column',
+});
+
+const WhiteDialog = styled(Dialog)(({ theme }) => ({
+  "& .MuiPaper-root": {
+    backgroundColor: "white",
+    width: "530px",
+    height: "420px",
+  padding:'15px',
+    borderRadius: "10px",
+  },
+}));
+
+
+const CustomDialogTitle = styled(DialogTitle)({
+  width: "390px",
+  textAlign:'center',
+  fontSize:'22px',
+ marginBottom:'17px',
+});
+
+const TextAreaBox = styled(Box)({
+  width: "450px",
+  height: "119px",
+  padding: "15px 314px 87px 16px",
+  borderRadius: "8px",
+  backgroundColor: "#ECEFF0",
+  
+});
+
+const CustomTextArea = styled(TextField)({
+  width: "100%",
+  border: "none !important", 
+  outline: "none !important" 
+});
+
+
 
 const  DynamicPage = () => {
   const router = useRouter();
@@ -473,28 +516,30 @@ const  DynamicPage = () => {
       <div>{isComponentLoaded && <CrossAssign />}</div>
       {/* side stepper component */}
       <Features />
-      <Dialog open={open} onClose={()=>{ handleClose(); }}>
-        <DialogTitle>Type your reasons to inform the IP Partner</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Email Address"
-            type="email"
-            fullWidth
-            variant="standard"
-            placeholder="Type your reasons"
-            value={reasons}
-            onChange={handleReasonsChange}
-          />
-        </DialogContent>
+      <WhiteDialog open={open} onClose={handleClose}>
+    <CenteredDialogActions>
+        <CustomDialogTitle>Type your reasons to inform the IP Partner</CustomDialogTitle>
+       <DialogContent>
+        <TextAreaBox
+        >
+          <textarea
+  rows={6}
+  cols={60}
+  placeholder="Type Your Reasons"
+  value={reasons}
+  onChange={handleReasonsChange}
+  style={{ border: "none !important",fontFamily:'Roboto', outline: "none !important" ,backgroundColor:'transparent',borderWidth:"0px",outline:"none"}}
+>
+     </textarea>
+          </TextAreaBox>
+          </DialogContent>
         <DialogActions>
-          <ColorButton sx={{ width: "15%" }} onClick={()=> {window.location.reload(true); onPartnerNotif(jobID, reasons)}}>
+          <ColorButton style={{width:"150px"}} sx={{ width: "15%" }} onClick={()=> {window.location.reload(true); onPartnerNotif(jobID, reasons)}}>
             Submit
           </ColorButton>
         </DialogActions>
-      </Dialog>
+        </CenteredDialogActions>
+      </WhiteDialog>
     </>
   );
 }

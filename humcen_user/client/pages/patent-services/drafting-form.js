@@ -47,6 +47,23 @@ const ColorButton = styled(Button)(({ theme }) => ({
   fontWeight: "400",
 }));
 
+const WhiteDialog = styled(Dialog)(({ theme }) => ({
+  "& .MuiPaper-root": {
+    backgroundColor: "white",
+    width: "530px",
+    height: "420px",
+  padding:'15px',
+    borderRadius: "10px",
+  },
+}));
+
+
+const CenteredDialogActions = styled(DialogActions)({
+  display: 'flex',
+  justifyContent: 'center',
+  flexDirection:'column',
+});
+
 export default function Inbox() {
   const [domain, setDomain] = useState("");
   const [title, setTitle] = useState("");
@@ -549,15 +566,24 @@ export default function Inbox() {
         </Card>
       </form>
 </Card>
-     <Dialog open={isSubmitted}>
-        <DialogTitle>Success</DialogTitle>
-        <DialogContent>
-          <p>Your form has been submitted successfully.</p>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleOk}>OK</Button>
-        </DialogActions>
-      </Dialog>
+
+<WhiteDialog open={isSubmitted}>
+<CenteredDialogActions>
+      <DialogTitle>
+        {/* Replace 'your-image-url.jpg' with the actual URL of the image */}
+        <img src="/images/done 2done.jpg" alt="Done" style={{width:"90px",height:'90px'}}/>
+      </DialogTitle>
+      <DialogContent>
+        <p>Your form has been submitted successfully.</p>
+        <p>Thank you for your submission.</p>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleOk}>OK</Button>
+      </DialogActions>
+      </CenteredDialogActions>
+
+</WhiteDialog>
+
       <Dialog open={isErrorDialogOpen}>
     <DialogTitle>Error</DialogTitle>
     <DialogContent>
