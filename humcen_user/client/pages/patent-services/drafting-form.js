@@ -16,7 +16,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import Upload from "../../components/Upload";
 import BannerCard from "@/components/BannerCard";
-
+import OkDialogueBox from "./dialoguebox";
 
 
 const api = axios.create({
@@ -50,9 +50,9 @@ const ColorButton = styled(Button)(({ theme }) => ({
 const WhiteDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiPaper-root": {
     backgroundColor: "white",
-    width: "530px",
+    width: "490px",
     height: "420px",
-  padding:'15px',
+  padding:'6px',
     borderRadius: "10px",
   },
 }));
@@ -567,22 +567,9 @@ export default function Inbox() {
       </form>
 </Card>
 
-<WhiteDialog open={isSubmitted}>
-<CenteredDialogActions>
-      <DialogTitle>
-        {/* Replace 'your-image-url.jpg' with the actual URL of the image */}
-        <img src="/images/done 2done.jpg" alt="Done" style={{width:"90px",height:'90px'}}/>
-      </DialogTitle>
-      <DialogContent>
-        <p>Your form has been submitted successfully.</p>
-        <p>Thank you for your submission.</p>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleOk}>OK</Button>
-      </DialogActions>
-      </CenteredDialogActions>
 
-</WhiteDialog>
+{isSubmitted && <OkDialogueBox domainValue={domain}/> }
+
 
       <Dialog open={isErrorDialogOpen}>
     <DialogTitle>Error</DialogTitle>
