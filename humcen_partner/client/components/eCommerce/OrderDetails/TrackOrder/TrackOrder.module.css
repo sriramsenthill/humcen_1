@@ -1,38 +1,40 @@
 .timelineList .tList {
   position: relative;
-  padding-left: 20px;
-  margin-bottom: 16px;
-  padding-bottom: 16px;
+  padding-left: 50px;
+  padding-bottom: 0px;
   border-bottom: 1px solid #F7FAFF;
 }
-
 .timelineList .tList:last-child {
   border: none;
   padding-bottom: 0;
   margin-bottom: 0;
 }
-
 .timelineList .tList::before {
-  content: '';
-  background: linear-gradient(149.1deg, #99B8F3 14.61%, #177FCB 130.18%);
-  box-shadow: 0px 2.98686px 13.4409px rgba(126, 172, 235, 0.25);
-  width: 10px;
-  height: 10px;
-  border-radius: 100%;
+  content: " ";
+  width: 25px;
+  height: 55px;
   position: absolute;
-  top: 4px;
   left: 0;
+  font-size: 18px; /* Adjust the font size as needed */
+  text-align: center; /* Center the tick symbol horizontally */
+  line-height: 26px;
+}
+.timelineList .tList.completed::before {
+  content: '✔';
+  color: white;
+  background: green; /* Green background for the before element when completed is true */
 }
 
-.timelineList .tList::after {
-  content: '';
-  background: #F7FAFF;
-  width: 3px;
-  height: 75px;
-  border-radius: 5px;
-  position: absolute;
-  top: 18px;
-  left: 3px;
+.timelineList .tList.notCompleted::before {
+  background: lightgray;
+  padding-top: 50px;  /* Blue background for the before element when completed is false */
+}
+.timelineList .tList.completed {
+  margin-bottom: 10px; /* Add a margin for completed .tList elements */
+}
+
+.timelineList .tList.notCompleted {
+  margin-bottom: 38px; /* Add a margin for not completed .tList elements */
 }
 
 .timelineList .tList h4 {
@@ -40,13 +42,11 @@
   font-size: 14px;
   margin: 0 0 10px;
 }
-
 .timelineList .tList .date {
   color: #A9A9C8;
   font-size: 12px;
   margin: 0;
 }
-
 .timelineList .tList .text {
   margin: 10px 0 0;
   font-size: 13px;
@@ -58,12 +58,10 @@
   padding-left: 0;
   padding-right: 20px;
 }
-
 [dir="rtl"] .timelineList .tList::before {
   left: auto;
   right: 0;
 }
-
 [dir="rtl"] .timelineList .tList::after {
   left: auto;
   right: 3px;
@@ -73,13 +71,10 @@
 [class="dark"] .timelineList .tList {
   border-bottom: 1px solid var(--borderColor);
 }
-
 [class="dark"] .timelineList .tList:last-child {
   border-bottom: none;
 }
-
 .timelineList .tList::after {
-  background: var(--borderColor);
 }
 
 .list {

@@ -142,8 +142,6 @@ const TrackOrder = () => {
 
       <Card
         sx={{
-          
-          borderRadius: "10px",
           boxShadow: "none",
           p: "15px",
           pr:"20px",
@@ -151,11 +149,11 @@ const TrackOrder = () => {
           width:"100%",
         }}
       >
-             <Box sx={{ padding: '5px', backgroundColor: '#F7FAFF', borderRadius: "20px", mb:"59px",
+       <Box sx={{ padding: '5px', backgroundColor: '#F7FAFF',          borderRadius: "20px",
 }}>
         <Typography
           as="h1"
-          sx={{  
+          sx={{
             fontSize: "36",
             fontWeight: 500,
             mb: "20px",
@@ -165,15 +163,16 @@ const TrackOrder = () => {
         >
           Apple Watch: Design Patent
         </Typography>
-
+      
         <ul className={styles.list}>
           <li>
             <h3 className={styles.emailheading}>Status</h3>
           </li>
           <li>
-            <p className={styles.email}>Verification Pending</p>
+            <p className={styles.email} style={{paddingRight:"8px"}}>Verification Pending</p>
           </li>
         </ul>
+
         <hr className={styles.line} style={{ width: "100%" }}></hr>
         <ul className={styles.list}>
           <li>
@@ -183,36 +182,29 @@ const TrackOrder = () => {
             <p className={styles.email} style={{paddingRight:"15px"}}>United Kingdom</p>
           </li>
         </ul>
+        
         <hr className={styles.line} style={{ width: "100%" }}></hr>
         <ul className={styles.list}>
           <li>
             <h3 className={styles.emailheading}>Activity Timeline</h3>
           </li>
           <li>
-            <p className={styles.email} style={{paddingRight:"120px"}}>
+            <p className={styles.email} style={{paddingRight:"20px"}}>
               Expected Completion
-               April 18, 2023
+              April 18, 2023
             </p>
           </li>
         </ul>
         </Box>
-        <div style={{ marginLeft: "30%" }}>
+        <div style={{ marginLeft: "30%",marginTop:"55px" }}>
           <div className={styles.timelineList}>
-          {timelineTransitions((style, timeline) => (
-            <animated.div
-              style={{
-                ...style,
-                filter: timeline.completed ? "none" : "blur(1px)",
-              }}
-              key={timeline.id}
-            >
-              <div className={styles.tList}>
-                <h4>{timeline.title}</h4>
-                <p className={styles.date}>{timeline.date}</p>
-                <p className={styles.text}>{timeline.text}</p>
-              </div>
-            </animated.div>
-          ))}
+              {timelineTransitions((style, timeline) => (
+                <div className={`${styles.tList} ${timeline.completed ? styles.completed : styles.notCompleted}`}>
+                  <h4>{timeline.title}</h4>
+                  <p className={styles.date}>{timeline.date}</p>
+                  <p className={styles.text}>{timeline.text}</p>
+                </div>
+              ))}
           </div>
         </div>
       </Card>
