@@ -90,7 +90,16 @@ export default function Features() {
           <Stepper activeStep={stepsNo} alternativeLabel className="direction-ltr">
             {text.map((label) => (
               <Step key={label}>
-                <StepLabel>
+                <StepLabel StepIconProps={{
+                  sx: {
+                    "&.Mui-completed": {
+                      color:"green"
+                    },
+                    "&.Mui-active": {
+                      color: "#F49D1A"
+                    },
+                  }
+                }}>
                   {label}
                 </StepLabel>
               </Step>
