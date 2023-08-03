@@ -38,7 +38,7 @@ const ColorButton = styled(Button)(({ theme }) => ({
     "& .MuiPaper-root": {
       backgroundColor: "white",
       width: "490px",
-      height: "420px",
+      height: "460px",
     padding:'6px',
       borderRadius: "10px",
     },
