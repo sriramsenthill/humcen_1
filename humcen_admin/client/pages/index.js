@@ -9,8 +9,51 @@ import Impression4 from "@/components/Dashboard/eCommerce/Impression4";
 import NewCustomers from "@/components/Dashboard/eCommerce/NewCustomers";
 import BasicTabs from "@/components/UIElements/Tabs/BasicTabs";
 import withAuth from "@/components/withAuth";
+import { useState,useEffect } from "react";
+import axios from "axios";
+
+
+
+const api = axios.create({
+  baseURL: "http://localhost:3000/",
+});
+
+// Add an interceptor to include the token in the request headers
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers["Authorization"] = token;
+  }
+  return config;
+});
 
 const eCommerce = () => {
+
+  
+    const [profileName,setName] = useState(null);
+  
+    useEffect(() => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        axios
+          .get("http://localhost:3000/api/admin/settings", {
+            headers: {
+              Authorization: token,
+            },
+          })
+          .then((response) => {
+            const nameData = response.data;
+            console.log(nameData)
+            setName(nameData.name+" "+nameData.surname);
+          })
+          .catch((error) => {
+            console.error("Error fetching profile name:", error);
+          });
+      }
+    }, []);
+console.log(profileName)
+
+
   return (
     <>
       {/* Page title */}
@@ -23,7 +66,7 @@ const eCommerce = () => {
             lineHeight: "29px",
           }}
         >
-          Hey Bibin Matthew!
+          Hey {profileName},
         </h1>
         <ul>
           <li>

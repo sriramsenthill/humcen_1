@@ -130,6 +130,7 @@ const TrackOrder = () => {
     from: { opacity: 0, transform: "translateX(-100%)" },
     enter: { opacity: 1, transform: "translateX(0%)" },
     leave: { opacity: 0, transform: "translateX(100%)" },
+  
   });
 
   const handleProcessCompleted = (id) => {
@@ -200,7 +201,7 @@ const TrackOrder = () => {
         </ul>
         </Box>
         <div style={{ marginLeft: "30%",marginTop:"55px" }}>
-          <div className={styles.timelineList}>
+        <div className={styles.timelineList}>
            {timelineTransitions((style, timeline) => (
             <animated.div
               style={{
