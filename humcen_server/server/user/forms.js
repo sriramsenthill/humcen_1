@@ -137,7 +137,6 @@ const createJobOrderPatentDrafting = async (req, res) => {
   
       // Update partner and customer jobs lists
       findPartner.jobs.push(draftingOrder._id.job_no);
-      findPartner.is_free = false;
       findCustomer.jobs.push(draftingOrder._id.job_no);
   
       await Promise.all([findPartner.save(), findCustomer.save()]);
@@ -251,7 +250,6 @@ const createJobOrderPatentFiling = async (req, res) => {
     stepsInitial = 3;
     findPartner.jobs.push(filingOrder._id.job_no);
     findCustomer.jobs.push(filingOrder._id.job_no);
-    findPartner.is_free = false;
 
     await Promise.all([findPartner.save(), findCustomer.save()]);
 
@@ -356,7 +354,6 @@ const savePatentSearchData = async (req, res) => {
       stepsInitial = 3;
     findPartner.jobs.push(searchOrder._id.job_no);
     findCustomer.jobs.push(searchOrder._id.job_no);
-    findPartner.is_free = false;
 
     await Promise.all([findPartner.save(), findCustomer.save()]);
 
@@ -465,7 +462,6 @@ const saveResponseToFerData = async (req, res) => {
     stepsInitial = 3;
     findPartner.jobs.push(responseToFerOrder._id.job_no);
     findCustomer.jobs.push(responseToFerOrder._id.job_no);
-    findPartner.is_free = false;
 
     await Promise.all([findPartner.save(), findCustomer.save()]);
 
@@ -567,7 +563,6 @@ const saveFreedomToOperateData = async (req, res) => {
       stepsInitial = 3;
       findPartner.jobs.push(freedomToOperateData._id.job_no);
       findCustomer.jobs.push(freedomToOperateData._id.job_no);
-      findPartner.is_free = false;
   
       await Promise.all([findPartner.save(), findCustomer.save()]);
   
@@ -677,7 +672,6 @@ const savePatentIllustrationData = async (req, res) => {
     stepsInitial = 3;
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findCustomer.jobs.push(savedJobOrder._id.job_no);
-    findPartner.is_free = false;
 
     await Promise.all([findPartner.save(), findCustomer.save()]);
 
@@ -784,7 +778,6 @@ const savePatentLandscapeData = async (req, res) => {
       stepsInitial = 3;
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findCustomer.jobs.push(savedJobOrder._id.job_no);
-    findPartner.is_free = false;
 
     await Promise.all([findPartner.save(), findCustomer.save()]);
 
@@ -890,7 +883,6 @@ const savePatentWatchData = async (req, res) => {
       stepsInitial = 3;
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findCustomer.jobs.push(savedJobOrder._id.job_no);
-    findPartner.is_free = false;
 
     await Promise.all([findPartner.save(), findCustomer.save()]);
 
@@ -997,7 +989,6 @@ const savePatentLicenseData = async (req, res) => {
     stepsInitial = 3;
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findCustomer.jobs.push(savedJobOrder._id.job_no);
-    findPartner.is_free = false;
 
     await Promise.all([findPartner.save(), findCustomer.save()]);
 
@@ -1103,7 +1094,6 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
       stepsInitial = 3;
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findCustomer.jobs.push(savedJobOrder._id.job_no);
-    findPartner.is_free = false;
 
     await Promise.all([findPartner.save(), findCustomer.save()]);
 
@@ -1211,7 +1201,6 @@ const savePatentTranslationData = async (req, res) => {
     stepsInitial = 3;
     findPartner.jobs.push(savedJobOrder._id.job_no);
     findCustomer.jobs.push(savedJobOrder._id.job_no);
-    findPartner.is_free = false;
 
     await Promise.all([findPartner.save(), findCustomer.save()]);
 
