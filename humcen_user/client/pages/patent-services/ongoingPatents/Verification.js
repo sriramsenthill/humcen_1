@@ -291,14 +291,14 @@ const Verifications = ({ jobNumber }) => {
         sx={{
           boxShadow: "none",
           borderRadius: "10px",
-          border: "1px solid black",
+          border: "1px solid #00000033",
           mb: "15px",
           width: "100%",
-        padding:"5px",
-         margin: "0 auto",
-         mt:'45px',
-         ml:"10px",
-         mr:"10px",
+          padding:"1%",
+          margin: "0 auto",
+          mt:'45px',
+          ml:"10px",
+          mr:"10px",
         }}
       
       >
@@ -348,7 +348,7 @@ const Verifications = ({ jobNumber }) => {
                       background: !decisions ?  "#00ACF6" : "#D3D3D3"   , 
                       color: "white",
                       borderRadius: "100px",
-                      width:"108%",
+                      width:"95%",
                       height:"100%",
                       textTransform: "none",
                     }}

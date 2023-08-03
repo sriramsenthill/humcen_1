@@ -115,8 +115,8 @@ const Invoice = ({jobNumber}) => {
         sx={{
           boxShadow: "none",
           borderRadius: "10px",
-          border: "1px solid black",
-          p: "0.5% 0.5%",
+          border: "1px solid #00000033",
+          p: "1% 1%",
           mt:'45px',
           mb: "15px",
           width: "100%",

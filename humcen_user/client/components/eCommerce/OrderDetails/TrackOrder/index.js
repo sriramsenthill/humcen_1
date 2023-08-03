@@ -153,53 +153,47 @@ const TrackOrder = () => {
           width:"100%",
         }}
       >
-       <Box sx={{ padding: '5px', backgroundColor: '#F7FAFF',          borderRadius: "20px",
-}}>
-        <Typography
-          as="h1"
-          sx={{
-            fontSize: "36",
-            fontWeight: 500,
-            mb: "20px",
-            mt:"20px",
-            ml:"10px",
-          }}
-        >
-          Apple Watch: Design Patent
-        </Typography>
-      
-        <ul className={styles.list}>
-          <li>
-            <h3 className={styles.emailheading}>Status</h3>
-          </li>
-          <li>
-            <p className={styles.email} style={{paddingRight:"8px"}}>Verification Pending</p>
-          </li>
-        </ul>
+        <Box sx={{ padding: '5px', backgroundColor: '#fff', borderRadius: "20px" }} className={styles.containerBox}>
+          <Typography as="h1" sx={{ fontSize: "36", fontWeight: 500, mb: "20px", mt: "20px", ml: "10px" }}>
+            Apple Watch: Design Patent
+          </Typography>
+          <hr className={styles.line} style={{ width: "100%" }} />
 
-        <hr className={styles.line} style={{ width: "100%" }}></hr>
-        <ul className={styles.list}>
-          <li>
-            <h3 className={styles.emailheading}>Country</h3>
-          </li>
-          <li>
-            <p className={styles.email} style={{paddingRight:"15px"}}>United Kingdom</p>
-          </li>
-        </ul>
-        
-        <hr className={styles.line} style={{ width: "100%" }}></hr>
-        <ul className={styles.list}>
-          <li>
-            <h3 className={styles.emailheading}>Activity Timeline</h3>
-          </li>
-          <li>
-            <p className={styles.email} style={{paddingRight:"20px"}}>
-              Expected Completion
-              April 18, 2023
-            </p>
-          </li>
-        </ul>
+          <ul className={styles.list}>
+            <li>
+              <h3 className={styles.emailheading}>Status</h3>
+            </li>
+            <li>
+              <p className={styles.email} >Verification Pending</p>
+            </li>
+          </ul>
+
+          <hr className={styles.line} style={{ width: "100%" }} />
+
+          <ul className={styles.list}>
+            <li>
+              <h3 className={styles.emailheading}>Country</h3>
+            </li>
+            <li>
+              <p className={styles.email} >United Kingdom</p>
+            </li>
+          </ul>
+
+          <hr className={styles.line} style={{ width: "100%" }} />
+
+          <ul className={styles.list}>
+            <li>
+              <h3 className={styles.emailheading}>Activity Timeline</h3>
+            </li>
+            <li>
+              <p className={styles.email} >
+                Expected Completion<br></br>
+                April 18, 2023
+              </p>
+            </li>
+          </ul>
         </Box>
+
         <div style={{ marginLeft: "30%",marginTop:"55px" }}>
           <div className={styles.timelineList}>
               {timelineTransitions((style, timeline) => (
