@@ -201,22 +201,14 @@ const TrackOrder = () => {
         </ul>
         </Box>
         <div style={{ marginLeft: "30%",marginTop:"55px" }}>
-        <div className={styles.timelineList}>
-           {timelineTransitions((style, timeline) => (
-            <animated.div
-              style={{
-                ...style,
-                filter: timeline.completed ? "none" : "blur(1px)",
-              }}
-              key={timeline.id}
-            >
-              <div className={styles.tList}>
-                <h4>{timeline.title}</h4>
-                <p className={styles.date}>{timeline.date}</p>
-                <p className={styles.text}>{timeline.text}</p>
-              </div>
-            </animated.div>
-          ))}
+          <div className={styles.timelineList}>
+              {timelineTransitions((style, timeline) => (
+                <div className={`${styles.tList} ${timeline.completed ? styles.completed : styles.notCompleted}`}>
+                  <h4>{timeline.title}</h4>
+                  <p className={styles.date}>{timeline.date}</p>
+                  <p className={styles.text}>{timeline.text}</p>
+                </div>
+              ))}
           </div>
         </div>
       </Card>
