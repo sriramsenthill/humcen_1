@@ -104,25 +104,25 @@ const NewOrder = () => {
               }}>
             <thead>
               <tr>
-                <th className={styles.label} style={{ padding: "5px", textAlign: "left"}}>
+                <th className={styles.label} style={{ padding: "5px", textAlign: "left", fontWeight:"bold" }}>
                   Job No
                 </th>
-                <th className={styles.label} style={{ padding: "5px", textAlign: "left" }}>
+                <th className={styles.label} style={{ padding: "5px", textAlign: "left", fontWeight:"bold"  }}>
                   Patent Type
                 </th>
-                <th className={styles.label} style={{ padding: "5px", textAlign: "left" }}>
+                <th className={styles.label} style={{ padding: "5px", textAlign: "left" , fontWeight:"bold" }}>
                   Location
                 </th>
-                <th className={styles.label} style={{ padding: "5px" , textAlign: "left"}}>
+                <th className={styles.label} style={{ padding: "5px" , textAlign: "left", fontWeight:"bold" }}>
                   Budget
                 </th>
-                <th className={styles.label} style={{ padding: "5px" , textAlign: "left"}}>
+                <th className={styles.label} style={{ padding: "5px" , textAlign: "left", fontWeight:"bold" }}>
                   Expected Delivery
                 </th>
-                <th className={styles.label} style={{ padding: "2px" , position: "relative", left: "30px"}}>
+                <th className={styles.label} style={{ padding: "2px" , position: "relative", left: "30px", fontWeight:"bold"}}>
                   Actions
                 </th>
-                <th className={styles.label} style={{ paddingLeft: "2px" ,position: "relative", left: "90px",}}>
+                <th className={styles.label} style={{ paddingLeft: "2px" ,position: "relative", left: "90px", fontWeight:"bold"  }}>
                   Details
                 </th>
               </tr>
@@ -156,13 +156,13 @@ const NewOrder = () => {
                         width: "100%",
                         height: "88%",
                         textTransform: "none",
-                        "&:hover": {  
-                          background: "linear-gradient(90deg,#00308F  0%, #7FFFD4 100%)",
-                        },
+                        "&:hover": {
+                          background: "linear-gradient(90deg, #FF0000 0%, #FF6347 100%)",
+                        },                        
                       }}
                       onClick={() => {window.location.reload(true); handleRejectJob(order._id.job_no, order.service, order.country)}}
                     >
-                      Reject
+                      Deny
                     </Button>
                   </td>
                   <td>
@@ -197,6 +197,8 @@ const NewOrder = () => {
                       textTransform: "none",
                       position: "relative",
                       left: "10px",
+                      marginRight: "30px",
+                      marginLeft: "-20px"
                     }}
                   >
                         Details
