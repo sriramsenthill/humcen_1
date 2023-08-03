@@ -75,7 +75,7 @@ export default function OkDialogueBox({domainValue,serviceValue}){
         <p style={{textAlign:"center",fontWeight:"500",fontSize:"15px",fontFamily:'Inter',color:"#8C8E8F"}}>Track the status of your order to know how close it is to completion</p>
       </DialogContent>
       <DialogActions>
-        <ColorButton onClick={handleOk} style={{width:"120px",height:"40px"}}>Done</ColorButton>
+        <ColorButton onClick={handleOk} style={{width:"120px",height:"40px",fontFamily:'Inter'}}>Done</ColorButton>
       </DialogActions>
       </CenteredDialogActions>
 
