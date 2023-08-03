@@ -132,14 +132,30 @@ async function fetchJobOrders() {
   }
 }
 
-
-
 function getPayStatusColor(payStatus) {
   if (payStatus === "unpaid") {
-    return "red"; // Set the color to red for unpaid status
+    return ({
+      background: "rgba(238,54,140,.1)",
+      borderRadius: "4px",
+      color: "#ee368c",
+      padding: "5px 13px",
+      display: "inline-block",
+  })
+
   }
-  return "green"; // Set the color to green for paid status
+ else {
+    return ({
+      background: "rgba(0, 182, 155, 0.1)",
+      borderRadius: "4px",
+      color: "#00b69b",
+      fontWeight: "bold",
+      padding: "5px 13px",
+      display: "inline-block",
+  })  // Set the color to green for "completed" status
+  }  
+ // Default color if the status value is not matched
 }
+
 
 function MyIncome() {
   const [page, setPage] = useState(0);
@@ -178,17 +194,65 @@ function MyIncome() {
           marginTop: "10px",
           marginLeft: "12px"
         }}>My Income History</h1>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
+        <TableContainer component={Paper} sx={{
+            boxShadow: "none",
+          }}>
+          <Table sx={{ minWidth: 950 }} aria-label="custom pagination table" className="dark-table">
+            <TableHead sx={{ background: "#F7FAFF" }}>
               <TableRow>
-                <TableCell>Job No</TableCell>
-                <TableCell>Patent Service</TableCell>
-                <TableCell>Country</TableCell>
-                <TableCell>Amount</TableCell>
-                <TableCell>Delivery Date</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Download Files</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>
+                Job No
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>
+                Patent Service
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>Country</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>Amount</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>Delivery Date</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>Status</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>Download Files</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -196,22 +260,75 @@ function MyIncome() {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
                   <TableRow key={row._id.job_no}>
-                    <TableCell>{row._id.job_no}</TableCell>
-                    <TableCell>{row.service}</TableCell>
-                    <TableCell>{row.country}</TableCell>
-                    <TableCell>{row.amount}</TableCell>
-                    <TableCell>{formatDate(row.end_date)}</TableCell>
-                    <TableCell
-                      style={{ color: getPayStatusColor(row.pay_status) }}
-                    >
-                      {row.pay_status}
+                    <TableCell sx={{
+                      width: 100,
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
+                    {row._id.job_no}
                     </TableCell>
-                    <TableCell> <Button
+                    <TableCell sx={{
+                      width: 100,
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
+                    {row.service}
+                    </TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
+                    {row.country}
+                    </TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
+                    {row.amount}
+                    </TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{formatDate(row.end_date)}</TableCell>
+                    <TableCell
+                    sx={{
+                      fontWeight: 500,
+                      borderBottom: "1px solid #F7FAFF",
+                      fontSize: "11px",
+                      width: 100,
+                      padding: "8px 10px",
+                      textAlign: "center",
+                    }}
+                    >
+                    { row.pay_status && <span style={getPayStatusColor(row.pay_status)}>{row.pay_status}</span>}
+                    </TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}> <Button
                     sx={{
                       background: "#00ACF6",
                       color: "white",
                       borderRadius: "100px",
-                      width: "100%",
+                      width: "150px",
                       height: "80%",
                       textTransform: "none",
                     }}

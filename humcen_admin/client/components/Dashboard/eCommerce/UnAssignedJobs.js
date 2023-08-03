@@ -36,12 +36,35 @@ function formatDate(date) {
 
 function getStatusColor(status) {
   if (status === "In Progress") {
-    return "Gold"; // Set the color to yellow for "in progress" status
+    return ( {
+      background: "rgba(255, 255, 0, 0.1)", /* Yellow background with reduced opacity */
+      borderRadius: "4px",
+      fontWeight: "bold",
+      color: "#ffbc2b", /* You can define your yellow color variable */
+      padding: "5px 13px",
+      display: "inline-block",
+    });
+     // Set the color to yellow for "in progress" status
   } else if (status === "Completed") {
-    return "Green"; // Set the color to green for "completed" status
+    return ({
+      background: "rgba(0, 182, 155, 0.1)",
+      borderRadius: "4px",
+      color: "#00b69b",
+      fontWeight: "bold",
+      padding: "5px 13px",
+      display: "inline-block",
+  })  // Set the color to green for "completed" status
   } else if (status === "Pending") {
-    return "Red"; // Set the color to Red for "Pending" status
-  }
+    return ({
+      background: "rgba(238,54,140,.1)",
+      borderRadius: "4px",
+      color: "#ee368c",
+      padding: "5px 13px",
+      display: "inline-block",
+  })
+
+  } 
+
   return ""; // Default color if the status value is not matched
 }
 
@@ -166,17 +189,83 @@ function UnAssignedJob() {
   return (
     <Card>
       <Box sx={{ p: 2 }}>
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} sx={{
+            boxShadow: "none",
+          }}>
           <Table aria-label="custom pagination table" className="dark-table">
-            <TableHead>
+            <TableHead sx={{ background: "#F7FAFF" }}>
               <TableRow>
               
-                <TableCell>Job No</TableCell>
-                <TableCell>Full Name</TableCell>
-                <TableCell>service</TableCell>
-                <TableCell>Country</TableCell>
-                <TableCell>Budget</TableCell>
-                <TableCell>Status</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>
+                Job No
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "250px",
+                    textAlign: "center",
+                  }}>
+                Service
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>
+                Full Name
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "150px",
+                    textAlign: "center",
+                  }}>
+                Country
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "150px",
+                    textAlign: "center",
+                  }}>
+                Budget
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "180px",
+                    textAlign: "center",
+                  }}>
+                Status
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "180px",
+                    textAlign: "center",
+                  }}>
+                Assign Jobs
+                </TableCell>
                 
               </TableRow>
             </TableHead>
@@ -185,29 +274,75 @@ function UnAssignedJob() {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
                   <TableRow key={row._id.userID}>
-                    <TableCell>{row._id.job_no}</TableCell>
-                    <TableCell>{row.customerName}</TableCell>
-                    <TableCell>{row.service}</TableCell>
-                    <TableCell>{row.country}</TableCell>
-                    <TableCell>{row.budget}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
+                    {row._id.job_no}
+                    </TableCell>
+                    <TableCell sx={{
+                      width: 250,
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.service}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
+                    {row.customerName}
+                    </TableCell>
+                    <TableCell sx={{
+                      width: 150,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px", 
+                      textAlign: "center",
+                    }}>
+                    {row.country}
+                    </TableCell>
+                    <TableCell sx={{
+                      width: 180,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
+                    {row.budget}
+                    </TableCell>
                     <TableCell
-                      style={{
-                        color: getStatusColor(row.status),
-                        fontWeight: "bold",
-                      }}
+                      sx={{
+                      fontWeight: 500,
+                      borderBottom: "1px solid #F7FAFF",
+                      fontSize: "11px",
+                      padding: "8px 10px",
+                      textAlign: "center",
+                    }}
                     >
-                      {row.status}
+                    <span style={getStatusColor(row.status)}>{row.status}</span>                
                     </TableCell>
                   
                   <TableCell>
                   <Link href={`assignJobs/${row._id.job_no}`} passHref>
                     <Button
                       sx={{
-                        background: "#27AE60"  , 
+                        background: "#27AE60",
+                        position: "relative",
+                        left: "10%", 
                         color: "white",
                         borderRadius: "100px",
-                        width: "100%",
+                        width: "80%",
                         height: "88%",
+                        textAlign: "center",
                         textTransform: "none",
                         "&:hover": {
                           background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",

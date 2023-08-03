@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Badge from "@mui/material";
 import Link from "next/link";
 import {
   Box,
@@ -30,12 +31,35 @@ function formatDate(date) {
 
 function getStatusColor(status) {
   if (status === "In Progress") {
-    return "Gold"; // Set the color to yellow for "in progress" status
+    return ( {
+      background: "rgba(255, 255, 0, 0.1)", /* Yellow background with reduced opacity */
+      borderRadius: "4px",
+      fontWeight: "bold",
+      color: "#ffbc2b", /* You can define your yellow color variable */
+      padding: "5px 13px",
+      display: "inline-block",
+    });
+     // Set the color to yellow for "in progress" status
   } else if (status === "Completed") {
-    return "Green"; // Set the color to green for "completed" status
+    return ({
+      background: "rgba(0, 182, 155, 0.1)",
+      borderRadius: "4px",
+      color: "#00b69b",
+      fontWeight: "bold",
+      padding: "5px 13px",
+      display: "inline-block",
+  })  // Set the color to green for "completed" status
   } else if (status === "Pending") {
-    return "Red"; // Set the color to Red for "Pending" status
-  }
+    return ({
+      background: "rgba(238,54,140,.1)",
+      borderRadius: "4px",
+      color: "#ee368c",
+      padding: "5px 13px",
+      display: "inline-block",
+  })
+
+  } 
+
   return ""; // Default color if the status value is not matched
 }
 
@@ -155,24 +179,139 @@ function RecentOrders() {
   return (
     <Card>
       <Box sx={{ p: 2 }}>
-        <TableContainer component={Paper}>
-          <Table aria-label="custom pagination table" className="dark-table">
-            <TableHead>
+        <TableContainer component={Paper} sx={{
+            boxShadow: "none",
+          }}>
+          <Table sx={{ minWidth: 950 }} aria-label="custom pagination table" className="dark-table">
+            <TableHead sx={{ background: "#F7FAFF" }}>
               <TableRow>
-                <TableCell>Job No</TableCell>
-                <TableCell>Service</TableCell>
-                <TableCell>Country</TableCell>
-                <TableCell>Submitted Date</TableCell>
-                <TableCell>Delivery Date</TableCell>
-                <TableCell>Budget</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>User ID</TableCell>
-                <TableCell>User Name</TableCell>
-                <TableCell>Partner ID</TableCell>
-                <TableCell>Partner Name</TableCell>
-                <TableCell>Job Title</TableCell>
-                <TableCell>Job Description</TableCell>
-                <TableCell>Action</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>
+                  Job No
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>
+                  Service
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>
+                  Country
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>
+                Submitted Date
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>
+                Delivery Date
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>
+                Budget
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    textAlign: "center",
+                    padding: "15px 10px",
+                  }}>
+                Status
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>
+                User ID
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>
+                User Name
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>
+                Partner ID
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    textAlign: "center",
+                    padding: "15px 10px",
+                  }}>
+                Partner Name
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    padding: "15px 10px",
+                    textAlign: "center",
+                    fontWeight: 'bold',
+                  }}>
+                Job Title
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>
+                Job Description
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>
+                Action
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -180,27 +319,126 @@ function RecentOrders() {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
                   <TableRow key={row._id.job_no}>
-                    <TableCell>{row._id.job_no}</TableCell>
-                    <TableCell>{row.service}</TableCell>
-                    <TableCell>{row.country}</TableCell>
-                    <TableCell>{formatDate(row.start_date)}</TableCell>
-                    <TableCell>{formatDate(row.end_date)}</TableCell>
-                    <TableCell>{row.budget}</TableCell>
                     <TableCell
-                      style={{
-                        color: getStatusColor(row.status),
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {row.status}
+                    sx={{
+                      width: 100,
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
+                    {row._id.job_no}
                     </TableCell>
-                    <TableCell>{row.userID || "To be assigned"}</TableCell>
-                    <TableCell>{row.customerName || "To be assigned"}</TableCell>
-                    <TableCell>{row.partnerID || "To be assigned"}</TableCell>
-                    <TableCell>{row.partnerName || "To be assigned"}</TableCell>
-                    <TableCell>{row.job_title || "To be assigned"}</TableCell>
-                    <TableCell>{row.job_desc || "To be assigned"}</TableCell>
-                    <TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px"
+                    }}>
+                     <Typography
+                        sx={{
+                          fontWeight: "bold",
+                          fontSize: "13px",
+                          textAlign: "center",
+                        }}
+                        className="ml-10px"
+                      >
+                        {row.service}
+                      </Typography>
+                    </TableCell>
+                    <TableCell sx={{
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      textAlign: "center",
+                      fontSize: "13px"
+                    }}>
+                    {row.country}
+                    </TableCell>
+                    <TableCell sx={{
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      textAlign: "center",
+                      fontSize: "13px"
+                    }}>
+                    {formatDate(row.start_date)}
+                    </TableCell>
+                    <TableCell sx={{
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      textAlign: "center",
+                      fontSize: "13px"
+                    }}>
+                    {formatDate(row.end_date)}
+                    </TableCell>
+                    <TableCell sx={{
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      textAlign: "center",
+                      fontSize: "13px"
+                    }}>
+                    {row.budget}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                      fontWeight: 500,
+                      borderBottom: "1px solid #F7FAFF",
+                      fontSize: "11px",
+                      padding: "8px 10px",
+                      textAlign: "center",
+                    }}
+                      
+                    >
+                    <span style={getStatusColor(row.status)}>{row.status}</span>
+                    </TableCell>
+                    <TableCell align="center"
+                    sx={{
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
+                    {row.userID || "To be assigned"}
+                    </TableCell>
+                    <TableCell sx={{
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
+                    {row.customerName || "To be assigned"}
+                    </TableCell>
+                    <TableCell sx={{
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.partnerID || "To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.partnerName || "To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.job_title || "To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.job_desc || "To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
                       <Link href={`onGoingPatents/${row._id.job_no}`} passHref>
                       <Button  sx={{
                        background: "#01ACF6",
@@ -233,6 +471,7 @@ function RecentOrders() {
                   page={page}
                   onPageChange={handleChangePage}
                   onRowsPerPageChange={handleChangeRowsPerPage}
+                  style={{ borderBottom: "none" }}
                 />
               </TableRow>
             </TableFooter>

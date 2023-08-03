@@ -31,12 +31,35 @@ function formatDate(date) {
 
 function getStatusColor(status) {
   if (status === "In Progress") {
-    return "Gold"; // Set the color to yellow for "in progress" status
+    return ( {
+      background: "rgba(255, 255, 0, 0.1)", /* Yellow background with reduced opacity */
+      borderRadius: "4px",
+      fontWeight: "bold",
+      color: "#ffbc2b", /* You can define your yellow color variable */
+      padding: "5px 13px",
+      display: "inline-block",
+    });
+     // Set the color to yellow for "in progress" status
   } else if (status === "Completed") {
-    return "Green"; // Set the color to green for "completed" status
+    return ({
+      background: "rgba(0, 182, 155, 0.1)",
+      borderRadius: "4px",
+      color: "#00b69b",
+      fontWeight: "bold",
+      padding: "5px 13px",
+      display: "inline-block",
+  })  // Set the color to green for "completed" status
   } else if (status === "Pending") {
-    return "Red"; // Set the color to Red for "Pending" status
-  }
+    return ({
+      background: "rgba(238,54,140,.1)",
+      borderRadius: "4px",
+      color: "#ee368c",
+      padding: "5px 13px",
+      display: "inline-block",
+  })
+
+  } 
+
   return ""; // Default color if the status value is not matched
 }
 
@@ -186,19 +209,92 @@ function RecentOrders({searchQuery}) {
     
   return (
     <Box>
-      <TableContainer component={Paper}>
-        <Table sx ={{
-          backgroundColor: "white",
-        }}>
-          <TableHead>
+      <TableContainer component={Paper} sx={{
+            boxShadow: "none",
+          }}>
+        <Table sx={{ minWidth: 950 }} aria-label="custom pagination table" className="dark-table">
+          <TableHead sx={{ background: "#F7FAFF" }}>
             <TableRow>
-              <TableCell>Job No</TableCell>
-              <TableCell>Service</TableCell>
-              <TableCell>Country</TableCell>
-              <TableCell>Submitted Date</TableCell>
-              <TableCell>Delivery Date</TableCell>
-              <TableCell>Budget</TableCell>
-              <TableCell>Verification</TableCell>
+              <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    width: "50px",
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>
+              Job No
+              </TableCell>
+              <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    width: "200px",
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>
+              Service
+              </TableCell>
+              <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    width: "100px",
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>
+              Country
+              </TableCell>
+              <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    width: "100px",
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>
+              Submitted Date
+              </TableCell>
+              <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    width: "100px",
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>
+              Delivery Date
+              </TableCell>
+              <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    width: "100px",
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>
+              Budget
+              </TableCell>
+              <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    width: "100px",
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>
+              Verification
+              </TableCell>
+              <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    width: "150px",
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>
+              Action
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -206,28 +302,89 @@ function RecentOrders({searchQuery}) {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => (
                 <TableRow key={row._id.job_no}>
-                  <TableCell>{row._id.job_no}</TableCell>
-                  <TableCell>{row.service}</TableCell>
-                  <TableCell>{row.country}</TableCell>
-                  <TableCell>{formatDate(row.start_date)}</TableCell>
-                  <TableCell>{formatDate(row.end_date)}</TableCell>
-                  <TableCell>{row.budget}</TableCell>
-                  <TableCell
-                    style={{
-                      color: getStatusColor(row.status),
+                  <TableCell sx={{
+                      width: 80,
                       fontWeight: "bold",
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
+                  {row._id.job_no}
+                  </TableCell>
+                  <TableCell sx={{
+                      width: 100,
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
+                  {row.service}
+                  </TableCell>
+                  <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
+                  {row.country}
+                  </TableCell>
+                  <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
+                  {formatDate(row.start_date)}
+                  </TableCell>
+                  <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
+                  {formatDate(row.end_date)}
+                  </TableCell>
+                  <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
+                  {row.budget}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: 500,
+                      borderBottom: "1px solid #F7FAFF",
+                      fontSize: "11px",
+                      width: 120,
+                      padding: "8px 10px",
+                      textAlign: "center",
                     }}
                   >
-                    {row.status}
+                    <span style={getStatusColor(row.status)}>{row.status}</span>
                   </TableCell>
-                  <TableCell>
+                  <TableCell sx={{
+                      fontWeight: 500,
+                      borderBottom: "1px solid #F7FAFF",
+                      fontSize: "11px",
+                      width: 120,
+                      padding: "8px 10px",
+                      textAlign: "center",
+                    }}>
                       <Link href={`patent-services/onGoingPatents/${row._id.job_no}`} passHref>
                       <Button
                     sx={{
                       background: "#01ACF6",
                       color: "white",
                       borderRadius: "100px",
-                      width: "100%",
+                      width: "80%",
                       height: "90%",
                       textTransform: "none",
                     }}
