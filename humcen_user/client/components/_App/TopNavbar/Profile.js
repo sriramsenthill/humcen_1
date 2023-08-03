@@ -201,7 +201,7 @@ const Profile = () => {
             <AttachMoneyIcon fontSize="small" />
           </ListItemIcon>
           <Link
-            href="/pages/pricing/"
+            href="/pricing/"
             fontSize="13px"
             color="inherit"
             underline="none"
