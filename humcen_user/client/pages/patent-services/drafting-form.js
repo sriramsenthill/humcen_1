@@ -47,22 +47,6 @@ const ColorButton = styled(Button)(({ theme }) => ({
   fontWeight: "400",
 }));
 
-const WhiteDialog = styled(Dialog)(({ theme }) => ({
-  "& .MuiPaper-root": {
-    backgroundColor: "white",
-    width: "490px",
-    height: "420px",
-  padding:'6px',
-    borderRadius: "10px",
-  },
-}));
-
-
-const CenteredDialogActions = styled(DialogActions)({
-  display: 'flex',
-  justifyContent: 'center',
-  flexDirection:'column',
-});
 
 export default function Inbox() {
   const [domain, setDomain] = useState("");
@@ -568,7 +552,7 @@ export default function Inbox() {
 </Card>
 
 
-{isSubmitted && <OkDialogueBox domainValue={domain}/> }
+{isSubmitted && <OkDialogueBox domainValue={domain} serviceValue={"Patent Drafting"}/> }
 
 
       <Dialog open={isErrorDialogOpen}>

@@ -19,7 +19,7 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FileBase64 from "react-file-base64";
 import axios from "axios";
 import { useRouter } from 'next/router';
-
+import OkDialogueBox from "./dialoguebox";
 // const DottedCard = styled(Card)`
 //   border: 2px dotted #787878;
 //   align-item: center ;
@@ -634,15 +634,7 @@ export default function Inbox() {
         </Card>
       </form>
 </Card>
-      <Dialog open={isSubmitted}>
-        <DialogTitle>Success</DialogTitle>
-        <DialogContent>
-          <p>Your form has been submitted successfully.</p>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleOk}>OK</Button>
-        </DialogActions>
-      </Dialog>
+    {isSubmitted && <OkDialogueBox domainValue={domain} serviceValue={"Patent Filing"}/> }
 
       <Dialog open={isErrorDialogOpen}>
     <DialogTitle>Error</DialogTitle>

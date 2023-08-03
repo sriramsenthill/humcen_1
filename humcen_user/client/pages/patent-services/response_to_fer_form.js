@@ -15,6 +15,7 @@ import DialogActions from "@mui/material/DialogActions";
 import FileBase64 from "react-file-base64";
 import axios from "axios";
 import { useRouter } from "next/router";
+import OkDialogueBox from "./dialoguebox";
 
 const api = axios.create({
   baseURL: "http://localhost:3000/api",
@@ -419,16 +420,7 @@ export default function Inbox() {
           </Card>
       </form>
       </Card>
-
-      <Dialog open={isSubmitted}>
-        <DialogTitle>Success</DialogTitle>
-        <DialogContent>
-          <p>Your form has been submitted successfully.</p>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleOk}>OK</Button>
-        </DialogActions>
-      </Dialog>
+      {isSubmitted && <OkDialogueBox domainValue={domain} serviceValue={"Response to FER/Office Action"}/> }
       <Dialog open={isErrorDialogOpen}>
     <DialogTitle>Error</DialogTitle>
     <DialogContent>

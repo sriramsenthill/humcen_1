@@ -54,8 +54,8 @@ const ColorButton = styled(Button)(({ theme }) => ({
 
  
 
-export default function OkDialogueBox(props){
-    const {domain}=props;
+export default function OkDialogueBox({domainValue,serviceValue}){
+   
     const router = useRouter();
     const handleOk = () => {
 
@@ -71,7 +71,7 @@ export default function OkDialogueBox(props){
         <img src="/images/done 2done.jpg" alt="Done" style={{width:"80px",height:'80px', marginBottom:"0px"}}/>
       </DialogTitle>
       <DialogContent>
-        <h1 style={{textAlign:"center",fontWeight:"600",fontSize:"22px",fontFamily:'Inter',color:"#00002B"}}>Patent Drafting For {domain} Submitted Successfully!</h1>
+        <h1 style={{textAlign:"center",fontWeight:"600",fontSize:"22px",fontFamily:'Inter',color:"#00002B"}}>{serviceValue} For {domainValue} Submitted Successfully!</h1>
         <p style={{textAlign:"center",fontWeight:"500",fontSize:"15px",fontFamily:'Inter',color:"#8C8E8F"}}>Track the status of your order to know how close it is to completion</p>
       </DialogContent>
       <DialogActions>
