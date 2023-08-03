@@ -83,3 +83,47 @@
   gap: 500px;
   /* Adjust the gap value to add spacing between the elements */
 }
+
+.containerBox {
+  padding: 5px;
+  background-color: #fff;
+  border-radius: 20px;
+}
+
+/* Styling for the h1 element inside Typography */
+.containerBox h1 {
+  font-size: 36px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  margin-left: 0;
+}
+
+/* Styling for the list items */
+.containerBox .list {
+  display: flex; /* Use Flexbox to arrange list items */
+  justify-content: space-between; /* Place list items on the extreme right and left */
+  padding-left: 0; /* Remove default padding from the ul */
+}
+
+.containerBox .list li {
+  list-style: none; /* Remove default list bullet */
+  flex: 1; /* Allow list items to take equal space */
+  display: flex; /* Use Flexbox for nested items */
+  justify-content: space-between; /* Place nested items on the extreme right and left */
+  margin-right: 0px; /* Add right margin between list items */
+}
+
+
+/* Optional: You can add additional styles for h3 and p elements as needed */
+.line{
+  border: 1px solid #E0E0E0
+}
+
+.emailheading{
+  color: #828282;
+}
+
+.email{
+  color: #828282;
+}

@@ -149,8 +149,7 @@ const TrackOrder = () => {
           width:"100%",
         }}
       >
-       <Box sx={{ padding: '5px', backgroundColor: '#F7FAFF',          borderRadius: "20px",
-}}>
+       <Box sx={{ padding: '5px', backgroundColor: '#FFF' ,borderRadius: "20px",}} className={styles.containerBox}>
         <Typography
           as="h1"
           sx={{
