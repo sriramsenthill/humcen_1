@@ -49,8 +49,8 @@ const ColorButton = styled(Button)(({ theme }) => ({
     "& .MuiPaper-root": {
       backgroundColor: "white",
       width: "490px",
-      height: "420px",
-    padding:'6px',
+      height: "330px",
+    padding:'5px',
       borderRadius: "10px",
     },
   }));
@@ -105,7 +105,7 @@ export default function StatusDialogueBox(){
      <CenteredDialogActions>
       <DialogContent sx={{
         position: "relative",
-        top: "50%",
+       
       }}>
         <h1 style={{textAlign:"center",fontWeight:"600",fontSize:"28px",fontFamily:'Inter',color:"#00002B"}}> Work Status and Remarks</h1>
         {realStatus ? <p style={{textAlign:"center",fontWeight:"500",fontSize:"18px",fontFamily:'Inter',color:"#8C8E8F"}}>{realStatus}</p> : <p style={{textAlign:"center",fontWeight:"500",fontSize:"15px",fontFamily:'Inter',color:"#8C8E8F"}}>Please Wait for some Time to get Work Status</p>}
@@ -113,7 +113,7 @@ export default function StatusDialogueBox(){
       </DialogContent>
       <DialogActions sx={{
         position: "relative",
-        top: "50%",
+        
       }}>
         <ColorButton onClick={handleOk} style={{width:"120px",height:"40px"}}>Done</ColorButton>
       </DialogActions>

@@ -6,6 +6,7 @@ import styles from "@/components/eCommerce/OrderDetails/TrackOrder/TrackOrder.mo
 import { useTransition, animated } from "react-spring";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { jobData } from "@/components/patentData";
 
 
 // Create an Axios instance
@@ -99,9 +100,11 @@ const TrackOrder = () => {
     const fetchStepData = async () => {
       try {
         const response = await api.get(`job_order/${id}`);
-        const job = response.data;
-        const stepCount = job.steps_done_activity; // For choosing the last Step done
-        const dates = job.date_activity;
+        const jobData = response.data;
+        setJob(jobData);
+        const stepCount = jobData.steps_done_activity; // For choosing the last Step done
+       
+        const dates = jobData.date_activity;
         for(let totalDates=0; totalDates<dates.length; totalDates++) {
           ActivityTimelineData[totalDates].date = dates[totalDates];
         }
@@ -155,7 +158,7 @@ const TrackOrder = () => {
       >
         <Box sx={{ padding: '5px', backgroundColor: '#fff', borderRadius: "20px" }} className={styles.containerBox}>
           <Typography as="h1" sx={{ fontSize: "36", fontWeight: 500, mb: "20px", mt: "20px", ml: "10px" }}>
-            Apple Watch: Design Patent
+          Service: {job?.service}
           </Typography>
           <hr className={styles.line} style={{ width: "100%" }} />
 
@@ -164,7 +167,7 @@ const TrackOrder = () => {
               <h3 className={styles.emailheading}>Status</h3>
             </li>
             <li>
-              <p className={styles.email} >Verification Pending</p>
+              <p className={styles.email} >{job?.status}</p>
             </li>
           </ul>
 
@@ -175,7 +178,7 @@ const TrackOrder = () => {
               <h3 className={styles.emailheading}>Country</h3>
             </li>
             <li>
-              <p className={styles.email} >United Kingdom</p>
+              <p className={styles.email} >{job?.country}</p>
             </li>
           </ul>
 
@@ -187,8 +190,8 @@ const TrackOrder = () => {
             </li>
             <li>
               <p className={styles.email} >
-                Expected Completion<br></br>
-                April 18, 2023
+              Excepted Completion Date: 
+              {ActivityTimelineData[0].date}
               </p>
             </li>
           </ul>

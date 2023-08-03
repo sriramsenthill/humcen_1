@@ -294,17 +294,22 @@ const DynamicPage = () =>{
       >
         Find Partner
       </Button>
+      
   )}
+
+
           </Grid>
+         
         </Grid>
 
 <>
 </>
       </Grid>
-      
+   
   
       </Card>
-    {submit && (<ColorButton
+      
+      {submit && (<ColorButton
                 sx={{ 
                   width: "10%",
                   height: "10%",
@@ -318,6 +323,7 @@ const DynamicPage = () =>{
               >
                 Assign Job
       </ColorButton> )}
+   
       </div>
     </>
   );

@@ -96,10 +96,11 @@ const TrackOrder = () => {
     const fetchStepData = async () => {
       try {
         const response = await api.get(`partner/jobs/${id}`);
-        const job = response.data;
-        const stepCount = job.steps_done_activity; // For choosing the last Step done
+        const jobData = response.data;
+       setJob(jobData);
+        const stepCount = jobData.steps_done_activity; // For choosing the last Step done
         setSteps(stepCount);
-        const dates = job.date_activity;
+        const dates = jobData.date_activity;
         for(let totalDates=0; totalDates<dates.length; totalDates++) {
           ActivityTimelineData[totalDates].date = dates[totalDates];
         }
@@ -113,7 +114,7 @@ const TrackOrder = () => {
         setTimelineData(updatedTimelineData);
       } catch (error) {
         console.error("Error fetching job order data:", error);
-        setJob(null);
+        
       }
     };
 
@@ -160,7 +161,7 @@ const TrackOrder = () => {
             ml:"10px",
           }}
         >
-          Apple Watch: Design Patent
+          Service: {job?.service}
         </Typography>
       
         <ul className={styles.list}>
@@ -168,7 +169,7 @@ const TrackOrder = () => {
             <h3 className={styles.emailheading}>Status</h3>
           </li>
           <li>
-            <p className={styles.email} style={{paddingRight:"8px"}}>Verification Pending</p>
+            <p className={styles.email} style={{paddingRight:"8px"}}> {job?.status}</p>
           </li>
         </ul>
 
@@ -178,7 +179,7 @@ const TrackOrder = () => {
             <h3 className={styles.emailheading}>Country</h3>
           </li>
           <li>
-            <p className={styles.email} style={{paddingRight:"15px"}}>United Kingdom</p>
+            <p className={styles.email} style={{paddingRight:"15px"}}>{job?.country}</p>
           </li>
         </ul>
         
@@ -189,8 +190,8 @@ const TrackOrder = () => {
           </li>
           <li>
             <p className={styles.email} style={{paddingRight:"20px"}}>
-              Expected Completion
-              April 18, 2023
+            Excepted Completion Date: 
+              {ActivityTimelineData[9].date}
             </p>
           </li>
         </ul>
