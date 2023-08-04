@@ -118,40 +118,7 @@ const Notification = () => {
               11:47 PM Wednesday
             </Typography>
           </div>
-
-          <div className={styles.notificationList}>
-            <Typography
-              variant="h5"
-              sx={{
-                fontSize: "14px",
-                color: "#260944",
-                fontWeight: "500",
-                mb: 1,
-              }}
-            >
-              Create a new project for client
-            </Typography>
-
-            <div className={styles.notificationListContent}>
-              <img src="/images/man.png" alt="avatar Img" width={27} />
-              <Typography
-                variant="h6"
-                sx={{
-                  fontSize: "13px",
-                  color: "#5B5B98",
-                  fontWeight: "500",
-                }}
-                className="ml-1"
-              >
-                Allow users to like products in your WooCommerce
-              </Typography>
-            </div>
-
-            <Typography sx={{ fontSize: "12px", color: "#A9A9C8", mt: 1 }}>
-              2:00 PM Wednesday
-            </Typography>
-          </div>
-
+          
           <Typography component="div" textAlign="center">
             <Link
               href="/notification/"

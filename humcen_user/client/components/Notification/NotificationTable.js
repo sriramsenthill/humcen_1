@@ -1,4 +1,6 @@
 import * as React from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import PropTypes from "prop-types";
 import { useTheme } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -25,8 +27,24 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import Checkbox from "@mui/material/Checkbox";
 import Link from "next/link";
+import { options } from "@fullcalendar/core/preact";
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
+
+const api = axios.create({
+  baseURL: "http://localhost:3000/api",
+});
+
+
+// Add an interceptor to include the token in the request headers
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers['Authorization'] = token;
+  }
+  return config;
+});
+
 
 function Notification(props) {
   const theme = useTheme();
@@ -211,6 +229,38 @@ const rows = [
 export default function NotificationTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [notifications, setNotifications] = useState([]);
+  const [userID, setUserID] = useState("");
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await api.get(`user/settings`);
+        setUserID(response.data.userID);
+      } catch (error) {
+        console.error("Error fetching job order data:", error);
+      }
+    };
+
+    fetchUserData();
+
+  }, []);
+
+  useEffect(() => {
+    if(userID) {
+    const fetchNotifData = async () => {
+      try {
+        const notifResponse = await api.get(`user/get-notifs/${userID}`);
+        setNotifications(notifResponse.data);
+        console.log("Notifications " + notifResponse.data);
+      } catch(error) {
+        console.error("Error Fetching Notification : " + error);
+      }
+    }
+
+    fetchNotifData();
+  }
+  },[userID])
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -234,6 +284,16 @@ export default function NotificationTable() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const clickedByUser = async(notifId, userID) => {
+    const clickConfirm = await api.put(`seen-notif/${userID}/${notifId}`, { seen: true})
+    clickConfirm.then(() => {
+      console.log("Successfully Updated" + clickConfirm.data);
+    }).catch( (error) => {
+      console.error("Error in updating Notifications : " + error);
+    });
+
+  }
 
   return (
     <>
@@ -367,20 +427,20 @@ export default function NotificationTable() {
           >
             <TableBody>
               {(rowsPerPage > 0
-                ? rows.slice(
+                ? notifications.slice(
                     page * rowsPerPage,
                     page * rowsPerPage + rowsPerPage
                   )
-                : rows
-              ).map((row) => (
-                <TableRow key={row.id}>
+                : notifications
+              ).map((notification) => (
+                <TableRow key={notification.notifNum}>
                   <TableCell
                     style={{
                       borderBottom: "1px solid #F7FAFF",
                       padding: "10px",
                     }}
                   >
-                    <Checkbox {...label} size="small" />
+                    <Checkbox value={notification.notifNum} {...label} size="small" />
                   </TableCell>
   
                   <TableCell
@@ -390,9 +450,7 @@ export default function NotificationTable() {
                       padding: "10px",
                     }}
                   >
-                    <Link href={row.readEmail} className="readEmail">
-                      {row.text}
-                    </Link>
+                      <Link href="/notification" onClick={() => { clickedByUser(notification.notifNum, userID) }}>{notification.notifText}</Link>
                   </TableCell>
 
                   <TableCell
@@ -403,7 +461,7 @@ export default function NotificationTable() {
                       padding: "10px",
                     }}
                   >
-                    {row.date}
+                    {new Date(notification.notifDate).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
                   </TableCell>
                 </TableRow>
               ))}

@@ -226,9 +226,9 @@ const getJobOrderById = async (req, res) => {
 
 const getUnassignedJobById = async (req, res) => {
   const jobId = req.params.jobID
-  console.log(jobId);
+  console.log("Hey " + jobId);
   try {
-    const jobOrders = await Unassigned.find({"_id.job_no": Number(jobId)});
+    const jobOrders = await Unassigned.find({"_id.job_no": jobId});
     console.log("jo: " + jobOrders);
     res.json(jobOrders);
   } catch (error) {
@@ -1392,8 +1392,9 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
     }
 
     // For Response To FER/ Office Action
-    else if (service === "Response To FER Office Action") {
+    else if (service === "Response to FER Office Action") {
       const jobDetails = await Unassigned.findOne({ "_id.job_no": jobId });
+
 
       if (!jobDetails || !jobDetails.fer || !jobDetails.complete_specifications) {
         return res.status(404).json({ error: "File not found" });
@@ -1489,7 +1490,7 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
       let fileMIMEList = [];
       // Extract the file data from the job details
       for(let totalFiles=0; totalFiles < jobDetails.service_specific_files.invention_details.length; totalFiles++) {
-        const inventionDetails = jobDetails.service_specific_files.invention_description[totalFiles];
+        const inventionDetails = jobDetails.service_specific_files.invention_details[totalFiles];
       // Check if base64 data is present
         if (!inventionDetails.base64) {
           return res.status(404).json({ error: "File not found" });

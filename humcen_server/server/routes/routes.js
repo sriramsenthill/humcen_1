@@ -83,6 +83,9 @@ router.put("/api/user/job_order/approve/:jobID", verifyToken, forms.approveTheDo
 
 router.put("/api/user/job_order/reject/:jobID", verifyToken, forms.rejectTheDoneWork);
 
+router.get("/api/user/get-notifs/:userID", verifyToken, forms.getNotification) // Get Notifications for Customer
+
+router.put("/api/seen-notif/:notifId/:userID", verifyToken, forms.notificationSeen); // Make the notification, a visited one
 
 //Users_Settings
 
@@ -97,7 +100,6 @@ router.put("/api/user/settings", verifyToken, userSettings.updateCustomerSetting
 router.put("/api/user/pref-settings", verifyToken, userSettings.updatePreferentialSettings);
 
 router.put("/api/user/password", verifyToken, userSettings.updateCustomerPassword);
-
 
 //User_SignInUp
 

@@ -16,6 +16,8 @@ const Drafting = require("../mongoose_schemas/patent_drafting");
 const Filing = require("../mongoose_schemas/patent_filing");
 const Unassigned = require("../mongoose_schemas/unassigned");
 const sendEmail = require("../email.js");
+const Notification = require("../mongoose_schemas/notification"); // Import Notification Model
+
 // Define your API route for fetching job order data
 const getJobOrderOnID = async (req, res) => {
   const { id } = req.params;
@@ -1418,6 +1420,36 @@ const rejectTheDoneWork = async(req, res) => {
   }
 }
 
+const getNotification = async(req, res) => {
+  const customerID = req.params.userID;
+  console.log(customerID);
+  const thatCustomerNotifs = await Notification.findOne({user_Id: Number(customerID)});
+  if(!thatCustomerNotifs) {
+    console.error("Notifications for Customer ID " + customerID + " not exists.");
+  } else {
+    res.json(thatCustomerNotifs.notifications);
+  }
+}
+
+const notificationSeen = async(req, res) => {
+  const notificID = req.params.userID;
+  const customerID = req.params.notifId;
+
+  console.log(customerID, notificID);
+  const thatCustomerNotifs = await Notification.findOne({user_Id: Number(customerID)});
+  console.log(thatCustomerNotifs);
+  if(!thatCustomerNotifs) {
+    console.error("That Notification doesn't exists.");
+  } else {
+    thatCustomerNotifs.notifications[parseInt(notificID) - 1].seen = true;
+    thatCustomerNotifs.save().then(() => {
+      console.log("Notification Seen");
+    }).catch((error) => {
+      console.error('Error in seeing the Notification : ' + error);
+    })
+  }
+}
+
   module.exports = {
     getJobOrderOnID,
     getJobOrders,
@@ -1437,4 +1469,6 @@ const rejectTheDoneWork = async(req, res) => {
     getJobFilesForUsers,
     approveTheDoneWork,
     rejectTheDoneWork,
+    getNotification,
+    notificationSeen,
   };
