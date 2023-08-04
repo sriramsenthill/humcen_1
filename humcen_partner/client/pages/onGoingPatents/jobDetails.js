@@ -9,6 +9,8 @@ import { styled } from "@mui/system";
 import styles from "@/components/eCommerce/OrderDetails/TrackOrder/TrackOrder.module.css";
 import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { useRouter } from "next/router";
+import CustomDropZone from "./CustomDropBox";
+
 
 const ColorButton = styled(Button)(({ theme }) => ({
   color: "white",
@@ -273,7 +275,7 @@ const JobDetails = ({services, jobNo}) => {
             <li style={{
               textAlign: "right",
             }}>
-              <p className={styles.email} >{info.text}</p>
+              <p className={styles.email} style={{width:'100px'}}>{info.text}</p>
             </li>
           </ul>
 
@@ -322,12 +324,13 @@ const JobDetails = ({services, jobNo}) => {
             </li>
             <li style={{
               position: "relative",
-              right: "3%",
+              right: "3%", 
               textAlign: "right",
               bottom: "50%",
               width: "150px",
+              marginRight:'33px',
             }}>
-              <p className={styles.email} ><FileBase64 multiple={true} onDone={getFiles} /></p>
+              <p className={styles.email} style={{width:'200px'}} ><CustomDropZone files={files} onFileChange={getFiles}/></p>
             </li>
           </ul>)}
       <Box
