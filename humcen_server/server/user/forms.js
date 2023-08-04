@@ -1274,24 +1274,26 @@ const getJobFilesForUsers = async (req, res) => {
       if (!jobFile || !jobFile.job_files ) {
         return res.status(404).json({ error: "File not found" });
       }
-      const JFile = jobFile.job_files[0];
+      let fileDataList = [];
+      let fileNameList = [];
+      let fileMIMEList = [];
+      // Extract the file data from the job details
+      for(let totalFiles=0; totalFiles < jobFile.job_files.length; totalFiles++) {
+        const inventionDetails = jobFile.job_files[totalFiles];
+      // Check if base64 data is present
+        if (!inventionDetails.base64) {
+          return res.status(404).json({ error: "File not found" });
+        }
 
-      if (!JFile.base64) {
-        return res.status(404).json({ error: "File not found" });
+        const { base64, name, type } = inventionDetails;
+        fileDataList.push(base64);
+        fileNameList.push("Finished_Job_Files_" + (totalFiles+1) + '.' + name.split(".")[1]) ;
+        fileMIMEList.push(type);
       }
-      let fileNames = new Array(JFile.name);
-      let fileContents = new Array(JFile.base64);
-      let fileMimes = new Array(JFile.type);
-      fileNames.forEach((file) => {
-        res.set({
-          'Content-Type': 'application/octet-stream',
-          'Content-Disposition': `attachment; filename=${file}`,
-          });
-      });
-      res.json({ fileData: fileContents, fileName: fileNames, fileMIME: fileMimes });
+      res.json({ fileData: fileDataList, fileName: fileNameList, fileMIME: fileMIMEList });
     }
   } catch(err) {
-    console.error("Job FIle Not Found", err);
+    console.error("Job File Not Found", err);
   }
 }
 
