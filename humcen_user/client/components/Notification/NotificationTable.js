@@ -259,7 +259,7 @@ export default function NotificationTable() {
           <Typography
             as="h3"
             sx={{
-              fontSize: 16,
+              fontSize: 24,
               fontWeight: 500,
             }}
           >

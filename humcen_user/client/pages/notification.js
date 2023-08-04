@@ -5,9 +5,8 @@ import styles from '@/styles/PageTitle.module.css';
 export default function Notification() {
   return (
     <>
-      {/* Page title */}
-      <div className={styles.pageTitle}>
-        <h1>Notification</h1>
+      <div className="card">
+      <div className={styles.pageTitle} style={{marginBottom: "38px"}}>
         <ul>
           <li>
             <Link href="/">Dashboard</Link>
@@ -17,6 +16,7 @@ export default function Notification() {
       </div>
 
       <NotificationTable />
+      </div>
     </>
   );
 }

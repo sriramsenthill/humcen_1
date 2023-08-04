@@ -7,9 +7,9 @@ import styles from '@/styles/PageTitle.module.css';
 export default function Pricing() {
   return (
     <>
+    <div className='card'>
       {/* Page title */}
       <div className={styles.pageTitle}>
-        <h1>Pricing</h1>
         <ul>
           <li>
             <Link href="/">Dashboard</Link>
@@ -17,10 +17,13 @@ export default function Pricing() {
           <li>Pricing</li>
         </ul>
       </div>
-
+      <div className={styles.pageTitle} style={{padding: "30px 0px"}}>
+      <h1>Pricing</h1>
+      </div>
       <PricingPlanStyle1 />
 
       <PricingPlanStyle2 />
+      </div>
     </>
   );
 }
