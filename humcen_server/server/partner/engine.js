@@ -966,9 +966,6 @@ const getFilesForPartners = async (req, res) => {
       if (!jobDetails || !jobDetails.service_specific_files || !jobDetails.service_specific_files.details || !jobDetails.service_specific_files.applicants || !jobDetails.service_specific_files.investors) {
         return res.status(404).json({ error: "File not found" });
       }
-      const inventionDetails = jobDetails.service_specific_files.details;
-      const applicantsList = jobDetails.service_specific_files.applicants;
-      const investorsList = jobDetails.service_specific_files.investors;
 
       let fileDataList = [];
       let fileNameList = [];
@@ -1023,21 +1020,24 @@ const getFilesForPartners = async (req, res) => {
       if (!jobDetails || !jobDetails.technical_diagram) {
         return res.status(404).json({ error: "File not found" });
       }
-      const technicalDiagrams = jobDetails.technical_diagram[0];
 
-      if (!technicalDiagrams.base64) {
-        return res.status(404).json({ error: "File not found" });
+      let fileDataList = [];
+      let fileNameList = [];
+      let fileMIMEList = [];
+      // Extract the file data from the job details
+      for(let totalFiles=0; totalFiles < jobDetails.technical_diagram.length; totalFiles++) {
+        const inventionDetails = jobDetails.technical_diagram[totalFiles];
+      // Check if base64 data is present
+        if (!inventionDetails.base64) {
+          return res.status(404).json({ error: "File not found" });
+        }
+
+        const { base64, name, type } = inventionDetails;
+        fileDataList.push(base64);
+        fileNameList.push("Patent_Search_Technical_Diagram_" + (totalFiles+1) + '.' + name.split(".")[1]) ;
+        fileMIMEList.push(type);
       }
-      let fileNames = new Array(technicalDiagrams.name);
-      let fileContents = new Array(technicalDiagrams.base64);
-      let fileMimes = new Array(technicalDiagrams.type);
-      fileNames.forEach((file) => {
-        res.set({
-          'Content-Type': 'application/octet-stream',
-          'Content-Disposition': `attachment; filename=${file}`,
-          });
-      });
-      res.json({ fileData: fileContents, fileName: fileNames, fileMIME: fileMimes });
+      res.json({ fileData: fileDataList, fileName: fileNameList, fileMIME: fileMIMEList });
 
     }
 
@@ -1047,24 +1047,38 @@ const getFilesForPartners = async (req, res) => {
       if (!jobDetails || !jobDetails.fer || !jobDetails.complete_specifications) {
         return res.status(404).json({ error: "File not found" });
       }
-      const ferFile = jobDetails.fer[0];
-      const specsFile = jobDetails.complete_specifications[0];
 
-      if (!ferFile.base64 || !specsFile.base64) {
-        return res.status(404).json({ error: "File not found" });
+      let fileDataList = [];
+      let fileNameList = [];
+      let fileMIMEList = [];
+      // Extract the file data from the job details
+      for(let totalFiles=0; totalFiles < jobDetails.fer.length; totalFiles++) {
+        const inventionDetails = jobDetails.fer[totalFiles];
+      // Check if base64 data is present
+        if (!inventionDetails.base64) {
+          return res.status(404).json({ error: "File not found" });
+        }
+
+        const { base64, name, type } = inventionDetails;
+        fileDataList.push(base64);
+        fileNameList.push("Response_To_FER_Office_Action_FER_" + (totalFiles+1) + '.' + name.split(".")[1]) ;
+        fileMIMEList.push(type);
       }
-      let fileNames = new Array(ferFile.name, specsFile.name);
-      console.log(fileNames);
-      let fileContents = new Array(ferFile.base64, specsFile.base64);
-      let fileMimes = new Array(ferFile.type, specsFile.type);
-      console.log(ferFile.name, specsFile.name);
-      fileNames.forEach((file) => {
-        res.set({
-          'Content-Type': 'application/octet-stream',
-          'Content-Disposition': `attachment; filename=${file}`,
-          });
-      });
-      res.json({ fileData: fileContents, fileName: fileNames, fileMIME: fileMimes });
+
+      for(let totalFiles=0; totalFiles < jobDetails.complete_specifications.length; totalFiles++) {
+        const inventionDetails = jobDetails.complete_specifications[totalFiles];
+      // Check if base64 data is present
+        if (!inventionDetails.base64) {
+          return res.status(404).json({ error: "File not found" });
+        }
+
+        const { base64, name, type } = inventionDetails;
+        fileDataList.push(base64);
+        fileNameList.push("Response_To_FER_Office_Action_Complete_Specifications_" + (totalFiles+1) + '.' + name.split(".")[1]) ;
+        fileMIMEList.push(type);
+      }
+
+      res.json({ fileData: fileDataList, fileName: fileNameList, fileMIME: fileMIMEList });
 
     }
 
@@ -1074,24 +1088,38 @@ const getFilesForPartners = async (req, res) => {
       if (!jobDetails || !jobDetails.invention_description || !jobDetails.patent_application_details ) {
         return res.status(404).json({ error: "File not found" });
       }
-      const inventionFile = jobDetails.invention_description[0];
-      const patentFile = jobDetails.patent_application_details[0];
 
-      if (!inventionFile.base64 || !patentFile.base64) {
-        return res.status(404).json({ error: "File not found" });
+      let fileDataList = [];
+      let fileNameList = [];
+      let fileMIMEList = [];
+      // Extract the file data from the job details
+      for(let totalFiles=0; totalFiles < jobDetails.invention_description.length; totalFiles++) {
+        const inventionDetails = jobDetails.invention_description[totalFiles];
+      // Check if base64 data is present
+        if (!inventionDetails.base64) {
+          return res.status(404).json({ error: "File not found" });
+        }
+
+        const { base64, name, type } = inventionDetails;
+        fileDataList.push(base64);
+        fileNameList.push("Freedom_To_Operate_Invention_Description_" + (totalFiles+1) + '.' + name.split(".")[1]) ;
+        fileMIMEList.push(type);
       }
-      let fileNames = new Array(inventionFile.name, patentFile.name);
-      let fileContents = new Array(inventionFile.base64, patentFile.base64);
-      let fileMimes = new Array(inventionFile.type, patentFile.type);
-      fileNames.forEach((file) => {
-        res.set({
-          'Content-Type': 'application/octet-stream',
-          'Content-Disposition': `attachment; filename=${file}`,
-          });
-      });
-      console.log(fileContents, fileNames, fileMimes);
-      res.json({ fileData: fileContents, fileName: fileNames, fileMIME: fileMimes });
 
+      for(let totalFiles=0; totalFiles < jobDetails.patent_application_details.length; totalFiles++) {
+        const inventionDetails = jobDetails.patent_application_details[totalFiles];
+      // Check if base64 data is present
+        if (!inventionDetails.base64) {
+          return res.status(404).json({ error: "File not found" });
+        }
+
+        const { base64, name, type } = inventionDetails;
+        fileDataList.push(base64);
+        fileNameList.push("Freedom_To_Operate_Patent_Application_Details_" + (totalFiles+1) + '.' + name.split(".")[1]) ;
+        fileMIMEList.push(type);
+      }
+
+      res.json({ fileData: fileDataList, fileName: fileNameList, fileMIME: fileMIMEList });
     }
 
     // For Freedom to Patent Portfolio Analysis
@@ -1100,21 +1128,25 @@ const getFilesForPartners = async (req, res) => {
       if (!jobDetails || !jobDetails.service_specific_files.invention_details ) {
         return res.status(404).json({ error: "File not found" });
       }
-      const portfolioInfoFile = jobDetails.service_specific_files.invention_details[0];
 
-      if (!portfolioInfoFile.base64) {
-        return res.status(404).json({ error: "File not found" });
+      let fileDataList = [];
+      let fileNameList = [];
+      let fileMIMEList = [];
+      // Extract the file data from the job details
+      for(let totalFiles=0; totalFiles < jobDetails.service_specific_files.invention_details.length; totalFiles++) {
+        const inventionDetails = jobDetails.service_specific_files.invention_details[totalFiles];
+      // Check if base64 data is present
+        if (!inventionDetails.base64) {
+          return res.status(404).json({ error: "File not found" });
+        }
+
+        const { base64, name, type } = inventionDetails;
+        fileDataList.push(base64);
+        fileNameList.push("Patent_Portfolio_Analysis_Invention_Details_" + (totalFiles+1) + '.' + name.split(".")[1]) ;
+        fileMIMEList.push(type);
       }
-      let fileNames = new Array(portfolioInfoFile.name);
-      let fileContents = new Array(portfolioInfoFile.base64);
-      let fileMimes = new Array(portfolioInfoFile.type);
-      fileNames.forEach((file) => {
-        res.set({
-          'Content-Type': 'application/octet-stream',
-          'Content-Disposition': `attachment; filename=${file}`,
-          });
-      });
-      res.json({ fileData: fileContents, fileName: fileNames, fileMIME: fileMimes });
+
+      res.json({ fileData: fileDataList, fileName: fileNameList, fileMIME: fileMIMEList });
 
     }
 
@@ -1124,21 +1156,25 @@ const getFilesForPartners = async (req, res) => {
       if (!jobDetails || !jobDetails.document_details ) {
         return res.status(404).json({ error: "File not found" });
       }
-      const documentFile = jobDetails.document_details[0];
 
-      if (!documentFile.base64) {
-        return res.status(404).json({ error: "File not found" });
+      let fileDataList = [];
+      let fileNameList = [];
+      let fileMIMEList = [];
+      // Extract the file data from the job details
+      for(let totalFiles=0; totalFiles < jobDetails.document_details.length; totalFiles++) {
+        const inventionDetails = jobDetails.document_details[totalFiles];
+      // Check if base64 data is present
+        if (!inventionDetails.base64) {
+          return res.status(404).json({ error: "File not found" });
+        }
+
+        const { base64, name, type } = inventionDetails;
+        fileDataList.push(base64);
+        fileNameList.push("Patent_Translation_Document_Details_" + (totalFiles+1) + '.' + name.split(".")[1]) ;
+        fileMIMEList.push(type);
       }
-      let fileNames = new Array(documentFile.name);
-      let fileContents = new Array(documentFile.base64);
-      let fileMimes = new Array(documentFile.type);
-      fileNames.forEach((file) => {
-        res.set({
-          'Content-Type': 'application/octet-stream',
-          'Content-Disposition': `attachment; filename=${file}`,
-          });
-      });
-      res.json({ fileData: fileContents, fileName: fileNames, fileMIME: fileMimes });
+
+      res.json({ fileData: fileDataList, fileName: fileNameList, fileMIME: fileMIMEList });
 
     }
 
@@ -1148,24 +1184,27 @@ const getFilesForPartners = async (req, res) => {
       if (!jobDetails || !jobDetails.preferred_style ) {
         return res.status(404).json({ error: "File not found" });
       }
-      const styleFile = jobDetails.preferred_style[0];
 
-      if (!styleFile.base64) {
-        return res.status(404).json({ error: "File not found" });
+      let fileDataList = [];
+      let fileNameList = [];
+      let fileMIMEList = [];
+      // Extract the file data from the job details
+      for(let totalFiles=0; totalFiles < jobDetails.preferred_style.length; totalFiles++) {
+        const inventionDetails = jobDetails.preferred_style[totalFiles];
+      // Check if base64 data is present
+        if (!inventionDetails.base64) {
+          return res.status(404).json({ error: "File not found" });
+        }
+
+        const { base64, name, type } = inventionDetails;
+        fileDataList.push(base64);
+        fileNameList.push("Patent_Illustration_Preferred_Style_" + (totalFiles+1) + '.' + name.split(".")[1]) ;
+        fileMIMEList.push(type);
       }
-      let fileNames = new Array(styleFile.name);
-      let fileContents = new Array(styleFile.base64);
-      let fileMimes = new Array(styleFile.type);
-      fileNames.forEach((file) => {
-        res.set({
-          'Content-Type': 'application/octet-stream',
-          'Content-Disposition': `attachment; filename=${file}`,
-          });
-      });
-      res.json({ fileData: fileContents, fileName: fileNames, fileMIME: fileMimes });
+
+      res.json({ fileData: fileDataList, fileName: fileNameList, fileMIME: fileMIMEList });
 
     }
-
     
   } catch (error) {
     console.error('Error retrieving file:', error);

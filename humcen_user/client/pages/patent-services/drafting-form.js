@@ -14,6 +14,7 @@ import DialogActions from "@mui/material/DialogActions";
 import FileBase64 from "react-file-base64";
 import axios from "axios";
 import { useRouter } from "next/router";
+import CustomDropZone from "@/components/CustomDropBox";
 import Upload from "../../components/Upload";
 import BannerCard from "@/components/BannerCard";
 import OkDialogueBox from "./dialoguebox";
@@ -55,7 +56,7 @@ export default function Inbox() {
   const [keyword, setKeyword] = useState("");
   const [country, setCountry] = useState("");
   const [budget, setBudget] = useState("");
-  const [files, setFileData] = useState(null);
+  const [files, setFiles] = useState([]);
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isErrorDialogOpenStatus, setIsErrorDialogOpenStatus] = useState(false);
@@ -63,13 +64,17 @@ export default function Inbox() {
   const router = useRouter();
 
 
-  const getFiles = (fileData) => {
-    setFileData(fileData);
-  };
 
   const handleDomainChange = (value) => {
     setDomain(value);
   };
+
+  const handleFileChange = (newFiles) => {
+    // Process the uploaded files data as needed
+    setFiles(newFiles);
+  };
+
+
   const handleKeywordChange = (event) => {
     setKeyword(event.target.value);
   };
@@ -340,7 +345,7 @@ export default function Inbox() {
             >
               Upload your invention details
             </Typography>
-            <FileBase64 multiple={true} onDone={getFiles} />{" "}
+            <CustomDropZone files={files} onFileChange={handleFileChange}/>
           </Card>
           <Card
             sx={{
