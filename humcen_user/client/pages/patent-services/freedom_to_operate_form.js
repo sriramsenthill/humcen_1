@@ -16,6 +16,7 @@ import FileBase64 from "react-file-base64";
 import axios from "axios";
 import { useRouter } from "next/router";
 import OkDialogueBox from "./dialoguebox";
+import CustomDropZone from "@/components/CustomDropBox";
 const api = axios.create({
   baseURL: "http://localhost:3000/api",
 });
@@ -174,7 +175,7 @@ export default function Inbox() {
             >
              ( A clear and detailed description of the technology or product for which you require the FTO Search. )
             </Typography>
-            <FileBase64 multiple={true} onDone={getDescription} />{" "}
+            <CustomDropZone files={description} onFileChange={getDescription}/>
           </Card>
           <Card
             sx={{
@@ -204,7 +205,7 @@ export default function Inbox() {
             >
              ( Any existing patents or patent applications related to your technology or similar inventions that you are aware of. )
             </Typography>
-            <FileBase64 multiple={true} onDone={getPatentDetails} />{" "}
+            <CustomDropZone files={patentDetails} onFileChange={getPatentDetails}/>
           </Card>
           <Card
             sx={{

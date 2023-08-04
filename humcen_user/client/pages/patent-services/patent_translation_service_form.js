@@ -16,6 +16,8 @@ import FileBase64 from "react-file-base64";
 import axios from "axios";
 import { useRouter } from "next/router";
 import OkDialogueBox from "./dialoguebox";
+import CustomDropZone from "@/components/CustomDropBox";
+
 const api = axios.create({
   baseURL: "http://localhost:3000/api",
 });
@@ -387,7 +389,7 @@ if (!isFormValid()) {
             >
              ( Share the specific patent document(s) that need to be translated, including patent numbers, titles, and any other relevant details. )
             </Typography>
-            <FileBase64 multiple={true} onDone={getFiles} />{" "}
+            <CustomDropZone files={files} onFileChange={getFiles}/>
           </Card>
           <Card
             sx={{

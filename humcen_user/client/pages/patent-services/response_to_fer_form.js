@@ -16,7 +16,7 @@ import FileBase64 from "react-file-base64";
 import axios from "axios";
 import { useRouter } from "next/router";
 import OkDialogueBox from "./dialoguebox";
-
+import CustomDropZone from "@/components/CustomDropBox";
 const api = axios.create({
   baseURL: "http://localhost:3000/api",
 });
@@ -179,7 +179,7 @@ export default function Inbox() {
             >
              ( Please provide the official document received from the patent office, such as the First Examination Report or Office Action. )
             </Typography>
-            <FileBase64 multiple={true} onDone={getFer} />{" "}
+            <CustomDropZone files={fer} onFileChange={setFer}/>
           </Card>
           <Card
             sx={{
@@ -209,7 +209,7 @@ export default function Inbox() {
             >
              ( A Copy of the complete specification that was initially filed with the patent application. )
             </Typography>
-            <FileBase64 multiple={true} onDone={getSpecs} />{" "}
+            <CustomDropZone files={specs} onFileChange={setSpecs}/>
           </Card>
           <Card
             sx={{

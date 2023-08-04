@@ -16,6 +16,7 @@ import FileBase64 from "react-file-base64";
 import axios from "axios";
 import { useRouter } from "next/router";
 import OkDialogueBox from "./dialoguebox";
+import CustomDropZone from "@/components/CustomDropBox";
 const api = axios.create({
   baseURL: "http://localhost:3000/api",
 });
@@ -387,7 +388,7 @@ export default function Inbox() {
             >
              ( If you have a preferred illustration style or any specific examples or references, please share them with us. )
             </Typography>
-            <FileBase64 multiple={true} onDone={getFiles} />{" "}
+            <CustomDropZone files={preferredStyleFile} onFileChange={getFiles}/>
           </Card>
           
           <Card

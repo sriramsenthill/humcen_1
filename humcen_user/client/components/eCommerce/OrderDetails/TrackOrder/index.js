@@ -191,7 +191,7 @@ const TrackOrder = () => {
             <li>
               <p className={styles.email} >
               Excepted Completion Date: 
-              {ActivityTimelineData[0].date}
+              {ActivityTimelineData[9].date}
               </p>
             </li>
           </ul>

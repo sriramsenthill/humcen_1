@@ -20,6 +20,7 @@ import FileBase64 from "react-file-base64";
 import axios from "axios";
 import { useRouter } from 'next/router';
 import OkDialogueBox from "./dialoguebox";
+import CustomDropZone from "@/components/CustomDropBox";
 // const DottedCard = styled(Card)`
 //   border: 2px dotted #787878;
 //   align-item: center ;
@@ -83,8 +84,8 @@ export default function Inbox() {
     setTitle(event.target.value); // Update the title state on input change
   };
 
-  const handleDetailsFileChange = (files) => {
-    setDetailsFile(files);
+  const handleDetailsFileChange = (newFiles) => {
+    setDetailsFile(newFiles);
   };
 
   const handleApplicantsFileChange = (files) => {
@@ -405,7 +406,7 @@ export default function Inbox() {
                 Upload your invention details
               </Typography>
               {/* <DottedCard> */}
-              <FileBase64 multiple={true} onDone={handleDetailsFileChange} />{" "}
+              <CustomDropZone files={detailsFile} onFileChange={handleDetailsFileChange}/>
               {/* </DottedCard> */}
             </Card>
             <Card
@@ -427,7 +428,7 @@ export default function Inbox() {
                 Upload your list of applicants
               </Typography>
               {/* <DottedCard> */}
-        <FileBase64 multiple={true} onDone={handleApplicantsFileChange} />
+              <CustomDropZone files={applicantsFile} onFileChange={handleApplicantsFileChange}/>
       {/* </DottedCard> */}
             </Card>
             <Card
@@ -449,7 +450,7 @@ export default function Inbox() {
                 Upload your list of investors (if applicable)
               </Typography>
               {/* <DottedCard> */}
-              <FileBase64 multiple={true} onDone={handleInvestorsFileChange} />{" "}
+              <CustomDropZone files={investorsFile} onFileChange={handleInvestorsFileChange}/>
               {/* </DottedCard> */}
             </Card>
           </Card>

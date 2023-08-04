@@ -16,7 +16,7 @@ import FileBase64 from "react-file-base64";
 import axios from "axios";
 import { useRouter } from "next/router";
 import OkDialogueBox from "./dialoguebox";
-
+import CustomDropZone from "@/components/CustomDropBox";
 const api = axios.create({
   baseURL: "http://localhost:3000/api",
 });
@@ -349,7 +349,7 @@ if (!isFormValid()) {
             >
              ( Visual representations or technical drawings that illustrate the invention's design, structure, or process. )
             </Typography>
-            <FileBase64 multiple={true} onDone={handleTechDrawings} />{" "}
+            <CustomDropZone files={techDrawings} onFileChange={handleTechDrawings}/>
           </Card>
           <Card
             sx={{
