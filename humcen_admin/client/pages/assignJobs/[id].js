@@ -59,7 +59,9 @@ const ColorButton = styled(Button)(({ theme }) => ({
   width: "120%",
   height: "52px",
   borderRadius: "100px",
-  marginBottom: "30px",
+  marginBottom: "20px",
+  marginLeft:"105px",
+  marginTop:'20px',
   background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
   "&:hover": {
     background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
@@ -427,16 +429,10 @@ const DynamicPage = () =>{
         Find Partner
       </Button>
   )}
-          </Grid>
-        </Grid>
-
-<>
-</>
-      </Grid>
-      
   
-      </Card>
-    {submit && (<ColorButton
+          </Grid>
+        
+          {submit && (<ColorButton
                 sx={{ 
                   width: "10%",
                   height: "10%",
@@ -450,6 +446,16 @@ const DynamicPage = () =>{
               >
                 Assign Job
       </ColorButton> )}
+    
+        </Grid>
+
+<>
+</>
+      </Grid>
+      
+  
+      </Card>
+   
       </div>
     </>
   );
