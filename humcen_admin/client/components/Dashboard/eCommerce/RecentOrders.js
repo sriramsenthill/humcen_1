@@ -335,6 +335,7 @@ function RecentOrders() {
                       fontWeight: "bold",
                       borderBottom: "1px solid #F7FAFF",
                       padding: "8px 10px",
+                      textAlign: "center",
                       fontSize: "13px"
                     }}>
                      <Typography

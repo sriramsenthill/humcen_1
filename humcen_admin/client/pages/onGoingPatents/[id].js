@@ -75,6 +75,39 @@ const CustomTextArea = styled(TextField)({
   outline: "none !important" 
 });
 
+function getStatusColor(status) {
+  if (status === "In Progress") {
+    return ( {
+      background: "rgba(255, 255, 0, 0.1)", /* Yellow background with reduced opacity */
+      borderRadius: "4px",
+      fontWeight: "bold",
+      color: "#ffbc2b", /* You can define your yellow color variable */
+      padding: "5px 13px",
+      display: "inline-block",
+    });
+     // Set the color to yellow for "in progress" status
+  } else if (status === "Completed") {
+    return ({
+      background: "rgba(0, 182, 155, 0.1)",
+      borderRadius: "4px",
+      color: "#00b69b",
+      fontWeight: "bold",
+      padding: "5px 13px",
+      display: "inline-block",
+  })  // Set the color to green for "completed" status
+  } else if (status === "Pending") {
+    return ({
+      background: "rgba(238,54,140,.1)",
+      borderRadius: "4px",
+      color: "#ee368c",
+      padding: "5px 13px",
+      display: "inline-block",
+  })
+
+  } 
+
+  return ""; // Default color if the status value is not matched
+}
 
 
 const  DynamicPage = () => {
@@ -369,40 +402,40 @@ const  DynamicPage = () => {
           >
             <tbody>
               <tr>
-                <td className={styles.label} style={{ padding: "10px" }}>
+                <td className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
                   Patent Type
                 </td>
-                <td className={styles.label} style={{ padding: "10px" }}>
+                <td className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
                   Customer Name
                 </td>
-                <td className={styles.label} style={{ padding: "10px" }}>
+                <td className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
                   Partner Name
                 </td>
-                <td className={styles.label} style={{ padding: "10px" }}>
+                <td className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
                   Location
                 </td>
-                <td className={styles.label} style={{ padding: "10px" }}>
+                <td className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
                   Budget
                 </td>
-                <td className={styles.label} style={{ padding: "10px" }}>
+                <td className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
                   Assigned
                 </td>
-                <td className={styles.label} style={{ padding: "10px" }}>
+                <td className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
                   Status
                 </td>
-                <td className={styles.label} style={{ padding: "10px" }}>
+                <td className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
                   Partner Work
                 </td>
               </tr>
               <tr>
-                <td style={{ padding: "10px" }}>{service}</td>
-                <td style={{ padding: "10px" }}>{customerName}</td>
-                <td style={{ padding: "10px" }}>{partnerName}</td>
-                <td style={{ padding: "10px" }}>{country}</td>
-                <td style={{ padding: "10px" }}>{budget}</td>
-                <td style={{ padding: "10px" }}>{formattedStartDate}</td>
-                <td style={{ padding: "10px" }}>{status}</td>
-                <td>
+                <td style={{ padding: "10px", textAlign:"center", fontWeight: "bold", fontSize: "13.5px",  }}>{service}</td>
+                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{customerName}</td>
+                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{partnerName}</td>
+                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{country}</td>
+                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{budget}</td>
+                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{formattedStartDate}</td>
+                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}><span style={getStatusColor(status)}>{status}</span></td>
+                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>
                 <Button
                       sx={{
                         background: downloadStatus ?  "#27AE60" : "#D3D3D3" , 
@@ -423,17 +456,10 @@ const  DynamicPage = () => {
                     </td>
               </tr>
               <tr>
-                <td style={{ padding: "10px" }}></td>
-                <td style={{ padding: "10px" }}>
-                  <Link href="/">Mail</Link>
-                </td>
-                <td style={{ padding: "10px" }}>
-                  <Link href="/">Mail</Link>
-                </td>
-                <td style={{ padding: "10px" }}></td>
-                <td style={{ padding: "10px" }}></td>
-                <td style={{ padding: "10px" }}></td>
-                { states !== "Completed" &&<td style={{ padding: "10px" }}>
+                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}></td>
+                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}></td>
+                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}></td>
+                { states !== "Completed" &&<td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>
                   <Link href="#" onClick={loadComponent}>
                     Cross-Assign
                   </Link>

@@ -104,25 +104,25 @@ const NewOrder = () => {
               }}>
             <thead>
               <tr>
-                <th className={styles.label} style={{ padding: "5px", textAlign: "left", fontWeight:"bold" }}>
+                <th className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
                   Job No
                 </th>
-                <th className={styles.label} style={{ padding: "5px", textAlign: "left", fontWeight:"bold"  }}>
+                <th className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
                   Patent Type
                 </th>
-                <th className={styles.label} style={{ padding: "5px", textAlign: "left" , fontWeight:"bold" }}>
+                <th className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px",}}>
                   Location
                 </th>
-                <th className={styles.label} style={{ padding: "5px" , textAlign: "left", fontWeight:"bold" }}>
+                <th className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
                   Budget
                 </th>
-                <th className={styles.label} style={{ padding: "5px" , textAlign: "left", fontWeight:"bold" }}>
+                <th className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
                   Expected Delivery
                 </th>
-                <th className={styles.label} style={{ padding: "2px" , position: "relative", left: "30px", fontWeight:"bold"}}>
+                <th className={styles.label} style={{ padding: "2px" , position: "relative", left: "30px", fontWeight:"bold", fontSize: "16px", textAlign: "center"}}>
                   Actions
                 </th>
-                <th className={styles.label} style={{ paddingLeft: "2px" ,position: "relative", left: "90px", fontWeight:"bold"  }}>
+                <th className={styles.label} style={{ paddingLeft: "2px" ,position: "relative", left: "90px", fontWeight:"bold", fontSize: "16px", textAlign: "center"  }}>
                   Details
                 </th>
               </tr>
@@ -130,22 +130,22 @@ const NewOrder = () => {
             <tbody>
               {jobOrders.map((order) => (             
                 <tr key={order._id}> 
-                  <td className={styles.label} style={{ padding: "5px" }}>
+                  <td className={styles.label} style={{ padding: "10px", textAlign:"center", fontWeight: "bold", fontSize: "15px",  }}>
                     {order._id.job_no}
                   </td>
-                  <td className={styles.label} style={{ padding: "5px" }}>
+                  <td className={styles.label} style={{ padding: "10px", textAlign:"center", fontWeight: "bold", fontSize: "15px",  }}>
                     {order.service}
                   </td>
-                  <td className={styles.label} style={{ padding: "5px" }}>
+                  <td className={styles.label} style={{ padding: "10px", textAlign:"center", fontSize: "13.5px", }}>
                     {order.country}
                   </td>
-                  <td className={styles.label} style={{ padding: "5px" }}>
+                  <td className={styles.label} style={{ padding: "10px", textAlign:"center", fontSize: "13.5px", }}>
                     {order.budget}
                   </td>
-                  <td className={styles.label} style={{ padding: "5px" }}>
+                  <td className={styles.label} style={{ padding: "10px", textAlign:"center", fontSize: "13.5px", }}>
                     {formatDate(order.end_date)}
                   </td>
-                  <td className={styles.label} style={{ padding: "2px" }}>
+                  <td className={styles.label} style={{ padding: "10px", textAlign:"center", fontSize: "13.5px", }}>
                     <Button
                       sx={{
                         background: "#D3D3D3",
@@ -185,7 +185,7 @@ const NewOrder = () => {
                       Accept
                     </Button>
                   </td>
-                  <td>
+                  <td style={{textAlign:"center", fontSize: "13.5px", }}>
                   <Link href={`onGoingPatents/${order._id.job_no}`} passHref>
                       <Button
                     sx={{

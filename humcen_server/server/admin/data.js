@@ -1394,6 +1394,7 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
     // For Response To FER/ Office Action
     else if (service === "Response To FER Office Action") {
       const jobDetails = await Unassigned.findOne({ "_id.job_no": jobId });
+
       if (!jobDetails || !jobDetails.fer || !jobDetails.complete_specifications) {
         return res.status(404).json({ error: "File not found" });
       }
@@ -1428,6 +1429,7 @@ const getUnassignedJobFilesForAdmin = async (req, res) => {
         fileMIMEList.push(type);
       }
 
+      console.log(fileDataList, fileNameList, fileMIMEList)
       res.json({ fileData: fileDataList, fileName: fileNameList, fileMIME: fileMIMEList });
 
     }

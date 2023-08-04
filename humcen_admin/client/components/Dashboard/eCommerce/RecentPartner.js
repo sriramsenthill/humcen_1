@@ -32,16 +32,6 @@ function formatDate(date) {
   return new Date(date).toLocaleDateString(undefined, options);
 }
 
-function getStatusColor(status) {
-  if (status === "In Progress") {
-    return "Gold"; // Set the color to yellow for "in progress" status
-  } else if (status === "Completed") {
-    return "Green"; // Set the color to green for "completed" status
-  } else if (status === "Pending") {
-    return "Red"; // Set the color to Red for "Pending" status
-  }
-  return ""; // Default color if the status value is not matched
-}
 
 const StyledRating = styled(Rating)({
   "& .MuiRating-iconFilled": {
@@ -187,29 +177,148 @@ function RecentPartners() {
   return (
     <Card>
       <Box sx={{ p: 2 }}>
-        <TableContainer component={Paper}>
-          <Table aria-label="custom pagination table" className="dark-table">
-            <TableHead>
+        <TableContainer component={Paper} sx={{
+            boxShadow: "none",
+          }}>
+          <Table sx={{ minWidth: 950 }} aria-label="custom pagination table" className="dark-table">
+            <TableHead sx={{ background: "#F7FAFF" }}>
               <TableRow>
-                <TableCell>User ID</TableCell>
-                <TableCell>Full Name</TableCell>
-                <TableCell>Age</TableCell>
-                <TableCell>Domain</TableCell>
-                <TableCell>Patent Agent</TableCell>
-                <TableCell>Cert No</TableCell>
-                <TableCell>Jurisdiction</TableCell>
-                <TableCell>City</TableCell>
-                <TableCell>State</TableCell>
-                <TableCell>Zip Code</TableCell>
-                <TableCell>Tax ID No</TableCell>
-                <TableCell>LinkedIn Profile</TableCell>
-                <TableCell>Years of Experience</TableCell>
-                <TableCell>Expertise In</TableCell>
-                <TableCell>Can Handle</TableCell>
-                <TableCell>Jobs</TableCell>
-                <TableCell>Ratings</TableCell>
-                <TableCell>Current Status</TableCell>
-                <TableCell>Action</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>User ID</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>Full Name</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}
+                >Age</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>Domain</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>Patent Agent</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>Cert No</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>Jurisdiction</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>City</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>State</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>Zip Code</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>Tax ID No</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>LinkedIn Profile</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>Years of Experience</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>Expertise In</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>Can Handle</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>Jobs</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>Ratings</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>Current Status</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    textAlign: "center",
+                  }}>Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -217,22 +326,120 @@ function RecentPartners() {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
                   <TableRow key={row.userID}>
-                    <TableCell>{row.userID}</TableCell>
-                    <TableCell>{row.full_name}</TableCell>
-                    <TableCell>{row.age}</TableCell>
-                    <TableCell>{row.domain}</TableCell>
-                    <TableCell>{row["Patent Agent"]}</TableCell>
-                    <TableCell>{row.cert_no || "To be assigned"}</TableCell>
-                    <TableCell>{row.jurisdiction}</TableCell>
-                    <TableCell>{row.city}</TableCell>
-                    <TableCell>{row.state}</TableCell>
-                    <TableCell>{row.zip_code}</TableCell>
-                    <TableCell>{row.tax_ID_no}</TableCell>
-                    <TableCell>{row.linkedin_profile}</TableCell>
-                    <TableCell>{row.years_of_exp}</TableCell>
-                    <TableCell>{row.expertise_in}</TableCell>
-                    <TableCell>{row.can_handle}</TableCell>
-                    <TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.userID ?? "To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.full_name ?? "To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.age ?? "To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.domain ?? "To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row["Patent Agent"] ?? "To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.cert_no || "To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.jurisdiction ?? "To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.city ?? "To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.state ?? "To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.zip_code ?? "To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.tax_ID_no ?? "To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.linkedin_profile ?? "To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.years_of_exp ?? "To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{"To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.can_handle ?? "To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
   {/* Show only some jobs initially, and all jobs when "Show More" is clicked */}
   {expandedRows.includes(row.userID) ? (
     row.jobs.join(", ")
@@ -247,14 +454,32 @@ function RecentPartners() {
     
       )}
     </div>
-  )}
+  ) || "To be assigned"}
 </TableCell>
 
-                    <TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
                       <StyledRating name="read-only" value="2.5" readOnly />
                     </TableCell>
-                    <TableCell>Completed</TableCell>
-                    <TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>Completed</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
                       <IconButton>
                         <MoreVertIcon />
                       </IconButton>

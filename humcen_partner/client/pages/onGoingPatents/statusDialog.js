@@ -104,7 +104,8 @@ export default function StatusDialogueBox(){
         <WhiteDialog open={true}>
      <CenteredDialogActions>
       <DialogContent sx={{
-        position: "relative",
+          position: "relative",
+          top: "20%",
        
       }}>
         <h1 style={{textAlign:"center",fontWeight:"600",fontSize:"28px",fontFamily:'Inter',color:"#00002B"}}> Work Status and Remarks</h1>
@@ -113,7 +114,7 @@ export default function StatusDialogueBox(){
       </DialogContent>
       <DialogActions sx={{
         position: "relative",
-        
+        top: "18%",
       }}>
         <ColorButton onClick={handleOk} style={{width:"120px",height:"40px"}}>Done</ColorButton>
       </DialogActions>

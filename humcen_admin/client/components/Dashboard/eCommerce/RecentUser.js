@@ -159,24 +159,124 @@ function RecentUsers() {
   return (
     <Card>
       <Box sx={{ p: 2 }}>
-        <TableContainer component={Paper}>
-          <Table aria-label="custom pagination table" className="dark-table">
-            <TableHead>
+        <TableContainer component={Paper} sx={{
+            boxShadow: "none",
+          }}>
+          <Table sx={{ minWidth: 950 }} aria-label="custom pagination table" className="dark-table">
+            <TableHead sx={{ background: "#F7FAFF" }}>
               <TableRow>
-                <TableCell>User ID</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Phone No</TableCell>
-                <TableCell>City</TableCell>
-                <TableCell>Street</TableCell>
-                <TableCell>State</TableCell>
-                <TableCell>Zip Code</TableCell>
-                <TableCell>Tax ID</TableCell>
-                <TableCell>Website</TableCell>
-                <TableCell>Industry Sector</TableCell>
-                <TableCell>Employee Name</TableCell>
-                <TableCell>Employee Surname</TableCell>
-                <TableCell>Employee Position</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>User ID</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>Name</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>Email</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>Phone No</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>City</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>Street</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>State</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>Zip Code</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>Tax ID</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>Website</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>Industry Sector</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>Employee Name</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>Employee Surname</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>Employee Position</TableCell>
               
               </TableRow>
             </TableHead>
@@ -185,28 +285,114 @@ function RecentUsers() {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
                   <TableRow key={row._id.$oid}>
-                    <TableCell>{row.userID}</TableCell>
-                    <TableCell>{row.first_name+" "+row.last_name}</TableCell>
-                    <TableCell>{row.email}</TableCell>
-                    <TableCell>{row.phno}</TableCell>
-                    <TableCell>{row.city}</TableCell>
-                    <TableCell>{row.street}</TableCell>
-                    <TableCell>{row.state}</TableCell>
-                    <TableCell>{row.zipcode}</TableCell>
-                    <TableCell>{row.user_specific_data?.tax_ID??"To be assigned"}</TableCell>
-                    <TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.userID}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.first_name+" "+row.last_name}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.email}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.phno ?? "To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.city ?? "To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.street ?? "To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.state ?? "To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.zipcode ?? "To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.user_specific_data?.tax_ID??"To be assigned"}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
                       {row.user_specific_data?.website ?? "To be assigned"}
                     </TableCell>
-                    <TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
                       {row.user_specific_data?.ind_sec ?? "To be assigned"}
                     </TableCell>
-                    <TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
                       {row.user_specific_data?.emp_name ?? "To be assigned"}
                     </TableCell>
-                    <TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
                       {row.user_specific_data?.emp_surname ?? "To be assigned"}
                     </TableCell>
-                    <TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>
                       {row.user_specific_data?.emp_pos ?? "To be assigned"}
                     </TableCell>
                   </TableRow>

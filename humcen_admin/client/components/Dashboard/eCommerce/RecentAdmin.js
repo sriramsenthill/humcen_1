@@ -145,15 +145,52 @@ function RecentAdmins() {
   return (
     <Card>
       <Box sx={{ p: 2 }}>
-        <TableContainer component={Paper}>
-          <Table aria-label="custom pagination table" className="dark-table">
-            <TableHead>
+        <TableContainer component={Paper} sx={{
+            boxShadow: "none",
+          }}>
+          <Table sx={{ minWidth: 950 }} aria-label="custom pagination table" className="dark-table">
+            <TableHead sx={{ background: "#F7FAFF" }}>
               <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Surname</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Phone</TableCell>
-                <TableCell>Preferences</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>Name</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>Surname</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>Email</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>Phone</TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>Preferences</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -161,11 +198,43 @@ function RecentAdmins() {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
                   <TableRow key={row._id["$oid"]}>
-                    <TableCell>{row.name}</TableCell>
-                    <TableCell>{row.surname}</TableCell>
-                    <TableCell>{row.email}</TableCell>
-                    <TableCell>{row.phone}</TableCell>
-                    <TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      textAlign: "center",
+                      fontSize: "13px"
+                    }}>{row.name}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      textAlign: 'center',
+                      fontSize: "13px"
+                    }}>{row.surname}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      textAlign: "center",
+                      fontSize: "13px"
+                    }}>{row.email}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      textAlign: "center",
+                      fontSize: "13px"
+                    }}>{row.phone}</TableCell>
+                    <TableCell sx={{
+                      width: 100,
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      textAlign: "center",
+                      fontSize: "13px"
+                    }}>
                       {Object.entries(row.pref).map(([key, value]) => (
                         <Typography key={key}>
                           {key}: {value.toString()}
