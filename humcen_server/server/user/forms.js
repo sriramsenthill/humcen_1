@@ -15,8 +15,7 @@ const JobFiles=require("../mongoose_schemas/job_files");
 const Drafting = require("../mongoose_schemas/patent_drafting");
 const Filing = require("../mongoose_schemas/patent_filing");
 const Unassigned = require("../mongoose_schemas/unassigned");
-
-
+const sendEmail = require("../email.js");
 // Define your API route for fetching job order data
 const getJobOrderOnID = async (req, res) => {
   const { id } = req.params;
@@ -65,6 +64,7 @@ const createPatentConsultation = async (req, res) => {
     res.status(500).json({ error: "Failed to schedule consultation." });
   }
 };
+
 
 const createJobOrderPatentDrafting = async (req, res) => {
   try {
@@ -175,6 +175,13 @@ const createJobOrderPatentDrafting = async (req, res) => {
       res.status(200).json(savedDrafting);
 
     }
+        // Fetch user's email from MongoDB and send the email
+        const user = await Customer.findOne({ userID: userId });
+        if (user && user.email) {
+          const subject = 'Patent Drafting Submission Successful';
+          const text = 'Your patent drafting form has been submitted successfully.';
+          sendEmail(user.email, subject, text);
+        }
 
     
 
@@ -183,7 +190,7 @@ const createJobOrderPatentDrafting = async (req, res) => {
     res.status(500).send("Error creating Patent Drafting Order");
   }
 };
-
+      
 
 
 const createJobOrderPatentFiling = async (req, res) => {

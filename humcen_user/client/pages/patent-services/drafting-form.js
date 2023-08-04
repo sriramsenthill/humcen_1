@@ -127,6 +127,7 @@ export default function Inbox() {
       setErrorMessage(error.response.data);
       setIsErrorDialogOpenStatus(true);
     }
+    
   };
 
   const handleOk = () => {
