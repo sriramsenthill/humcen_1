@@ -98,15 +98,28 @@ const acceptJobOrder = async (req, res) => {
     }
 
     // Update the Accepted field of the specified job ID to true
-    const updatedJobOrder = await JobOrder.findOneAndUpdate(
+    const updatedJobOrder = await JobOrder.findOne(
       { "_id.job_no": jobId },
-      { Accepted: true },
-      { new: true }
     );
+
 
     if (!updatedJobOrder) {
       return res.status(404).json({ error: "Job order not found" });
     }
+
+    const formattedDate = new Date().toLocaleDateString(undefined, options);
+    updatedJobOrder.Accepted = true;
+    
+    for (let steps=1; steps < 3; steps++) {
+      updatedJobOrder.date_user[steps] = formattedDate;
+    }
+    for (let steps=2; steps < 5; steps++) {
+      updatedJobOrder.date_activity[steps] = formattedDate;
+    }
+    for (let steps=1; steps < 3; steps++) {
+      updatedJobOrder.date_partner[steps] = formattedDate;
+    }
+
     partner.in_progress_jobs = partner.in_progress_jobs + 1;
     partner.save().then((response) => {console.log("Job added to In Progress section of Partner")})
     res.json({ message: "Job order accepted successfully" });

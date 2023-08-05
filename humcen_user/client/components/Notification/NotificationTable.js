@@ -450,7 +450,7 @@ export default function NotificationTable() {
                       padding: "10px",
                     }}
                   >
-                      <Link href="/notification" onClick={() => { clickedByUser(notification.notifNum, userID) }}>{notification.notifText}</Link>
+                      <Link href="/notification" onClick={() => { clickedByUser(notification.notifNum, userID); window.location.href=window.location.href; }}>{notification.notifText}</Link>
                   </TableCell>
 
                   <TableCell
