@@ -147,9 +147,9 @@ RecentPartner.propTypes = {
 async function fetchPartnerData() {
   try {
     const response = await fetch("http://localhost:3000/api/admin/Unassigned");
-    const data = await response.json();
-    console.log(data);
-    return data;
+    const responseData = await response.json();
+    console.log(responseData);
+    return responseData;
   } catch (error) {
     console.error("Error fetching partner data:", error);
     return [];
@@ -181,8 +181,7 @@ function UnAssignedJob() {
     setPage(0);
   };
 
-  const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, count - page * rowsPerPage);
+  const emptyRows = rowsPerPage - Math.min(rowsPerPage, count - page * rowsPerPage);
 
     const sortedData = rows.sort((a, b) => parseInt(b._id.job_no) - parseInt(a._id.job_no));
 

@@ -12,6 +12,7 @@ import axios from "axios";
 import JSZip from "jszip";
 import { styled } from "@mui/system";
 import { headers } from "next.config";
+import { WindowScrollController } from "@fullcalendar/core/internal";
 
 // Create an Axios instance
 
@@ -359,8 +360,8 @@ const DynamicPage = () =>{
                 </td>
               </tr>
               <tr>
-                <td style={{ padding: "10px", textAlign:"center", fontWeight: "bold", fontSize: "13.5px",  }}>{service}</td>
-                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{customerName}</td>
+                <td style={{ padding: "10px", textAlign:"center", fontWeight: "bold", fontSize: "13.5px",  }}>{customerName}</td>
+                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{service}</td>
                 <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{domain}</td>
                 <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{country}</td>
                 <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{budget}</td>
@@ -467,7 +468,7 @@ const DynamicPage = () =>{
                           background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
                         }, }}
                 type="submit"
-                onClick={() => {window.location.href = "/"; handleSubmit()}}
+                onClick={() => {window.location.href = '/', handleSubmit()}}
               >
                 Assign Job
       </ColorButton> )}

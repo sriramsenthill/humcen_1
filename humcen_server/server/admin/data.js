@@ -15,7 +15,8 @@ const patentTranslation = require("../mongoose_schemas/patent_translation_servic
 const patentIllustration = require("../mongoose_schemas/patent_illustration"); // Import Patent Illustration Model
 const patentWatch = require("../mongoose_schemas/patent_watch"); // Import Patent Watch Model
 const patentLicense = require("../mongoose_schemas/patent_licensing"); // Import Patent Licensing Model
-const Customer=require("../mongoose_schemas/customer")
+const Customer=require("../mongoose_schemas/customer");
+const sendEmail = require("../email");
 
 const getUsers = async (req, res) => {
   try {
@@ -341,6 +342,10 @@ const assignTask = async(req, res) => {
       }).catch((error) => {
         console.log("Error in Pushing the Job to the Partner : " + error);
       });
+      if (assignedPartner){const partnerSubject="Request to accept the Patent Drafting  Form"
+      const partnerText="Accept the submission for Patent Drafting Form"
+      sendEmail(assignedPartner.email,partnerSubject,partnerText);}
+      
 
       // For PATENT FILING
   } else if (patentService === "Patent Filing") {
@@ -440,6 +445,12 @@ const assignTask = async(req, res) => {
       }).catch((error) => {
         console.log("Error in Pushing the Job to the Partner : " + error);
       });
+
+      if (assignedPartner){
+        const partnerSubject="Request to accept the Patent Filing  Form"
+      const partnerText="Accept the submission for Patent Filing Form"
+      sendEmail(assignedPartner.email,partnerSubject,partnerText);
+    }
       
   }
 
@@ -539,6 +550,14 @@ const assignTask = async(req, res) => {
       }).catch((error) => {
         console.log("Error in Pushing the Job to the Partner : " + error);
       });
+
+      
+      if (assignedPartner){
+        const partnerSubject="Request to accept the Patent Search  Form"
+      const partnerText="Accept the submission for Patent Search Form"
+      sendEmail(assignedPartner.email,partnerSubject,partnerText);
+    }
+
       
   }
 
@@ -638,6 +657,12 @@ const assignTask = async(req, res) => {
       }).catch((error) => {
         console.log("Error in Pushing the Job to the Partner : " + error);
       });
+
+      if (assignedPartner){
+        const partnerSubject="Request to accept the Response to FER Office Action Form"
+      const partnerText="Accept the submission for Response to FER Office Action Form"
+      sendEmail(assignedPartner.email,partnerSubject,partnerText);
+    }
       
   }
 
@@ -737,6 +762,12 @@ const assignTask = async(req, res) => {
       }).catch((error) => {
         console.log("Error in Pushing the Job to the Partner : " + error);
       });
+
+      if (assignedPartner){
+        const partnerSubject="Request to accept the Freedom To Operate Form"
+      const partnerText="Accept the submission for Freedom To Operate Form"
+      sendEmail(assignedPartner.email,partnerSubject,partnerText);
+    }
       
   }
 
@@ -836,6 +867,12 @@ const assignTask = async(req, res) => {
       }).catch((error) => {
         console.log("Error in Pushing the Job to the Partner : " + error);
       });
+
+      if (assignedPartner){
+        const partnerSubject="Request to accept the Freedom to Patent Landscape Form"
+      const partnerText="Accept the submission for Freedom to Patent Landscape Form"
+      sendEmail(assignedPartner.email,partnerSubject,partnerText);
+    }
       
   }
 
@@ -935,6 +972,13 @@ const assignTask = async(req, res) => {
         console.log("Error in Pushing the Job to the Partner : " + error);
       });
       
+
+      if (assignedPartner){
+        const partnerSubject="Request to accept the Patent Portfolio Analysis Form"
+      const partnerText="Accept the submission for Patent Portfolio Analysis Form"
+      sendEmail(assignedPartner.email,partnerSubject,partnerText);
+    }
+      
   }
 
   // For PATENT TRANSLATION
@@ -1033,6 +1077,12 @@ const assignTask = async(req, res) => {
       }).catch((error) => {
         console.log("Error in Pushing the Job to the Partner : " + error);
       });
+
+      if (assignedPartner){
+        const partnerSubject="Request to accept the Patent Translation Services Form"
+      const partnerText="Accept the submission for Patent Translation Services Form"
+      sendEmail(assignedPartner.email,partnerSubject,partnerText);
+    }
       
   }
 
@@ -1133,6 +1183,12 @@ const assignTask = async(req, res) => {
       }).catch((error) => {
         console.log("Error in Pushing the Job to the Partner : " + error);
       });
+
+      if (assignedPartner){
+        const partnerSubject="Request to accept the Patent Illustration Form"
+      const partnerText="Accept the submission for Patent Illustration Form"
+      sendEmail(assignedPartner.email,partnerSubject,partnerText);
+    }
       
   }
 
@@ -1234,6 +1290,14 @@ const assignTask = async(req, res) => {
       }).catch((error) => {
         console.log("Error in Pushing the Job to the Partner : " + error);
       });
+
+      
+
+      if (assignedPartner){
+        const partnerSubject="Request to accept the Patent Watch Form"
+      const partnerText="Accept the submission for Patent Watch Form"
+      sendEmail(assignedPartner.email,partnerSubject,partnerText);
+    }
       
   }
 
@@ -1334,6 +1398,11 @@ const assignTask = async(req, res) => {
       }).catch((error) => {
         console.log("Error in Pushing the Job to the Partner : " + error);
       });
+      if (assignedPartner){
+        const partnerSubject="Request to accept the Patent Licensing and Commercialization Services Form"
+      const partnerText="Accept the submission for Patent Licensing and Commercialization Services Form"
+      sendEmail(assignedPartner.email,partnerSubject,partnerText);
+    }
       
   }
 
