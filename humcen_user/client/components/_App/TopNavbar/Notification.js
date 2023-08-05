@@ -1,4 +1,7 @@
 import * as React from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import {DateTime} from "luxon";
 import styles from "@/components/_App/TopNavbar/Notification.module.css";
 import {
   IconButton,
@@ -11,8 +14,66 @@ import {
 } from "@mui/material";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 
+const api = axios.create({
+  baseURL: "http://localhost:3000/api",
+});
+
+
+// Add an interceptor to include the token in the request headers
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers['Authorization'] = token;
+  }
+  return config;
+});
+
+
 const Notification = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [notifications, setNotifications] = useState([]);
+  const [userID, setUserID] = useState("");
+  const options = {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+    weekday: "long",
+  };
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await api.get(`user/settings`);
+        setUserID(response.data.userID);
+      } catch (error) {
+        console.error("Error fetching job order data:", error);
+      }
+    };
+
+    fetchUserData();
+
+  }, []);
+
+  useEffect(() => {
+    if(userID) {
+    const fetchNotifData = async () => {
+      try {
+        const notifResponse = await api.get(`user/get-notifs/${userID}`);
+        const unSeenNotifs = notifResponse.data.filter((notif) => {
+          return notif.seen == false;
+        })
+        setNotifications(unSeenNotifs);
+        console.log("Notifications Unseen " + unSeenNotifs[0].notifDate);
+      } catch(error) {
+        console.error("Error Fetching Notification : " + error);
+      }
+    }
+
+    fetchNotifData();
+  }
+  },[userID])
+
+
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -37,9 +98,14 @@ const Notification = () => {
           aria-expanded={open ? "true" : undefined}
           className="ml-2 for-dark-notification"
         >
+      { notifications.length > 0 ? (
           <Badge color="danger" variant="dot">
             <NotificationsActiveIcon color="action" />
           </Badge>
+        ) :
+          (
+            <NotificationsActiveIcon color="action" />
+          )}
         </IconButton>
       </Tooltip>
 
@@ -86,7 +152,7 @@ const Notification = () => {
           <Button variant="text">clear all</Button>
         </div>
         <div className={styles.notification}>
-          <div className={styles.notificationList}>
+          {/* <div className={styles.notificationList}>
             <Typography
               variant="h5"
               sx={{
@@ -99,26 +165,32 @@ const Notification = () => {
               8 Invoices have been paid
             </Typography>
 
-            <div className={styles.notificationListContent}>
-              <img src="/images/pdf-icon.png" alt="PDF Icon" width={27} />
-              <Typography
-                variant="h6"
-                sx={{
-                  fontSize: "13px",
-                  color: "#5B5B98",
-                  fontWeight: "500",
-                }}
-                className="ml-1"
-              >
-                Invoices have been paid to the company.
-              </Typography>
-            </div>
-
             <Typography sx={{ fontSize: "12px", color: "#A9A9C8", mt: 1 }}>
               11:47 PM Wednesday
             </Typography>
+          </div> */}
+          {notifications.map((notif) => (
+            <div className={styles.notificationList}>
+            <Typography
+              variant="h5"
+              sx={{
+                fontSize: "14px",
+                color: "#260944",
+                fontWeight: "500",
+                mb: 1,
+              }}
+            >
+              {notif.notifText}
+            </Typography>
+
+            <Typography sx={{ fontSize: "12px", color: "#A9A9C8", mt: 1 }}>
+              {console.log(DateTime.fromISO(notif.notifDate, { zone: "utc" }).toLocal().toFormat("cccc, h:mm:ss a ZZZZ"))}
+              {new Intl.DateTimeFormat("en-US", options).format(DateTime.fromISO(notif.notifDate, { zone: "utc" }).toLocal())}
+              
+            </Typography>
           </div>
-          
+
+          ))}
           <Typography component="div" textAlign="center">
             <Link
               href="/notification/"

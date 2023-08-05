@@ -271,6 +271,9 @@ const assignTask = async(req, res) => {
       console.error("Error in pushing the Job to Customer Schema: " + err);
     });  
 
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = new Date().toLocaleDateString(undefined, options);
+
     // Creating a new Job Order Document
 
       const jobOrderDoc = {
@@ -288,6 +291,9 @@ const assignTask = async(req, res) => {
       steps_done: 2, 
       steps_done_user: 3,
       steps_done_activity: 4,
+      date_partner: [formattedDate, formattedDate, " ", " "], 
+      date_user: [formattedDate, formattedDate, formattedDate, " ", " ", " "],
+      date_activity: [formattedDate, formattedDate, formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
       Accepted: true,
       userID: unassignedDraftingData.userID,
       partnerID: partnerID,
@@ -365,6 +371,9 @@ const assignTask = async(req, res) => {
       console.error("Error in pushing the Job to Customer Schema: " + err);
     }); 
 
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = new Date().toLocaleDateString(undefined, options);
+
       // Creating a new Job Order Document
 
       const jobOrderDoc = {
@@ -378,6 +387,9 @@ const assignTask = async(req, res) => {
         domain: unassignedFilingData.domain,
         customerName: unassignedFilingData.customerName,
         partnerName: assignedPartner.first_name,
+        date_partner: [formattedDate, formattedDate, " ", " "], 
+        date_user: [formattedDate, formattedDate, formattedDate, " ", " ", " "],
+        date_activity: [formattedDate, formattedDate, formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
         rejected_by: [],
         steps_done: 2, 
         steps_done_user: 3,
@@ -460,6 +472,9 @@ const assignTask = async(req, res) => {
       console.error("Error in pushing the Job to Customer Schema: " + err);
     }); 
 
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = new Date().toLocaleDateString(undefined, options);
+
       // Creating a new Job Order Document
 
       const jobOrderDoc = {
@@ -473,6 +488,9 @@ const assignTask = async(req, res) => {
         domain: unassignedSearchData.domain,
         customerName: unassignedSearchData.customerName,
         partnerName: assignedPartner.first_name,
+        date_partner: [formattedDate, formattedDate, " ", " "], 
+        date_user: [formattedDate, formattedDate, formattedDate, " ", " ", " "],
+        date_activity: [formattedDate, formattedDate, formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
         rejected_by: [],
         steps_done: 2, 
         steps_done_user: 3,
@@ -555,6 +573,9 @@ const assignTask = async(req, res) => {
 
       // Creating a new Job Order Document
 
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      const formattedDate = new Date().toLocaleDateString(undefined, options);
+
       const jobOrderDoc = {
         "_id.job_no": newFERNo,
         service: patentService,
@@ -566,6 +587,9 @@ const assignTask = async(req, res) => {
         domain: unassignedFERData.domain,
         customerName: unassignedFERData.customerName,
         partnerName: assignedPartner.first_name,
+        date_partner: [formattedDate, formattedDate, " ", " "], 
+        date_user: [formattedDate, formattedDate, formattedDate, " ", " ", " "],
+        date_activity: [formattedDate, formattedDate, formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
         rejected_by: [],
         steps_done: 2, 
         steps_done_user: 3,
@@ -648,6 +672,9 @@ const assignTask = async(req, res) => {
 
       // Creating a new Job Order Document
 
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      const formattedDate = new Date().toLocaleDateString(undefined, options);
+
       const jobOrderDoc = {
         "_id.job_no": newFTONo,
         service: patentService,
@@ -657,6 +684,9 @@ const assignTask = async(req, res) => {
         budget: unassignedFTOData.budget,
         status: unassignedFTOData.status,
         domain: unassignedFTOData.domain,
+        date_partner: [formattedDate, formattedDate, " ", " "], 
+        date_user: [formattedDate, formattedDate, formattedDate, " ", " ", " "],
+        date_activity: [formattedDate, formattedDate, formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
         customerName: unassignedFTOData.customerName,
         partnerName: assignedPartner.first_name,
         rejected_by: [],
@@ -739,6 +769,9 @@ const assignTask = async(req, res) => {
       console.error("Error in pushing the Job to Customer Schema: " + err);
     }); 
 
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = new Date().toLocaleDateString(undefined, options);
+
       // Creating a new Job Order Document
 
       const jobOrderDoc = {
@@ -750,6 +783,9 @@ const assignTask = async(req, res) => {
         budget: unassignedLandscapeData.budget,
         status: unassignedLandscapeData.status,
         domain: unassignedLandscapeData.domain,
+        date_partner: [formattedDate, formattedDate, " ", " "], 
+        date_user: [formattedDate, formattedDate, formattedDate, " ", " ", " "],
+        date_activity: [formattedDate, formattedDate, formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
         customerName: unassignedLandscapeData.customerName,
         partnerName: assignedPartner.first_name,
         rejected_by: [],
@@ -822,6 +858,9 @@ const assignTask = async(req, res) => {
 
       // Creating a new Job Order Document
 
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      const formattedDate = new Date().toLocaleDateString(undefined, options);
+
        // Push job details to the Customer 
     const findCustomer = await Customer.findOne({userID: unassignedPortfolioData.userID})
     if(!findCustomer) {
@@ -843,6 +882,9 @@ const assignTask = async(req, res) => {
         budget: unassignedPortfolioData.budget,
         status: unassignedPortfolioData.status,
         domain: unassignedPortfolioData.domain,
+        date_partner: [formattedDate, formattedDate, " ", " "], 
+        date_user: [formattedDate, formattedDate, formattedDate, " ", " ", " "],
+        date_activity: [formattedDate, formattedDate, formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
         customerName: unassignedPortfolioData.customerName,
         partnerName: assignedPartner.first_name,
         rejected_by: [],
@@ -914,6 +956,9 @@ const assignTask = async(req, res) => {
 
       // Creating a new Job Order Document
 
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      const formattedDate = new Date().toLocaleDateString(undefined, options);
+
        // Push job details to the Customer 
     const findCustomer = await Customer.findOne({userID: unassignedTranslationData.userID})
     if(!findCustomer) {
@@ -935,6 +980,9 @@ const assignTask = async(req, res) => {
         budget: unassignedTranslationData.budget,
         status: unassignedTranslationData.status,
         domain: unassignedTranslationData.domain,
+        date_partner: [formattedDate, formattedDate, " ", " "], 
+        date_user: [formattedDate, formattedDate, formattedDate, " ", " ", " "],
+        date_activity: [formattedDate, formattedDate, formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
         customerName: unassignedTranslationData.customerName,
         partnerName: assignedPartner.first_name,
         rejected_by: [],
@@ -1017,6 +1065,9 @@ const assignTask = async(req, res) => {
       console.error("Error in pushing the Job to Customer Schema: " + err);
     }); 
 
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = new Date().toLocaleDateString(undefined, options);
+
       // Creating a new Job Order Document
 
       const jobOrderDoc = {
@@ -1028,6 +1079,9 @@ const assignTask = async(req, res) => {
         budget: unassignedIllustrationData.budget,
         status: unassignedIllustrationData.status,
         domain: unassignedIllustrationData.domain,
+        date_partner: [formattedDate, formattedDate, " ", " "], 
+        date_user: [formattedDate, formattedDate, formattedDate, " ", " ", " "],
+        date_activity: [formattedDate, formattedDate, formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
         customerName: unassignedIllustrationData.customerName,
         partnerName: assignedPartner.first_name,
         rejected_by: [],
@@ -1111,6 +1165,9 @@ const assignTask = async(req, res) => {
       console.error("Error in pushing the Job to Customer Schema: " + err);
     }); 
 
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = new Date().toLocaleDateString(undefined, options);
+
       // Creating a new Job Order Document
 
       const jobOrderDoc = {
@@ -1122,6 +1179,9 @@ const assignTask = async(req, res) => {
         budget: unassignedWatchData.budget,
         status: unassignedWatchData.status,
         domain: unassignedWatchData.domain,
+        date_partner: [formattedDate, formattedDate, " ", " "], 
+        date_user: [formattedDate, formattedDate, formattedDate, " ", " ", " "],
+        date_activity: [formattedDate, formattedDate, formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
         customerName: unassignedWatchData.customerName,
         partnerName: assignedPartner.first_name,
         rejected_by: [],
@@ -1206,6 +1266,9 @@ const assignTask = async(req, res) => {
       console.error("Error in pushing the Job to Customer Schema: " + err);
     }); 
 
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = new Date().toLocaleDateString(undefined, options);
+
       // Creating a new Job Order Document
 
       const jobOrderDoc = {
@@ -1218,6 +1281,9 @@ const assignTask = async(req, res) => {
         status: unassignedLicenseData.status,
         domain: unassignedLicenseData.domain,
         customerName: unassignedLicenseData.customerName,
+        date_partner: [formattedDate, formattedDate, " ", " "], 
+        date_user: [formattedDate, formattedDate, formattedDate, " ", " ", " "],
+        date_activity: [formattedDate, formattedDate, formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
         partnerName: assignedPartner.first_name,
         rejected_by: [],
         steps_done: 2, 

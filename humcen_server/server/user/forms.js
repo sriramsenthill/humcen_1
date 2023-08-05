@@ -148,7 +148,7 @@ const createJobOrderPatentDrafting = async (req, res) => {
       endDate.setDate(endDate.getDate() + 7);
 
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
-      new Date().toLocaleDateString(undefined, options);
+      const formattedDate = new Date().toLocaleDateString(undefined, options);
   
       const newJobOrder = new JobOrder({
         _id: { job_no: newDraftingNo },
@@ -163,9 +163,9 @@ const createJobOrderPatentDrafting = async (req, res) => {
         steps_done: stepsInitial - 1,
         steps_done_user: stepsInitial,
         steps_done_activity: stepsInitial + 1,
-        date_partner: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " "], 
-        date_user: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " "],
-        date_activity: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " ", " ", " ", " "],
+        date_partner: [formattedDate, formattedDate, " ", " "], 
+        date_user: [formattedDate, " ", " ", " ", " ", " "],
+        date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
         status: "In Progress",
         budget: req.body.budget,
         domain: req.body.field,
@@ -272,7 +272,7 @@ const createJobOrderPatentFiling = async (req, res) => {
     endDate.setDate(endDate.getDate() + 7);
 
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    new Date().toLocaleDateString(undefined, options);
+    const formattedDate = new Date().toLocaleDateString(undefined, options);
 
     const newJobOrder = new JobOrder({
       _id: { job_no: newFilingNo },
@@ -287,9 +287,9 @@ const createJobOrderPatentFiling = async (req, res) => {
       steps_done: stepsInitial - 1, 
       steps_done_user: stepsInitial,
       steps_done_activity: stepsInitial + 1,
-      date_partner: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " "], 
-      date_user: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " "],
-      date_activity: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " ", " ", " ", " "],
+      date_partner: [formattedDate, formattedDate, " ", " "], 
+      date_user: [formattedDate, " ", " ", " ", " ", " "],
+      date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
       status: "In Progress",
       budget: req.body.budget,
       domain: req.body.field,
@@ -387,7 +387,7 @@ const savePatentSearchData = async (req, res) => {
     endDate.setDate(endDate.getDate() + 7);
 
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    new Date().toLocaleDateString(undefined, options);
+    const formattedDate = new Date().toLocaleDateString(undefined, options);
 
     const newJobOrder = new JobOrder({
       _id: { job_no: newSearchNo },
@@ -401,9 +401,9 @@ const savePatentSearchData = async (req, res) => {
       steps_done: stepsInitial - 1, 
       steps_done_user: stepsInitial,
       steps_done_activity: stepsInitial + 1,
-      date_partner: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " "], 
-      date_user: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " "],
-      date_activity: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " ", " ", " ", " "],
+      date_partner: [formattedDate, formattedDate, " ", " "], 
+      date_user: [formattedDate, " ", " ", " ", " ", " "],
+      date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
       budget: "To be Allocated",
       status: "In Progress",
       country: req.body.country,
@@ -507,7 +507,7 @@ const saveResponseToFerData = async (req, res) => {
     endDate.setDate(endDate.getDate() + 7);
 
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    new Date().toLocaleDateString(undefined, options);
+    const formattedDate = new Date().toLocaleDateString(undefined, options);
 
     const newJobOrder = new JobOrder({
       _id: { job_no: newResponseToFerNo },
@@ -522,9 +522,9 @@ const saveResponseToFerData = async (req, res) => {
       steps_done: stepsInitial - 1, 
       steps_done_user: stepsInitial,
       steps_done_activity: stepsInitial + 1,
-      date_partner: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " "], 
-      date_user: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " "],
-      date_activity: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " ", " ", " ", " "],
+      date_partner: [formattedDate, formattedDate, " ", " "], 
+      date_user: [formattedDate, " ", " ", " ", " ", " "],
+      date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
       status: "In Progress",
       budget: "To be Allocated",
       domain: req.body.field,
@@ -620,7 +620,7 @@ const saveFreedomToOperateData = async (req, res) => {
       endDate.setDate(endDate.getDate() + 7);
 
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
-      new Date().toLocaleDateString(undefined, options);
+      const formattedDate = new Date().toLocaleDateString(undefined, options);
   
       const newJobOrder = new JobOrder({
         _id: { job_no: newFTONo },
@@ -635,9 +635,9 @@ const saveFreedomToOperateData = async (req, res) => {
         steps_done: stepsInitial - 1, 
         steps_done_user: stepsInitial,
         steps_done_activity: stepsInitial + 1,
-        date_partner: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " "], 
-        date_user: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " "],
-        date_activity: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " ", " ", " ", " "],
+        date_partner: [formattedDate, formattedDate, " ", " "], 
+        date_user: [formattedDate, " ", " ", " ", " ", " "],
+        date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
         status: "In Progress",
         budget: "To be Allocated",
         domain: req.body.field,
@@ -740,7 +740,7 @@ const savePatentIllustrationData = async (req, res) => {
     endDate.setDate(endDate.getDate() + 7);
 
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    new Date().toLocaleDateString(undefined, options);
+    const formattedDate = new Date().toLocaleDateString(undefined, options);
 
     const newJobOrder = new JobOrder({
       _id: { job_no: newJobNo },
@@ -755,9 +755,9 @@ const savePatentIllustrationData = async (req, res) => {
       steps_done: stepsInitial - 1, 
       steps_done_user: stepsInitial,
       steps_done_activity: stepsInitial + 1,
-      date_partner: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " "], 
-      date_user: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " "],
-      date_activity: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " ", " ", " ", " "],
+      date_partner: [formattedDate, formattedDate, " ", " "], 
+      date_user: [formattedDate, " ", " ", " ", " ", " "],
+      date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
       country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
@@ -858,7 +858,7 @@ const savePatentLandscapeData = async (req, res) => {
     endDate.setDate(endDate.getDate() + 7);
 
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    new Date().toLocaleDateString(undefined, options);
+    const formattedDate = new Date().toLocaleDateString(undefined, options);
 
     const newJobOrder = new JobOrder({
       _id: { job_no: newJobNo },
@@ -873,9 +873,9 @@ const savePatentLandscapeData = async (req, res) => {
       steps_done: stepsInitial - 1, 
       steps_done_user: stepsInitial,
       steps_done_activity: stepsInitial + 1,
-      date_partner: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " "], 
-      date_user: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " "],
-      date_activity: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " ", " ", " ", " "],
+      date_partner: [formattedDate, formattedDate, " ", " "], 
+      date_user: [formattedDate, " ", " ", " ", " ", " "],
+      date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
       country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
@@ -977,7 +977,7 @@ const savePatentWatchData = async (req, res) => {
     endDate.setDate(endDate.getDate() + 7);
 
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    new Date().toLocaleDateString(undefined, options);
+    const formattedDate = new Date().toLocaleDateString(undefined, options);
 
     const newJobOrder = new JobOrder({
       _id: { job_no: newJobNo },
@@ -992,9 +992,9 @@ const savePatentWatchData = async (req, res) => {
       steps_done: stepsInitial - 1, 
       steps_done_user: stepsInitial,
       steps_done_activity: stepsInitial + 1,
-      date_partner: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " "], 
-      date_user: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " "],
-      date_activity: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " ", " ", " ", " "],
+      date_partner: [formattedDate, formattedDate, " ", " "], 
+      date_user: [formattedDate, " ", " ", " ", " ", " "],
+      date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
       country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
@@ -1095,7 +1095,7 @@ const savePatentLicenseData = async (req, res) => {
     endDate.setDate(endDate.getDate() + 7);
 
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    new Date().toLocaleDateString(undefined, options);
+    const formattedDate = new Date().toLocaleDateString(undefined, options);
 
     const newJobOrder = new JobOrder({
       _id: { job_no: newJobNo },
@@ -1110,9 +1110,9 @@ const savePatentLicenseData = async (req, res) => {
       steps_done: stepsInitial - 1, 
       steps_done_user: stepsInitial,
       steps_done_activity: stepsInitial + 1,
-      date_partner: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " "], 
-      date_user: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " "],
-      date_activity: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " ", " ", " ", " "],
+      date_partner: [formattedDate, formattedDate, " ", " "], 
+      date_user: [formattedDate, " ", " ", " ", " ", " "],
+      date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
       country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
@@ -1213,7 +1213,7 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
     endDate.setDate(endDate.getDate() + 7);
 
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    new Date().toLocaleDateString(undefined, options);
+    const formattedDate = new Date().toLocaleDateString(undefined, options);
 
     const newJobOrder = new JobOrder({
       _id: { job_no: newJobNo },
@@ -1228,9 +1228,9 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
       steps_done: stepsInitial - 1, 
       steps_done_user: stepsInitial,
       steps_done_activity: stepsInitial + 1,
-      date_partner: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " "], 
-      date_user: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " "],
-      date_activity: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " ", " ", " ", " "],
+      date_partner: [formattedDate, formattedDate, " ", " "], 
+      date_user: [formattedDate, " ", " ", " ", " ", " "],
+      date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
       country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
@@ -1333,7 +1333,7 @@ const savePatentTranslationData = async (req, res) => {
     endDate.setDate(endDate.getDate() + 7);
 
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    new Date().toLocaleDateString(undefined, options);
+    const formattedDate = new Date().toLocaleDateString(undefined, options);
 
     const newJobOrder = new JobOrder({
       _id: { job_no: newJobNo },
@@ -1348,9 +1348,9 @@ const savePatentTranslationData = async (req, res) => {
       steps_done: stepsInitial - 1, 
       steps_done_user: stepsInitial,
       steps_done_activity: stepsInitial + 1,
-      date_partner: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " "], 
-      date_user: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " "],
-      date_activity: [new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), new Date().toLocaleDateString(undefined, options), " ", " ", " ", " ", " ", " "],
+      date_partner: [formattedDate, formattedDate, " ", " "], 
+      date_user: [formattedDate, " ", " ", " ", " ", " "],
+      date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
       country: req.body.country,
       status: "In Progress",
       budget: "To be Allocated",
