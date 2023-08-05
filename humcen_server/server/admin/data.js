@@ -17,6 +17,7 @@ const patentWatch = require("../mongoose_schemas/patent_watch"); // Import Paten
 const patentLicense = require("../mongoose_schemas/patent_licensing"); // Import Patent Licensing Model
 const Customer=require("../mongoose_schemas/customer");
 const sendEmail = require("../email");
+const Notification = require("../mongoose_schemas/notification"); // Import Notification Model
 
 const getUsers = async (req, res) => {
   try {
@@ -149,6 +150,50 @@ const updateJobFilesDetails = async (req, res) => {
       console.log("No Job Files Present under Job No " + jobID);
     } else {
       console.log(req.body);
+      if(req.body.accessProvided === true)  {
+        console.log("Hey correct");
+        const findUserThroughJob = await JobOrder.findOne({"_id.job_no": jobID});
+        if(!findUserThroughJob) {
+          console.log("Can't able to find the Customer");
+        } else {
+          const thatCustomer = findUserThroughJob.userID;
+          const options = { year: 'numeric', month: 'long', day: 'numeric' };
+          const formattedDate = new Date().toLocaleDateString(undefined, options);
+
+          const acceptNotification = await Notification.findOne({user_Id: thatCustomer});
+          if(!acceptNotification) {
+            const newNotification = new Notification({
+              user_Id: thatCustomer,
+              notifications: [
+                {
+                  notifNum: 1,
+                  notifText: "Admin has given access for Verification of Work " + jobID,
+                  notifDate: formattedDate,
+                  seen: false,
+                }
+              ]
+            });
+            newNotification.save().then(() => {
+              console.log("Notification sent Successfully.");
+            }).catch((err) => {
+              console.error("Error in sending Notifications : " + err);
+            })
+          } else {
+            const accessGivenNotif = {
+              notifNum: acceptNotification.notifications.length + 1,
+              notifText: "Admin has given access for Verification of Work " + jobID,
+              notifDate: formattedDate,
+              seen: false,
+            }
+            acceptNotification.notifications.push(accessGivenNotif);
+            acceptNotification.save().then(() => {
+              console.log("Notification sent Successfully.")
+            }).catch((err) => {
+              console.error("Error in sending Notification : " + err);
+            });
+          }
+        }
+      }
       jobFile.access_provided = req.body.accessProvided;
       jobFile.verification = req.body.verification;
       jobFile.job_files = req.body.file ? {} : jobFile.job_files;

@@ -14,7 +14,7 @@ const Consultation = require("../mongoose_schemas/consultation");
 const Unassigned = require("../mongoose_schemas/unassigned"); // Import Unassigned Job Model
 const Drafting = require("../mongoose_schemas/patent_drafting");
 const Filing = require("../mongoose_schemas/patent_filing");
-
+const Notification = require("../mongoose_schemas/notification"); // Import Notification Model
 
 const getPartnerJobsById = async (req, res) => {
   try {
@@ -107,8 +107,6 @@ const acceptJobOrder = async (req, res) => {
       return res.status(404).json({ error: "Job order not found" });
     }
 
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    const formattedDate = new Date().toLocaleDateString(undefined, options);
     updatedJobOrder.Accepted = true;
     updatedJobOrder.steps_done = 2;
     updatedJobOrder.steps_done_user = 3;
@@ -132,6 +130,42 @@ const acceptJobOrder = async (req, res) => {
     partner.in_progress_jobs = partner.in_progress_jobs + 1;
     partner.save().then((response) => {console.log("Job added to In Progress section of Partner")})
     res.json({ message: "Job order accepted successfully" });
+
+
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = new Date().toLocaleDateString(undefined, options);
+    const assignedNotification = await Notification.findOne({ user_Id: Number(userID) });
+    if(!assignedNotification) {
+      const newNotification = new Notification({
+        user_Id: Number(userID),
+        notifications: [
+          {
+            notifNum: 1,
+            notifText: "Work  " + jobId+" has been assigned to Partner named " + partner.first_name + " " + partner.last_name + " Successfully.",
+            notifDate: formattedDate,
+            seen: false,
+          }
+        ] 
+      }).save().then(() => {
+        console.log("Notification sent Successfully.");
+      }).catch((err) => {
+        console.error("Error in sending Notification : " + err);
+      });
+    } else {
+      const oldNotification = {
+        notifNum: assignedNotification.notifications.length + 1,
+        notifText: "Work  " + jobId+" has been assigned to Partner named " + partner.first_name + " " + partner.last_name + " Successfully.",
+        notifDate: formattedDate,
+        seen: false,
+      }
+      assignedNotification.notifications.push(oldNotification);
+      assignedNotification.save().then(() => {
+        console.log("Notification sent Successfully.")
+      }).catch((err) => {
+        console.error("Error in sending Notifcation : " + err);
+      });
+    }
+
   } catch (error) {
     console.error("Error accepting job order:", error);
     res.status(500).json({ error: "Internal Server Error" });

@@ -151,6 +151,19 @@ const Notification = () => {
           <Typography variant="h4">Notifications</Typography>
           <Button variant="text">clear all</Button>
         </div>
+        { notifications.length === 0 && 
+          <Typography
+              variant="h5"
+              sx={{
+                fontSize: "14px",
+                color: "#260944",
+                fontWeight: "400",
+                mb: 1,
+              }}
+            >
+              No new Notifications to show up.
+            </Typography>
+        }
         <div className={styles.notification}>
           {/* <div className={styles.notificationList}>
             <Typography
@@ -169,6 +182,7 @@ const Notification = () => {
               11:47 PM Wednesday
             </Typography>
           </div> */}
+
           {notifications.map((notif) => (
             <div className={styles.notificationList}>
             <Typography
