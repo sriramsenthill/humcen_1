@@ -153,7 +153,7 @@ const  DynamicPage = () => {
 
   }, [id]); // Add 'id' as a dependency
 
-  console.log(job);
+ 
 
   // Visibility
 
@@ -193,7 +193,7 @@ const  DynamicPage = () => {
     return <div>No job found with the provided job number.</div>;
   }
 
-
+console.log(job)
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -254,7 +254,7 @@ const  DynamicPage = () => {
   };
 
   // Function to enable the Access for User's Download Button
-  const onUserAccess = async (jobId) => {
+  const onUserAccess = async (jobId,job) => {
     try {
       const token = localStorage.getItem("token");
       if(token) {
@@ -262,6 +262,7 @@ const  DynamicPage = () => {
           `http://localhost:3000/api/admin/job_files_details/${jobId}`,
           {
             accessProvided: true,
+            jobDetails:job,
             decision: true,
             verification: "Job Files sent to User for Verification.",
             reduction: true,
@@ -277,6 +278,7 @@ const  DynamicPage = () => {
             headers: {
               "Authorization": token,
               "Content-Type": "application/json",
+             
             },
           }
         );
@@ -506,7 +508,7 @@ const  DynamicPage = () => {
                           background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
                         },
                       }} // onUserAccess(job._id.job_no)
-                      onClick={()=> {  window.location.reload(true); onUserAccess(job._id.job_no)}}
+                      onClick={()=> {  window.location.reload(true); onUserAccess(job._id.job_no,job)}}
                     >
                       Accept the Work
                     </Button>

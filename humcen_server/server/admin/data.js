@@ -139,6 +139,10 @@ const getJobFiles = async (req, res) => {
 
 const updateJobFilesDetails = async (req, res) => {
   const jobID = req.params.jobID;
+  const jobData = req.body.jobDetails;
+  const user = await Customer.findOne({ userID: jobData.userID });
+  const jobFile = await JobFiles.findOne({"_id.job_no": jobID});
+  const {job_files}=jobFile
   try {
     const jobFile = await JobFiles.findOne({"_id.job_no": jobID});
     if(! jobFile) {
@@ -187,6 +191,32 @@ const updateJobFilesDetails = async (req, res) => {
       }
       jobFile.save()
       .then((response) => {
+        const subject = `Verification for your submission form with job no ${req.params.jobID}`;
+        const text = `Verify your ${jobData.service} form details from the partner`;
+        const attachments=[]
+        const tableData = [
+          { label: 'Service :', value: jobData.service },
+          { label: 'Customer Name :', value: jobData.customerName },
+          {label:'Country :',value:jobData.country},
+          {label:'Partner Name :',value:jobData.partnerName},
+          {label:'Status :',value:jobData.status},
+          // Add more rows as needed
+        ];
+
+        if (Array.isArray(job_files) && job_files.length > 0) {
+          // Iterate through the invention_details array and add each file as a separate attachment
+          for (const item of job_files) {
+            if (item.name && item.base64) {
+              const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+              attachments.push({
+                filename: item.name,
+                content: base64Content,
+                encoding: 'base64', // Specify that the content is base64-encoded
+              });
+            }
+          }
+        }
+        sendEmail(user.email, subject, text, tableData,attachments);
         console.log("Job File status Updated Successfully.")
       }).catch((err) => {
         console.log("Error in saving Job File Status", err);
