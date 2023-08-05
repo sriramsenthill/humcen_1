@@ -17,6 +17,7 @@ const Filing = require("../mongoose_schemas/patent_filing");
 const Unassigned = require("../mongoose_schemas/unassigned");
 const sendEmail = require("../email.js");
 const Notification = require("../mongoose_schemas/notification"); // Import Notification Model
+const NotificationPartner = require("../mongoose_schemas/notification_partner"); // Import Notification for Partner model
 
 // Define your API route for fetching job order data
 const getJobOrderOnID = async (req, res) => {
@@ -160,9 +161,9 @@ const createJobOrderPatentDrafting = async (req, res) => {
         country: req.body.country,
         start_date: startDate,
         end_date: endDate,
-        steps_done: stepsInitial - 1,
-        steps_done_user: stepsInitial,
-        steps_done_activity: stepsInitial + 1,
+        steps_done: 1,
+        steps_done_user: 1,
+        steps_done_activity: 2,
         date_partner: [formattedDate, " ", " ", " "], 
         date_user: [formattedDate, " ", " ", " ", " ", " "],
         date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " ", " ", " "],
@@ -174,6 +175,42 @@ const createJobOrderPatentDrafting = async (req, res) => {
       await newJobOrder.save();
   
       console.log("Successfully Assigned Patent Drafting Task to a Partner");
+
+      // To send notification to User
+      const notificationHub = await Notification.findOne({user_Id: userId});
+      if (!notificationHub) {
+        const newNotificationDoc = new Notification({
+          user_Id: userId,
+          notifications: [
+            {
+              notifNum: 1,
+              notifText: "Your Patent Drafting Form has been submitted successfully",
+              notifDate: formattedDate,
+              seen: false,
+            }
+          ]
+        })
+        newNotificationDoc.save().then(() => {
+          console.log("Notification sent Successfully");
+        }).catch((err) => {
+          console.error("Error in sending Notification : " + err);
+        })
+      } else {
+        const newNotification = {
+          notifNum: notificationHub.notifications.length + 1,
+          notifText: "Your Patent Drafting Form has been submitted successfully",
+          notifDate: formattedDate,
+          seen: false,
+        }
+        notificationHub.notifications.push(newNotification);
+        notificationHub.save().then(() => {
+          console.log("Notification sent Successfully");
+        }).catch((err) => {
+          console.error("Error in sending Notification : " + err);
+        });
+
+      }
+
       res.status(200).json(savedDrafting);
 
     }
@@ -319,9 +356,9 @@ const createJobOrderPatentFiling = async (req, res) => {
       country: req.body.country,
       start_date: startDate,
       end_date: endDate,
-      steps_done: stepsInitial - 1, 
-      steps_done_user: stepsInitial,
-      steps_done_activity: stepsInitial + 1,
+      steps_done: 1,
+      steps_done_user: 1,
+      steps_done_activity: 2,
       date_partner: [formattedDate, " ", " ", " "], 
       date_user: [formattedDate, " ", " ", " ", " ", " "],
       date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " ", " ", " "],
@@ -333,6 +370,43 @@ const createJobOrderPatentFiling = async (req, res) => {
     await newJobOrder.save();
 
     console.log("Successfully Assigned Patent Filing Task to a Partner");
+      // To send notification to User
+      const notificationHub = await Notification.findOne({user_Id: userId});
+      if (!notificationHub) {
+        const newNotificationDoc = new Notification({
+          user_Id: userId,
+          notifications: [
+            {
+              notifNum: 1,
+              notifText: "Your Patent Filing Form has been submitted successfully",
+              notifDate: formattedDate,
+              seen: false,
+            }
+          ]
+        })
+        newNotificationDoc.save().then(() => {
+          console.log("Notification sent Successfully");
+        }).catch((err) => {
+          console.error("Error in sending Notification : " + err);
+        })
+      } else {
+        const newNotification = {
+          notifNum: notificationHub.notifications.length + 1,
+          notifText: "Your Patent Filing Form has been submitted successfully",
+          notifDate: formattedDate,
+          seen: false,
+        }
+        notificationHub.notifications.push(newNotification);
+        notificationHub.save().then(() => {
+          console.log("Notification sent Successfully");
+        }).catch((err) => {
+          console.error("Error in sending Notification : " + err);
+        });
+
+      }
+
+    
+
     res.status(200).json(savedFiling);
 
     }
@@ -492,9 +566,9 @@ const savePatentSearchData = async (req, res) => {
       customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
       start_date: new Date(),
       end_date: endDate,
-      steps_done: stepsInitial - 1, 
-      steps_done_user: stepsInitial,
-      steps_done_activity: stepsInitial + 1,
+      steps_done: 1,
+      steps_done_user: 1,
+      steps_done_activity: 2,
       date_partner: [formattedDate, " ", " ", " "], 
       date_user: [formattedDate, " ", " ", " ", " ", " "],
       date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " ", " ", " "],
@@ -505,6 +579,42 @@ const savePatentSearchData = async (req, res) => {
     });
 
     await newJobOrder.save();
+
+      // To send notification to User
+      const notificationHub = await Notification.findOne({user_Id: userId});
+      if (!notificationHub) {
+        const newNotificationDoc = new Notification({
+          user_Id: userId,
+          notifications: [
+            {
+              notifNum: 1,
+              notifText: "Your Patent Search Form has been submitted successfully",
+              notifDate: formattedDate,
+              seen: false,
+            }
+          ]
+        })
+        newNotificationDoc.save().then(() => {
+          console.log("Notification sent Successfully");
+        }).catch((err) => {
+          console.error("Error in sending Notification : " + err);
+        })
+      } else {
+        const newNotification = {
+          notifNum: notificationHub.notifications.length + 1,
+          notifText: "Your Patent Search Form has been submitted successfully",
+          notifDate: formattedDate,
+          seen: false,
+        }
+        notificationHub.notifications.push(newNotification);
+        notificationHub.save().then(() => {
+          console.log("Notification sent Successfully");
+        }).catch((err) => {
+          console.error("Error in sending Notification : " + err);
+        });
+
+      }
+
 
     console.log("Successfully Assigned Patent Search Task to a Partner");
     res.status(200).json(savedSearch);
@@ -566,7 +676,7 @@ const saveResponseToFerData = async (req, res) => {
     responseToFerData.userID = userId;
 
 
-    let findPartner = await Partner.findOne({ is_free: true, ["known_fields.Response to FER/Office Action"]: true, country: req.body.country, in_progress_jobs: { $lt: 5 } });
+    let findPartner = await Partner.findOne({ is_free: true, ["known_fields.Response to FER Office Action"]: true, country: req.body.country, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
 
     if (!findPartner) {
@@ -638,9 +748,9 @@ const saveResponseToFerData = async (req, res) => {
       country: req.body.country,
       start_date: new Date(),
       end_date: endDate,
-      steps_done: stepsInitial - 1, 
-      steps_done_user: stepsInitial,
-      steps_done_activity: stepsInitial + 1,
+      steps_done: 1,
+      steps_done_user: 1,
+      steps_done_activity: 2,
       date_partner: [formattedDate, " ", " ", " "], 
       date_user: [formattedDate, " ", " ", " ", " ", " "],
       date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " ", " ", " "],
@@ -650,6 +760,41 @@ const saveResponseToFerData = async (req, res) => {
     });
 
     await newJobOrder.save();
+      // To send notification to User
+      const notificationHub = await Notification.findOne({user_Id: userId});
+      if (!notificationHub) {
+        const newNotificationDoc = new Notification({
+          user_Id: userId,
+          notifications: [
+            {
+              notifNum: 1,
+              notifText: "Your Response To FER/Office Action has been submitted successfully",
+              notifDate: formattedDate,
+              seen: false,
+            }
+          ]
+        })
+        newNotificationDoc.save().then(() => {
+          console.log("Notification sent Successfully");
+        }).catch((err) => {
+          console.error("Error in sending Notification : " + err);
+        })
+      } else {
+        const newNotification = {
+          notifNum: notificationHub.notifications.length + 1,
+          notifText: "Your Response To FER/Office Action Form has been submitted successfully",
+          notifDate: formattedDate,
+          seen: false,
+        }
+        notificationHub.notifications.push(newNotification);
+        notificationHub.save().then(() => {
+          console.log("Notification sent Successfully");
+        }).catch((err) => {
+          console.error("Error in sending Notification : " + err);
+        });
+
+      }
+
 
     console.log("Successfully Assigned Response to FER Task to a Partner");
     res.status(200).json(savedResponseToFer);
@@ -730,7 +875,7 @@ const saveFreedomToOperateData = async (req, res) => {
     const freedomToOperateData = req.body;
     freedomToOperateData.userID = userId;
 
-    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Freedom To Operate Search"]: true, in_progress_jobs: { $lt: 5 } });
+    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Freedom To Operate"]: true, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
 
     if (!findPartner) {
@@ -798,9 +943,9 @@ const saveFreedomToOperateData = async (req, res) => {
         country: req.body.country,
         start_date: new Date(),
         end_date: endDate,
-        steps_done: stepsInitial - 1, 
-        steps_done_user: stepsInitial,
-        steps_done_activity: stepsInitial + 1,
+        steps_done: 1,
+        steps_done_user: 1,
+        steps_done_activity: 2,
         date_partner: [formattedDate, " ", " ", " "], 
         date_user: [formattedDate, " ", " ", " ", " ", " "],
         date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " ", " ", " "],
@@ -810,6 +955,41 @@ const saveFreedomToOperateData = async (req, res) => {
       });
   
       await newJobOrder.save();
+        // To send notification to User
+        const notificationHub = await Notification.findOne({user_Id: userId});
+        if (!notificationHub) {
+          const newNotificationDoc = new Notification({
+            user_Id: userId,
+            notifications: [
+              {
+                notifNum: 1,
+                notifText: "Your Freedom To Operate Search Form has been submitted successfully",
+                notifDate: formattedDate,
+                seen: false,
+              }
+            ]
+          })
+          newNotificationDoc.save().then(() => {
+            console.log("Notification sent Successfully");
+          }).catch((err) => {
+            console.error("Error in sending Notification : " + err);
+          })
+        } else {
+          const newNotification = {
+            notifNum: notificationHub.notifications.length + 1,
+            notifText: "Your Freedom To Operate Search Form has been submitted successfully",
+            notifDate: formattedDate,
+            seen: false,
+          }
+          notificationHub.notifications.push(newNotification);
+          notificationHub.save().then(() => {
+            console.log("Notification sent Successfully");
+          }).catch((err) => {
+            console.error("Error in sending Notification : " + err);
+          });
+  
+        }
+  
   
       console.log("Successfully Assigned Freedom To Operate Task to a Partner");
   
@@ -962,9 +1142,9 @@ const savePatentIllustrationData = async (req, res) => {
       domain: req.body.field,
       start_date: new Date(),
       end_date: endDate,
-      steps_done: stepsInitial - 1, 
-      steps_done_user: stepsInitial,
-      steps_done_activity: stepsInitial + 1,
+      steps_done: 1,
+      steps_done_user: 1,
+      steps_done_activity: 2,
       date_partner: [formattedDate, " ", " ", " "], 
       date_user: [formattedDate, " ", " ", " ", " ", " "],
       date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " ", " ", " "],
@@ -974,6 +1154,42 @@ const savePatentIllustrationData = async (req, res) => {
     });
 
     await newJobOrder.save();
+
+      // To send notification to User
+      const notificationHub = await Notification.findOne({user_Id: userId});
+      if (!notificationHub) {
+        const newNotificationDoc = new Notification({
+          user_Id: userId,
+          notifications: [
+            {
+              notifNum: 1,
+              notifText: "Your Patent Illustration Form has been submitted successfully",
+              notifDate: formattedDate,
+              seen: false,
+            }
+          ]
+        })
+        newNotificationDoc.save().then(() => {
+          console.log("Notification sent Successfully");
+        }).catch((err) => {
+          console.error("Error in sending Notification : " + err);
+        })
+      } else {
+        const newNotification = {
+          notifNum: notificationHub.notifications.length + 1,
+          notifText: "Your Patent Illustration Form has been submitted successfully",
+          notifDate: formattedDate,
+          seen: false,
+        }
+        notificationHub.notifications.push(newNotification);
+        notificationHub.save().then(() => {
+          console.log("Notification sent Successfully");
+        }).catch((err) => {
+          console.error("Error in sending Notification : " + err);
+        });
+
+      }
+
 
     console.log("Successfully Assigned Patent Illustration to a Partner");
 
@@ -1112,9 +1328,9 @@ const savePatentLandscapeData = async (req, res) => {
       domain: req.body.field,
       start_date: new Date(),
       end_date: endDate,
-      steps_done: stepsInitial - 1, 
-      steps_done_user: stepsInitial,
-      steps_done_activity: stepsInitial + 1,
+      steps_done: 1,
+      steps_done_user: 1,
+      steps_done_activity: 2,
       date_partner: [formattedDate, " ", " ", " "], 
       date_user: [formattedDate, " ", " ", " ", " ", " "],
       date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " ", " ", " "],
@@ -1124,6 +1340,42 @@ const savePatentLandscapeData = async (req, res) => {
     });
 
     await newJobOrder.save();
+
+      // To send notification to User
+      const notificationHub = await Notification.findOne({user_Id: userId});
+      if (!notificationHub) {
+        const newNotificationDoc = new Notification({
+          user_Id: userId,
+          notifications: [
+            {
+              notifNum: 1,
+              notifText: "Your Freedom To Patent Landscape Form has been submitted successfully",
+              notifDate: formattedDate,
+              seen: false,
+            }
+          ]
+        })
+        newNotificationDoc.save().then(() => {
+          console.log("Notification sent Successfully");
+        }).catch((err) => {
+          console.error("Error in sending Notification : " + err);
+        })
+      } else {
+        const newNotification = {
+          notifNum: notificationHub.notifications.length + 1,
+          notifText: "Your Freedom To Patent Landscape Form has been submitted successfully",
+          notifDate: formattedDate,
+          seen: false,
+        }
+        notificationHub.notifications.push(newNotification);
+        notificationHub.save().then(() => {
+          console.log("Notification sent Successfully");
+        }).catch((err) => {
+          console.error("Error in sending Notification : " + err);
+        });
+
+      }
+
 
     console.log("Successfully Assigned Patent Landscape to a Partner");
 
@@ -1245,9 +1497,9 @@ const savePatentWatchData = async (req, res) => {
       domain: req.body.field,
       start_date: new Date(),
       end_date: endDate,
-      steps_done: stepsInitial - 1, 
-      steps_done_user: stepsInitial,
-      steps_done_activity: stepsInitial + 1,
+      steps_done: 1,
+      steps_done_user: 1,
+      steps_done_activity: 2,
       date_partner: [formattedDate, " ", " ", " "], 
       date_user: [formattedDate, " ", " ", " ", " ", " "],
       date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " ", " ", " "],
@@ -1257,6 +1509,42 @@ const savePatentWatchData = async (req, res) => {
     });
 
     await newJobOrder.save();
+
+      // To send notification to User
+      const notificationHub = await Notification.findOne({user_Id: userId});
+      if (!notificationHub) {
+        const newNotificationDoc = new Notification({
+          user_Id: userId,
+          notifications: [
+            {
+              notifNum: 1,
+              notifText: "Your Patent Watch Form has been submitted successfully",
+              notifDate: formattedDate,
+              seen: false,
+            }
+          ]
+        })
+        newNotificationDoc.save().then(() => {
+          console.log("Notification sent Successfully");
+        }).catch((err) => {
+          console.error("Error in sending Notification : " + err);
+        })
+      } else {
+        const newNotification = {
+          notifNum: notificationHub.notifications.length + 1,
+          notifText: "Your Patent Watch Form has been submitted successfully",
+          notifDate: formattedDate,
+          seen: false,
+        }
+        notificationHub.notifications.push(newNotification);
+        notificationHub.save().then(() => {
+          console.log("Notification sent Successfully");
+        }).catch((err) => {
+          console.error("Error in sending Notification : " + err);
+        });
+
+      }
+
 
     console.log("Successfully Assigned Patent Watch to a Partner");
 
@@ -1378,9 +1666,9 @@ const savePatentLicenseData = async (req, res) => {
       domain: req.body.field,
       start_date: new Date(),
       end_date: endDate,
-      steps_done: stepsInitial - 1, 
-      steps_done_user: stepsInitial,
-      steps_done_activity: stepsInitial + 1,
+      steps_done: 1,
+      steps_done_user: 1,
+      steps_done_activity: 2,
       date_partner: [formattedDate, " ", " ", " "], 
       date_user: [formattedDate, " ", " ", " ", " ", " "],
       date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " ", " ", " "],
@@ -1390,6 +1678,42 @@ const savePatentLicenseData = async (req, res) => {
     });
 
     await newJobOrder.save();
+
+      // To send notification to User
+      const notificationHub = await Notification.findOne({user_Id: userId});
+      if (!notificationHub) {
+        const newNotificationDoc = new Notification({
+          user_Id: userId,
+          notifications: [
+            {
+              notifNum: 1,
+              notifText: "Your Patent Licensing and Commercialization Form has been submitted successfully",
+              notifDate: formattedDate,
+              seen: false,
+            }
+          ]
+        })
+        newNotificationDoc.save().then(() => {
+          console.log("Notification sent Successfully");
+        }).catch((err) => {
+          console.error("Error in sending Notification : " + err);
+        })
+      } else {
+        const newNotification = {
+          notifNum: notificationHub.notifications.length + 1,
+          notifText: "Your Patent Licensing and Commercialization Form has been submitted successfully",
+          notifDate: formattedDate,
+          seen: false,
+        }
+        notificationHub.notifications.push(newNotification);
+        notificationHub.save().then(() => {
+          console.log("Notification sent Successfully");
+        }).catch((err) => {
+          console.error("Error in sending Notification : " + err);
+        });
+
+      }
+
 
     console.log("Successfully Assigned Patent Licensing and Commercialization Services Task to a Partner");
 
@@ -1440,7 +1764,7 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
     const patentPortfolioData = req.body;
     patentPortfolioData.userID = userId;
 
-    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Freedom to Patent Portfolio Analysis"]: true, in_progress_jobs: { $lt: 5 } });
+    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Patent Portfolio Analysis"]: true, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
 
     if (!findCustomer) {
@@ -1511,9 +1835,9 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
       domain: req.body.field,
       start_date: new Date(),
       end_date: endDate,
-      steps_done: stepsInitial - 1, 
-      steps_done_user: stepsInitial,
-      steps_done_activity: stepsInitial + 1,
+      steps_done: 1,
+      steps_done_user: 1,
+      steps_done_activity: 2,
       date_partner: [formattedDate, " ", " ", " "], 
       date_user: [formattedDate, " ", " ", " ", " ", " "],
       date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " ", " ", " "],
@@ -1523,6 +1847,42 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
     });
 
     await newJobOrder.save();
+
+      // To send notification to User
+      const notificationHub = await Notification.findOne({user_Id: userId});
+      if (!notificationHub) {
+        const newNotificationDoc = new Notification({
+          user_Id: userId,
+          notifications: [
+            {
+              notifNum: 1,
+              notifText: "Your Patent Portfolio Analysis Form has been submitted successfully",
+              notifDate: formattedDate,
+              seen: false,
+            }
+          ]
+        })
+        newNotificationDoc.save().then(() => {
+          console.log("Notification sent Successfully");
+        }).catch((err) => {
+          console.error("Error in sending Notification : " + err);
+        })
+      } else {
+        const newNotification = {
+          notifNum: notificationHub.notifications.length + 1,
+          notifText: "Your Patent Portfolio Analysis Form has been submitted successfully",
+          notifDate: formattedDate,
+          seen: false,
+        }
+        notificationHub.notifications.push(newNotification);
+        notificationHub.save().then(() => {
+          console.log("Notification sent Successfully");
+        }).catch((err) => {
+          console.error("Error in sending Notification : " + err);
+        });
+
+      }
+
 
     console.log("Successfully Assigned Patent Portfolio Analysis Task to a Partner");
 
@@ -1586,13 +1946,14 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
 
 const savePatentTranslationData = async (req, res) => {
   try {
+    console.log(req.body);
     const userId = req.userId;
     let stepsInitial = 0;
     const patentTranslationData = req.body;
     patentTranslationData.userID = userId;
 
 
-    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Patent Translation Service"]: true, in_progress_jobs: { $lt: 5 } });
+    let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Patent Translation Services"]: true, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
 
     if (!findCustomer) {
@@ -1663,9 +2024,9 @@ const savePatentTranslationData = async (req, res) => {
       domain: req.body.field,
       start_date: new Date(),
       end_date: endDate,
-      steps_done: stepsInitial - 1, 
-      steps_done_user: stepsInitial,
-      steps_done_activity: stepsInitial + 1,
+      steps_done: 1,
+      steps_done_user: 1,
+      steps_done_activity: 2,
       date_partner: [formattedDate, " ", " ", " "], 
       date_user: [formattedDate, " ", " ", " ", " ", " "],
       date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " ", " ", " "],
@@ -1675,6 +2036,42 @@ const savePatentTranslationData = async (req, res) => {
     });
 
     await newJobOrder.save();
+
+      // To send notification to User
+      const notificationHub = await Notification.findOne({user_Id: userId});
+      if (!notificationHub) {
+        const newNotificationDoc = new Notification({
+          user_Id: userId,
+          notifications: [
+            {
+              notifNum: 1,
+              notifText: "Your Patent Translation Services Form has been submitted successfully",
+              notifDate: formattedDate,
+              seen: false,
+            }
+          ]
+        })
+        newNotificationDoc.save().then(() => {
+          console.log("Notification sent Successfully");
+        }).catch((err) => {
+          console.error("Error in sending Notification : " + err);
+        })
+      } else {
+        const newNotification = {
+          notifNum: notificationHub.notifications.length + 1,
+          notifText: "Your Patent Translation Services Form has been submitted successfully",
+          notifDate: formattedDate,
+          seen: false,
+        }
+        notificationHub.notifications.push(newNotification);
+        notificationHub.save().then(() => {
+          console.log("Notification sent Successfully");
+        }).catch((err) => {
+          console.error("Error in sending Notification : " + err);
+        });
+
+      }
+
 
     console.log("Successfully Assigned Patent Translation Services Task to a Partner");
 

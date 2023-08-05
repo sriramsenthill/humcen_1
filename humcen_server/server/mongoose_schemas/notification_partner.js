@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const NotificationSchema = new mongoose.Schema({
+const NotificationPartnerSchema = new mongoose.Schema({
     user_Id: {
         type: Number,
     },
@@ -8,7 +8,7 @@ const NotificationSchema = new mongoose.Schema({
         {
         notifNum: {
             type: Number,
-            default: 1,
+            default: 0,
         },
         notifText: {
             type: String,
@@ -24,6 +24,6 @@ const NotificationSchema = new mongoose.Schema({
     ]
 });
 
-const NotificationModel = mongoose.model('Notification', NotificationSchema, 'notification');
+const NotificationPartnerModel = mongoose.model('NotificationPartner', NotificationPartnerSchema, 'notification_partner');
 
-module.exports = NotificationModel;
+module.exports = NotificationPartnerModel;

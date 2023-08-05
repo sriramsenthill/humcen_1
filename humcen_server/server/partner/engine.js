@@ -107,18 +107,27 @@ const acceptJobOrder = async (req, res) => {
       return res.status(404).json({ error: "Job order not found" });
     }
 
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
     const formattedDate = new Date().toLocaleDateString(undefined, options);
     updatedJobOrder.Accepted = true;
-    
+    updatedJobOrder.steps_done = 2;
+    updatedJobOrder.steps_done_user = 3;
+    updatedJobOrder.steps_done_activity = 4;
     for (let steps=1; steps < 3; steps++) {
       updatedJobOrder.date_user[steps] = formattedDate;
     }
-    for (let steps=2; steps < 5; steps++) {
+    for (let steps=2; steps < 4; steps++) {
       updatedJobOrder.date_activity[steps] = formattedDate;
     }
-    for (let steps=1; steps < 3; steps++) {
+    for (let steps=1; steps < 2; steps++) {
       updatedJobOrder.date_partner[steps] = formattedDate;
     }
+
+    updatedJobOrder.save().then(() => {
+      console.log("Job Order saved successfully.");
+    }). catch((err) => {
+      console.log("Error in saving Job Order");
+    })
 
     partner.in_progress_jobs = partner.in_progress_jobs + 1;
     partner.save().then((response) => {console.log("Job added to In Progress section of Partner")})
