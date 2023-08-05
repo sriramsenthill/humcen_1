@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 
-const sendEmail = async (to, subject, text) => {
+const sendEmail = async (to, subject, text, tableData,attachments) => {
   try {
     const transporter = nodemailer.createTransport({
       service: 'gmail', // Replace with the email service you want to use (e.g., Gmail, Outlook, etc.)
@@ -13,17 +13,28 @@ const sendEmail = async (to, subject, text) => {
       },
     });
    
+ // Prepare the HTML table from tableData
+ const tableRows = tableData.map((row) => {
+  return `<tr><td>${row.label}</td><td>${row.value}</td></tr>`;
+});
 
+// Prepare the email body with the table and text
+const emailBody = `<p>${text}</p>
+  <table style="border-collapse: collapse; width: 100%;">
+    <tbody>${tableRows.join('')}</tbody>
+  </table>`;
 
-    const mailOptions = {
-      from: 'senthilnathan.shanmugam2003@gmail.com', // Replace with your email address
-      to: 'shaiksuhail0728@gmail.com', // The user's email address fetched from MongoDB
-      subject: subject,
-      text: text,
-    };
+const mailOptions = {
+  from: 'senthilnathan.shanmugam2003@gmail.com', // Replace with your email address
+  to: 'shaiksuhail0728@gmail.com', // The user's email address fetched from MongoDB
+  subject: subject,
+  html: emailBody,
+  attachments:attachments,
+  // An array of file attachments (if any)
+};
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log('Email sent: ' + info.response);
+const info = await transporter.sendMail(mailOptions);
+console.log('Email sent: ' + info.response);
   } catch (error) {
     console.log('Error sending email:', error);
   }

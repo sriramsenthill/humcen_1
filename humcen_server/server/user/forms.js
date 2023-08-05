@@ -177,20 +177,55 @@ const createJobOrderPatentDrafting = async (req, res) => {
       res.status(200).json(savedDrafting);
 
     }
+  
         // Fetch user's email from MongoDB and send the email
         const user = await Customer.findOne({ userID: userId });
+        const attachments = [];
         if (user && user.email) {
           const subject = 'Patent Drafting Submission Successful';
-          const text = 'Your patent drafting form has been submitted successfully.';
-          sendEmail(user.email, subject, text);
-        }
-        if (findPartner){
-          const partnerSubject="Request to accept the Patent Drafting Form"
-          const partnerText="Accept the submission for Patent Drafting Form"
-          sendEmail(findPartner.email,partnerSubject,partnerText);
-        }
+          const text = 'Your Patent Drafting form has been submitted successfully.';
+          
+          // Prepare the data for the table in the email
+          const tableData = [
+            { label: 'Service :', value: 'Patent Drafting' },
+            { label: 'Customer Name :', value: findCustomer.first_name },
+            {label:'Domain :',value:req.body.domain},
+            {label:'Country :',value:req.body.country},
+            {label:'Job Title :',value:req.body.job_title},
+            {label:'Budget :',value:req.body.budget},
+            {label:'Time Of Delivery :',value:req.body.time_of_delivery},
+            // Add more rows as needed
+          ];
 
-    
+          const { invention_details } = req.body.service_specific_files;
+          
+          // Ensure invention_details is an array and not empty
+          if (Array.isArray(invention_details) && invention_details.length > 0) {
+            // Iterate through the invention_details array and add each file as a separate attachment
+            for (const item of invention_details) {
+              if (item.name && item.base64) {
+                const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+                attachments.push({
+                  filename: item.name,
+                  content: base64Content,
+                  encoding: 'base64', // Specify that the content is base64-encoded
+                });
+              }
+            }
+          }
+          
+          // Send the email with tableData and attachments
+          sendEmail(user.email, subject, text, tableData,attachments);
+          if (findPartner){
+            const partnerSubject="Request to accept the Patent Drafting Form"
+            const partnerText="Accept the submission for Patent Drafting Form"
+            sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments)
+          }
+          }
+          
+  
+
+      
 
   } catch (error) {
     console.error("Error creating Patent Drafting Order:", error);
@@ -302,16 +337,75 @@ const createJobOrderPatentFiling = async (req, res) => {
 
     }
     const user = await Customer.findOne({ userID: userId });
-    if (user && user.email) {
-      const subject = 'Patent Filing Submission Successful';
-      const text = 'Your patent filing form has been submitted successfully.';
-      sendEmail(user.email, subject, text);
-    }
+    const attachments = [];
+        if (user && user.email) {
+          const subject = 'Patent Filing Submission Successful';
+          const text = 'Your Patent Filing form has been submitted successfully.';
+          
+          // Prepare the data for the table in the email
+          const tableData = [
+            { label: 'Service :', value: 'Patent Filing' },
+            { label: 'Customer Name :', value: findCustomer.first_name },
+            {label:'Domain :',value:req.body.domain},
+            {label:'Country :',value:req.body.country},
+            {label:'Job Title :',value:req.body.job_title},
+            {label:'Application Type :',value:req.body.service_specific_files.application_type},
+            {label:'Budget :',value:req.body.budget},
+            {label:'Time Of Delivery :',value:req.body.time_of_delivery},
+            // Add more rows as needed
+          ];
+
+          const { details,applicants,investors } = req.body.service_specific_files;
+          
+          // Ensure invention_details is an array and not empty
+          if (Array.isArray(details) && details.length > 0) {
+            // Iterate through the invention_details array and add each file as a separate attachment
+            for (const item of details) {
+              if (item.name && item.base64) {
+                const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+                attachments.push({
+                  filename: item.name,
+                  content: base64Content,
+                  encoding: 'base64', // Specify that the content is base64-encoded
+                });
+              }
+            }
+          }
+          if (Array.isArray(applicants) && applicants.length > 0) {
+            // Iterate through the invention_details array and add each file as a separate attachment
+            for (const item of applicants) {
+              if (item.name && item.base64) {
+                const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+                attachments.push({
+                  filename: item.name,
+                  content: base64Content,
+                  encoding: 'base64', // Specify that the content is base64-encoded
+                });
+              }
+            }
+          }
+          if (Array.isArray(investors) && investors.length > 0) {
+            // Iterate through the invention_details array and add each file as a separate attachment
+            for (const item of investors) {
+              if (item.name && item.base64) {
+                const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+                attachments.push({
+                  filename: item.name,
+                  content: base64Content,
+                  encoding: 'base64', // Specify that the content is base64-encoded
+                });
+              }
+            }
+          }
+          
+          // Send the email with tableData and attachments
+          sendEmail(user.email, subject, text, tableData,attachments);
     if (findPartner){
       const partnerSubject="Request to accept the Patent Filing Form"
       const partnerText="Accept the submission for Patent Filing Form"
-      sendEmail(findPartner.email,partnerSubject,partnerText);
+      sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
     }
+  }
 
     
   } catch (error) {
@@ -417,20 +511,45 @@ const savePatentSearchData = async (req, res) => {
 
     }
     const user = await Customer.findOne({ userID: userId });
-    if (user && user.email) {
-      const subject = 'Patent Search Submission Successful';
-      const text = 'Your patent search form has been submitted successfully.';
-      sendEmail(user.email, subject, text);
-    }
-    if (findPartner){
-      const partnerSubject="Request to accept the Patent Search Form"
-      const partnerText="Accept the submission for Patent Search Form"
-      sendEmail(findPartner.email,partnerSubject,partnerText);
-    }
-
-
-    
-    
+    const attachments = [];
+        if (user && user.email) {
+          const subject = 'Patent Search Submission Successful';
+          const text = 'Your Patent Search form has been submitted successfully.';
+          
+          // Prepare the data for the table in the email
+          const tableData = [
+            { label: 'Service :', value: 'Patent Search' },
+            { label: 'Customer Name :', value: findCustomer.first_name },
+            {label:'Domain :',value:req.body.field},
+            {label:'Country :',value:req.body.country},
+            {label:'Invention Description :',value:req.body.invention_description},
+            // Add more rows as needed
+          ];
+         const fileData=req.body.technical_diagram
+          
+          // Ensure invention_details is an array and not empty
+          if (Array.isArray(fileData) && fileData.length > 0) {
+            // Iterate through the invention_details array and add each file as a separate attachment
+            for (const item of fileData) {
+              if (item.name && item.base64) {
+                const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+                attachments.push({
+                  filename: item.name,
+                  content: base64Content,
+                  encoding: 'base64', // Specify that the content is base64-encoded
+                });
+              }
+            }
+          }
+          
+          // Send the email with tableData and attachments
+          sendEmail(user.email, subject, text, tableData,attachments);
+          if (findPartner){
+            const partnerSubject="Request to accept the Patent Search Form"
+            const partnerText="Accept the submission for Patent Search Form"
+            sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
+          }
+        }
   } catch (error) {
     console.error("Error creating Search Order:", error);
     res.status(500).send("Error creating Search Order");
@@ -537,16 +656,63 @@ const saveResponseToFerData = async (req, res) => {
 
     }
     const user = await Customer.findOne({ userID: userId });
+    const attachments = [];
     if (user && user.email) {
       const subject = 'Response To FER Office Action Submission Successful';
       const text = 'Your Response To FER Office Action form has been submitted successfully.';
-      sendEmail(user.email, subject, text);
+      
+      // Prepare the data for the table in the email
+      const tableData = [
+        { label: 'Service :', value: 'Response To FER Office Action' },
+        { label: 'Customer Name :', value: findCustomer.first_name },
+        {label:'Domain :',value:req.body.field},
+        {label:'Country :',value:req.body.country},
+        {label:'Response Strategy :',value:req.body.response_strategy},
+
+        // Add more rows as needed
+      ];
+
+      const ferFileData=req.body.fer
+      const completeSpecificationsFileData=req.body.complete_specifications
+      
+      // Ensure invention_details is an array and not empty
+      if (Array.isArray(ferFileData) && ferFileData.length > 0) {
+        // Iterate through the invention_details array and add each file as a separate attachment
+        for (const item of ferFileData) {
+          if (item.name && item.base64) {
+            const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+            attachments.push({
+              filename: item.name,
+              content: base64Content,
+              encoding: 'base64', // Specify that the content is base64-encoded
+            });
+          }
+        }
+      }
+
+      if (Array.isArray(completeSpecificationsFileData) && completeSpecificationsFileData.length > 0) {
+        // Iterate through the invention_details array and add each file as a separate attachment
+        for (const item of completeSpecificationsFileData) {
+          if (item.name && item.base64) {
+            const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+            attachments.push({
+              filename: item.name,
+              content: base64Content,
+              encoding: 'base64', // Specify that the content is base64-encoded
+            });
+          }
+        }
+      }
+      
+      // Send the email with tableData and attachments
+      sendEmail(user.email, subject, text, tableData,attachments);
+      if (findPartner){
+        const partnerSubject="Request to accept the Response To FER Office Action Form"
+        const partnerText="Accept the submission for Response To FER Office Action Form"
+        sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
+      }
     }
-    if (findPartner){
-      const partnerSubject="Request to accept the Response To FER Office Action Form"
-      const partnerText="Accept the submission for Response To FER Office Action Form"
-      sendEmail(findPartner.email,partnerSubject,partnerText);
-    }
+ 
 
 
     
@@ -651,17 +817,61 @@ const saveFreedomToOperateData = async (req, res) => {
 
     }
     const user = await Customer.findOne({ userID: userId });
+    const attachments = [];
     if (user && user.email) {
       const subject = 'Freedom To Operate Search Submission Successful';
       const text = 'Your Freedom To Operate Search form has been submitted successfully.';
-      sendEmail(user.email, subject, text);
-    }
-    if (findPartner){
-      const partnerSubject="Request to accept the Freedom To Operate Search Form"
-      const partnerText="Accept the submission for Freedom To Operate Search Form"
-      sendEmail(findPartner.email,partnerSubject,partnerText);
-    }
+      
+      // Prepare the data for the table in the email
+      const tableData = [
+        { label: 'Service :', value: 'Freedom To Operate Search' },
+        { label: 'Customer Name :', value: findCustomer.first_name },
+        {label:'Domain :',value:req.body.field},
+        {label:'Country :',value:req.body.country},
+        // Add more rows as needed
+      ];
 
+      const inventionDescriptionFile=req.body.invention_description
+      const patentApplicationFile=req.body.patent_application_details
+      
+      // Ensure invention_details is an array and not empty
+      if (Array.isArray(inventionDescriptionFile) && inventionDescriptionFile.length > 0) {
+        // Iterate through the invention_details array and add each file as a separate attachment
+        for (const item of inventionDescriptionFile) {
+          if (item.name && item.base64) {
+            const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+            attachments.push({
+              filename: item.name,
+              content: base64Content,
+              encoding: 'base64', // Specify that the content is base64-encoded
+            });
+          }
+        }
+      }
+
+      if (Array.isArray(patentApplicationFile) && patentApplicationFile.length > 0) {
+        // Iterate through the invention_details array and add each file as a separate attachment
+        for (const item of patentApplicationFile) {
+          if (item.name && item.base64) {
+            const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+            attachments.push({
+              filename: item.name,
+              content: base64Content,
+              encoding: 'base64', // Specify that the content is base64-encoded
+            });
+          }
+        }
+      }
+      
+      // Send the email with tableData and attachments
+      sendEmail(user.email, subject, text, tableData,attachments);
+      if (findPartner){
+    
+        const partnerSubject="Request to accept the Freedom To Operate Search Form"
+        const partnerText="Accept the submission for Freedom To Operate Search Form"
+        sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
+      }
+    }
 
   } catch (error) {
     console.error("Error creating Freedom To Operate:", error);
@@ -772,16 +982,48 @@ const savePatentIllustrationData = async (req, res) => {
     }
 
     const user = await Customer.findOne({ userID: userId });
+    const attachments = [];
     if (user && user.email) {
       const subject = 'Patent Illustration Submission Successful';
       const text = 'Your Patent Illustration form has been submitted successfully.';
-      sendEmail(user.email, subject, text);
-    }
+      
+      // Prepare the data for the table in the email
+      const tableData = [
+        { label: 'Service :', value: 'Patent Illustration' },
+        { label: 'Customer Name :', value: findCustomer.first_name },
+        {label:'Domain :',value:req.body.field},
+        {label:'Country :',value:req.body.country},
+        {label:'Patent Specifications :',value:req.body.patent_specifications},
+        {label:'Drawing Requirements :',value:req.body.drawing_requirements},
+        // Add more rows as needed
+      ];
+
+      const preferredStyleFile=req.body.preferred_style
+    
+      
+      // Ensure invention_details is an array and not empty
+      if (Array.isArray(preferredStyleFile) && preferredStyleFile.length > 0) {
+        // Iterate through the invention_details array and add each file as a separate attachment
+        for (const item of preferredStyleFile) {
+          if (item.name && item.base64) {
+            const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+            attachments.push({
+              filename: item.name,
+              content: base64Content,
+              encoding: 'base64', // Specify that the content is base64-encoded
+            });
+          }
+        }
+      }
+      
+      // Send the email with tableData and attachments
+      sendEmail(user.email, subject, text, tableData,attachments);
     if (findPartner){
       const partnerSubject="Request to accept the Patent Illustration Form"
       const partnerText="Accept the submission for Patent Illustration Form"
-      sendEmail(findPartner.email,partnerSubject,partnerText);
+      sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
     }
+  }
     
   } catch (error) {
     console.error("Error creating job order:", error);
@@ -892,16 +1134,30 @@ const savePatentLandscapeData = async (req, res) => {
 
     
     const user = await Customer.findOne({ userID: userId });
+    const attachments = [];
     if (user && user.email) {
       const subject = 'Freedom to Patent Landscape Submission Successful';
       const text = 'Your Freedom to Patent Landscape form has been submitted successfully.';
-      sendEmail(user.email, subject, text);
-    }
+      
+      // Prepare the data for the table in the email
+      const tableData = [
+        { label: 'Service :', value: 'Freedom to Patent Landscape' },
+        { label: 'Customer Name :', value: findCustomer.first_name },
+        {label:'Domain :',value:req.body.field},
+        {label:'Country :',value:req.body.country},
+        {label:'Technology Description :',value:req.body.technology_description},
+        {label:'Competitor Information :',value:req.body.competitor_information},
+        
+      ];
+      
+      // Send the email with tableData and attachments
+      sendEmail(user.email, subject, text, tableData,attachments);
     if (findPartner){
       const partnerSubject="Request to accept the Freedom to Patent Landscape Form"
       const partnerText="Accept the submission for Freedom to Patent Landscape Form"
-      sendEmail(findPartner.email,partnerSubject,partnerText);
+      sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
     }
+  }
     
   } catch (error) {
     console.error("Error creating job order:", error);
@@ -1009,16 +1265,31 @@ const savePatentWatchData = async (req, res) => {
     }
 
     const user = await Customer.findOne({ userID: userId });
+    const attachments = [];
     if (user && user.email) {
       const subject = 'Patent Watch Submission Successful';
       const text = 'Your Patent Watch form has been submitted successfully.';
-      sendEmail(user.email, subject, text);
-    }
+      
+      // Prepare the data for the table in the email
+      const tableData = [
+        { label: 'Service :', value: 'Patent Watch' },
+        { label: 'Customer Name :', value: findCustomer.first_name },
+        {label:'Domain :',value:req.body.field},
+        {label:'Country :',value:req.body.country},
+        {label:'Technology or Industry Focus :',value:req.body.industry_focus},
+        {label:'Competitor Information :',value:req.body.competitor_information},
+        {label:'Geographic Scope :',value:req.body.geographic_scope},
+        {label:'Monitoring Duration :',value:req.body.monitoring_duration},
+        // Add more rows as needed
+      ];
+      // Send the email with tableData and attachments
+      sendEmail(user.email, subject, text, tableData,attachments);
     if (findPartner){
       const partnerSubject="Request to accept the Patent Watch Form"
       const partnerText="Accept the submission for Patent Watch Form"
-      sendEmail(findPartner.email,partnerSubject,partnerText);
+      sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
     }
+  }
 
     
     
@@ -1126,16 +1397,31 @@ const savePatentLicenseData = async (req, res) => {
     }
 
     const user = await Customer.findOne({ userID: userId });
+    const attachments = [];
     if (user && user.email) {
       const subject = 'Patent Licensing and Commercialization Services Submission Successful';
       const text = 'Your Patent Licensing and Commercialization Services form has been submitted successfully.';
-      sendEmail(user.email, subject, text);
-    }
+      
+      // Prepare the data for the table in the email
+      const tableData = [
+        { label: 'Service :', value: 'Patent Licensing and Commercialization Services' },
+        { label: 'Customer Name :', value: findCustomer.first_name },
+        {label:'Domain :',value:req.body.field},
+        {label:'Country :',value:req.body.country},
+        {label:'Patent Information :',value:req.body.patent_information},
+        {label:'Commercialization Goals :',value:req.body.commercialization_goals},
+        {label:'Competitive Landscape :',value:req.body.competitive_landscape},
+        {label:'Technology Description :',value:req.body.technology_description},
+        // Add more rows as needed
+      ];
+      // Send the email with tableData and attachments
+      sendEmail(user.email, subject, text, tableData,attachments);
     if (findPartner){
       const partnerSubject="Request to accept the Patent Licensing and Commercialization Services Form"
       const partnerText="Accept the submission for Patent Licensing and Commercialization Services Form"
-      sendEmail(findPartner.email,partnerSubject,partnerText);
+      sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
     }
+  }
 
 
 
@@ -1245,16 +1531,48 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
     }
 
     const user = await Customer.findOne({ userID: userId });
+    const attachments = [];
     if (user && user.email) {
       const subject = 'Freedom To Patent Portfolio Analysis Submission Successful';
       const text = 'Your Freedom To Patent Portfolio Analysis form has been submitted successfully.';
-      sendEmail(user.email, subject, text);
-    }
+      
+      // Prepare the data for the table in the email
+      const tableData = [
+        { label: 'Service :', value: 'Freedom To Patent Portfolio Analysis' },
+        { label: 'Customer Name :', value: findCustomer.first_name },
+        {label:'Domain :',value:req.body.domain},
+        {label:'Country :',value:req.body.country},
+        {label:'Business Objectives :',value:req.body.business_objectives},
+        {label:'Market and Industry Information :',value:req.body.market_and_industry_information},
+        // Add more rows as needed
+      ];
+
+      const {invention_details}=req.body.service_specific_files
+    
+      
+      // Ensure invention_details is an array and not empty
+      if (Array.isArray(invention_details) && invention_details.length > 0) {
+        // Iterate through the invention_details array and add each file as a separate attachment
+        for (const item of invention_details) {
+          if (item.name && item.base64) {
+            const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+            attachments.push({
+              filename: item.name,
+              content: base64Content,
+              encoding: 'base64', // Specify that the content is base64-encoded
+            });
+          }
+        }
+      }
+      
+      // Send the email with tableData and attachments
+      sendEmail(user.email, subject, text, tableData,attachments);
     if (findPartner){
       const partnerSubject="Request to accept the Freedom To Patent Portfolio Analysis Form"
       const partnerText="Accept the submission for Freedom To Patent Portfolio Analysis Form"
-      sendEmail(findPartner.email,partnerSubject,partnerText);
+      sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
     }
+  }
 
 
     
@@ -1365,18 +1683,49 @@ const savePatentTranslationData = async (req, res) => {
     }
 
     const user = await Customer.findOne({ userID: userId });
+    const attachments = [];
     if (user && user.email) {
-      const subject = 'Patent Translation Services Submission Successful';
+      const subject = 'Patent Translation Services Analysis Submission Successful';
       const text = 'Your Patent Translation Services form has been submitted successfully.';
-      sendEmail(user.email, subject, text);
-    }
+      
+      // Prepare the data for the table in the email
+      const tableData = [
+        { label: 'Service :', value: 'Patent Translation Services' },
+        { label: 'Customer Name :', value: findCustomer.first_name },
+        {label:'Domain :',value:req.body.domain},
+        {label:'Country :',value:req.body.country},
+        {label:'Source Language :',value:req.body.source_language},
+        {label:'Target Language :',value:req.body.target_language},
+        {label:'Additional Instructions :',value:req.body.additional_instructions}
+      ];
+
+      const fileData=req.body.document_details
+    
+      
+      // Ensure invention_details is an array and not empty
+      if (Array.isArray(fileData) && fileData.length > 0) {
+        // Iterate through the invention_details array and add each file as a separate attachment
+        for (const item of fileData) {
+          if (item.name && item.base64) {
+            const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+            attachments.push({
+              filename: item.name,
+              content: base64Content,
+              encoding: 'base64', // Specify that the content is base64-encoded
+            });
+          }
+        }
+      }
+      
+      // Send the email with tableData and attachments
+      sendEmail(user.email, subject, text, tableData,attachments);
     if (findPartner){
       const partnerSubject="Request to accept the Patent Translation Services Form"
       const partnerText="Accept the submission for Patent Translation Services Form"
-      sendEmail(findPartner.email,partnerSubject,partnerText);
+      sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
     }
 
-
+  }
     
   } catch (error) {
     console.error("Error creating job order:", error);

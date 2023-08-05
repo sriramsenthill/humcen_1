@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import {DateTime} from "luxon";
+
 import styles from "@/components/_App/TopNavbar/Notification.module.css";
 import {
   IconButton,
@@ -184,8 +184,7 @@ const Notification = () => {
             </Typography>
 
             <Typography sx={{ fontSize: "12px", color: "#A9A9C8", mt: 1 }}>
-              {console.log(DateTime.fromISO(notif.notifDate, { zone: "utc" }).toLocal().toFormat("cccc, h:mm:ss a ZZZZ"))}
-              {new Intl.DateTimeFormat("en-US", options).format(DateTime.fromISO(notif.notifDate, { zone: "utc" }).toLocal())}
+            {new Intl.DateTimeFormat("en-US", options).format(new Date(notif.notifDate))}
               
             </Typography>
           </div>
