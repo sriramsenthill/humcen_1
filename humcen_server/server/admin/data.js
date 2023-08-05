@@ -342,9 +342,41 @@ const assignTask = async(req, res) => {
       }).catch((error) => {
         console.log("Error in Pushing the Job to the Partner : " + error);
       });
-      if (assignedPartner){const partnerSubject="Request to accept the Patent Drafting  Form"
-      const partnerText="Accept the submission for Patent Drafting Form"
-      sendEmail(assignedPartner.email,partnerSubject,partnerText);}
+      if (assignedPartner){
+        const partnerSubject="Request to accept the Patent Drafting Form"
+      const partnerText="Accept the submission for Patent Drafting Form" 
+      const attachments = [];
+      const tableData = [
+        { label: 'Service :', value: 'Patent Drafting' },
+        { label: 'Customer Name :', value: findCustomer.first_name },
+        {label:'Domain :',value:unassignedDraftingData.domain},
+        {label:'Country :',value:unassignedDraftingData.country},
+        {label:'Job Title :',value:unassignedDraftingData.job_title},
+        {label:'Budget :',value:unassignedDraftingData.budget},
+        {label:'Time Of Delivery :',value:unassignedDraftingData.time_of_delivery},
+        // Add more rows as needed
+      ];
+
+      const { invention_details } = unassignedDraftingData.service_specific_files;
+          
+      // Ensure invention_details is an array and not empty
+      if (Array.isArray(invention_details) && invention_details.length > 0) {
+        // Iterate through the invention_details array and add each file as a separate attachment
+        for (const item of invention_details) {
+          if (item.name && item.base64) {
+            const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+            attachments.push({
+              filename: item.name,
+              content: base64Content,
+              encoding: 'base64', // Specify that the content is base64-encoded
+            });
+          }
+        }
+      }
+      
+
+      sendEmail(assignedPartner.email,partnerSubject,partnerText,tableData,attachments);
+    }
       
 
       // For PATENT FILING
@@ -449,7 +481,62 @@ const assignTask = async(req, res) => {
       if (assignedPartner){
         const partnerSubject="Request to accept the Patent Filing  Form"
       const partnerText="Accept the submission for Patent Filing Form"
-      sendEmail(assignedPartner.email,partnerSubject,partnerText);
+      const attachments = [];
+      const tableData = [
+        { label: 'Service :', value: 'Patent Filing' },
+        { label: 'Customer Name :', value: findCustomer.first_name },
+        {label:'Domain :',value:unassignedFilingData.domain},
+        {label:'Country :',value:unassignedFilingData.country},
+        {label:'Job Title :',value:unassignedFilingData.job_title},
+        {label:'Application Type :',value:unassignedFilingData.service_specific_files.application_type},
+        {label:'Budget :',value:unassignedFilingData.budget},
+        {label:'Time Of Delivery :',value:unassignedFilingData.time_of_delivery},
+        // Add more rows as needed
+      ];
+
+      const { details,applicants,investors } = unassignedFilingData.service_specific_files;
+      
+      // Ensure invention_details is an array and not empty
+      if (Array.isArray(details) && details.length > 0) {
+        // Iterate through the invention_details array and add each file as a separate attachment
+        for (const item of details) {
+          if (item.name && item.base64) {
+            const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+            attachments.push({
+              filename: item.name,
+              content: base64Content,
+              encoding: 'base64', // Specify that the content is base64-encoded
+            });
+          }
+        }
+      }
+      if (Array.isArray(applicants) && applicants.length > 0) {
+        // Iterate through the invention_details array and add each file as a separate attachment
+        for (const item of applicants) {
+          if (item.name && item.base64) {
+            const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+            attachments.push({
+              filename: item.name,
+              content: base64Content,
+              encoding: 'base64', // Specify that the content is base64-encoded
+            });
+          }
+        }
+      }
+      if (Array.isArray(investors) && investors.length > 0) {
+        // Iterate through the invention_details array and add each file as a separate attachment
+        for (const item of investors) {
+          if (item.name && item.base64) {
+            const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+            attachments.push({
+              filename: item.name,
+              content: base64Content,
+              encoding: 'base64', // Specify that the content is base64-encoded
+            });
+          }
+        }
+      }
+      sendEmail(assignedPartner.email,partnerSubject,partnerText,tableData,attachments);
     }
       
   }
@@ -555,7 +642,32 @@ const assignTask = async(req, res) => {
       if (assignedPartner){
         const partnerSubject="Request to accept the Patent Search  Form"
       const partnerText="Accept the submission for Patent Search Form"
-      sendEmail(assignedPartner.email,partnerSubject,partnerText);
+      const attachments = [];
+      const tableData = [
+        { label: 'Service :', value: 'Patent Search' },
+        { label: 'Customer Name :', value: findCustomer.first_name },
+        {label:'Domain :',value:unassignedSearchData.field},
+        {label:'Country :',value:unassignedSearchData.country},
+        {label:'Invention Description :',value:unassignedSearchData.invention_description},
+        // Add more rows as needed
+      ];
+     const fileData=unassignedSearchData.technical_diagram
+      
+      // Ensure invention_details is an array and not empty
+      if (Array.isArray(fileData) && fileData.length > 0) {
+        // Iterate through the invention_details array and add each file as a separate attachment
+        for (const item of fileData) {
+          if (item.name && item.base64) {
+            const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+            attachments.push({
+              filename: item.name,
+              content: base64Content,
+              encoding: 'base64', // Specify that the content is base64-encoded
+            });
+          }
+        }
+      }
+      sendEmail(assignedPartner.email,partnerSubject,partnerText,tableData,attachments);
     }
 
       
@@ -661,7 +773,50 @@ const assignTask = async(req, res) => {
       if (assignedPartner){
         const partnerSubject="Request to accept the Response to FER Office Action Form"
       const partnerText="Accept the submission for Response to FER Office Action Form"
-      sendEmail(assignedPartner.email,partnerSubject,partnerText);
+      const attachments = [];
+      const tableData = [
+        { label: 'Service :', value: 'Response To FER Office Action' },
+        { label: 'Customer Name :', value: findCustomer.first_name },
+        {label:'Domain :',value:unassignedFERData.field},
+        {label:'Country :',value:unassignedFERData.country},
+        {label:'Response Strategy :',value:unassignedFERData.response_strategy},
+
+        // Add more rows as needed
+      ];
+
+      const ferFileData=unassignedFERData.fer
+      const completeSpecificationsFileData=unassignedFERData.complete_specifications
+      
+      // Ensure invention_details is an array and not empty
+      if (Array.isArray(ferFileData) && ferFileData.length > 0) {
+        // Iterate through the invention_details array and add each file as a separate attachment
+        for (const item of ferFileData) {
+          if (item.name && item.base64) {
+            const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+            attachments.push({
+              filename: item.name,
+              content: base64Content,
+              encoding: 'base64', // Specify that the content is base64-encoded
+            });
+          }
+        }
+      }
+
+      if (Array.isArray(completeSpecificationsFileData) && completeSpecificationsFileData.length > 0) {
+        // Iterate through the invention_details array and add each file as a separate attachment
+        for (const item of completeSpecificationsFileData) {
+          if (item.name && item.base64) {
+            const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+            attachments.push({
+              filename: item.name,
+              content: base64Content,
+              encoding: 'base64', // Specify that the content is base64-encoded
+            });
+          }
+        }
+      }
+      
+      sendEmail(assignedPartner.email,partnerSubject,partnerText,tableData,attachments);
     }
       
   }
@@ -766,7 +921,47 @@ const assignTask = async(req, res) => {
       if (assignedPartner){
         const partnerSubject="Request to accept the Freedom To Operate Form"
       const partnerText="Accept the submission for Freedom To Operate Form"
-      sendEmail(assignedPartner.email,partnerSubject,partnerText);
+      const attachments = [];
+      const tableData = [
+        { label: 'Service :', value: 'Freedom To Operate Search' },
+        { label: 'Customer Name :', value: findCustomer.first_name },
+        {label:'Domain :',value:unassignedFTOData.field},
+        {label:'Country :',value:unassignedFTOData.country},
+        // Add more rows as needed
+      ];
+
+      const inventionDescriptionFile=unassignedFTOData.invention_description
+      const patentApplicationFile=unassignedFTOData.patent_application_details
+      
+      // Ensure invention_details is an array and not empty
+      if (Array.isArray(inventionDescriptionFile) && inventionDescriptionFile.length > 0) {
+        // Iterate through the invention_details array and add each file as a separate attachment
+        for (const item of inventionDescriptionFile) {
+          if (item.name && item.base64) {
+            const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+            attachments.push({
+              filename: item.name,
+              content: base64Content,
+              encoding: 'base64', // Specify that the content is base64-encoded
+            });
+          }
+        }
+      }
+
+      if (Array.isArray(patentApplicationFile) && patentApplicationFile.length > 0) {
+        // Iterate through the invention_details array and add each file as a separate attachment
+        for (const item of patentApplicationFile) {
+          if (item.name && item.base64) {
+            const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+            attachments.push({
+              filename: item.name,
+              content: base64Content,
+              encoding: 'base64', // Specify that the content is base64-encoded
+            });
+          }
+        }
+      }
+      sendEmail(assignedPartner.email,partnerSubject,partnerText,tableData,attachments);
     }
       
   }
@@ -871,7 +1066,18 @@ const assignTask = async(req, res) => {
       if (assignedPartner){
         const partnerSubject="Request to accept the Freedom to Patent Landscape Form"
       const partnerText="Accept the submission for Freedom to Patent Landscape Form"
-      sendEmail(assignedPartner.email,partnerSubject,partnerText);
+      const attachments=[];
+      const tableData = [
+        { label: 'Service :', value: 'Freedom to Patent Landscape' },
+        { label: 'Customer Name :', value: findCustomer.first_name },
+        {label:'Domain :',value:unassignedLandscapeData.field},
+        {label:'Country :',value:unassignedLandscapeData.country},
+        {label:'Technology Description :',value:unassignedLandscapeData.technology_description},
+        {label:'Competitor Information :',value:unassignedLandscapeData.competitor_information},
+        
+      ];
+      
+      sendEmail(assignedPartner.email,partnerSubject,partnerText,tableData,attachments);
     }
       
   }
@@ -976,7 +1182,35 @@ const assignTask = async(req, res) => {
       if (assignedPartner){
         const partnerSubject="Request to accept the Patent Portfolio Analysis Form"
       const partnerText="Accept the submission for Patent Portfolio Analysis Form"
-      sendEmail(assignedPartner.email,partnerSubject,partnerText);
+      const attachments = [];
+      const tableData = [
+        { label: 'Service :', value: 'Freedom To Patent Portfolio Analysis' },
+        { label: 'Customer Name :', value: findCustomer.first_name },
+        {label:'Domain :',value:unassignedPortfolioData.domain},
+        {label:'Country :',value:unassignedPortfolioData.country},
+        {label:'Business Objectives :',value:unassignedPortfolioData.business_objectives},
+        {label:'Market and Industry Information :',value:unassignedPortfolioData.market_and_industry_information},
+        // Add more rows as needed
+      ];
+
+      const {invention_details}=unassignedPortfolioData.service_specific_files
+    
+      
+      // Ensure invention_details is an array and not empty
+      if (Array.isArray(invention_details) && invention_details.length > 0) {
+        // Iterate through the invention_details array and add each file as a separate attachment
+        for (const item of invention_details) {
+          if (item.name && item.base64) {
+            const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+            attachments.push({
+              filename: item.name,
+              content: base64Content,
+              encoding: 'base64', // Specify that the content is base64-encoded
+            });
+          }
+        }
+      }
+      sendEmail(assignedPartner.email,partnerSubject,partnerText,tableData,attachments);
     }
       
   }
@@ -1081,7 +1315,35 @@ const assignTask = async(req, res) => {
       if (assignedPartner){
         const partnerSubject="Request to accept the Patent Translation Services Form"
       const partnerText="Accept the submission for Patent Translation Services Form"
-      sendEmail(assignedPartner.email,partnerSubject,partnerText);
+      const attachments = [];
+      const tableData = [
+        { label: 'Service :', value: 'Patent Translation Services' },
+        { label: 'Customer Name :', value: findCustomer.first_name },
+        {label:'Domain :',value:unassignedTranslationData.domain},
+        {label:'Country :',value:unassignedTranslationData.country},
+        {label:'Source Language :',value:unassignedTranslationData.source_language},
+        {label:'Target Language :',value:unassignedTranslationData.target_language},
+        {label:'Additional Instructions :',value:unassignedTranslationData.additional_instructions}
+      ];
+
+      const fileData=unassignedTranslationData.document_details
+    
+      
+      // Ensure invention_details is an array and not empty
+      if (Array.isArray(fileData) && fileData.length > 0) {
+        // Iterate through the invention_details array and add each file as a separate attachment
+        for (const item of fileData) {
+          if (item.name && item.base64) {
+            const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+            attachments.push({
+              filename: item.name,
+              content: base64Content,
+              encoding: 'base64', // Specify that the content is base64-encoded
+            });
+          }
+        }
+      }
+      sendEmail(assignedPartner.email,partnerSubject,partnerText,tableData,attachments);
     }
       
   }
@@ -1187,7 +1449,36 @@ const assignTask = async(req, res) => {
       if (assignedPartner){
         const partnerSubject="Request to accept the Patent Illustration Form"
       const partnerText="Accept the submission for Patent Illustration Form"
-      sendEmail(assignedPartner.email,partnerSubject,partnerText);
+      const attachments = [];
+      const tableData = [
+        { label: 'Service :', value: 'Patent Illustration' },
+        { label: 'Customer Name :', value: findCustomer.first_name },
+        {label:'Domain :',value:unassignedIllustrationData.field},
+        {label:'Country :',value:unassignedIllustrationData.country},
+        {label:'Patent Specifications :',value:unassignedIllustrationData.patent_specifications},
+        {label:'Drawing Requirements :',value:unassignedIllustrationData.drawing_requirements},
+        // Add more rows as needed
+      ];
+
+      const preferredStyleFile=unassignedIllustrationData.preferred_style
+    
+      
+      // Ensure invention_details is an array and not empty
+      if (Array.isArray(preferredStyleFile) && preferredStyleFile.length > 0) {
+        // Iterate through the invention_details array and add each file as a separate attachment
+        for (const item of preferredStyleFile) {
+          if (item.name && item.base64) {
+            const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+            attachments.push({
+              filename: item.name,
+              content: base64Content,
+              encoding: 'base64', // Specify that the content is base64-encoded
+            });
+          }
+        }
+      }
+      
+      sendEmail(assignedPartner.email,partnerSubject,partnerText,tableData,attachments);
     }
       
   }
@@ -1296,7 +1587,19 @@ const assignTask = async(req, res) => {
       if (assignedPartner){
         const partnerSubject="Request to accept the Patent Watch Form"
       const partnerText="Accept the submission for Patent Watch Form"
-      sendEmail(assignedPartner.email,partnerSubject,partnerText);
+      const attachments = [];
+      const tableData = [
+        { label: 'Service :', value: 'Patent Watch' },
+        { label: 'Customer Name :', value: findCustomer.first_name },
+        {label:'Domain :',value:unassignedWatchData.field},
+        {label:'Country :',value:unassignedWatchData.country},
+        {label:'Technology or Industry Focus :',value:unassignedWatchData.industry_focus},
+        {label:'Competitor Information :',value:unassignedWatchData.competitor_information},
+        {label:'Geographic Scope :',value:unassignedWatchData.geographic_scope},
+        {label:'Monitoring Duration :',value:unassignedWatchData.monitoring_duration},
+        // Add more rows as needed
+      ];
+      sendEmail(assignedPartner.email,partnerSubject,partnerText,tableData,attachments);
     }
       
   }
@@ -1401,7 +1704,19 @@ const assignTask = async(req, res) => {
       if (assignedPartner){
         const partnerSubject="Request to accept the Patent Licensing and Commercialization Services Form"
       const partnerText="Accept the submission for Patent Licensing and Commercialization Services Form"
-      sendEmail(assignedPartner.email,partnerSubject,partnerText);
+      const attachments = [];
+      const tableData = [
+        { label: 'Service :', value: 'Patent Licensing and Commercialization Services' },
+        { label: 'Customer Name :', value: findCustomer.first_name },
+        {label:'Domain :',value:unassignedLicenseData.field},
+        {label:'Country :',value:unassignedLicenseData.country},
+        {label:'Patent Information :',value:unassignedLicenseData.patent_information},
+        {label:'Commercialization Goals :',value:unassignedLicenseData.commercialization_goals},
+        {label:'Competitive Landscape :',value:unassignedLicenseData.competitive_landscape},
+        {label:'Technology Description :',value:unassignedLicenseData.technology_description},
+        // Add more rows as needed
+      ];
+      sendEmail(assignedPartner.email,partnerSubject,partnerText,tableData,attachments);
     }
       
   }
