@@ -26,7 +26,7 @@ const emailBody = `<p>${text}</p>
 
 const mailOptions = {
   from: 'senthilnathan.shanmugam2003@gmail.com', // Replace with your email address
-  to:'shaiksuhail0728@gmail.com', // The user's email address fetched from MongoDB
+  to: to, // The user's email address fetched from MongoDB
   subject: subject,
   html: emailBody,
   attachments:attachments,

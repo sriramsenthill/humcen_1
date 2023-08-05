@@ -18,6 +18,7 @@ const Unassigned = require("../mongoose_schemas/unassigned");
 const sendEmail = require("../email.js");
 const Notification = require("../mongoose_schemas/notification"); // Import Notification Model
 const NotificationPartner = require("../mongoose_schemas/notification_partner"); // Import Notification for Partner model
+const Admin= require("../mongoose_schemas/admin");
 
 // Define your API route for fetching job order data
 const getJobOrderOnID = async (req, res) => {
@@ -85,7 +86,7 @@ const createJobOrderPatentDrafting = async (req, res) => {
     });
 
     const findCustomer = await Customer.findOne({ userID: userId });
-
+    const findAdmin=await Admin.findOne({_id:"64803aa4b57edc54d6b276cb"})
     if (!findCustomer) {
       // Handle the case when no customer is found
       throw new Error("No customer found for the given user ID");
@@ -258,11 +259,12 @@ const createJobOrderPatentDrafting = async (req, res) => {
             const partnerText="Accept the submission for Patent Drafting Form"
             sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments)
           }
+          else{
+            const partnerSubject="Request to accept the Patent Drafting Form"
+            const partnerText="Assign the partner for Patent Drafting Form"
+            sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
           }
-          
-  
-
-      
+          } 
 
   } catch (error) {
     console.error("Error creating Patent Drafting Order:", error);
@@ -285,7 +287,7 @@ const createJobOrderPatentFiling = async (req, res) => {
     // Find the partner and customer and update their jobs list
     let findPartner = await Partner.findOne({ is_free: true, ["known_fields.Patent Filing"]: true, country: req.body.country });
     let findCustomer = await Customer.findOne({ userID: userId });
-
+    const findAdmin=await Admin.findOne({_id:"64803aa4b57edc54d6b276cb"})
     if (!findCustomer) {
       // Handle the case when no customer is found
       throw new Error("No customer found for the given user ID");
@@ -479,6 +481,11 @@ const createJobOrderPatentFiling = async (req, res) => {
       const partnerText="Accept the submission for Patent Filing Form"
       sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
     }
+    else{
+      const partnerSubject="Request to accept the Patent Filing Form"
+      const partnerText="Assign the partner for Patent Filing Form"
+      sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
+    }
   }
 
     
@@ -499,6 +506,8 @@ const savePatentSearchData = async (req, res) => {
 
     let findPartner = await Partner.findOne({ is_free: true, ["known_fields.Patent Search"]: true, country: req.body.country, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
+    const findAdmin=await Admin.findOne({_id:"64803aa4b57edc54d6b276cb"})
+
 
     if (!findCustomer) {
       // Handle the case when no customer is found
@@ -659,6 +668,11 @@ const savePatentSearchData = async (req, res) => {
             const partnerText="Accept the submission for Patent Search Form"
             sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
           }
+          else{
+            const partnerSubject="Request to accept the Patent Search Form"
+            const partnerText="Assign the partner for Patent Search Form"
+            sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
+          }
         }
   } catch (error) {
     console.error("Error creating Search Order:", error);
@@ -678,6 +692,8 @@ const saveResponseToFerData = async (req, res) => {
 
     let findPartner = await Partner.findOne({ is_free: true, ["known_fields.Response to FER Office Action"]: true, country: req.body.country, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
+    const findAdmin=await Admin.findOne({_id:"64803aa4b57edc54d6b276cb"})
+
 
     if (!findPartner) {
       // Handle the case when no partner is found
@@ -856,6 +872,11 @@ const saveResponseToFerData = async (req, res) => {
         const partnerText="Accept the submission for Response To FER Office Action Form"
         sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
       }
+      else{
+        const partnerSubject="Request to accept the Response To FER Office Action Form"
+        const partnerText="Assign the partner for Response To FER Office Action Form"
+        sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
+      }
     }
  
 
@@ -877,6 +898,8 @@ const saveFreedomToOperateData = async (req, res) => {
 
     let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Freedom To Operate"]: true, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
+    const findAdmin=await Admin.findOne({_id:"64803aa4b57edc54d6b276cb"})
+
 
     if (!findPartner) {
       // Handle the case when no partner is found
@@ -1051,6 +1074,12 @@ const saveFreedomToOperateData = async (req, res) => {
         const partnerText="Accept the submission for Freedom To Operate Search Form"
         sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
       }
+      else{
+        const partnerSubject="Request to accept the Freedom To Operate Search Form"
+        const partnerText="Assign the partner for Freedom To Operate Search Form"
+        sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
+      }
+
     }
 
   } catch (error) {
@@ -1074,6 +1103,9 @@ const savePatentIllustrationData = async (req, res) => {
 
     let findPartner = await Partner.findOne({ is_free: true, ["known_fields.Patent Illustration"]: true, country: req.body.country, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
+    
+  const findAdmin=await Admin.findOne({_id:"64803aa4b57edc54d6b276cb"})
+
 
     if (!findPartner) {
       // Handle the case when no partner is found
@@ -1239,6 +1271,11 @@ const savePatentIllustrationData = async (req, res) => {
       const partnerText="Accept the submission for Patent Illustration Form"
       sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
     }
+    else{
+      const partnerSubject="Request to accept the PPatent Illustration Form"
+      const partnerText="Assign the partner for Patent Illustration Form"
+      sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
+    }
   }
     
   } catch (error) {
@@ -1258,6 +1295,8 @@ const savePatentLandscapeData = async (req, res) => {
 
     let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Freedom to Patent Landscape"]: true, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
+    const findAdmin=await Admin.findOne({_id:"64803aa4b57edc54d6b276cb"})
+
 
     if (!findCustomer) {
       // Handle the case when no customer is found
@@ -1409,6 +1448,11 @@ const savePatentLandscapeData = async (req, res) => {
       const partnerText="Accept the submission for Freedom to Patent Landscape Form"
       sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
     }
+    else{
+      const partnerSubject="Request to accept the Freedom to Patent Landscape Form"
+      const partnerText="Assign the partner for Freedom to Patent Landscape Form"
+      sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
+    }
   }
     
   } catch (error) {
@@ -1427,6 +1471,7 @@ const savePatentWatchData = async (req, res) => {
 
     let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Patent Watch"]: true, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
+    const findAdmin=await Admin.findOne({_id:"64803aa4b57edc54d6b276cb"})
 
     if (!findCustomer) {
       // Handle the case when no customer is found
@@ -1577,6 +1622,12 @@ const savePatentWatchData = async (req, res) => {
       const partnerText="Accept the submission for Patent Watch Form"
       sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
     }
+    else{
+      const partnerSubject="Request to accept the Patent Watch Form"
+      const partnerText="Assign the partner for Patent Watch Form"
+      sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
+    }
+
   }
 
     
@@ -1597,6 +1648,8 @@ const savePatentLicenseData = async (req, res) => {
 
     let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Patent Licensing and Commercialization Services"]: true, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
+
+    const findAdmin=await Admin.findOne({_id:"64803aa4b57edc54d6b276cb"})
 
     if (!findCustomer) {
       // Handle the case when no customer is found
@@ -1745,6 +1798,13 @@ const savePatentLicenseData = async (req, res) => {
       const partnerText="Accept the submission for Patent Licensing and Commercialization Services Form"
       sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
     }
+    else{
+      const partnerSubject="Request to accept the Patent Licensing and Commercialization Services Form"
+      const partnerText="Assign the partner for Patent Licensing and Commercialization Services Form"
+      sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
+    }
+
+
   }
 
 
@@ -1766,6 +1826,8 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
 
     let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Patent Portfolio Analysis"]: true, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
+    const findAdmin=await Admin.findOne({_id:"64803aa4b57edc54d6b276cb"})
+
 
     if (!findCustomer) {
       // Handle the case when no customer is found
@@ -1932,6 +1994,12 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
       const partnerText="Accept the submission for Freedom To Patent Portfolio Analysis Form"
       sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
     }
+    else{
+      const partnerSubject="Request to accept the Freedom To Patent Portfolio Analysis Form"
+      const partnerText="Assign the partner for Freedom To Patent Portfolio Analysis Form"
+      sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
+    }
+
   }
 
 
@@ -1955,6 +2023,7 @@ const savePatentTranslationData = async (req, res) => {
 
     let findPartner = await Partner.findOne({ is_free: true, country: req.body.country, ["known_fields.Patent Translation Services"]: true, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
+    const findAdmin=await Admin.findOne({_id:"64803aa4b57edc54d6b276cb"})
 
     if (!findCustomer) {
       // Handle the case when no customer is found
@@ -2121,6 +2190,12 @@ const savePatentTranslationData = async (req, res) => {
       const partnerText="Accept the submission for Patent Translation Services Form"
       sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
     }
+    else{
+      const partnerSubject="Request to accept the Patent Translation Services Form"
+      const partnerText="Assign the partner for Patent Translation Services Form"
+      sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
+    }
+
 
   }
     
