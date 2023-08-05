@@ -184,6 +184,11 @@ const createJobOrderPatentDrafting = async (req, res) => {
           const text = 'Your patent drafting form has been submitted successfully.';
           sendEmail(user.email, subject, text);
         }
+        if (findPartner){
+          const partnerSubject="Request to accept the Patent Drafting Form"
+          const partnerText="Accept the submission for Patent Drafting Form"
+          sendEmail(findPartner.email,partnerSubject,partnerText);
+        }
 
     
 
@@ -296,6 +301,18 @@ const createJobOrderPatentFiling = async (req, res) => {
     res.status(200).json(savedFiling);
 
     }
+    const user = await Customer.findOne({ userID: userId });
+    if (user && user.email) {
+      const subject = 'Patent Filing Submission Successful';
+      const text = 'Your patent filing form has been submitted successfully.';
+      sendEmail(user.email, subject, text);
+    }
+    if (findPartner){
+      const partnerSubject="Request to accept the Patent Filing Form"
+      const partnerText="Accept the submission for Patent Filing Form"
+      sendEmail(findPartner.email,partnerSubject,partnerText);
+    }
+
     
   } catch (error) {
     console.error("Error creating Patent Filing Order:", error);
@@ -399,6 +416,18 @@ const savePatentSearchData = async (req, res) => {
     res.status(200).json(savedSearch);
 
     }
+    const user = await Customer.findOne({ userID: userId });
+    if (user && user.email) {
+      const subject = 'Patent Search Submission Successful';
+      const text = 'Your patent search form has been submitted successfully.';
+      sendEmail(user.email, subject, text);
+    }
+    if (findPartner){
+      const partnerSubject="Request to accept the Patent Search Form"
+      const partnerText="Accept the submission for Patent Search Form"
+      sendEmail(findPartner.email,partnerSubject,partnerText);
+    }
+
 
     
     
@@ -507,6 +536,18 @@ const saveResponseToFerData = async (req, res) => {
     res.status(200).json(savedResponseToFer);
 
     }
+    const user = await Customer.findOne({ userID: userId });
+    if (user && user.email) {
+      const subject = 'Response To FER Office Action Submission Successful';
+      const text = 'Your Response To FER Office Action form has been submitted successfully.';
+      sendEmail(user.email, subject, text);
+    }
+    if (findPartner){
+      const partnerSubject="Request to accept the Response To FER Office Action Form"
+      const partnerText="Accept the submission for Response To FER Office Action Form"
+      sendEmail(findPartner.email,partnerSubject,partnerText);
+    }
+
 
     
   } catch (error) {
@@ -608,6 +649,17 @@ const saveFreedomToOperateData = async (req, res) => {
   
       res.status(200).send(savedFTO._id);
 
+    }
+    const user = await Customer.findOne({ userID: userId });
+    if (user && user.email) {
+      const subject = 'Freedom To Operate Search Submission Successful';
+      const text = 'Your Freedom To Operate Search form has been submitted successfully.';
+      sendEmail(user.email, subject, text);
+    }
+    if (findPartner){
+      const partnerSubject="Request to accept the Freedom To Operate Search Form"
+      const partnerText="Accept the submission for Freedom To Operate Search Form"
+      sendEmail(findPartner.email,partnerSubject,partnerText);
     }
 
 
@@ -718,6 +770,18 @@ const savePatentIllustrationData = async (req, res) => {
     res.status(200).json(savedJobOrder._id);
 
     }
+
+    const user = await Customer.findOne({ userID: userId });
+    if (user && user.email) {
+      const subject = 'Patent Illustration Submission Successful';
+      const text = 'Your Patent Illustration form has been submitted successfully.';
+      sendEmail(user.email, subject, text);
+    }
+    if (findPartner){
+      const partnerSubject="Request to accept the Patent Illustration Form"
+      const partnerText="Accept the submission for Patent Illustration Form"
+      sendEmail(findPartner.email,partnerSubject,partnerText);
+    }
     
   } catch (error) {
     console.error("Error creating job order:", error);
@@ -823,6 +887,20 @@ const savePatentLandscapeData = async (req, res) => {
 
     res.status(200).json(savedJobOrder._id);
 
+    }
+
+
+    
+    const user = await Customer.findOne({ userID: userId });
+    if (user && user.email) {
+      const subject = 'Freedom to Patent Landscape Submission Successful';
+      const text = 'Your Freedom to Patent Landscape form has been submitted successfully.';
+      sendEmail(user.email, subject, text);
+    }
+    if (findPartner){
+      const partnerSubject="Request to accept the Freedom to Patent Landscape Form"
+      const partnerText="Accept the submission for Freedom to Patent Landscape Form"
+      sendEmail(findPartner.email,partnerSubject,partnerText);
     }
     
   } catch (error) {
@@ -930,6 +1008,18 @@ const savePatentWatchData = async (req, res) => {
 
     }
 
+    const user = await Customer.findOne({ userID: userId });
+    if (user && user.email) {
+      const subject = 'Patent Watch Submission Successful';
+      const text = 'Your Patent Watch form has been submitted successfully.';
+      sendEmail(user.email, subject, text);
+    }
+    if (findPartner){
+      const partnerSubject="Request to accept the Patent Watch Form"
+      const partnerText="Accept the submission for Patent Watch Form"
+      sendEmail(findPartner.email,partnerSubject,partnerText);
+    }
+
     
     
   } catch (error) {
@@ -1034,6 +1124,19 @@ const savePatentLicenseData = async (req, res) => {
 
     res.status(200).json(savedJobOrder._id);
     }
+
+    const user = await Customer.findOne({ userID: userId });
+    if (user && user.email) {
+      const subject = 'Patent Licensing and Commercialization Services Submission Successful';
+      const text = 'Your Patent Licensing and Commercialization Services form has been submitted successfully.';
+      sendEmail(user.email, subject, text);
+    }
+    if (findPartner){
+      const partnerSubject="Request to accept the Patent Licensing and Commercialization Services Form"
+      const partnerText="Accept the submission for Patent Licensing and Commercialization Services Form"
+      sendEmail(findPartner.email,partnerSubject,partnerText);
+    }
+
 
 
     
@@ -1141,6 +1244,19 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
 
     }
 
+    const user = await Customer.findOne({ userID: userId });
+    if (user && user.email) {
+      const subject = 'Freedom To Patent Portfolio Analysis Submission Successful';
+      const text = 'Your Freedom To Patent Portfolio Analysis form has been submitted successfully.';
+      sendEmail(user.email, subject, text);
+    }
+    if (findPartner){
+      const partnerSubject="Request to accept the Freedom To Patent Portfolio Analysis Form"
+      const partnerText="Accept the submission for Freedom To Patent Portfolio Analysis Form"
+      sendEmail(findPartner.email,partnerSubject,partnerText);
+    }
+
+
     
     
   } catch (error) {
@@ -1247,6 +1363,19 @@ const savePatentTranslationData = async (req, res) => {
     res.status(200).json(savedJobOrder._id);
 
     }
+
+    const user = await Customer.findOne({ userID: userId });
+    if (user && user.email) {
+      const subject = 'Patent Translation Services Submission Successful';
+      const text = 'Your Patent Translation Services form has been submitted successfully.';
+      sendEmail(user.email, subject, text);
+    }
+    if (findPartner){
+      const partnerSubject="Request to accept the Patent Translation Services Form"
+      const partnerText="Accept the submission for Patent Translation Services Form"
+      sendEmail(findPartner.email,partnerSubject,partnerText);
+    }
+
 
     
   } catch (error) {
