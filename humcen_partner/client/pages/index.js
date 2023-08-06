@@ -32,7 +32,7 @@ async function fetchJobOrders() {
     const { jobOrders } = response.data; // Extract the jobOrders array from the response data
     console.log(jobOrders)
     if (Array.isArray(jobOrders)) {
-      const filteredJobOrders = jobOrders.filter(order => order.Accepted === true);
+      const filteredJobOrders = jobOrders   // .filter(order => order.Accepted === true);
       // console.log(filteredJobOrders);
       return filteredJobOrders;
     } else {
@@ -77,6 +77,7 @@ function eCommerce() {
     const fetchData = async () => {
       const data = await fetchJobOrders();
       setJobs(data);
+      console.log(data);
     };
 
     fetchData();

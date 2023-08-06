@@ -165,24 +165,6 @@ const Notification = () => {
             </Typography>
         }
         <div className={styles.notification}>
-          {/* <div className={styles.notificationList}>
-            <Typography
-              variant="h5"
-              sx={{
-                fontSize: "14px",
-                color: "#260944",
-                fontWeight: "500",
-                mb: 1,
-              }}
-            >
-              8 Invoices have been paid
-            </Typography>
-
-            <Typography sx={{ fontSize: "12px", color: "#A9A9C8", mt: 1 }}>
-              11:47 PM Wednesday
-            </Typography>
-          </div> */}
-
           {notifications.map((notif) => (
             <div className={styles.notificationList}>
             <Typography

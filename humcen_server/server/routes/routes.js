@@ -87,6 +87,8 @@ router.get("/api/user/get-notifs/:userID", verifyToken, forms.getNotification) /
 
 router.put("/api/seen-notif/:notifId/:userID", verifyToken, forms.notificationSeen); // Make the notification, a visited one
 
+router.put("/api/delete-notif/:userID", verifyToken, forms.notifcationsDelete); // For deleting the Selected Notifications
+
 //Users_Settings
 
 router.get("/api/user/img", verifyToken, userSettings.getCustomerProfileImage);

@@ -106,6 +106,8 @@ const acceptJobOrder = async (req, res) => {
     if (!updatedJobOrder) {
       return res.status(404).json({ error: "Job order not found" });
     }
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = new Date().toLocaleDateString(undefined, options);
 
     updatedJobOrder.Accepted = true;
     updatedJobOrder.steps_done = 2;
@@ -131,9 +133,6 @@ const acceptJobOrder = async (req, res) => {
     partner.save().then((response) => {console.log("Job added to In Progress section of Partner")})
     res.json({ message: "Job order accepted successfully" });
 
-
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    const formattedDate = new Date().toLocaleDateString(undefined, options);
     const assignedNotification = await Notification.findOne({ user_Id: Number(userID) });
     if(!assignedNotification) {
       const newNotification = new Notification({

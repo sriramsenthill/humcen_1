@@ -2271,11 +2271,12 @@ const approveTheDoneWork = async(req, res) => {
     job.steps_done = req.body.steps;
     job.steps_done_user = req.body.user_steps;
     job.steps_done_activity = req.body.activity;
+    const formattedDate = new Date().toLocaleDateString(undefined, options);
     done_activity.map((elem) => {
-      job.date_activity[elem]  = new Date().toLocaleDateString(undefined, options);
+      job.date_activity[elem]  = formattedDate;
     });
-    job.date_partner[3] = new Date().toLocaleDateString(undefined, options);
-    job.date_user[5] = new Date().toLocaleDateString(undefined, options);
+    job.date_partner[3] = formattedDate;
+    job.date_user[5] = formattedDate;
 
     job.save()
     .then((response) => {
@@ -2311,6 +2312,41 @@ const approveTheDoneWork = async(req, res) => {
       console.error("Error in updating Partner's In Progress Job Count: ", error);
     })      
     res.redirect("back");
+
+    // Sending Notification to Users that File is ready to download
+    const finalizeNotification = await Notification.findOne({user_Id: job.userID});
+    if(!finalizeNotification) {
+      const thatFinalNotification = new Notification({
+        user_Id: job.userID,
+        notifications: [
+          {
+            notifNum: 1,
+            notifText: "Job " + jobID + " has been delivered Successfully and is ready to Download.",
+            notifDate: formattedDate,
+            seen: false,
+          }
+        ]
+      })
+      thatFinalNotification.save().then(() => {
+        console.log("Notifications sent Successfully.");
+      }).catch((error) => {
+        console.error("Error in sending the Notification : " + error );
+      })
+    } else {
+      const finalNotifDoc = {
+        notifNum: finalizeNotification.notifications.length + 1,
+        notifText: "Job " + jobID + " has been delivered Successfully and is ready to Download.",
+        notifDate: formattedDate,
+        seen: false,
+      }
+      finalizeNotification.notifications.push(finalNotifDoc);
+      finalizeNotification.save().then(() => {
+        console.log("Notification sent Successfully.");
+      }).catch((err) => {
+        console.error("Error in sending the Notification : " + err)
+      });
+    }
+
   } catch(error) {
     console.error("Error in finding the Job: "+ error);
   }
@@ -2400,6 +2436,28 @@ const notificationSeen = async(req, res) => {
   }
 }
 
+const notifcationsDelete = async(req, res) => {
+  const userID = req.params.userID;
+  const listOfNotifDeleted = req.body.deletedNotifs;
+
+  try {
+    const findNotification = await Notification.findOne({user_Id: Number(userID)});
+    if(!findNotification) {
+      console.log("No Notifications available for User ID " + userID);
+    } else {
+      const updatedNotifs = findNotification.notifications.filter(notif => !listOfNotifDeleted.includes(notif.notifNum));
+      findNotification.notifications = updatedNotifs;
+      findNotification.save().then(() => {
+        console.log("Notifications deleted Successfully.")
+      }).catch((err) => {
+        console.error('Error in deleting Notifications : ' + err);
+      })
+    }
+  } catch(err) {
+    console.error("Error in deleting Notifications : " + err);
+  }
+}
+
   module.exports = {
     getJobOrderOnID,
     getJobOrders,
@@ -2421,4 +2479,5 @@ const notificationSeen = async(req, res) => {
     rejectTheDoneWork,
     getNotification,
     notificationSeen,
+    notifcationsDelete,
   };

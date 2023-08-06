@@ -5,6 +5,7 @@ import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
 import axios from "axios";
 import Link from "@mui/material/Link";
+import { filter } from "jszip";
 
 
 function formatDate(date) {
@@ -28,6 +29,7 @@ async function fetchJobOrders() {
   try {
     const response = await api.get('/partner/job_order');
     const { jobOrders } = response.data;
+    console.log("This is it " + jobOrders);
 
     if (Array.isArray(jobOrders)) {
       const filteredJobOrders = jobOrders.filter(order => !order.Accepted);
@@ -51,6 +53,7 @@ const NewOrder = () => {
       try {
         const filteredOrders = await fetchJobOrders();
         setJobOrders(filteredOrders);
+        console.log(jobOrders.length);
       } catch (error) {
         console.error('Error fetching job orders:', error);
       }

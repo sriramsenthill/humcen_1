@@ -230,6 +230,7 @@ export default function NotificationTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [notifications, setNotifications] = useState([]);
+  const [tickNotifs, setTickNotifs] = useState([]);
   const [userID, setUserID] = useState("");
 
   useEffect(() => {
@@ -295,6 +296,27 @@ export default function NotificationTable() {
 
   }
 
+  const sendNotifNums = async(evt) => {
+    let chosenOnes = [...tickNotifs];
+    if(chosenOnes.includes(evt.target.value)){
+      chosenOnes = chosenOnes.filter((value) => value != evt.target.value);
+      setTickNotifs(chosenOnes);
+    } else {
+      chosenOnes.push(evt.target.value);
+      setTickNotifs(chosenOnes);
+    } 
+  }
+
+  const deleteSelectedNotifs = async(userID, deleteTheseNotifs) => {
+    const selectedNotifs = deleteTheseNotifs.map((elt) => elt=Number(elt));
+    console.log(userID, selectedNotifs)
+    const response = await api.put(`delete-notif/${userID}`, {deletedNotifs: selectedNotifs}).then(() => {
+      console.log("Successfully Deleted those Notifications.");
+    }).catch((err) => {
+      console.error("Error in deleting Notifications : " + err);
+    });
+  }
+
   return (
     <>
       <Card
@@ -342,6 +364,7 @@ export default function NotificationTable() {
                 size="small"
                 sx={{ background: "#F2F6F8" }}
                 className='ml-5px'
+                onClick={() => {deleteSelectedNotifs(userID, tickNotifs), window.location.href = window.location.href;}}
               >
                 <DeleteIcon fontSize="small" />
               </IconButton>
@@ -440,7 +463,7 @@ export default function NotificationTable() {
                       padding: "10px",
                     }}
                   >
-                    <Checkbox value={notification.notifNum} {...label} size="small" />
+                    <Checkbox value={notification.notifNum} {...label} onClick={(e) => sendNotifNums(e)} size="small" />
                   </TableCell>
   
                   <TableCell
