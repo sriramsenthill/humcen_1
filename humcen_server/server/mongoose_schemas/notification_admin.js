@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
-const NotificationPartnerSchema = new mongoose.Schema({
-    partner_Id: {
+const NotificationAdminSchema = new mongoose.Schema({
+    admin_Id: {
         type: Number,
     },
     notifications: [
@@ -24,6 +24,6 @@ const NotificationPartnerSchema = new mongoose.Schema({
     ]
 });
 
-const NotificationPartnerModel = mongoose.model('NotificationPartner', NotificationPartnerSchema, 'notification_partner');
+const NotificationAdminModel = mongoose.model('NotificationAdmin', NotificationAdminSchema, 'notification_admin');
 
-module.exports = NotificationPartnerModel;
+module.exports = NotificationAdminModel;

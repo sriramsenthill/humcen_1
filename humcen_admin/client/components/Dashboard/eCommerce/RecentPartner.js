@@ -341,7 +341,7 @@ function RecentPartners() {
                       padding: "8px 10px",
                       fontSize: "13px",
                       textAlign: "center",
-                    }}>{row.full_name ?? "To be assigned"}</TableCell>
+                    }}>{row.first_name ? (row.last_name ? row.first_name + " " + row.last_name : (row.full_name ? row.full_name : "To be Assigned")) : "To be Assigned"}</TableCell>
                     <TableCell sx={{
                       width: 100,
                       borderBottom: "1px solid #F7FAFF",

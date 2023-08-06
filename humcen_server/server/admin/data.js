@@ -17,7 +17,8 @@ const patentWatch = require("../mongoose_schemas/patent_watch"); // Import Paten
 const patentLicense = require("../mongoose_schemas/patent_licensing"); // Import Patent Licensing Model
 const Customer=require("../mongoose_schemas/customer");
 const sendEmail = require("../email");
-const Notification = require("../mongoose_schemas/notification"); // Import Notification Model
+const Notification = require("../mongoose_schemas/notification"); // Import Notification Model for Users
+const NotificationAdmin = require("../mongoose_schemas/notification_admin"); // Import Notification Model for Admin
 
 const getUsers = async (req, res) => {
   try {
