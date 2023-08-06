@@ -89,6 +89,10 @@ router.put("/api/seen-notif/:notifId/:userID", verifyToken, forms.notificationSe
 
 router.put("/api/delete-notif/:userID", verifyToken, forms.notifcationsDelete); // For deleting the Selected Notifications
 
+router.get("/api/sort-notif/:userID/:days", verifyToken, forms.sortNotifications); // Sorting Notifications on the basis of Time Interval
+
+router.get("/api/clear-notif/:userID", verifyToken, forms.clearRecentNotifs); // Clearing out the Recent Notifications
+
 //Users_Settings
 
 router.get("/api/user/img", verifyToken, userSettings.getCustomerProfileImage);

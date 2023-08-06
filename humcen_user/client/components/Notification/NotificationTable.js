@@ -317,6 +317,13 @@ export default function NotificationTable() {
     });
   }
 
+  const handleDaysSort = async (e, userID) => {
+    const timeInterval = e.target.getAttribute("value");
+    console.log(timeInterval, userID);
+    const sortedNotif = await api.get(`sort-notif/${userID}/${timeInterval}`);
+    setNotifications(sortedNotif.data);
+  }
+
   return (
     <>
       <Card
@@ -364,6 +371,7 @@ export default function NotificationTable() {
                 size="small"
                 sx={{ background: "#F2F6F8" }}
                 className='ml-5px'
+                disabled={notifications.length === 0}
                 onClick={() => {deleteSelectedNotifs(userID, tickNotifs), window.location.href = window.location.href;}}
               >
                 <DeleteIcon fontSize="small" />
@@ -383,6 +391,7 @@ export default function NotificationTable() {
             <Tooltip title="More...">
               <IconButton
                 onClick={handleClick}
+                disabled={notifications.length === 0}
                 size="small"
                 aria-controls={open ? "account-menu" : undefined}
                 aria-haspopup="true"
@@ -431,9 +440,9 @@ export default function NotificationTable() {
             transformOrigin={{ horizontal: "right", vertical: "top" }}
             anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
           >
-            <MenuItem sx={{ fontSize: "14px" }}>Last 15 Days</MenuItem>
-            <MenuItem sx={{ fontSize: "14px" }}>Last Month</MenuItem>
-            <MenuItem sx={{ fontSize: "14px" }}>Last Year</MenuItem>
+            <MenuItem sx={{ fontSize: "14px" }} value={15} onClick={(e) => {  handleDaysSort(e, userID);  }}>Last 15 Days</MenuItem>
+            <MenuItem sx={{ fontSize: "14px" }} value={30} onClick={(e) => handleDaysSort(e, userID)}>Last Month</MenuItem>
+            <MenuItem sx={{ fontSize: "14px" }} value={365} onClick={(e) => handleDaysSort(e, userID)}>Last Year</MenuItem>
           </Menu>
         </Box>
 

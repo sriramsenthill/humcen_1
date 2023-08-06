@@ -73,6 +73,14 @@ const Notification = () => {
   }
   },[userID])
 
+  const eraseRecent = async(userID) => {
+
+    const response = await api.get(`clear-notif/${userID}`).then(() => {
+      console.log("Recent Notifications cleared Successfully");
+    }).catch((err) => {
+      console.error("Error in Clearing Unseen Notifications : " + err)
+    })
+  }
 
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -149,7 +157,7 @@ const Notification = () => {
       >
         <div className={styles.header}>
           <Typography variant="h4">Notifications</Typography>
-          <Button variant="text">clear all</Button>
+          <Button variant="text" disabled={notifications.length === 0} onClick={() => {eraseRecent(userID); window.location.reload(true);}}>clear all</Button>
         </div>
         { notifications.length === 0 && 
           <Typography

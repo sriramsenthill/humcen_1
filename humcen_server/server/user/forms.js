@@ -2458,6 +2458,47 @@ const notifcationsDelete = async(req, res) => {
   }
 }
 
+const sortNotifications = async(req, res) => {
+  const userID = req.params.userID;
+  const interval = req.params.days;
+
+  const today = new Date();
+  const totalNotifs = await Notification.findOne({user_Id: Number(userID)});
+  if(!totalNotifs) {
+    console.log("No Notifcations Left to Sort.");
+  } else {
+    const sortedNotifs = totalNotifs.notifications.filter((notif) => {
+      return Math.round((today.getTime() - new Date(notif.notifDate).getTime())/(1000 * 3600 * 24)) <= Number(interval)
+    });
+    console.log(sortedNotifs.length);
+    console.log("Sorted Notifications sent Successfully. ");
+    res.status(200).json(sortedNotifs)
+  }
+}
+
+const clearRecentNotifs = async(req, res) => {
+  const userID = req.params.userID;
+
+  try {
+    const allNotifications = await Notification.findOne({user_Id: Number(userID)});
+    if(!allNotifications) {
+      console.log("No Notifications found.");
+    } else {
+      allNotifications.notifications = allNotifications.notifications.map((notification) => {
+        notification.seen = true;
+        return notification;
+      });
+      allNotifications.save().then(() => {
+        console.log("All Recent Notifications Successfully Cleared");
+      }).catch((err) => {
+        console.error('Error in Clearin out Recent Notifications : ' + err)
+      })
+    }
+  } catch(error) {
+    console.error("Error in Clearing out Recent Notifications : " + error);
+  }
+}
+
   module.exports = {
     getJobOrderOnID,
     getJobOrders,
@@ -2480,4 +2521,6 @@ const notifcationsDelete = async(req, res) => {
     getNotification,
     notificationSeen,
     notifcationsDelete,
+    sortNotifications,
+    clearRecentNotifs,
   };
