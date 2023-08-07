@@ -58,6 +58,8 @@ const useStyles = makeStyles((theme) => ({
               boxShadow: isHovered ? "0px 4px 8px rgba(0, 0, 0, 0.2)" : "none",
               transition: "background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
               borderRadius:"20px",
+              width: '100%', // Set a fixed width for the card
+              height: '100%', 
             }}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
@@ -67,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
               <Typography
                 variant="h6"
                 align="center"
-                style={{ color: isHovered ? "#333" : "#fff", transition: "color 0.3s ease-in-out" ,fontSize:'21px'}}
+                style={{ color: isHovered ? "#333" : "#fff", transition: "color 0.3s ease-in-out" ,fontSize:'21px',marginBottom:'10px'}}
               >
                 {title}
               </Typography>
@@ -106,7 +108,7 @@ const BulkOrderComponent = () => {
           <Typography variant="h4" style={headingStyle}>
         Why Choose Our Bulk Patent Design Services?
       </Typography>
-      <Container style={{ marginTop: "21px" }}>
+      <Container style={{ marginTop: "21px",marginBottom:'40px' }}>
               <Grid container spacing={2} sx={{ rowGap: 0 }}>
                 <Grid item xs={4}>
                   <IconBox
@@ -183,7 +185,7 @@ const BulkOrderComponent = () => {
                 </Grid>
               </Grid>
             </Container>
-            <div style={{ marginTop: '80px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 'auto'}}>
+            <div style={{textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 'auto'}}>
            <CustomDropZone files={files} onFileChange={handleFileChange} />
          </div>  
             <Typography variant="h4" style={headingStyle}>
