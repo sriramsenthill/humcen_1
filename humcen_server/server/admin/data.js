@@ -141,26 +141,27 @@ const getJobFiles = async (req, res) => {
 
 const updateJobFilesDetails = async (req, res) => {
   const jobID = req.params.jobID;
-  const jobFile = await JobFiles.findOne({"_id.job_no": jobID});
-  const {job_files}=jobFile
+
   try {
-    const jobFile = await JobFiles.findOne({"_id.job_no": jobID});
-    if(! jobFile) {
+    const jobFile = await JobFiles.findOne({ "_id.job_no": jobID });
+    const { job_files } = jobFile;
+
+    if (!jobFile) {
       console.log("No Job Files Present under Job No " + jobID);
     } else {
       console.log(req.body);
-      if(req.body.accessProvided === true)  {
+      if (req.body.accessProvided === true) {
         console.log("Hey correct");
-        const findUserThroughJob = await JobOrder.findOne({"_id.job_no": jobID});
-        if(!findUserThroughJob) {
+        const findUserThroughJob = await JobOrder.findOne({ "_id.job_no": jobID });
+        if (!findUserThroughJob) {
           console.log("Can't able to find the Customer");
         } else {
           const thatCustomer = findUserThroughJob.userID;
           const options = { year: 'numeric', month: 'long', day: 'numeric' };
           const formattedDate = new Date().toLocaleDateString(undefined, options);
 
-          const acceptNotification = await Notification.findOne({user_Id: thatCustomer});
-          if(!acceptNotification) {
+          const acceptNotification = await Notification.findOne({ user_Id: thatCustomer });
+          if (!acceptNotification) {
             const newNotification = new Notification({
               user_Id: thatCustomer,
               notifications: [
@@ -176,23 +177,24 @@ const updateJobFilesDetails = async (req, res) => {
               console.log("Notification sent Successfully.");
             }).catch((err) => {
               console.error("Error in sending Notifications : " + err);
-            })
+            });
           } else {
             const accessGivenNotif = {
               notifNum: acceptNotification.notifications.length + 1,
               notifText: "Admin has given access for Verification of Work " + jobID,
               notifDate: formattedDate,
               seen: false,
-            }
+            };
             acceptNotification.notifications.push(accessGivenNotif);
             acceptNotification.save().then(() => {
-              console.log("Notification sent Successfully.")
+              console.log("Notification sent Successfully.");
             }).catch((err) => {
               console.error("Error in sending Notification : " + err);
             });
           }
         }
       }
+
       jobFile.access_provided = req.body.accessProvided;
       jobFile.verification = req.body.verification;
       jobFile.job_files = req.body.file ? {} : jobFile.job_files;
@@ -201,40 +203,46 @@ const updateJobFilesDetails = async (req, res) => {
       const userCount = req.body.users;
       const activityCount = req.body.activity;
       const partnerCount = req.body.partners;
-      if(req.body.reduction) {
-        const workedPartner = await Partner.findOne( { jobs: {$in: [parseInt(jobID)]}} ); // Finding Partner based on the Job ID
-        if(workedPartner) {
+
+      if (req.body.reduction) {
+        const workedPartner = await Partner.findOne({ jobs: { $in: [parseInt(jobID)] } }); // Finding Partner based on the Job ID
+        if (workedPartner) {
           console.log(workedPartner.in_progress_jobs);
-          const job = await JobOrder.findOne({"_id.job_no": jobID});
+          const job = await JobOrder.findOne({ "_id.job_no": jobID });
           job.steps_done = req.body.steps_done;
           job.steps_done_user = req.body.steps_user;
           job.steps_done_activity = req.body.steps_activity;
           const options = { year: 'numeric', month: 'long', day: 'numeric' };
+
           userCount.forEach((user) => {
             job.date_user[user] = new Date().toLocaleDateString(undefined, options);
-          })
-          for(let userSteps=Math.max(...userCount); userSteps < 6 ; userSteps++) {
+          });
+          for (let userSteps = Math.max(...userCount); userSteps < 6; userSteps++) {
             job.date_user[userSteps] = " ";
           }
+
           activityCount.forEach((activity) => {
             job.date_activity[activity] = new Date().toLocaleDateString(undefined, options);
-          })
-          for(let activitySteps=Math.max(...activityCount); activitySteps < 10 ; activitySteps++) {
+          });
+          for (let activitySteps = Math.max(...activityCount); activitySteps < 10; activitySteps++) {
             job.date_activity[activitySteps] = " ";
           }
+
           partnerCount.forEach((partner) => {
             job.date_partner[partner] = new Date().toLocaleDateString(undefined, options);
-          })
-          for(let partnerSteps=Math.max(...partnerCount); partnerSteps < 6 ; partnerSteps++) {
+          });
+          for (let partnerSteps = Math.max(...partnerCount); partnerSteps < 6; partnerSteps++) {
             job.date_partner[partnerSteps] = " ";
           }
+
           await job.save().then((response) => {
             console.log("Successfully updated the Timeline and Job Status");
           }).catch((err) => {
             console.error("Error in Updating Job Status and Timeline");
-          })
+          });
+
           workedPartner.save().then((response) => {
-            console.log("Successfully updated in the Partner Schema.")
+            console.log("Successfully updated in the Partner Schema.");
           }).catch((err) => {
             console.error("Error in Updating Partner Schema: ", err);
           });
@@ -242,48 +250,67 @@ const updateJobFilesDetails = async (req, res) => {
           res.status(404).json({ error: "Partner Not Found" });
         }
       }
-      jobFile.save()
-      .then((response) => {
-        const job = JobOrder.findOne({"_id.job_no": parseInt(jobID)});
-        const user = Customer.findOne({ userID: job.userID });
-        const subject = `Verification for your submission form with job no ${req.params.jobID}`;
-        const text = `Verify your ${job.service} form details from the partner`;
-        const attachments=[]
-        const tableData = [
-          { label: 'Service :', value: job.service },
-          { label: 'Customer Name :', value: job.customerName },
-          {label:'Country :',value:job.country},
-          {label:'Partner Name :',value:job.partnerName},
-          {label:'Status :',value:job.status},
-          // Add more rows as needed
-        ];
 
-        if (Array.isArray(job_files) && job_files.length > 0) {
-          // Iterate through the invention_details array and add each file as a separate attachment
-          for (const item of job_files) {
-            if (item.name && item.base64) {
-              const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
-              attachments.push({
-                filename: item.name,
-                content: base64Content,
-                encoding: 'base64', // Specify that the content is base64-encoded
-              });
+      jobFile.save().then(async (response) => {
+        const query = JobOrder.findOne({ "_id.job_no": parseInt(jobID) });
+        const job = await query.exec();
+
+        if (job) {
+          const subject = `Verification for your submission form with job no ${req.params.jobID}`;
+          const text = `Verify your ${job.service} form details from the partner`;
+          const attachments = [];
+          const tableData = [
+            { label: 'Service:', value: job.service },
+            { label: 'Customer Name:', value: job.customerName },
+            { label: 'Country:', value: job.country },
+            { label: 'Partner Name:', value: job.partnerName },
+            { label: 'Status:', value: job.status },
+            // Add more rows as needed
+          ];
+
+          if (Array.isArray(job_files) && job_files.length > 0) {
+            // Iterate through the invention_details array and add each file as a separate attachment
+            for (const item of job_files) {
+              if (item.name && item.base64) {
+                const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+                attachments.push({
+                  filename: item.name,
+                  content: base64Content,
+                  encoding: 'base64', // Specify that the content is base64-encoded
+                });
+              }
             }
           }
-        }
-        if(user && user.email) {
-        sendEmail(user.email, subject, text, tableData,attachments);
-        console.log("Job File status Updated Successfully.")
+
+          try {
+            const user = await Customer.findOne({ userID: job.userID }).exec();
+            if (user) {
+              sendEmail(user.email, subject, text, tableData, attachments);
+              console.log("Email sent successfully.");
+            } else {
+              // User not found
+              console.log('User not found.');
+            }
+          } catch (error) {
+            // Handle any errors that occurred during the query execution
+            console.error('Error retrieving user:', error);
+          }
+
+          console.log("Job File status Updated Successfully.");
+        } else {
+          // Document not found
+          console.log('Job not found.');
         }
       }).catch((err) => {
         console.log("Error in saving Job File Status", err);
       });
     }
-
-  } catch(error) {
-    console.error("Error in providing Job Files Details: ", error)
+  } catch (error) {
+    console.error("Error in providing Job Files Details: ", error);
   }
-}
+};
+
+
 
 const getJobFilesDetails = async(req, res) => {
   const jobID = req.params.jobID;
