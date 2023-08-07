@@ -163,7 +163,7 @@ const  DynamicPage = () => {
         const token = localStorage.getItem("token");
         if (token) {
           const response = await axios.get(`http://localhost:3000/api/admin/job_files_details/${jobID}`);
-          if(!response.data || !response.data.job_files){
+          if(!response.data || response.data.job_files.length === 0){
             setDownloadStatus(false);
             setButtonAccess(false);
           } else {
@@ -211,8 +211,8 @@ console.log(job)
   const onClickDownload = async (jobId) => {
     console.log(access);
     try {
-      const response = await axios.get(`http://localhost:3000/api/admin/job_files_details/${jobId}`);
-      console.log(response.data);
+      const response = await axios.get(`http://localhost:3000/api/admin/job_files/${jobId}`);
+      console.log("hEY " + response.data);
       
       const fileData = response.data.fileData;
       const fileName = response.data.fileName;
