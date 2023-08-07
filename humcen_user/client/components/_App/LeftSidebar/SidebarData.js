@@ -32,6 +32,13 @@ export const SidebarData = [
     iconOpened: <KeyboardArrowDownIcon />,
   },
   {
+    title: "Bulk Orders",
+    path: "/bulk-orders/",
+    icon: <LayersIcon />,
+    iconClosed: <KeyboardArrowRightIcon />,
+    iconOpened: <KeyboardArrowDownIcon />,
+  },
+  {
     title: "My Patent NFTs",
     path: "/my-patent-nft/",
     icon: <RequestPageIcon />,
