@@ -141,8 +141,6 @@ const getJobFiles = async (req, res) => {
 
 const updateJobFilesDetails = async (req, res) => {
   const jobID = req.params.jobID;
-  const jobData = req.body.jobDetails;
-  const user = await Customer.findOne({ userID: jobData.userID });
   const jobFile = await JobFiles.findOne({"_id.job_no": jobID});
   const {job_files}=jobFile
   try {
@@ -212,16 +210,25 @@ const updateJobFilesDetails = async (req, res) => {
           job.steps_done_user = req.body.steps_user;
           job.steps_done_activity = req.body.steps_activity;
           const options = { year: 'numeric', month: 'long', day: 'numeric' };
-          userCount.map((user) => {
+          userCount.forEach((user) => {
             job.date_user[user] = new Date().toLocaleDateString(undefined, options);
           })
-          activityCount.map((activity) => {
+          for(let userSteps=Math.max(...userCount); userSteps < 6 ; userSteps++) {
+            job.date_user[userSteps] = " ";
+          }
+          activityCount.forEach((activity) => {
             job.date_activity[activity] = new Date().toLocaleDateString(undefined, options);
           })
-          partnerCount.map((partner) => {
+          for(let activitySteps=Math.max(...activityCount); activitySteps < 10 ; activitySteps++) {
+            job.date_activity[activitySteps] = " ";
+          }
+          partnerCount.forEach((partner) => {
             job.date_partner[partner] = new Date().toLocaleDateString(undefined, options);
           })
-          job.save().then((response) => {
+          for(let partnerSteps=Math.max(...partnerCount); partnerSteps < 6 ; partnerSteps++) {
+            job.date_partner[partnerSteps] = " ";
+          }
+          await job.save().then((response) => {
             console.log("Successfully updated the Timeline and Job Status");
           }).catch((err) => {
             console.error("Error in Updating Job Status and Timeline");
@@ -237,15 +244,17 @@ const updateJobFilesDetails = async (req, res) => {
       }
       jobFile.save()
       .then((response) => {
+        const job = JobOrder.findOne({"_id.job_no": parseInt(jobID)});
+        const user = Customer.findOne({ userID: job.userID });
         const subject = `Verification for your submission form with job no ${req.params.jobID}`;
-        const text = `Verify your ${jobData.service} form details from the partner`;
+        const text = `Verify your ${job.service} form details from the partner`;
         const attachments=[]
         const tableData = [
-          { label: 'Service :', value: jobData.service },
-          { label: 'Customer Name :', value: jobData.customerName },
-          {label:'Country :',value:jobData.country},
-          {label:'Partner Name :',value:jobData.partnerName},
-          {label:'Status :',value:jobData.status},
+          { label: 'Service :', value: job.service },
+          { label: 'Customer Name :', value: job.customerName },
+          {label:'Country :',value:job.country},
+          {label:'Partner Name :',value:job.partnerName},
+          {label:'Status :',value:job.status},
           // Add more rows as needed
         ];
 
@@ -262,8 +271,10 @@ const updateJobFilesDetails = async (req, res) => {
             }
           }
         }
+        if(user && user.email) {
         sendEmail(user.email, subject, text, tableData,attachments);
         console.log("Job File status Updated Successfully.")
+        }
       }).catch((err) => {
         console.log("Error in saving Job File Status", err);
       });

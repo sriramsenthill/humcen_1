@@ -163,7 +163,7 @@ const  DynamicPage = () => {
         const token = localStorage.getItem("token");
         if (token) {
           const response = await axios.get(`http://localhost:3000/api/admin/job_files_details/${jobID}`);
-          if(!response.data){
+          if(!response.data || !response.data.job_files){
             setDownloadStatus(false);
             setButtonAccess(false);
           } else {
@@ -211,7 +211,7 @@ console.log(job)
   const onClickDownload = async (jobId) => {
     console.log(access);
     try {
-      const response = await axios.get(`http://localhost:3000/api/admin/job_files/${jobId}`);
+      const response = await axios.get(`http://localhost:3000/api/admin/job_files_details/${jobId}`);
       console.log(response.data);
       
       const fileData = response.data.fileData;
@@ -270,9 +270,9 @@ console.log(job)
             steps_done: 3,
             steps_user: 5,
             steps_activity: 7,
-            partners: [2],
-            users: [2, 3, 4],
-            activity: [5, 6],
+            partners: [2, 3],
+            users: [2, 3, 4, 5],
+            activity: [5, 6, 7],
           },
           {
             headers: {
@@ -303,14 +303,14 @@ console.log(job)
             accessProvided: false,
             decision: true,
             verification: reasons,
-            reduction: false,
+            reduction: true,
             userDeci: true,
             file: {},
-            steps_done: 3,
-            steps_user: 4,
-            steps_activity: 6,
-            users: [3, 4],
-            activity: [5],
+            steps_done: 2,
+            steps_user: 3,
+            steps_activity: 4,
+            users: [3],
+            activity: [4],
             partners: [2],
           },
           {
