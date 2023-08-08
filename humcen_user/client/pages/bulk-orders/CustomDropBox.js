@@ -8,8 +8,13 @@ const FileUploadWrapper = ({ files, onFileChange }) => {
   };
 
   const createBase64DataUrl = (file) => {
+    if (!(file instanceof Blob)) {
+      console.error('Invalid file type. Expected Blob or File object.');
+      return;
+    }
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
+      console.log(file);
       reader.readAsDataURL(file);
       reader.onload = () => {
         resolve(reader.result);
@@ -19,6 +24,12 @@ const FileUploadWrapper = ({ files, onFileChange }) => {
       };
     });
   };
+
+  const handleRemoveFile = (removedFile) => {
+    const updatedFiles = files.filter((file) => file !== removedFile);
+    onFileChange(updatedFiles);
+  };  
+  
 
   const handleFileChange = async (newFiles) => {
     const updatedFiles = await Promise.all(
@@ -36,7 +47,8 @@ const FileUploadWrapper = ({ files, onFileChange }) => {
   };
 
   return (
-    <FileUpload value={files} onChange={handleFileChange}  accept=".csv" />
+    <FileUpload value={files} onChange={handleFileChange} 
+    accept=".csv, .zip" />
   );
 };
 

@@ -32,11 +32,13 @@
     "dayjs": "^1.11.7",
     "eslint": "8.28.0",
     "eslint-config-next": "13.0.5",
+    "fs": "^0.0.1-security",
     "jszip": "^3.10.1",
     "luxon": "^3.3.0",
     "moment": "^2.29.4",
     "next": "^13.3.0",
     "notistack": "^2.0.8",
+    "rarfile": "^0.2.3-1",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.0",
     "react-chartjs-2": "^5.0.1",
@@ -52,7 +54,9 @@
     "react-tabs": "^6.0.0",
     "recharts": "^2.2.0",
     "slick-carousel": "^1.8.1",
-    "swiper": "^8.4.5"
+    "swiper": "^8.4.5",
+    "unrar-js": "^0.2.3",
+    "webpack": "^5.88.2"
   },
   "devDependencies": {
     "sass": "^1.57.1"

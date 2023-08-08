@@ -93,6 +93,10 @@ router.get("/api/sort-notif/:userID/:days", verifyToken, forms.sortNotifications
 
 router.get("/api/clear-notif/:userID", verifyToken, forms.clearRecentNotifs); // Clearing out the Recent Notifications
 
+router.get("/api/process-base64-csv/:base", forms.getCSVData); // Get CSV data through Python script
+
+router.post("/api/user/create-bulk-orders", verifyToken , forms.createBulkOrders); // Create Bulk Orders
+
 //Users_Settings
 
 router.get("/api/user/img", verifyToken, userSettings.getCustomerProfileImage);

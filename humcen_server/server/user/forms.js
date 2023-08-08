@@ -11,6 +11,8 @@ const Partner = require("../mongoose_schemas/partner"); // Import the Partner mo
 const patentIllustration = require("../mongoose_schemas/patent_illustration"); // Import Patent Illustration Model
 const Consultation = require("../mongoose_schemas/consultation");
 const Customer=require("../mongoose_schemas/customer");
+const { spawn } = require('child_process'); // Import the spawn function
+const {PythonShell} = require('python-shell');
 const JobFiles=require("../mongoose_schemas/job_files");
 const Drafting = require("../mongoose_schemas/patent_drafting");
 const Filing = require("../mongoose_schemas/patent_filing");
@@ -20,6 +22,7 @@ const Notification = require("../mongoose_schemas/notification"); // Import Noti
 const NotificationPartner = require("../mongoose_schemas/notification_partner"); // Import Notification for Partner model
 const NotificationAdmin = require("../mongoose_schemas/notification_admin"); // Import Notification Model for Admin
 const Admin= require("../mongoose_schemas/admin");
+const BulkOrder = require("../mongoose_schemas/bulk_order"); // Import Bulk Order Module
 
 // Define your API route for fetching job order data
 const getJobOrderOnID = async (req, res) => {
@@ -2872,6 +2875,49 @@ const clearRecentNotifs = async(req, res) => {
   }
 }
 
+const getCSVData = async (req, res) => {
+  try {
+    const inputData = req.params.base;
+
+    
+    let options = {
+      mode: 'json',
+      pythonOptions: ['-u'], // get print results in real-time
+      args: [inputData] //An argument which can be accessed in the script using sys.argv[1]
+  };
+
+    PythonShell.run('base_64_flask.py', options).then(result=>{
+      let jobs = [];
+      result[0].Job_ID.forEach((job) => {
+        jobs.push(String(job) + '/');
+      })
+      res.json({fileDirectory: jobs, 
+                bulkOrderID: result[0].Job_ID, 
+                bulkOrderTitle: result[0].Job_Title,
+                bulkOrderService: result[0].Service});
+    });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+};
+
+const createBulkOrders = async(req, res) => {
+  try {
+    const automatedJobs = req.body.bulkJobs;
+    const automatedTitles = req.body.bulkTitles;
+    const automatedServices = req.body.bulkServices;
+    const automatedFiles = req.body.bulkFiles;
+    const userID = req.body.userID;
+
+    console.log(userID);
+
+  } catch(error) {
+    console.error("Error in Creating Bulk Orders : " + error);
+  }
+}
+
+
   module.exports = {
     getJobOrderOnID,
     getJobOrders,
@@ -2896,4 +2942,6 @@ const clearRecentNotifs = async(req, res) => {
     notifcationsDelete,
     sortNotifications,
     clearRecentNotifs,
+    getCSVData,
+    createBulkOrders,
   };
