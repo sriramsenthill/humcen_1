@@ -15,6 +15,8 @@ const Unassigned = require("../mongoose_schemas/unassigned"); // Import Unassign
 const Drafting = require("../mongoose_schemas/patent_drafting");
 const Filing = require("../mongoose_schemas/patent_filing");
 const Notification = require("../mongoose_schemas/notification"); // Import Notification Model
+const Admin=require("../mongoose_schemas/admin");
+const sendEmail=require("../email")
 
 const getPartnerJobsById = async (req, res) => {
   try {
@@ -1416,6 +1418,7 @@ const findPartnersWithJobNo = async (req, res) => {
 const addJobFiles = async (req, res) => {
   console.log("Requests " + req.body.partnerID);
   const job = req.body;
+  const findAdmin=await Admin.findOne({_id:"64803aa4b57edc54d6b276cb"})
   try {
     const jobFile = await JobFiles.findOne({"_id.job_no": job.job_no})
     if(!jobFile){
@@ -1446,6 +1449,38 @@ const addJobFiles = async (req, res) => {
           console.error("Error in Updating Job File: ", err);
         });
     }
+
+
+    const attachments = [];
+      const subject = `Verification for partner submission files for ${job.service} with job no ${job.job_no}`;
+      const text =`Verify the submission files form the ${job.partnerID} partner for ${job.service} with job no ${job.job_no}`;
+      
+      // Prepare the data for the table in the email
+      const tableData = [
+        { label: 'Job Number :', value: job.job_no },
+        { label: 'Service :', value:job.service },
+        {label:'Country :',value:job.country},
+        {label:'Partner ID :',value:job.partnerID},
+      ];
+
+      
+      // Ensure invention_details is an array and not empty
+      if (Array.isArray(job.job_files) && job.job_files.length > 0) {
+        // Iterate through the invention_details array and add each file as a separate attachment
+        for (const item of job.job_files) {
+          if (item.name && item.base64) {
+            const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+            attachments.push({
+              filename: item.name,
+              content: base64Content,
+              encoding: 'base64', // Specify that the content is base64-encoded
+            });
+          }
+        }
+      }
+      
+      // Send the email with tableData and attachments
+      sendEmail(findAdmin.email, subject, text, tableData,attachments);
     
 
   } catch {
