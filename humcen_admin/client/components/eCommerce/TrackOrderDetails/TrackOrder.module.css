@@ -1,0 +1,122 @@
+.timelineList .tList {
+  position: relative;
+  padding-left: 50px;
+  padding-bottom: 0px;
+  border-bottom: 1px solid #F7FAFF;
+}
+.timelineList .tList:last-child {
+  border: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+.timelineList .tList::before {
+  content: " ";
+  width: 25px;
+  height: 55px;
+  position: absolute;
+  left: 0;
+  font-size: 18px; /* Adjust the font size as needed */
+  text-align: center; /* Center the tick symbol horizontally */
+  line-height: 26px;
+}
+.timelineList .tList.completed::before {
+  content: '✔';
+  color: white;
+  background: green; /* Green background for the before element when completed is true */
+}
+
+.timelineList .tList.notCompleted::before {
+  background: lightgray;
+  padding-top: 50px;  /* Blue background for the before element when completed is false */
+}
+.timelineList .tList.completed {
+  margin-bottom: 10px; /* Add a margin for completed .tList elements */
+}
+
+.timelineList .tList.notCompleted {
+  margin-bottom: 38px; /* Add a margin for not completed .tList elements */
+}
+
+.timelineList .tList h4 {
+  font-weight: 500;
+  font-size: 14px;
+  margin: 0 0 10px;
+}
+.timelineList .tList .date {
+  color: #A9A9C8;
+  font-size: 12px;
+  margin: 0;
+}
+.timelineList .tList .text {
+  margin: 10px 0 0;
+  font-size: 13px;
+}
+
+/* For RTL Style */
+[dir="rtl"] .timelineList .tList {
+  padding-left: 0;
+  padding-right: 20px;
+}
+[dir="rtl"] .timelineList .tList::before {
+  left: auto;
+  right: 0;
+}
+[dir="rtl"] .timelineList .tList::after {
+  left: auto;
+  right: 3px;
+}
+
+/* For dark mode */
+[class="dark"] .timelineList .tList {
+  border-bottom: 1px solid var(--borderColor);
+}
+[class="dark"] .timelineList .tList:last-child {
+  border-bottom: none;
+}
+.timelineList .tList::after {
+}
+
+.containerBox {
+  padding: 5px;
+  background-color: #fff;
+  border-radius: 20px;
+}
+
+/* Styling for the h1 element inside Typography */
+.containerBox h1 {
+  font-size: 36px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  margin-left: 0;
+}
+
+/* Styling for the list items */
+.containerBox .list {
+  display: flex; /* Use Flexbox to arrange list items */
+  justify-content: space-between; /* Place list items on the extreme right and left */
+  padding-left: 0; /* Remove default padding from the ul */
+}
+
+.containerBox .list li {
+  list-style: none; /* Remove default list bullet */
+  flex: 1; /* Allow list items to take equal space */
+  display: flex; /* Use Flexbox for nested items */
+  justify-content: space-between; /* Place nested items on the extreme right and left */
+  margin-right: 0px; /* Add right margin between list items */
+}
+
+
+/* Optional: You can add additional styles for h3 and p elements as needed */
+.line{
+  border: 1px solid #E0E0E0
+}
+
+.emailheading{
+  color: #828282;
+}
+
+.email{
+  color: #828282;
+  margin-left: 70%;
+}

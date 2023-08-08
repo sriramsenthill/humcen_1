@@ -1,4 +1,7 @@
 import * as React from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
+
 import styles from "@/components/_App/TopNavbar/Notification.module.css";
 import {
   IconButton,
@@ -11,8 +14,74 @@ import {
 } from "@mui/material";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 
+const api = axios.create({
+  baseURL: "http://localhost:3000/api",
+});
+
+
+// Add an interceptor to include the token in the request headers
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers['Authorization'] = token;
+  }
+  return config;
+});
+
+
 const Notification = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [notifications, setNotifications] = useState([]);
+  const [userID, setUserID] = useState("");
+  const options = {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+    weekday: "long",
+  };
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await api.get(`user/settings`);
+        setUserID(response.data.userID);
+      } catch (error) {
+        console.error("Error fetching job order data:", error);
+      }
+    };
+
+    fetchUserData();
+
+  }, []);
+
+  useEffect(() => {
+    if(userID) {
+    const fetchNotifData = async () => {
+      try {
+        const notifResponse = await api.get(`user/get-notifs/${userID}`);
+        const unSeenNotifs = notifResponse.data.filter((notif) => {
+          return notif.seen == false;
+        })
+        setNotifications(unSeenNotifs);
+        console.log("Notifications Unseen " + unSeenNotifs[0].notifDate);
+      } catch(error) {
+        console.error("Error Fetching Notification : " + error);
+      }
+    }
+
+    fetchNotifData();
+  }
+  },[userID])
+
+  const eraseRecent = async(userID) => {
+
+    const response = await api.get(`clear-notif/${userID}`).then(() => {
+      console.log("Recent Notifications cleared Successfully");
+    }).catch((err) => {
+      console.error("Error in Clearing Unseen Notifications : " + err)
+    })
+  }
+
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -37,9 +106,14 @@ const Notification = () => {
           aria-expanded={open ? "true" : undefined}
           className="ml-2 for-dark-notification"
         >
+      { notifications.length > 0 ? (
           <Badge color="danger" variant="dot">
             <NotificationsActiveIcon color="action" />
           </Badge>
+        ) :
+          (
+            <NotificationsActiveIcon color="action" />
+          )}
         </IconButton>
       </Tooltip>
 
@@ -83,10 +157,24 @@ const Notification = () => {
       >
         <div className={styles.header}>
           <Typography variant="h4">Notifications</Typography>
-          <Button variant="text">clear all</Button>
+          <Button variant="text" disabled={notifications.length === 0} onClick={() => {eraseRecent(userID); window.location.reload(true);}}>clear all</Button>
         </div>
+        { notifications.length === 0 && 
+          <Typography
+              variant="h5"
+              sx={{
+                fontSize: "14px",
+                color: "#260944",
+                fontWeight: "400",
+                mb: 1,
+              }}
+            >
+              No new Notifications to show up.
+            </Typography>
+        }
         <div className={styles.notification}>
-          <div className={styles.notificationList}>
+          {notifications.map((notif) => (
+            <div className={styles.notificationList}>
             <Typography
               variant="h5"
               sx={{
@@ -96,62 +184,16 @@ const Notification = () => {
                 mb: 1,
               }}
             >
-              8 Invoices have been paid
+              {notif.notifText}
             </Typography>
 
-            <div className={styles.notificationListContent}>
-              <img src="/images/pdf-icon.png" alt="PDF Icon" width={27} />
-              <Typography
-                variant="h6"
-                sx={{
-                  fontSize: "13px",
-                  color: "#5B5B98",
-                  fontWeight: "500",
-                }}
-                className="ml-1"
-              >
-                Invoices have been paid to the company.
-              </Typography>
-            </div>
-
             <Typography sx={{ fontSize: "12px", color: "#A9A9C8", mt: 1 }}>
-              11:47 PM Wednesday
+            {new Intl.DateTimeFormat("en-US", options).format(new Date(notif.notifDate))}
+              
             </Typography>
           </div>
 
-          <div className={styles.notificationList}>
-            <Typography
-              variant="h5"
-              sx={{
-                fontSize: "14px",
-                color: "#260944",
-                fontWeight: "500",
-                mb: 1,
-              }}
-            >
-              Create a new project for client
-            </Typography>
-
-            <div className={styles.notificationListContent}>
-              <img src="/images/man.png" alt="avatar Img" width={27} />
-              <Typography
-                variant="h6"
-                sx={{
-                  fontSize: "13px",
-                  color: "#5B5B98",
-                  fontWeight: "500",
-                }}
-                className="ml-1"
-              >
-                Allow users to like products in your WooCommerce
-              </Typography>
-            </div>
-
-            <Typography sx={{ fontSize: "12px", color: "#A9A9C8", mt: 1 }}>
-              2:00 PM Wednesday
-            </Typography>
-          </div>
-
+          ))}
           <Typography component="div" textAlign="center">
             <Link
               href="/notification/"

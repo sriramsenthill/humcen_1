@@ -30,7 +30,6 @@ const mailOptions = {
   subject: subject,
   html: emailBody,
   attachments:attachments,
-  // An array of file attachments (if any)
 };
 
 const info = await transporter.sendMail(mailOptions);

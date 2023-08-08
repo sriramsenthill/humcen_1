@@ -352,7 +352,8 @@ export default function NotificationTable() {
               fontWeight: 500,
             }}
           >
-Bulk Orders          </Typography>
+            Notification List
+          </Typography>
 
           <Box>
             <Tooltip title="Print">
