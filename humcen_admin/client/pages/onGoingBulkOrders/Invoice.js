@@ -10,7 +10,7 @@ import { useState,useEffect } from "react";
 import { useRouter } from "next/router";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import { jobData } from "../../../components/patentData";
+import { jobData } from "../../components/patentData";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import Button from "@mui/material/Button";

@@ -19,6 +19,7 @@ const Customer=require("../mongoose_schemas/customer");
 const sendEmail = require("../email");
 const Notification = require("../mongoose_schemas/notification"); // Import Notification Model for Users
 const NotificationAdmin = require("../mongoose_schemas/notification_admin"); // Import Notification Model for Admin
+const BulkOrder = require("../mongoose_schemas/bulk_order"); // Importing Bulk Order Model
 
 const getUsers = async (req, res) => {
   try {
@@ -2239,6 +2240,37 @@ const getPartnersDataForCrossAssign = async  (req, res) => {
   }
 };
 
+const getAllBulkOrders = async(req, res) => {
+  try {
+    const bulkOrders = await BulkOrder.find({});
+    if(!bulkOrders) {
+      console.log("No Pending Bulk Orders");
+    } else {
+      console.log("Sending the Pending Bulk Orders");
+      res.json(bulkOrders);
+    }
+  } catch(error) {
+    console.error("Error in finding Bulk Orders : " +error);
+  }
+
+}
+
+const getBulkOrderById = async(req, res) => {
+  try {
+    const bulkOrderId = req.params.id;
+    console.log(bulkOrderId);
+    const foundBulkOrder = await BulkOrder.findOne({"_id.job_no": parseInt(bulkOrderId)});
+    if(!foundBulkOrder) {
+      console.log("No Bulk Order found for Job Number " + bulkOrderId);
+    } else {
+      console.log("Sending the details of that particular Bulk Order..");
+      res.json(foundBulkOrder);
+    } 
+  } catch(error) {
+    console.error('Error in getting the Bulk Order Details : ' + error);
+  }
+}
+
 
 module.exports = {
   getUsers,
@@ -2256,5 +2288,7 @@ module.exports = {
   getCustomers,
   getUnassignedJobFilesForAdmin,
   crossAssignTask,
-  getPartnersDataForCrossAssign
+  getPartnersDataForCrossAssign,
+  getAllBulkOrders,
+  getBulkOrderById,
 };

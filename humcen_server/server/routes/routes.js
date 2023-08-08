@@ -156,6 +156,10 @@ router.post("/api/cross_assign", data.crossAssignTask); // To manually assign Ta
 
 router.get("/api/admin/user_files/:services/:id", data.getUnassignedJobFilesForAdmin); // To fetch Unassigned User Files for Admin
 
+router.get("/api/get-bulk-orders", verifyAdmin, data.getAllBulkOrders); // For Fetching Bulk Orders for Admin
+
+router.get("/api/bulk-order/:id", verifyAdmin, data.getBulkOrderById); // Getting details of that particular Bulk Order
+
 // ADMIN SETTINGS
 router.get("/api/admin/settings", verifyAdmin, adminSettings.getAdminProfileSettings); // For fetching Admin's Profile Settings
 

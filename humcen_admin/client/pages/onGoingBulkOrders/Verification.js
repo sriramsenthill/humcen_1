@@ -10,7 +10,7 @@ import Card from "@mui/material/Card";
 import { Box } from "@mui/material";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import { jobData } from "../../../components/patentData";
+import { jobData } from "../../components/patentData";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import Button from "@mui/material/Button";

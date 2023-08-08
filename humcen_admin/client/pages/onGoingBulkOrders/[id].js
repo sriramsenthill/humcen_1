@@ -73,18 +73,20 @@ const DynamicPage = () => {
   const [downloadStatus, setDownloadStatus] = useState(false); // Initally, User is denied from downloading
   const [jobID, setJobID] = useState("");
   const [Service, setService] = useState("");
+  const [Title, setTitle] = useState("");
   const [approval, setApproval] = useState(false);
 
   useEffect(() => {
     const fetchJobData = async () => {
       try {
-        const response = await api.get(`/job_order/${id}`);
+        const response = await api.get(`/bulk-order/${id}`);
         const specificJob = response.data;
 
         if (specificJob) {
           setJob(specificJob);
           setJobID(id);
-          setService(specificJob.service);
+          setTitle(specificJob.bulk_order_title);
+          setService(specificJob.bulk_order_service);
         } else {
           console.log("No job found with the provided job number:", id);
           setJob(null);
@@ -103,31 +105,31 @@ const DynamicPage = () => {
     };
   }, [id]); // Add 'id' as a dependency
 
-  useEffect(() => {
-    const fetchJobFileData = async (jobID) => {
-      try {
-        const response = await api.get(`/user/job_files_details/${jobID}`);
-        if(!response.data){
-          setDownloadStatus(false);
-        }
-        console.log("Response from GET:", response.data);
-        setDownloadStatus(response.data.access_provided);
-        setApproval(response.data.approval_given);
-        const token = localStorage.getItem("token");
-      } catch (error) {
-        if (error.response && error.response.status === 401) {
-          console.error("Unauthorized: You do not have access to this resource.", error);
-        } else {
-          console.error("Error in giving access for the User to download the File.", error);
-        }
-      }
-    };
+  // useEffect(() => {
+  //   const fetchJobFileData = async (jobID) => {
+  //     try {
+  //       const response = await api.get(`/user/job_files_details/${jobID}`);
+  //       if(!response.data){
+  //         setDownloadStatus(false);
+  //       }
+  //       console.log("Response from GET:", response.data);
+  //       setDownloadStatus(response.data.access_provided);
+  //       setApproval(response.data.approval_given);
+  //       const token = localStorage.getItem("token");
+  //     } catch (error) {
+  //       if (error.response && error.response.status === 401) {
+  //         console.error("Unauthorized: You do not have access to this resource.", error);
+  //       } else {
+  //         console.error("Error in giving access for the User to download the File.", error);
+  //       }
+  //     }
+  //   };
 
-    if (jobID) {
-      fetchJobFileData(jobID);
-    }
+  //   if (jobID) {
+  //     fetchJobFileData(jobID);
+  //   }
 
-  }, [jobID]);
+  // }, [jobID]);
   
 
   console.log(job);
@@ -136,68 +138,54 @@ const DynamicPage = () => {
     return <div>No job found with the provided job number.</div>;
   }
 
-  const onClickDownload = async (jobId) => {
-    try {
-      const response = await api.get(`/user/job_files/${jobId}`);
-      console.log(response.data);
+  // const onClickDownload = async (jobId) => {
+  //   try {
+  //     const response = await api.get(`/user/job_files/${jobId}`);
+  //     console.log(response.data);
       
-      const fileData = response.data.fileData;
-      const fileName = response.data.fileName;
-      const fileMIME = response.data.fileMIME;
-      const zip = new JSZip();
+  //     const fileData = response.data.fileData;
+  //     const fileName = response.data.fileName;
+  //     const fileMIME = response.data.fileMIME;
+  //     const zip = new JSZip();
 
-      for(let totalFiles=0; totalFiles < fileData.length; totalFiles++) {
-        const base64Data = fileData[totalFiles].split(",")[1];
+  //     for(let totalFiles=0; totalFiles < fileData.length; totalFiles++) {
+  //       const base64Data = fileData[totalFiles].split(",")[1];
 
-        // Convert base64 data to binary
-        const binaryString = window.atob(base64Data);
+  //       // Convert base64 data to binary
+  //       const binaryString = window.atob(base64Data);
     
-        // Create Uint8Array from binary data
-        const bytes = new Uint8Array(binaryString.length);
-        for (let i = 0; i < binaryString.length; i++) {
-          bytes[i] = binaryString.charCodeAt(i);
-        }
+  //       // Create Uint8Array from binary data
+  //       const bytes = new Uint8Array(binaryString.length);
+  //       for (let i = 0; i < binaryString.length; i++) {
+  //         bytes[i] = binaryString.charCodeAt(i);
+  //       }
     
-        // Create Blob object from binary data
-        const blob = new Blob([bytes], { type: fileMIME[totalFiles] }); // Replace "application/pdf" with the appropriate MIME type for your file
-        zip.file(fileName[totalFiles] || `file_${totalFiles}.txt`, blob);
-      }
-      const content = await zip.generateAsync({ type: "blob" });
-        const dataURL = URL.createObjectURL(content);
-        // Create temporary download link
-        const link = document.createElement("a");
-        link.href = dataURL;
-        link.download = Service + "_" +  jobId + "_Completed.zip"; // Set the desired filename and extension
+  //       // Create Blob object from binary data
+  //       const blob = new Blob([bytes], { type: fileMIME[totalFiles] }); // Replace "application/pdf" with the appropriate MIME type for your file
+  //       zip.file(fileName[totalFiles] || `file_${totalFiles}.txt`, blob);
+  //     }
+  //     const content = await zip.generateAsync({ type: "blob" });
+  //       const dataURL = URL.createObjectURL(content);
+  //       // Create temporary download link
+  //       const link = document.createElement("a");
+  //       link.href = dataURL;
+  //       link.download = Service + "_" +  jobId + "_Completed.zip"; // Set the desired filename and extension
     
-        // Trigger the download
-        link.click();
+  //       // Trigger the download
+  //       link.click();
     
-        // Clean up the temporary link
-        URL.revokeObjectURL(link.href);
+  //       // Clean up the temporary link
+  //       URL.revokeObjectURL(link.href);
 
-    } catch (error) {
-      console.error('Error downloading file:', error);
-    }
-  };
+  //   } catch (error) {
+  //     console.error('Error downloading file:', error);
+  //   }
+  // };
 
-  const {
-    job_no,
-    start_date,
-    job_title,
-    service,
-    customerName,
-    partnerName,
-    country,
-    budget,
-    status,
-  } = job;
+
 
   // Format the start_date
-  const formattedStartDate = new Date(start_date).toLocaleDateString("en-US", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+
 
   return (
     <>
@@ -223,7 +211,7 @@ const DynamicPage = () => {
       >
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6} md={6}>
-            <h1>{job_title}</h1>
+            <h1>{Title}</h1>
           </Grid>
           <Grid
             item
@@ -250,53 +238,31 @@ const DynamicPage = () => {
             <tbody>
               <tr>
                 <td className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
-                  Patent Type
+                  Service
                 </td>
                 <td className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
-                  Customer Name
+                  Job Title
                 </td>
                 <td className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
-                  Partner Name
-                </td>
-                <td className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
-                  Location
-                </td>
-                <td className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
-                  Budget
-                </td>
-                <td className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
-                  Assigned
-                </td>
-                <td className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
-                  Status
-                </td>
-                <td className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
-                  Partner Work
+                  Bulk Files
                 </td>
               </tr>
               <tr>
-                <td style={{ padding: "10px", textAlign:"center", fontWeight: "bold", fontSize: "13.5px",  }}>{service}</td>
-                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{customerName}</td>
-                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{partnerName}</td>
-                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{country}</td>
-                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{budget}</td>
-                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{formattedStartDate}</td>
-                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}><span style={getStatusColor(status)}>{status}</span></td>
+                <td style={{ padding: "10px", textAlign:"center", fontWeight: "bold", fontSize: "13.5px",  }}>{Service}</td>
+                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{Title}</td>
                 <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px", }}>
                 <Button
                       sx={{
-                        background: approval ? "#27AE60" : "#D3D3D3"  , 
+                        background: "#27AE60"   , // approval ? "#27AE60" : "#D3D3D3"  
                         color: "white",
                         borderRadius: "100px",
-                        width: "100%",
+                        width: "50%",
                         height: "88%",
                         textTransform: "none",
                         "&:hover": {
                           background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
                         },
                       }}
-                      onClick={()=>onClickDownload(job._id.job_no)}
-                      disabled={!approval}
                     >
                       Download now
                     </Button>

@@ -261,7 +261,7 @@ const BulkOrderComponent = () => {
           setBulkOrderFiles(extractedData);
           await findUserID();
 
-          await createBulkOrders(bulkOrderJobs, bulkOrderTitle, bulkOrderServices, bulkOrderFiles, userID);
+          await createBulkOrders(bulkOrderJobs, bulkOrderTitle, bulkOrderServices, extractedData, userID);
       
         } catch (error) {
           console.error('Error extracting subfiles:', error);

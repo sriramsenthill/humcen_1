@@ -2910,7 +2910,32 @@ const createBulkOrders = async(req, res) => {
     const automatedFiles = req.body.bulkFiles;
     const userID = req.body.userID;
 
-    console.log(userID);
+    const newBulkOrders = [];
+    const latestBulkOrder = await BulkOrder.findOne()
+      .sort({ "_id.job_no": -1 })
+      .limit(1)
+      .exec();
+
+    let newBulkOrderNo = latestBulkOrder
+      ? latestBulkOrder._id.job_no + 1
+      : 2000;
+
+    for(let orders=0; orders < automatedJobs.length; orders++) {
+      const newBulkOrder = new BulkOrder({
+        "_id.job_no": newBulkOrderNo + orders,
+        user_ID: parseInt(userID),
+        bulk_order_service: automatedServices[orders],
+        bulk_order_title: automatedTitles[orders],
+        bulk_order_files: automatedFiles[orders],
+        })
+        newBulkOrders.push(newBulkOrder);
+    }
+    try {
+      const savedBulkOrders = await BulkOrder.insertMany(newBulkOrders);
+      console.log(`${savedBulkOrders.length} Bulk Orders Successfully Created`);
+    } catch (error) {
+      console.error("Error in creating Bulk Orders: " + error);
+    }
 
   } catch(error) {
     console.error("Error in Creating Bulk Orders : " + error);
