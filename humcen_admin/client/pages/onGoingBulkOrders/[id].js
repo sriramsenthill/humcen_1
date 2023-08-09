@@ -137,49 +137,56 @@ const DynamicPage = () => {
     return <div>No job found with the provided job number.</div>;
   }
 
-  // const onClickDownload = async (jobId) => {
-  //   try {
-  //     const response = await api.get(`/user/job_files/${jobId}`);
-  //     console.log(response.data);
+  const onClickDownload = async (uploadedFiles, bulkID) => {
+    try {
+      const downloadableFiles = uploadedFiles;
+
+      let fileData = [];
+      let fileName = [];
+      let fileMIME = [];
       
-  //     const fileData = response.data.fileData;
-  //     const fileName = response.data.fileName;
-  //     const fileMIME = response.data.fileMIME;
-  //     const zip = new JSZip();
+      downloadableFiles.forEach((file) => {
+        fileData.push(file.base64);
+        fileName.push(file.name);
+        fileMIME.push(file.type);
+      })
 
-  //     for(let totalFiles=0; totalFiles < fileData.length; totalFiles++) {
-  //       const base64Data = fileData[totalFiles].split(",")[1];
+      console.log(fileData, fileName, fileMIME);
+      const zip = new JSZip();
 
-  //       // Convert base64 data to binary
-  //       const binaryString = window.atob(base64Data);
-    
-  //       // Create Uint8Array from binary data
-  //       const bytes = new Uint8Array(binaryString.length);
-  //       for (let i = 0; i < binaryString.length; i++) {
-  //         bytes[i] = binaryString.charCodeAt(i);
-  //       }
-    
-  //       // Create Blob object from binary data
-  //       const blob = new Blob([bytes], { type: fileMIME[totalFiles] }); // Replace "application/pdf" with the appropriate MIME type for your file
-  //       zip.file(fileName[totalFiles] || `file_${totalFiles}.txt`, blob);
-  //     }
-  //     const content = await zip.generateAsync({ type: "blob" });
-  //       const dataURL = URL.createObjectURL(content);
-  //       // Create temporary download link
-  //       const link = document.createElement("a");
-  //       link.href = dataURL;
-  //       link.download = Service + "_" +  jobId + "_Completed.zip"; // Set the desired filename and extension
-    
-  //       // Trigger the download
-  //       link.click();
-    
-  //       // Clean up the temporary link
-  //       URL.revokeObjectURL(link.href);
+      for(let totalFiles=0; totalFiles < fileData.length; totalFiles++) {
+        const base64Data = fileData[totalFiles];
 
-  //   } catch (error) {
-  //     console.error('Error downloading file:', error);
-  //   }
-  // };
+        // Convert base64 data to binary
+        const binaryString = window.atob(base64Data);
+    
+        // Create Uint8Array from binary data
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+    
+        // Create Blob object from binary data
+        const blob = new Blob([bytes], { type: fileMIME[totalFiles] }); // Replace "application/pdf" with the appropriate MIME type for your file
+        zip.file(fileName[totalFiles] || `file_${totalFiles}.txt`, blob);
+      }
+      const content = await zip.generateAsync({ type: "blob" });
+        const dataURL = URL.createObjectURL(content);
+        // Create temporary download link
+        const link = document.createElement("a");
+        link.href = dataURL;
+        link.download =  "Bulk_Order_"+ bulkID +".zip"; // Set the desired filename and extension
+    
+        // Trigger the download
+        link.click();
+    
+        // Clean up the temporary link
+        URL.revokeObjectURL(link.href);
+
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
+  };
 
 
 
@@ -255,7 +262,7 @@ const DynamicPage = () => {
                         background: color ? "#27AE60" : "#D3D3D3"    , // approval ? "#27AE60" : "#D3D3D3"  
                         color: "white",
                         borderRadius: "100px",
-                        width: "50%",
+                        width: "30%",
                         height: "88%",
                         textTransform: "none",
                         "&:hover": {
@@ -263,6 +270,7 @@ const DynamicPage = () => {
                         },
                       }}
                       disabled={Files.length === 0}
+                      onClick={() => onClickDownload(Files, jobID)}
                     >
                       Download now
                     </Button>
