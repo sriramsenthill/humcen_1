@@ -72,7 +72,9 @@ const DynamicPage = () => {
   const [job, setJob] = useState(null); // Initialize job state as null
   const [downloadStatus, setDownloadStatus] = useState(false); // Initally, User is denied from downloading
   const [jobID, setJobID] = useState("");
+  const [color, setColor] = useState(false);
   const [Service, setService] = useState("");
+  const [Files, setFiles] = useState([]);
   const [Title, setTitle] = useState("");
   const [approval, setApproval] = useState(false);
 
@@ -81,7 +83,7 @@ const DynamicPage = () => {
       try {
         const response = await api.get(`/bulk-order/${id}`);
         const specificJob = response.data;
-
+        console.log(response.data);
         if (specificJob) {
           setJob(specificJob);
           setJobID(id);
@@ -105,35 +107,32 @@ const DynamicPage = () => {
     };
   }, [id]); // Add 'id' as a dependency
 
-  // useEffect(() => {
-  //   const fetchJobFileData = async (jobID) => {
-  //     try {
-  //       const response = await api.get(`/user/job_files_details/${jobID}`);
-  //       if(!response.data){
-  //         setDownloadStatus(false);
-  //       }
-  //       console.log("Response from GET:", response.data);
-  //       setDownloadStatus(response.data.access_provided);
-  //       setApproval(response.data.approval_given);
-  //       const token = localStorage.getItem("token");
-  //     } catch (error) {
-  //       if (error.response && error.response.status === 401) {
-  //         console.error("Unauthorized: You do not have access to this resource.", error);
-  //       } else {
-  //         console.error("Error in giving access for the User to download the File.", error);
-  //       }
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchJobFileData = async (jobID) => {
+      try {
+        const response = await api.get(`bulk-order-file/${jobID}`);
+        const stringResponse = JSON.stringify(response.data);
+        const objResponse = JSON.parse(stringResponse);
+        setFiles(objResponse.bulk_order_files);
+        setColor(true);
 
-  //   if (jobID) {
-  //     fetchJobFileData(jobID);
-  //   }
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          console.error("Unauthorized: You do not have access to this resource.", error);
+        } else {
+          console.error("Error in giving access for the User to download the File.", error);
+        }
+      }
+    };
 
-  // }, [jobID]);
+    if (jobID) {
+      fetchJobFileData(jobID);
+    }
+
+  }, [jobID]);
+
+  console.log(Files);
   
-
-  console.log(job);
-
   if (!job) {
     return <div>No job found with the provided job number.</div>;
   }
@@ -253,7 +252,7 @@ const DynamicPage = () => {
                 <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px", }}>
                 <Button
                       sx={{
-                        background: "#27AE60"   , // approval ? "#27AE60" : "#D3D3D3"  
+                        background: color ? "#27AE60" : "#D3D3D3"    , // approval ? "#27AE60" : "#D3D3D3"  
                         color: "white",
                         borderRadius: "100px",
                         width: "50%",
@@ -263,6 +262,7 @@ const DynamicPage = () => {
                           background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
                         },
                       }}
+                      disabled={Files.length === 0}
                     >
                       Download now
                     </Button>

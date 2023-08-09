@@ -2240,14 +2240,16 @@ const getPartnersDataForCrossAssign = async  (req, res) => {
   }
 };
 
+
 const getAllBulkOrders = async(req, res) => {
   try {
-    const bulkOrders = await BulkOrder.find({});
+    const bulkOrders = await BulkOrder.find({}).select("-bulk_order_files");
     if(!bulkOrders) {
       console.log("No Pending Bulk Orders");
     } else {
       console.log("Sending the Pending Bulk Orders");
-      res.json(bulkOrders);
+      console.log(bulkOrders);
+      res.json({bulkOrders});
     }
   } catch(error) {
     console.error("Error in finding Bulk Orders : " +error);
@@ -2258,8 +2260,8 @@ const getAllBulkOrders = async(req, res) => {
 const getBulkOrderById = async(req, res) => {
   try {
     const bulkOrderId = req.params.id;
-    console.log(bulkOrderId);
-    const foundBulkOrder = await BulkOrder.findOne({"_id.job_no": parseInt(bulkOrderId)});
+    console.log("Hey" + bulkOrderId);
+    const foundBulkOrder = await BulkOrder.findOne({"_id.job_no": Number(bulkOrderId)}).select("-bulk_order_files");
     if(!foundBulkOrder) {
       console.log("No Bulk Order found for Job Number " + bulkOrderId);
     } else {
@@ -2271,6 +2273,22 @@ const getBulkOrderById = async(req, res) => {
   }
 }
 
+const getBulkOrderFileById = async(req, res) => {
+  try {
+    const bulkOrderId = req.params.id;
+    console.log("Hey" + bulkOrderId);
+    const foundBulkOrder = await BulkOrder.findOne({"_id.job_no": Number(bulkOrderId)}).select("bulk_order_files");
+    if(!foundBulkOrder) {
+      console.log("No Bulk Order found for Job Number " + bulkOrderId);
+    } else {
+      console.log("Sending the files of that particular Bulk Order..");
+      console.log("This " + foundBulkOrder);
+      res.json(foundBulkOrder);
+    } 
+  } catch(error) {
+    console.error('Error in getting the Bulk Order Files : ' + error);
+  }
+}
 
 module.exports = {
   getUsers,
@@ -2291,4 +2309,5 @@ module.exports = {
   getPartnersDataForCrossAssign,
   getAllBulkOrders,
   getBulkOrderById,
+  getBulkOrderFileById,
 };

@@ -174,8 +174,9 @@ function RecentBulkOrders() {
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchPartnerData();
-      setCount(data.length);
-      setRows(data);
+      console.log(data.bulkOrders);
+      setCount(data.bulkOrders.length);
+      setRows(data.bulkOrders);
     };
 
     fetchData();
