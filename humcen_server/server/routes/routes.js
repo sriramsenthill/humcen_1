@@ -223,6 +223,7 @@ router.get("/api/:services/:jobID", verifyPartner, engine.getJobDetailsForPartne
 router.get("/api/partner-details/:services/:id", verifyPartner, engine.findPartnersWithJobNo);
 router.put("/api/partner/job-files", verifyPartner, engine.addJobFiles);
 router.get("/api/partner/job_files_details/:jobID", verifyPartner, engine.getJobFilesDetailsForPartners);
+router.get("/api/partner/get-bulk-order-file/:id", verifyPartner, engine.getAssignedBulkOrderFile);
 
 
 router.post("/api/find-partner", data.getPartnersData);

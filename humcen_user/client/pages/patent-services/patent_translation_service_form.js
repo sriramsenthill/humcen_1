@@ -95,7 +95,7 @@ if (!isFormValid()) {
 
 
     const formData = {
-      domain: domain,
+      field: domain,
       source_language:sourceLanguage,
       target_language:targetLanguage,
       additional_instructions:additionalInfo,

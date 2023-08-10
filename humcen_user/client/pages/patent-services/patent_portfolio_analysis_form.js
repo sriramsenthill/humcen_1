@@ -90,7 +90,7 @@ export default function Inbox() {
 
 
     const formData = {
-      domain: domain,
+      field: domain,
       country:country,
       business_objectives:businessObj,
       market_and_industry_information:marketAndIndustry,

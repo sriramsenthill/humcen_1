@@ -140,6 +140,7 @@ const BulkOrderComponent = () => {
     }
 
     const createBulkOrders = async(jobs, titles, services, files, user) => {
+      console.log("Process has started");
       const response = await api.post(`user/create-bulk-orders/`, {
         bulkJobs: jobs,
         bulkTitles: titles,

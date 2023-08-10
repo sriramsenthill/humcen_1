@@ -17,6 +17,10 @@ const bulkOrderSchema = new mongoose.Schema({
   bulk_order_files: {
     type: Object,
   },
+  Assigned: {
+    type: Boolean,
+    default: false,
+  }
 });
 
 const BulkOrder = mongoose.model('BulkOrder', bulkOrderSchema, 'bulk_order');

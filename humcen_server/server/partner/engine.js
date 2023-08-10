@@ -16,7 +16,8 @@ const Drafting = require("../mongoose_schemas/patent_drafting");
 const Filing = require("../mongoose_schemas/patent_filing");
 const Notification = require("../mongoose_schemas/notification"); // Import Notification Model
 const Admin=require("../mongoose_schemas/admin");
-const sendEmail=require("../email")
+const sendEmail=require("../email");
+const BulkOrder = require("../mongoose_schemas/bulk_order");
 
 const getPartnerJobsById = async (req, res) => {
   try {
@@ -1555,6 +1556,22 @@ const updateTimelineForUpload = async (req, res) => {
   }
 };
 
+const getAssignedBulkOrderFile = async(req, res) => {
+  try {
+    const fileID = req.params.id;
+    const thatBulkOrderFile = await BulkOrder.findOne({"_id.job_no": Number(fileID)}).select("bulk_order_files");
+    if(!thatBulkOrderFile) {
+      console.log("No Bulk Order File found for ID " + fileID );
+    } else {
+      console.log("Getting that File");
+      res.json(thatBulkOrderFile);
+      console.log("Successfully sent that File.");
+    }
+  } catch(error) {
+    console.error('Error in getting Assigned Bulk Order File : ' + error);
+  }
+}
+
 module.exports = {
   getPartnerJobsById,
   getPartnerJobOrders,
@@ -1565,5 +1582,6 @@ module.exports = {
   findPartnersWithJobNo,
   addJobFiles,
   getJobFilesDetailsForPartners,
-  updateTimelineForUpload
+  updateTimelineForUpload,
+  getAssignedBulkOrderFile,
 };

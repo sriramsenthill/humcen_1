@@ -2910,6 +2910,7 @@ const createBulkOrders = async(req, res) => {
     const automatedFiles = req.body.bulkFiles;
     const userID = req.body.userID;
 
+    console.log("Bulk Orders Received. Please wait for sometime.");
     const newBulkOrders = [];
     const latestBulkOrder = await BulkOrder.findOne()
       .sort({ "_id.job_no": -1 })
@@ -2940,6 +2941,7 @@ const createBulkOrders = async(req, res) => {
   } catch(error) {
     console.error("Error in Creating Bulk Orders : " + error);
   }
+  console.log("Process has ended.");
 }
 
 

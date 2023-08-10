@@ -23,6 +23,11 @@ const jobOrderSchema = new mongoose.Schema({
   job_desc: { type: String },
   accept_policies: { type: Boolean },
   keywords: { type: String },
+  prev_id : { type: Number},
+  bulk: {
+    type: Boolean,
+    default: false,
+  },
   service_specific_files: {
     invention_details: { type: Object },
     application_type: { type: String },

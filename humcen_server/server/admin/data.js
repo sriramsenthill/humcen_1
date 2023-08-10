@@ -54,7 +54,7 @@ const getPartners = async (req, res) => {
 const getUnassignedJobOrders = async (req, res) => {
   try {
     // Assuming you have a MongoDB model named "JobOrder"
-    const unassignedJobOrders = await Unassigned.find({ });
+    const unassignedJobOrders = await Unassigned.find({ }).select("domain country _id status customerName budget service");
     res.send(unassignedJobOrders);
   } catch (error) {
     console.error("Error fetching unassigned job orders:", error);
@@ -2243,7 +2243,7 @@ const getPartnersDataForCrossAssign = async  (req, res) => {
 
 const getAllBulkOrders = async(req, res) => {
   try {
-    const bulkOrders = await BulkOrder.find({}).select("-bulk_order_files");
+    const bulkOrders = await BulkOrder.find({Assigned: false}).select("-bulk_order_files");
     if(!bulkOrders) {
       console.log("No Pending Bulk Orders");
     } else {
@@ -2372,7 +2372,9 @@ const assignBulkOrder = async(req, res) => {
       date_user: [formattedDate, formattedDate, formattedDate, " ", " ", " "],
       date_activity: [formattedDate, formattedDate, formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
       Accepted: true,
+      bulk: true,
       job_title: title,
+      prev_id: Number(orderID),
       job_desc: "To be Assigned",
     }
 
@@ -2382,32 +2384,8 @@ const assignBulkOrder = async(req, res) => {
       console.error("Error in Creating the Job Order from Bulk Order : " +error)
     });
 
-
-    if(service === "Patent Drafting") {
-    // Creating a document for Particular Service Schema
-
-    const bulkDraftingDoc = {
-      "_id.job_no": newJobNo,
-      country: "To be Assigned",
-      budget: "To be Assigned",
-      userID: customer_ID,
-      job_title: title,
-      service: service,
-      start_date: startDate,
-      end_date: endDate,
-      status: "In Progress",
-      service_specific_files: requiredFiles,
-      time_of_delivery: "To be Assigned"
-    }
-
-    const newBulkDraftingOrder = new Drafting(bulkDraftingDoc).save().then(() => {
-      console.log("Bulk Order successfully saved in Drafting Schema.");
-    }).catch((error) => {
-      console.error("Error in saving details to Drafting Order : " + error);
-    });
-    console.log(bulkDraftingDoc);
-
-    // Pushing Job to User and Partner, Increasing the In Progress Jobs
+    
+        // Pushing Job to User and Partner, Increasing the In Progress Jobs
 
     thatPartner.in_progress_jobs = thatPartner.in_progress_jobs + 1;
     thatPartner.is_free = false;
@@ -2425,69 +2403,24 @@ const assignBulkOrder = async(req, res) => {
       console.error("Error in adding Job to the Customer Schema.")
     });
 
-    // Clearing out that particular Bulk Order
-    const findThatBulkOrder = await BulkOrder.deleteOne({"_id.job_no": Number(orderID)}).then(() => {
-      console.log(orderID + " successfully deleted from Bulk Order.");
-    }).catch((error) => {
-      console.error("Error in removing the Assigned Bulk Order : " + error);
-    });
-
-    } else if (service === "Patent Filing") {
-      // Creating a document for Particular Service Schema
-
-    const bulkFilingDoc = {
-      "_id.job_no": newJobNo,
-      country: "To be Assigned",
-      budget: "To be Assigned",
-      userID: customer_ID,
-      job_title: title,
-      service: service,
-      start_date: startDate,
-      end_date: endDate,
-      status: "In Progress",
-      service_specific_files: requiredFiles,
-      time_of_delivery: "To be Assigned"
+    // Clearing out that particular Bulk Order from Admin sight.
+    const findThatBulkOrder = await BulkOrder.findOne({"_id.job_no": Number(orderID)});
+    if(!findThatBulkOrder) {
+      console.log("No Bulk Order found for ID " + orderID);
+    } else {
+      findThatBulkOrder.Assigned = true;
+      findThatBulkOrder.save().then(() => {
+        console.log("Bulk Order Updated Successfully.");
+      }).catch((error) => {
+        console.error("Error in assigning the Bulk Order to Partner: " + error);
+      })
     }
 
-    const newBulkFilingOrder = new Drafting(bulkFilingDoc).save().then(() => {
-      console.log("Bulk Order successfully saved in Filing Schema.");
-    }).catch((error) => {
-      console.error("Error in saving details to Filing Order : " + error);
-    });
-    console.log(bulkFilingDoc);
-
-    // Pushing Job to User and Partner, Increasing the In Progress Jobs
-
-    thatPartner.in_progress_jobs = thatPartner.in_progress_jobs + 1;
-    thatPartner.is_free = false;
-    thatPartner.jobs.push(newJobNo);
-    thatPartner.save().then(() => {
-      console.log("Bulk Order Job Successfully Assigned to ID " + partner_ID);
-    }).catch((error) => {
-      console.error("Error in Assigning Job to the Partner : " + error);
-    });
-
-    thatCustomer.jobs.push(newJobNo);
-    thatCustomer.save().then(() => {
-      console.log("Job added to the Customer Schema successfully");
-    }).catch((error) => {
-      console.error("Error in adding Job to the Customer Schema.")
-    });
-
-    // Clearing out that particular Bulk Order
-    const findThatBulkOrder = await BulkOrder.deleteOne({"_id.job_no": Number(orderID)}).then(() => {
-      console.log(orderID + " successfully deleted from Bulk Order.");
-    }).catch((error) => {
-      console.error("Error in removing the Assigned Bulk Order : " + error);
-    });
-    }
-
-
-  } catch(error) {
+  }
+  catch(error) {
     console.error("Error in receiving the Assign Data : " + error);
   }
 }
-
 
 module.exports = {
   getUsers,
