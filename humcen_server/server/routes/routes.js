@@ -144,6 +144,8 @@ router.get("/api/admin/job_order/:jobID", data.getJobOrderById); // For getting 
 
 router.get("/api/Unassigned/:jobID", data.getUnassignedJobById); // For getting Job Details from Admin Side
 
+router.get("/api/Unassigned/only-details/:jobID", data.getUnassignedJobDetailsById); // Getting only the Necessary Details
+
 router.get("/api/find-partner/:services/:country", data.getPartnersData); // Fetching out Available Partners to assign the Task
 
 router.post("/api/assign", data.assignTask); // To manually assign Task to a Partner

@@ -134,6 +134,9 @@ const DynamicPage = () =>{
   const [getCountry, setCountry] = useState("");
   const [clicked, setClicked] = useState(false); 
   const [partners, setPartners] = useState(false);
+  const [dataList, setDataList] = useState([]);
+  const [nameList, setNameList] = useState([]);
+  const [mimeList, setMIMEList] = useState([]);
   const [selectedPartner, setSelectedPartner] = useState('');
   const [submit, setSubmit] = useState(false);
 
@@ -146,34 +149,46 @@ const DynamicPage = () =>{
     const fetchJobData = async () => {
       try {
         const noFileInputServices = ['Patent Licensing and Commercialization Services', "Patent Watch", "Freedom to Patent Landscape" ];
-        const response = await api.get(`/Unassigned/${id}`);
+        const response = await api.get(`/Unassigned/only-details/${id}`);
 
         const specificJob = response.data;
         console.log(specificJob);
 
         if (specificJob) {
-          setJob(specificJob[0]);
+          setJob(specificJob);
           setJobID(specificJob.job_no);
-          setService(specificJob[0].service);
+          setService(specificJob.service);
           setCountry(specificJob.country);
-          setFile(noFileInputServices.includes(specificJob[0].service));
+          setFile(noFileInputServices.includes(specificJob.service));
         } else {
           console.log("No job found with the provided job number:", id);
           setJob(null);
         }
       } catch (error) {
-        console.error("Error fetching job order data:", error);
+        console.error("Error fetching job order details:", error);
         setJob(null);
       }
-    };
+    }
 
     fetchJobData(id);
+
+    const fetchFiles = async() => {
+      const response = await api.get(`admin/user_files/${Service}/${id}`);
+      if(response.data) {
+        setDataList(response.data.fileData);
+        setNameList(response.data.fileName);
+        setMIMEList(response.data.fileMIME);
+        setFile(false);
+      } else {
+        console.log("No Files present for the ID : " + jobID)
+      }
+    }
 
     // Clean up the effect by resetting the job state when the component is unmounted
     return () => {
       setJob(null);
     };
-  }, [id]);
+  }, [id, Service]);
   
 
   if (!job) {
@@ -231,12 +246,11 @@ const DynamicPage = () =>{
   
   }
 
-  const onClickDownload = async (Service, jobId) => {
+  const onClickDownload = async (data, name, mime, Service, jobId) => {
     try {
-      const response = await api.get(`admin/user_files/${Service}/${jobId}`);
-      const fileData = response.data.fileData;
-      const fileName = response.data.fileName;
-      const fileMIME = response.data.fileMIME;
+      const fileData = data;
+      const fileName = name;
+      const fileMIME = mime;
       const zip = new JSZip();
       
       for(let totalFiles=0; totalFiles < fileData.length; totalFiles++) {
@@ -379,7 +393,7 @@ const DynamicPage = () =>{
                           background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
                         },
                       }}
-                      onClick={()=>onClickDownload(job.service , job._id.job_no)}
+                      onClick={()=>onClickDownload(dataList, nameList, mimeList, job.service, job._id.job_no)}
                       disabled={noFile}
                       
                     >

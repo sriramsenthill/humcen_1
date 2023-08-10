@@ -344,7 +344,7 @@ const getUnassignedJobById = async (req, res) => {
   const jobId = req.params.jobID
   console.log("Hey " + jobId);
   try {
-    const jobOrders = await Unassigned.find({"_id.job_no": jobId});
+    const jobOrders = await Unassigned.findOne({"_id.job_no": jobId});
     console.log("jo: " + jobOrders);
     res.json(jobOrders);
   } catch (error) {
@@ -352,6 +352,20 @@ const getUnassignedJobById = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+const getUnassignedJobDetailsById = async (req, res) => {
+  const jobId = req.params.jobID;
+  try {
+    const jobOrder = await Unassigned.findOne({"_id.job_no": Number(jobId)}).select("customerName service domain country budget status _id");
+    if(!jobOrder) {
+      console.log("No Unassigned Job Order found for ID " + jobId);
+    } else {
+      res.json(jobOrder);
+    }
+  }  catch(error) {
+    console.error("Error in sending the Details : " + error);
+  }
+}
 
 const assignTask = async(req, res) => {
   const unassignedJobID = req.body.uaJobID;
@@ -2433,6 +2447,7 @@ module.exports = {
   getJobOrderById,
   getUnassignedJobOrders,
   getUnassignedJobById,
+  getUnassignedJobDetailsById,
   getPartnersData,
   assignTask,
   getCustomers,
