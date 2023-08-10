@@ -2290,6 +2290,205 @@ const getBulkOrderFileById = async(req, res) => {
   }
 }
 
+const getPartnersForBulkOrder = async(req, res) => {
+  try {
+    const chosenService = req.params.service;
+    
+    const partnersList = await Partner.find({["known_fields."+chosenService]: true});
+    const nameList = [];
+    const idList = [];
+    partnersList.forEach((partner) => {
+      nameList.push(partner.first_name + " " + partner.last_name);
+      idList.push(partner.userID);
+    });
+
+    res.json({names: nameList, uniqueIDs: idList});
+  } catch(error) {
+    console.error("Error in Getting Partners : " + error);
+  }
+}
+
+const assignBulkOrder = async(req, res) => {
+  try {
+    const orderID = req.params.id;
+    const customer_ID = req.body.customerID;
+    const partner_ID = req.body.partnerID;
+    const service = req.body.chosenService;
+    const title = req.body.jobTitle;
+    let requiredFiles = req.body.inputFiles;
+    requiredFiles.map((file) => {
+      file.base64 = "data:"+file.type+";base64,"+file.base64;
+    });
+
+    // Finding Customer 
+
+    const thatCustomer = await Customer.findOne({userID: Number(customer_ID)});
+    if(!thatCustomer) {
+      console.log("No Customer found for Customer ID : " + customer_ID);
+    }
+
+    // Finding Partner
+    const thatPartner = await Partner.findOne({userID: Number(partner_ID)});
+    if(!thatPartner) {
+      console.log("No Partner found for Partner ID : " + partner_ID);
+    }
+
+    const customer_name = thatCustomer.first_name;
+    const partner_name = thatPartner.first_name;
+
+    // Creating a New Job Order
+    const latestJobOrder = await JobOrder.findOne()
+    .sort({ "_id.job_no": -1 })
+    .limit(1)
+    .exec();
+
+    let newJobNo = latestJobOrder
+    ? latestJobOrder._id.job_no + 1
+    : 1000;
+
+    const startDate = new Date();
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + 7);
+
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = new Date().toLocaleDateString(undefined, options);
+
+    const newBulkJob = {
+      "_id.job_no": newJobNo,
+      service: service,
+      country: "To be Assigned",
+      start_date: startDate,
+      end_date: endDate,
+      budget: "To be Assigned",
+      status: "In Progress",
+      userID: customer_ID,
+      customerName: customer_name,
+      partnerID: partner_ID,
+      partnerName: partner_name,
+      steps_done: 2, 
+      steps_done_user: 3,
+      steps_done_activity: 4,
+      date_partner: [formattedDate, formattedDate, " ", " "], 
+      date_user: [formattedDate, formattedDate, formattedDate, " ", " ", " "],
+      date_activity: [formattedDate, formattedDate, formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
+      Accepted: true,
+      job_title: title,
+      job_desc: "To be Assigned",
+    }
+
+    const newOrder = new JobOrder(newBulkJob).save().then(() => {
+      console.log("Bulk Order sent as Job Order successfully.");
+    }).catch((error) => {
+      console.error("Error in Creating the Job Order from Bulk Order : " +error)
+    });
+
+
+    if(service === "Patent Drafting") {
+    // Creating a document for Particular Service Schema
+
+    const bulkDraftingDoc = {
+      "_id.job_no": newJobNo,
+      country: "To be Assigned",
+      budget: "To be Assigned",
+      userID: customer_ID,
+      job_title: title,
+      service: service,
+      start_date: startDate,
+      end_date: endDate,
+      status: "In Progress",
+      service_specific_files: requiredFiles,
+      time_of_delivery: "To be Assigned"
+    }
+
+    const newBulkDraftingOrder = new Drafting(bulkDraftingDoc).save().then(() => {
+      console.log("Bulk Order successfully saved in Drafting Schema.");
+    }).catch((error) => {
+      console.error("Error in saving details to Drafting Order : " + error);
+    });
+    console.log(bulkDraftingDoc);
+
+    // Pushing Job to User and Partner, Increasing the In Progress Jobs
+
+    thatPartner.in_progress_jobs = thatPartner.in_progress_jobs + 1;
+    thatPartner.is_free = false;
+    thatPartner.jobs.push(newJobNo);
+    thatPartner.save().then(() => {
+      console.log("Bulk Order Job Successfully Assigned to ID " + partner_ID);
+    }).catch((error) => {
+      console.error("Error in Assigning Job to the Partner : " + error);
+    });
+
+    thatCustomer.jobs.push(newJobNo);
+    thatCustomer.save().then(() => {
+      console.log("Job added to the Customer Schema successfully");
+    }).catch((error) => {
+      console.error("Error in adding Job to the Customer Schema.")
+    });
+
+    // Clearing out that particular Bulk Order
+    const findThatBulkOrder = await BulkOrder.deleteOne({"_id.job_no": Number(orderID)}).then(() => {
+      console.log(orderID + " successfully deleted from Bulk Order.");
+    }).catch((error) => {
+      console.error("Error in removing the Assigned Bulk Order : " + error);
+    });
+
+    } else if (service === "Patent Filing") {
+      // Creating a document for Particular Service Schema
+
+    const bulkFilingDoc = {
+      "_id.job_no": newJobNo,
+      country: "To be Assigned",
+      budget: "To be Assigned",
+      userID: customer_ID,
+      job_title: title,
+      service: service,
+      start_date: startDate,
+      end_date: endDate,
+      status: "In Progress",
+      service_specific_files: requiredFiles,
+      time_of_delivery: "To be Assigned"
+    }
+
+    const newBulkFilingOrder = new Drafting(bulkFilingDoc).save().then(() => {
+      console.log("Bulk Order successfully saved in Filing Schema.");
+    }).catch((error) => {
+      console.error("Error in saving details to Filing Order : " + error);
+    });
+    console.log(bulkFilingDoc);
+
+    // Pushing Job to User and Partner, Increasing the In Progress Jobs
+
+    thatPartner.in_progress_jobs = thatPartner.in_progress_jobs + 1;
+    thatPartner.is_free = false;
+    thatPartner.jobs.push(newJobNo);
+    thatPartner.save().then(() => {
+      console.log("Bulk Order Job Successfully Assigned to ID " + partner_ID);
+    }).catch((error) => {
+      console.error("Error in Assigning Job to the Partner : " + error);
+    });
+
+    thatCustomer.jobs.push(newJobNo);
+    thatCustomer.save().then(() => {
+      console.log("Job added to the Customer Schema successfully");
+    }).catch((error) => {
+      console.error("Error in adding Job to the Customer Schema.")
+    });
+
+    // Clearing out that particular Bulk Order
+    const findThatBulkOrder = await BulkOrder.deleteOne({"_id.job_no": Number(orderID)}).then(() => {
+      console.log(orderID + " successfully deleted from Bulk Order.");
+    }).catch((error) => {
+      console.error("Error in removing the Assigned Bulk Order : " + error);
+    });
+    }
+
+
+  } catch(error) {
+    console.error("Error in receiving the Assign Data : " + error);
+  }
+}
+
+
 module.exports = {
   getUsers,
   getPartners,
@@ -2310,4 +2509,6 @@ module.exports = {
   getAllBulkOrders,
   getBulkOrderById,
   getBulkOrderFileById,
+  getPartnersForBulkOrder,
+  assignBulkOrder,
 };

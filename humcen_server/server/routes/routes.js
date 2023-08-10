@@ -162,6 +162,10 @@ router.get("/api/bulk-order/:id",  data.getBulkOrderById); // Getting details of
 
 router.get("/api/bulk-order-file/:id", data.getBulkOrderFileById); // Getting details of that particular Bulk Order
 
+router.get("/api/admin/bulk-order/partner/:service", data.getPartnersForBulkOrder); // Getting Partner's Details according to the service chosen by Admin
+
+router.post("/api/admin/bulk-order/assign/:id", data.assignBulkOrder); // API for Assigning Bulk Order Task to the Partner
+
 // ADMIN SETTINGS
 router.get("/api/admin/settings", verifyAdmin, adminSettings.getAdminProfileSettings); // For fetching Admin's Profile Settings
 

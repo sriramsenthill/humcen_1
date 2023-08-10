@@ -8,10 +8,25 @@ import Card from "@mui/material/Card";
 import withAuth from "@/components/withAuth";
 import Features from "./Features";
 import BasicTabs from "./Tabs";
-import { Button } from "@mui/material";
+import { Button, FormControl, InputLabel, Select, MenuItem, Typography } from "@mui/material";
 import axios from "axios";
-import JSZip from "jszip";
+import JSZip, { files } from "jszip";
+import { styled } from "@mui/system";
 
+const ColorButton = styled(Button)(({ theme }) => ({
+  color: "white",
+  width: "120%",
+  height: "52px",
+  borderRadius: "100px",
+  marginBottom: "30px",
+  background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
+  "&:hover": {
+    background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
+  },
+  textTransform: "none",
+  fontSize: "14px",
+  fontWeight: "400",
+}));
 
 
 
@@ -64,6 +79,16 @@ function getStatusColor(status) {
   return ""; // Default color if the status value is not matched
 }
 
+const list = ["Patent Drafting", 
+"Patent Filing", 
+"Patent Search", 
+"Response To FER Office Action",
+"Freedom to Patent Landscape", 
+"Patent Illustration",
+"Patent Licensing and Commercialization Services",
+"Patent Watch", "Freedom To Operate", 
+"Patent Portfolio Analysis", 
+"Patent Translation Services" ];
 
 const DynamicPage = () => {
   const router = useRouter();
@@ -73,10 +98,16 @@ const DynamicPage = () => {
   const [downloadStatus, setDownloadStatus] = useState(false); // Initally, User is denied from downloading
   const [jobID, setJobID] = useState("");
   const [color, setColor] = useState(false);
+  const [partnerNames, setPartnerNames] = useState([]);
+  const [partnerIDS, setPartnerIDS] = useState([]);
   const [Service, setService] = useState("");
   const [Files, setFiles] = useState([]);
   const [Title, setTitle] = useState("");
+  const [selectedPartner, setSelectedPartner] = useState("");
+  const [selectedService, setSelectedService] = useState('');
+  const [customer, setCustomer] = useState('');
   const [approval, setApproval] = useState(false);
+  const [listOfServices, setList] = useState(list);
 
   useEffect(() => {
     const fetchJobData = async () => {
@@ -86,6 +117,7 @@ const DynamicPage = () => {
         console.log(response.data);
         if (specificJob) {
           setJob(specificJob);
+          setCustomer(specificJob.user_ID);
           setJobID(id);
           setTitle(specificJob.bulk_order_title);
           setService(specificJob.bulk_order_service);
@@ -135,6 +167,45 @@ const DynamicPage = () => {
   
   if (!job) {
     return <div>No job found with the provided job number.</div>;
+  }
+
+  const handleServiceSelection = async(event) => {  
+    setSelectedService(event.target.value); // Update the state with the selected value
+    console.log(event.target.value);
+
+    if(event.target.value != '') {
+    try {
+      const response = await api.get(`admin/bulk-order/partner/${event.target.value}`);
+      setPartnerNames(response.data.names);
+      setPartnerIDS(response.data.uniqueIDs);
+    } catch(error) {
+      console.error("Error in finding Partners : " + error);
+    }
+  }
+
+  }
+
+  const handlePartnerSelection = async(event) => {  
+    setSelectedPartner(event.target.value); // Update the state with the selected value
+    console.log(event.target.value);
+
+  };
+
+  const handleSubmit = async(partner, thisService, order, custID, title, files) => {
+    console.log("Partner is :" + partner);
+    console.log("Service is :" + thisService);
+
+    const response = await api.post(`admin/bulk-order/assign/${order}`, {
+      partnerID: partner,
+      chosenService: thisService,
+      customerID: custID,
+      jobTitle: title,
+      inputFiles: files,
+    }).then(() => {
+      console.log("Assign Data sent to API successfully");
+    }).catch((err) => {
+      console.error("Error in assigning Job to the Partner: " + err);
+    });
   }
 
   const onClickDownload = async (uploadedFiles, bulkID) => {
@@ -285,19 +356,93 @@ const DynamicPage = () => {
             </tbody>
           </table>
         </Grid>
-      </Card>
-      <Features />
-      <Card
-        sx={{
-          boxShadow: "none",
-          borderRadius: "10px",
-          p: "25px",
-          mb: "15px",
-        }}
-      >
-        <Grid container spacing={2}>
-          <BasicTabs />
-        </Grid>
+        <Grid container>
+        <Typography
+          variant="h4"
+          sx={{
+            position: "relative",
+            top: "20px",
+            left: "120px",
+            fontWeight: "bold",
+          }}
+        >
+          Select the Service :
+        </Typography>
+  <FormControl style={{ marginTop: "17px", marginLeft: "16px", width: 260, position: "relative", left: "35%", bottom: "5px",}}>
+    <InputLabel id="service-dropdown-label">Service</InputLabel>
+    <Select
+      labelId="service-dropdown-label"
+      id="service-dropdown"
+      value={selectedService}
+      onChange={handleServiceSelection}
+    >
+      {listOfServices.map((service) => (
+        <MenuItem key={service} value={service}>
+          {service}
+        </MenuItem>
+      ))}
+    </Select>
+  </FormControl>
+</Grid>
+
+{ selectedService && 
+  <Grid container>
+        <Typography
+          variant="h4"
+          sx={{
+            position: "relative",
+            top: "20px",
+            left: "120px",
+            fontWeight: "bold",
+          }}
+        >
+          Select the Partner :
+        </Typography>
+  {(partnerNames.length != 0 && partnerIDS.length != 0) ? (
+    <FormControl style={{ marginTop: "17px", marginLeft: "16px", width: 260, position: "relative", left: "35%", bottom: "5px",}}>
+    <InputLabel id="service-dropdown-label">Partner</InputLabel>
+    <Select
+      labelId="service-dropdown-label"
+      id="service-dropdown"
+      value={selectedPartner}
+      onChange={handlePartnerSelection}
+    >
+    {partnerNames.map((partnerName, index) => (
+        <MenuItem key={partnerIDS[index]} value={partnerIDS[index]}>
+            {partnerName}
+        </MenuItem>
+    ))}
+
+    </Select>
+  </FormControl>
+  ) : (
+    <h3 style={{
+          position: "relative",
+          top: "10px",
+          fontWeight: "22px",
+          left: "35%",
+        }}>No Partners available to do the Task</h3>
+  )
+   }
+
+</Grid>
+}
+{(selectedPartner != '' && selectedService != '' && partnerNames.length != 0 && Files.length != 0) && (<ColorButton
+                sx={{ 
+                  width: "10%",
+                  height: "10%",
+                  position: "relative",
+                  top: "30px",
+                  left: "45%",
+                  "&:hover": {
+                          background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
+                        }, }}
+                type="submit"
+                onClick={() => {window.location.href = "/"; handleSubmit(selectedPartner, selectedService, jobID, customer, Title, Files)}}
+              >
+                Assign Job
+      </ColorButton> )}
+
       </Card>
       </div>
     </>
