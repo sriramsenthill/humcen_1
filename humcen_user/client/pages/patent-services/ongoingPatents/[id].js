@@ -80,7 +80,7 @@ const DynamicPage = () => {
       try {
         const response = await api.get(`/job_order/${id}`);
         const specificJob = response.data;
-
+        console.log(specificJob);
         if (specificJob) {
           setJob(specificJob);
           setJobID(id);

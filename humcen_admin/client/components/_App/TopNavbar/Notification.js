@@ -41,24 +41,9 @@ const Notification = () => {
   };
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await api.get(`user/settings`);
-        setUserID(response.data.userID);
-      } catch (error) {
-        console.error("Error fetching job order data:", error);
-      }
-    };
-
-    fetchUserData();
-
-  }, []);
-
-  useEffect(() => {
-    if(userID) {
     const fetchNotifData = async () => {
       try {
-        const notifResponse = await api.get(`user/get-notifs/${userID}`);
+        const notifResponse = await api.get(`admin/get-notifs`);
         const unSeenNotifs = notifResponse.data.filter((notif) => {
           return notif.seen == false;
         })
@@ -71,11 +56,11 @@ const Notification = () => {
 
     fetchNotifData();
   }
-  },[userID])
+  , []);
 
   const eraseRecent = async(userID) => {
 
-    const response = await api.get(`clear-notif/${userID}`).then(() => {
+    const response = await api.get(`admin/clear-notif`).then(() => {
       console.log("Recent Notifications cleared Successfully");
     }).catch((err) => {
       console.error("Error in Clearing Unseen Notifications : " + err)

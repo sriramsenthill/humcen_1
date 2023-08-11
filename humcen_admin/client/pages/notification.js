@@ -231,27 +231,11 @@ export default function NotificationTable() {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [notifications, setNotifications] = useState([]);
   const [tickNotifs, setTickNotifs] = useState([]);
-  const [userID, setUserID] = useState("");
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await api.get(`user/settings`);
-        setUserID(response.data.userID);
-      } catch (error) {
-        console.error("Error fetching job order data:", error);
-      }
-    };
-
-    fetchUserData();
-
-  }, []);
-
-  useEffect(() => {
-    if(userID) {
     const fetchNotifData = async () => {
       try {
-        const notifResponse = await api.get(`user/get-notifs/${userID}`);
+        const notifResponse = await api.get(`admin/get-notifs`);
         setNotifications(notifResponse.data);
         console.log("Notifications " + notifResponse.data);
       } catch(error) {
@@ -260,12 +244,11 @@ export default function NotificationTable() {
     }
 
     fetchNotifData();
-  }
-  },[userID])
+  },[])
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - notifications.length) : 0;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -286,8 +269,8 @@ export default function NotificationTable() {
     setAnchorEl(null);
   };
 
-  const clickedByUser = async(notifId, userID) => {
-    const clickConfirm = await api.put(`seen-notif/${userID}/${notifId}`, { seen: true})
+  const clickedByUser = async(notifId) => {
+    const clickConfirm = await api.put(`admin/seen-notif/${notifId}`, { seen: true})
     clickConfirm.then(() => {
       console.log("Successfully Updated" + clickConfirm.data);
     }).catch( (error) => {
@@ -307,10 +290,10 @@ export default function NotificationTable() {
     } 
   }
 
-  const deleteSelectedNotifs = async(userID, deleteTheseNotifs) => {
+  const deleteSelectedNotifs = async(deleteTheseNotifs) => {
     const selectedNotifs = deleteTheseNotifs.map((elt) => elt=Number(elt));
-    console.log(userID, selectedNotifs)
-    const response = await api.put(`delete-notif/${userID}`, {deletedNotifs: selectedNotifs}).then(() => {
+    console.log(selectedNotifs)
+    const response = await api.put(`admin/delete-notif`, {deletedNotifs: selectedNotifs}).then(() => {
       console.log("Successfully Deleted those Notifications.");
     }).catch((err) => {
       console.error("Error in deleting Notifications : " + err);
@@ -319,8 +302,8 @@ export default function NotificationTable() {
 
   const handleDaysSort = async (e, userID) => {
     const timeInterval = e.target.getAttribute("value");
-    console.log(timeInterval, userID);
-    const sortedNotif = await api.get(`sort-notif/${userID}/${timeInterval}`);
+    console.log(timeInterval);
+    const sortedNotif = await api.get(`admin/sort-notif/${timeInterval}`);
     setNotifications(sortedNotif.data);
   }
 
@@ -372,7 +355,7 @@ export default function NotificationTable() {
                 sx={{ background: "#F2F6F8" }}
                 className='ml-5px'
                 disabled={notifications.length === 0}
-                onClick={() => {deleteSelectedNotifs(userID, tickNotifs), window.location.href = window.location.href;}}
+                onClick={() => {deleteSelectedNotifs(tickNotifs), window.location.href = window.location.href;}}
               >
                 <DeleteIcon fontSize="small" />
               </IconButton>
@@ -440,9 +423,9 @@ export default function NotificationTable() {
             transformOrigin={{ horizontal: "right", vertical: "top" }}
             anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
           >
-            <MenuItem sx={{ fontSize: "14px" }} value={15} onClick={(e) => {  handleDaysSort(e, userID);  }}>Last 15 Days</MenuItem>
-            <MenuItem sx={{ fontSize: "14px" }} value={30} onClick={(e) => handleDaysSort(e, userID)}>Last Month</MenuItem>
-            <MenuItem sx={{ fontSize: "14px" }} value={365} onClick={(e) => handleDaysSort(e, userID)}>Last Year</MenuItem>
+            <MenuItem sx={{ fontSize: "14px" }} value={15} onClick={(e) => {  handleDaysSort(e);  }}>Last 15 Days</MenuItem>
+            <MenuItem sx={{ fontSize: "14px" }} value={30} onClick={(e) => handleDaysSort(e)}>Last Month</MenuItem>
+            <MenuItem sx={{ fontSize: "14px" }} value={365} onClick={(e) => handleDaysSort(e)}>Last Year</MenuItem>
           </Menu>
         </Box>
 
@@ -482,7 +465,7 @@ export default function NotificationTable() {
                       padding: "10px",
                     }}
                   >
-                      <Link href="/notification" onClick={() => { clickedByUser(notification.notifNum, userID); window.location.href=window.location.href; }}>{notification.notifText}</Link>
+                      <Link href="/notification" onClick={() => { clickedByUser(notification.notifNum); window.location.href=window.location.href; }}>{notification.notifText}</Link>
                   </TableCell>
 
                   <TableCell
@@ -498,7 +481,7 @@ export default function NotificationTable() {
                 </TableRow>
               ))}
 
-              {emptyRows > 0 && (
+              {notifications > 0 && (
                 <TableRow style={{ height: 53 * emptyRows }}>
                   <TableCell
                     colSpan={3}
@@ -513,7 +496,7 @@ export default function NotificationTable() {
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
                   colSpan={5}
-                  count={rows.length}
+                  count={notifications.length}
                   rowsPerPage={rowsPerPage}
                   page={page}
                   SelectProps={{

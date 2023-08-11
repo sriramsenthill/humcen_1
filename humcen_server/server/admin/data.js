@@ -2436,6 +2436,101 @@ const assignBulkOrder = async(req, res) => {
   }
 }
 
+const notificationAdminSeen = async(req, res) => {
+  const notificID = req.params.userI
+
+  const thatAdminNotifs = await NotificationAdmin.findOne({admin_Id: 1});
+  console.log(thatAdminNotifs);
+  if(!thatAdminNotifs) {
+    console.error("That Notification doesn't exists.");
+  } else {
+    thatAdminNotifs.notifications[parseInt(notificID) - 1].seen = true;
+    thatAdminNotifs.save().then(() => {
+      console.log("Notification Seen");
+    }).catch((error) => {
+      console.error('Error in seeing the Notification : ' + error);
+    })
+  }
+}
+
+const notifcationsAdminDelete = async(req, res) => {
+  const listOfNotifDeleted = req.body.deletedNotifs;
+
+  try {
+    const findNotification = await NotificationAdmin.findOne({admin_Id: 1});
+    if(!findNotification) {
+      console.log("No Notifications available for Admin");
+    } else {
+      const updatedNotifs = findNotification.notifications.filter(notif => !listOfNotifDeleted.includes(notif.notifNum));
+      findNotification.notifications = updatedNotifs;
+      findNotification.save().then(() => {
+        console.log("Notifications deleted Successfully.")
+      }).catch((err) => {
+        console.error('Error in deleting Notifications : ' + err);
+      })
+    }
+  } catch(err) {
+    console.error("Error in deleting Notifications : " + err);
+  }
+}
+
+const sortAdminNotifications = async(req, res) => {
+  const interval = req.params.days;
+
+  const today = new Date();
+  const totalNotifs = await NotificationAdmin.findOne({admin_Id: 1});
+  if(!totalNotifs) {
+    console.log("No Notifcations Left to Sort.");
+  } else {
+    const sortedNotifs = totalNotifs.notifications.filter((notif) => {
+      return Math.round((today.getTime() - new Date(notif.notifDate).getTime())/(1000 * 3600 * 24)) <= Number(interval)
+    });
+    console.log(sortedNotifs.length);
+    console.log("Sorted Notifications sent Successfully. ");
+    res.status(200).json(sortedNotifs)
+  }
+}
+
+const clearAdminRecentNotifs = async(req, res) => {
+
+  try {
+    const allNotifications = await NotificationAdmin.findOne({admin_Id: 1});
+    if(!allNotifications) {
+      console.log("No Notifications found.");
+    } else {
+      allNotifications.notifications = allNotifications.notifications.map((notification) => {
+        notification.seen = true;
+        return notification;
+      });
+      allNotifications.save().then(() => {
+        console.log("All Recent Notifications Successfully Cleared");
+      }).catch((err) => {
+        console.error('Error in Clearing out Recent Notifications : ' + err)
+      })
+    }
+  } catch(error) {
+    console.error("Error in Clearing out Recent Notifications : " + error);
+  }
+}
+
+const getAdminNotification = async (req, res) => {
+  try {
+    const thatAdminNotifs = await NotificationAdmin.findOne({ admin_Id: 1 });
+    console.log(thatAdminNotifs);
+    if (!thatAdminNotifs) {
+      console.error("Notifications for Admin do not exist.");
+      res.status(404).json({ error: "Notifications not found" });
+    } else {
+      res.json(thatAdminNotifs.notifications);
+    }
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
+
 module.exports = {
   getUsers,
   getPartners,
@@ -2459,4 +2554,9 @@ module.exports = {
   getBulkOrderFileById,
   getPartnersForBulkOrder,
   assignBulkOrder,
+  notificationAdminSeen,
+  notifcationsAdminDelete,
+  sortAdminNotifications,
+  clearAdminRecentNotifs,
+  getAdminNotification,
 };

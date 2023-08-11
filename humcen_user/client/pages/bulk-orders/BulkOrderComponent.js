@@ -144,6 +144,12 @@ const BulkOrderComponent = () => {
 
     const createBulkOrders = async(jobs, titles, services, files, user) => {
       console.log("Process has started");
+      const eventSource = new EventSource('http://localhost:3000/api/user/create-bulk-orders-progress');
+      eventSource.addEventListener('progress', (event) => {
+        const progress = parseFloat(event.data);
+        console.log(progress);
+      });
+
       const response = await api.post(`user/create-bulk-orders/`, {
         bulkJobs: jobs,
         bulkTitles: titles,

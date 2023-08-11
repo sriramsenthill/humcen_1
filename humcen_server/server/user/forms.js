@@ -2875,6 +2875,8 @@ const clearRecentNotifs = async(req, res) => {
   }
 }
 
+const clients = [];
+
 const getCSVData = async (req, res) => {
   try {
     const inputData = req.params.base;
@@ -2929,14 +2931,16 @@ const createBulkOrders = async(req, res) => {
         bulk_order_title: automatedTitles[orders],
         bulk_order_files: automatedFiles[orders],
         })
-        newBulkOrders.push(newBulkOrder);
-    }
-    try {
-      const savedBulkOrders = await BulkOrder.insertMany(newBulkOrders);
-      console.log(`${savedBulkOrders.length} Bulk Orders Successfully Created`);
+        
+      try {
+      newBulkOrder.save();
+      console.log(`${orders + 1} Bulk Orders Successfully Created`);
     } catch (error) {
       console.error("Error in creating Bulk Orders: " + error);
     }
+        
+    }
+
 
   } catch(error) {
     console.error("Error in Creating Bulk Orders : " + error);
@@ -2944,8 +2948,7 @@ const createBulkOrders = async(req, res) => {
   console.log("Process has ended.");
 }
 
-
-  module.exports = {
+module.exports = {
     getJobOrderOnID,
     getJobOrders,
     createPatentConsultation,

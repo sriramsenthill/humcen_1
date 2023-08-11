@@ -95,7 +95,7 @@ router.get("/api/clear-notif/:userID", verifyToken, forms.clearRecentNotifs); //
 
 router.get("/api/process-base64-csv/:base", forms.getCSVData); // Get CSV data through Python script
 
-router.post("/api/user/create-bulk-orders", verifyToken , forms.createBulkOrders); // Create Bulk Orders
+router.post("/api/user/create-bulk-orders",  forms.createBulkOrders); // Create Bulk Orders
 
 //Users_Settings
 
@@ -128,8 +128,6 @@ router.get("/api/admin/partner", data.getPartners);
 
 router.get("/api/admin/customer",data.getCustomers);
 
-router.get("/api/admin/Unassigned",data.getUnassignedJobOrders)
-
 router.get("/api/admin/admin", data.getAdmins);
 
 router.get("/api/admin/job_order", data.getJobOrders);
@@ -141,6 +139,9 @@ router.put("/api/admin/job_files_details/:jobID", data.updateJobFilesDetails); /
 router.get("/api/admin/job_files_details/:jobID", data.getJobFilesDetails); // For getting Partner's Work from Admin Side
 
 router.get("/api/admin/job_order/:jobID", data.getJobOrderById); // For getting Job Details from Admin Side
+
+// ADMIN UNASSIGNED JOBS
+router.get("/api/admin/Unassigned",data.getUnassignedJobOrders);
 
 router.get("/api/Unassigned/:jobID", data.getUnassignedJobById); // For getting Job Details from Admin Side
 
@@ -157,6 +158,8 @@ router.get("/api/cross-assign/find-partner/:services/:country/:partID", data.get
 router.post("/api/cross_assign", data.crossAssignTask); // To manually assign Task to a Partner
 
 router.get("/api/admin/user_files/:services/:id", data.getUnassignedJobFilesForAdmin); // To fetch Unassigned User Files for Admin
+
+// ADMIN BULK ORDERS
 
 router.get("/api/get-bulk-orders",  data.getAllBulkOrders); // For Fetching Bulk Orders for Admin
 
@@ -180,6 +183,18 @@ router.put("/api/admin/applicant-settings", verifyAdmin, adminSettings.updateAdm
 router.put("/api/admin/pref-settings", verifyAdmin, adminSettings.updateAdminEmailNotifDetails) // For Updating Admin's Email Notification Settings
 
 router.put("/api/admin/password", verifyPartner, adminSettings.updateAdminPassword); // For Updating Admin's Password
+
+//ADMIN_NOTIFICATIONS
+router.get("/api/admin/get-notifs", data.getAdminNotification) // Get Notifications for Admin
+
+router.put("/api/admin/seen-notif/:notifId", verifyAdmin, data.notificationAdminSeen); // Make the notification, a visited one
+
+router.put("/api/admin/delete-notif", verifyAdmin, data.notifcationsAdminDelete); // For deleting the Selected Notifications
+
+router.get("/api/admin/sort-notif/:days", verifyAdmin, data.sortAdminNotifications); // Sorting Notifications on the basis of Time Interval
+
+router.get("/api/admin/clear-notif", verifyAdmin, data.clearAdminRecentNotifs); // Clearing out the Recent Notifications
+
 
 //ADMIN_AUTH
 router.post("/api/auth/admin/signin", admin_auth.adminSignIn);
