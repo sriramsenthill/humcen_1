@@ -123,10 +123,13 @@ const BulkOrderComponent = () => {
 
     useEffect(() => {
       // Run your asynchronous operations here
+      if (files.length === 2) {
+        handleFileChange(files);
+      }
       if (csvBase64Data && base64ZipData) {
         handleBulkOrder();
       }
-    }, [csvBase64Data, base64ZipData]);
+    }, [csvBase64Data, base64ZipData, files]);
 
     console.log(files);
     console.log(bulkOrderFiles);
@@ -218,6 +221,7 @@ const BulkOrderComponent = () => {
       };
 
       const handleBulkOrder = async () => {
+        console.log(files);
         console.log("Say Hi");
         console.log(files[1]);
 
