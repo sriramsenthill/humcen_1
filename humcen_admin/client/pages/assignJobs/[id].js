@@ -146,6 +146,18 @@ const DynamicPage = () =>{
 
   useEffect(() => {
     console.log("Here " + id);
+    const fetchFiles = async(Service) => {
+      const response = await api.get(`admin/user_files/${Service}/${id}`);
+      console.log(response.data);
+      if(response.data) {
+        setDataList(response.data.fileData);
+        setNameList(response.data.fileName);
+        setMIMEList(response.data.fileMIME);
+        setFile(false);
+      } else {
+        console.log("No Files present for the ID : " + jobID)
+      }
+    }
     const fetchJobData = async () => {
       try {
         const noFileInputServices = ['Patent Licensing and Commercialization Services', "Patent Watch", "Freedom to Patent Landscape" ];
@@ -160,6 +172,7 @@ const DynamicPage = () =>{
           setService(specificJob.service);
           setCountry(specificJob.country);
           setFile(noFileInputServices.includes(specificJob.service));
+          fetchFiles(specificJob.service)
         } else {
           console.log("No job found with the provided job number:", id);
           setJob(null);
@@ -171,18 +184,6 @@ const DynamicPage = () =>{
     }
 
     fetchJobData(id);
-
-    const fetchFiles = async() => {
-      const response = await api.get(`admin/user_files/${Service}/${id}`);
-      if(response.data) {
-        setDataList(response.data.fileData);
-        setNameList(response.data.fileName);
-        setMIMEList(response.data.fileMIME);
-        setFile(false);
-      } else {
-        console.log("No Files present for the ID : " + jobID)
-      }
-    }
 
     // Clean up the effect by resetting the job state when the component is unmounted
     return () => {
@@ -247,6 +248,7 @@ const DynamicPage = () =>{
   }
 
   const onClickDownload = async (data, name, mime, Service, jobId) => {
+    console.log(data, name, mime, Service, jobID);
     try {
       const fileData = data;
       const fileName = name;

@@ -241,7 +241,7 @@ router.get("/api/partner-details/:services/:id", verifyPartner, engine.findPartn
 router.put("/api/partner/job-files", verifyPartner, engine.addJobFiles);
 router.get("/api/partner/job_files_details/:jobID", verifyPartner, engine.getJobFilesDetailsForPartners);
 router.get("/api/partner/get-bulk-order-file/:id", verifyPartner, engine.getAssignedBulkOrderFile);
-
+router.put("/api/idle-job/:partner", verifyPartner, engine.sendIdleJobToUnassigned);
 
 router.post("/api/find-partner", data.getPartnersData);
 module.exports = router;

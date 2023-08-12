@@ -18,6 +18,7 @@ const Notification = require("../mongoose_schemas/notification"); // Import Noti
 const Admin=require("../mongoose_schemas/admin");
 const sendEmail=require("../email");
 const BulkOrder = require("../mongoose_schemas/bulk_order");
+const Customer = require("../mongoose_schemas/customer");
 
 const getPartnerJobsById = async (req, res) => {
   try {
@@ -1572,6 +1573,147 @@ const getAssignedBulkOrderFile = async(req, res) => {
   }
 }
 
+const saveInUnassigned = async(docs) => {
+  try {
+    await Unassigned.insertMany(docs);
+    console.log("Saved successfully");
+  } catch(err) {
+    if (err.code === 11000) {
+      // Handle duplicate key error
+    } else {
+      // Handle other errors
+      console.error(`Error while saving document :"` + err)
+    }
+  }
+}
+
+const sendIdleJobToUnassigned = async(req, res) => {
+  // Getting the Job IDs
+
+  // Getting Job Orders from the IDs and Removing it after creating Unassigned Order
+
+  // Getting Service Schema details from it and Removing it after creating Unassigned Order
+
+  // Creating new Unassigned Order
+
+  // Removing the Jobs from Partner Array
+
+  try {
+      // Getting the Job IDs
+
+    const jobIDs = req.body.idleJobs;
+    const partID = req.params.partner;
+    const custIDs = req.body.customers;
+    const jobOrders = [];
+    const unassignedDocs = [];
+    console.log(partID);
+
+      // Getting Job Orders from the IDs and Removing it after creating Unassigned Order
+    for (const jobID of jobIDs) {
+      const thatJob = await JobOrder.findOne({ "_id.job_no": jobID });
+      if (thatJob) {
+        jobOrders.push(thatJob);
+      }
+    }
+
+    console.log(jobOrders.length);
+
+    const latestUnassignedOrder = await Unassigned.findOne()
+    .sort({ "_id.job_no": -1 })
+    .limit(1)
+    .exec();
+
+    const newUnassignedNo = latestUnassignedOrder
+    ? latestUnassignedOrder._id.job_no + 1
+    : 1000;
+
+    for(let job=0; job < jobOrders.length ; job++) {
+      
+      
+      if(jobOrders[job].service === "Freedom To Operate") {
+        // Getting Service Schema details from it and removing it after Unassigned Order is created
+        const ftoDetails = await freedomToOperate.findOne({"_id.job_no": jobOrders[job]._id.job_no});
+    
+        const ftoDoc = {
+          "_id.job_no": newUnassignedNo + job,
+          service: jobOrders[job].service,
+          domain: jobOrders[job].domain,
+          country: jobOrders[job].country,
+          budget: jobOrders[job].budget,
+          customerName: jobOrders[job].customerName,
+          status: jobOrders[job].status,
+          userID: jobOrders[job].userID,
+          time_of_delivery: jobOrders[job].time_of_delivery || "To be Assigned",
+          // Common for all services upto this
+          invention_description: ftoDetails.invention_description,
+          patent_application_details: ftoDetails.patent_application_details,
+          keywords: ftoDetails.keywords
+        }
+        unassignedDocs.push(ftoDoc);
+
+        const deleteService = await freedomToOperate.deleteOne({"_id.job_no": jobOrders[job]._id.job_no}).then(() => {
+          console.log("Files deleted from Freedom To Operate successfully.")
+        }).catch((err) => {
+          console.error("No files found.")
+        });
+
+      }
+
+    }
+// Saving the Unassigned Order
+    await saveInUnassigned(unassignedDocs);
+
+// Deleting Job Order
+    for (let job=0; job < jobIDs.length; job++) { 
+    const deleteOrder = await JobOrder.deleteOne({"_id.job_no": jobIDs[job]}).then(() => {
+      console.log("Job Order of ID " + jobIDs[job] + " deleted Successfully");
+    }).catch((err) => {
+      console.error("No Job found for that ID");
+    });
+    }
+
+    // Updating Partner Details
+    try {
+      const removeThatJob = await Partner.findOne({userID: Number(partID)});
+      if(removeThatJob) {
+        removeThatJob.jobs = removeThatJob.jobs.filter(jobID => !jobIDs.includes(jobID));
+        const updatedPartner = await removeThatJob.save();
+        console.log("Updated Partner:", updatedPartner);
+      } else {
+        console.log("Partner Not Found ");
+      }
+    } catch(error) {
+      console.error("Error in removing ID from Jobs : " + error);
+    }
+
+    // Updating Customer Details
+
+    for(let users=0; users < custIDs.length; users++) {
+      try {
+        const findThatCustomer = await Customer.findOne({userID: Number(custIDs[users])});
+        if(!findThatCustomer) {
+          console.log("No Customer Found for ID " + custIDs[users]);
+        } else {
+          findThatCustomer.jobs = findThatCustomer.jobs.filter(jobID => !jobIDs.includes(jobID));
+          const updatedCustomer = await findThatCustomer.save();
+          console.log("Customer details updated Successfully");
+        }
+      } catch(error) {
+        console.error("Error in updating Customer Details : " + error);
+      }
+    }
+
+    
+
+
+  // Removing IDs from Customers and Partners Jobs
+
+
+  } catch(error) {
+    console.error("Error in sending Idle Jobs to Unassigned : " + error)
+;  }
+}
+
 module.exports = {
   getPartnerJobsById,
   getPartnerJobOrders,
@@ -1584,4 +1726,5 @@ module.exports = {
   getJobFilesDetailsForPartners,
   updateTimelineForUpload,
   getAssignedBulkOrderFile,
+  sendIdleJobToUnassigned,
 };

@@ -47,12 +47,35 @@ async function fetchJobOrders() {
 
 const NewOrder = () => {
   const [jobOrders, setJobOrders] = useState([]);
+  const [exceeded, setExcJobs] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [partnerID, setPartnerID] = useState("");
+  const [idle, setIdle] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const filteredOrders = await fetchJobOrders();
-        setJobOrders(filteredOrders);
+        const now = new Date().getTime();
+        
+        const timeList = [];
+        const time = [];
+        const customers = [];
+        filteredOrders.forEach((order) => {
+          const shown = {}; 
+          if(((now - new Date(order.start_date).getTime())/1000) > 10800) { // 10800 Seconds = 3 Hours
+            timeList.push(order._id.job_no);
+            customers.push(order.userID);
+            setPartnerID(order.partnerID);
+            time.push(((now - new Date(order.start_date).getTime())/1000));
+          } else {
+            time.push(((now - new Date(order.start_date).getTime())/1000));
+          }
+        })
+        setExcJobs(timeList);
+        setUsers(customers);
+        setIdle(time);
+        setJobOrders(filteredOrders.filter((order) => !timeList.includes(order._id.job_no)));
         console.log(jobOrders.length);
       } catch (error) {
         console.error('Error fetching job orders:', error);
@@ -61,6 +84,24 @@ const NewOrder = () => {
 
     fetchData();
   }, []);
+  
+console.log(exceeded, idle);
+
+const handleIdleJobs = async(jobs, ID) => {
+  try {
+    const response = await api.put(`/idle-job/${ID}`, { idleJobs: jobs, customers: users}).then(() => {
+      console.log("Idle Jobs notified to API successfully");
+    }).catch((error) => {
+      console.error("Error in handling the Idle Job : " + error);
+    });
+  } catch(err) {
+    console.error("Error in handling Idle Jobs : " + err);
+  }
+}
+
+if (exceeded.length !== 0) {
+  handleIdleJobs(exceeded, partnerID);
+}
 
   const handleAcceptJob = async (jobId) => {
     try {
