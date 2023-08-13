@@ -1990,6 +1990,7 @@ const approveTheDoneWork = async(req, res) => {
     if(!workedPartner) {
       console.error("Error in finding the Partner.")
     }
+    const thatPartnerID = workedPartner.userID;
     workedPartner.in_progress_jobs = workedPartner.in_progress_jobs - 1;
     workedPartner.is_free = true;
     workedPartner.save().then((response) => {
@@ -1997,41 +1998,11 @@ const approveTheDoneWork = async(req, res) => {
     }).catch((error) => {
       console.error("Error in updating Partner's In Progress Job Count: ", error);
     })      
-    res.redirect("back");
+    res.redirect("/");
 
-    // Sending Notification to Users that File is ready to download
-    const finalizeNotification = await Notification.findOne({user_Id: job.userID});
-    if(!finalizeNotification) {
-      const thatFinalNotification = new Notification({
-        user_Id: job.userID,
-        notifications: [
-          {
-            notifNum: 1,
-            notifText: "Job " + jobID + " has been delivered Successfully and is ready to Download.",
-            notifDate: formattedDate,
-            seen: false,
-          }
-        ]
-      })
-      thatFinalNotification.save().then(() => {
-        console.log("Notifications sent Successfully.");
-      }).catch((error) => {
-        console.error("Error in sending the Notification : " + error );
-      })
-    } else {
-      const finalNotifDoc = {
-        notifNum: finalizeNotification.notifications.length + 1,
-        notifText: "Job " + jobID + " has been delivered Successfully and is ready to Download.",
-        notifDate: formattedDate,
-        seen: false,
-      }
-      finalizeNotification.notifications.push(finalNotifDoc);
-      finalizeNotification.save().then(() => {
-        console.log("Notification sent Successfully.");
-      }).catch((err) => {
-        console.error("Error in sending the Notification : " + err)
-      });
-    }
+   await AllNotifications.sendToUser(Number(job.userID), "Job " + jobID + " has been delivered Successfully and is ready to Download.")
+   await AllNotifications.sendToAdmin("Job " + job.userID + " has been delivered Successfully and is ready to Download for Customer.")
+   await AllNotifications.sendToPartner(Number(thatPartnerID), "Congratulations!, Your work " + jobID + " has been accepted by User and is delivered successfully.");
 
   } catch(error) {
     console.error("Error in finding the Job: "+ error);
@@ -2077,6 +2048,7 @@ const rejectTheDoneWork = async(req, res) => {
     if(!jobFile) {
       console.error("No Job Files present for Job No : "+ jobID);
     }
+    const thatPartner = jobFile.partnerID;
     jobFile.verification = req.body.verif;
     jobFile.decided = false;
     jobFile.access_provided = false;
@@ -2087,6 +2059,9 @@ const rejectTheDoneWork = async(req, res) => {
     }).catch((error)=> {
       console.error("Error in Updating Partner's Work Status: ", error);
     });
+    await AllNotifications.sendToAdmin("Job " + jobID + " has been rejected by the Customer and remarks have been updated in the Status successfully.");
+    await AllNotifications.sendToPartner(Number(thatPartner), "Your work " + jobID + " has been rejected by User and remarks have been updated in the Status successfully."); 
+    res.redirect("/");
 
   } catch(error) {
     console.error("Error in finding the Job: "+ error);

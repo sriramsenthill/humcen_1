@@ -14,6 +14,7 @@ const Consultation = require("../mongoose_schemas/consultation");
 const Unassigned = require("../mongoose_schemas/unassigned"); // Import Unassigned Job Model
 const Drafting = require("../mongoose_schemas/patent_drafting");
 const Filing = require("../mongoose_schemas/patent_filing");
+const AllNotifications = require("../notifications"); // Functions for sending Notification
 const Notification = require("../mongoose_schemas/notification"); // Import Notification Model
 const Admin=require("../mongoose_schemas/admin");
 const sendEmail=require("../email");
@@ -1439,6 +1440,8 @@ const addJobFiles = async (req, res) => {
     }).catch((err) => {
       console.log("Error in Updating Job Files");
     });
+    await AllNotifications.sendToAdmin("Partner's Work for Job ID " + job.job_no +" has been received successfully.");
+    await AllNotifications.sendToPartner(Number(job.partnerID), "Your Work on Job ID " + job.job_no +" has been sent successfully.");
     } else {
         jobFile.job_files = job.job_files;
         jobFile.decided = false;
@@ -1452,6 +1455,7 @@ const addJobFiles = async (req, res) => {
         });
     }
 
+    
 
     const attachments = [];
       const subject = `Verification for partner submission files for ${job.service} with job no ${job.job_no}`;
@@ -1650,6 +1654,8 @@ const sendIdleJobToUnassigned = async(req, res) => {
           keywords: ftoDetails.keywords
         }
         unassignedDocs.push(ftoDoc);
+        await AllNotifications.sendToAdmin("Idle Job Order of ID " + jobOrders[job]._id.job_no +" has been redirected to Unassigned Jobs successfully as ID of " + newUnassignedNo + job);
+        await AllNotifications.sendToPartner(Number(partID), "Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully");
 
         const deleteService = await freedomToOperate.deleteOne({"_id.job_no": jobOrders[job]._id.job_no}).then(() => {
           console.log("Files deleted from Freedom To Operate successfully.")

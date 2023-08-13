@@ -17,6 +17,7 @@ const patentWatch = require("../mongoose_schemas/patent_watch"); // Import Paten
 const patentLicense = require("../mongoose_schemas/patent_licensing"); // Import Patent Licensing Model
 const Customer=require("../mongoose_schemas/customer");
 const sendEmail = require("../email");
+const AllNotifications = require("../notifications"); // Functions to send Notifications
 const Notification = require("../mongoose_schemas/notification"); // Import Notification Model for Users
 const NotificationAdmin = require("../mongoose_schemas/notification_admin"); // Import Notification Model for Admin
 const BulkOrder = require("../mongoose_schemas/bulk_order"); // Importing Bulk Order Model
@@ -161,38 +162,8 @@ const updateJobFilesDetails = async (req, res) => {
           const options = { year: 'numeric', month: 'long', day: 'numeric' };
           const formattedDate = new Date().toLocaleDateString(undefined, options);
 
-          const acceptNotification = await Notification.findOne({ user_Id: thatCustomer });
-          if (!acceptNotification) {
-            const newNotification = new Notification({
-              user_Id: thatCustomer,
-              notifications: [
-                {
-                  notifNum: 1,
-                  notifText: "Admin has given access for Verification of Work " + jobID,
-                  notifDate: formattedDate,
-                  seen: false,
-                }
-              ]
-            });
-            newNotification.save().then(() => {
-              console.log("Notification sent Successfully.");
-            }).catch((err) => {
-              console.error("Error in sending Notifications : " + err);
-            });
-          } else {
-            const accessGivenNotif = {
-              notifNum: acceptNotification.notifications.length + 1,
-              notifText: "Admin has given access for Verification of Work " + jobID,
-              notifDate: formattedDate,
-              seen: false,
-            };
-            acceptNotification.notifications.push(accessGivenNotif);
-            acceptNotification.save().then(() => {
-              console.log("Notification sent Successfully.");
-            }).catch((err) => {
-              console.error("Error in sending Notification : " + err);
-            });
-          }
+          await AllNotifications.sendToAdmin("You have given access for Verification of Work " + jobID);
+          await AllNotifications.sendToUser(Number(thatCustomer), "Admin has given access for Verification of Work " + jobID);
         }
       }
 
@@ -2230,6 +2201,10 @@ try {
     
   }
 
+  await AllNotifications.sendToAdmin("Job ID " + jobID +  " has been cross-assigned from Partner ID " + previousPartner +" to Partner ID " + newlyAssignedPartner +" successfully");
+  await AllNotifications.sendToPartner(Number(previousPartner), "Assigned Job of ID " + jobID + " has been assigned to a new Partner. Thank You!");
+  await AllNotifications.sendToPartner(Number(newlyAssignedPartner), "You have been cross-assigned the Job of ID " + jobID + " by Admin successfully.");
+
 } catch(error) {
   console.error("Error in performing Cross Assign to the Partner : " + error);
 }
@@ -2429,6 +2404,9 @@ const assignBulkOrder = async(req, res) => {
         console.error("Error in assigning the Bulk Order to Partner: " + error);
       })
     }
+
+  await AllNotifications.sendToAdmin("Bulk Order of ID " + orderID + " has been assigned to Partner of ID " + partner_ID + " successfully.");
+  await AllNotifications.sendToPartner(Number(partner_ID), "You have been assigned a Bulk Order of ID " + orderID + " by Admin.");
 
   }
   catch(error) {
