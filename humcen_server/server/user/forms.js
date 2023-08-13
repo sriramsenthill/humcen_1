@@ -2054,6 +2054,7 @@ const rejectTheDoneWork = async(req, res) => {
     job.steps_done_user = req.body.user_steps;
     job.steps_done_activity = req.body.activity;
 
+    job.date_partner[2] = " ";
     job.date_partner[3] = " ";
     
     job.date_activity[3] = new Date().toLocaleDateString(undefined, options);

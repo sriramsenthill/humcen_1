@@ -220,7 +220,7 @@ const Verifications = ({ jobNumber }) => {
       if(token) {
         const response = await api.put(`user/job_order/reject/${jobID}`, {
           status: "In Progress",
-          steps: 3,
+          steps: 2,
           activity: 4,
           user_steps: 3,
           verif: rejectionInfo,
