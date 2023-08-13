@@ -23,6 +23,7 @@ const NotificationPartner = require("../mongoose_schemas/notification_partner");
 const NotificationAdmin = require("../mongoose_schemas/notification_admin"); // Import Notification Model for Admin
 const Admin= require("../mongoose_schemas/admin");
 const BulkOrder = require("../mongoose_schemas/bulk_order"); // Import Bulk Order Module
+const AllNotifications = require("../notifications"); // File which contains functions for Sending Notifications
 
 // Define your API route for fetching job order data
 const getJobOrderOnID = async (req, res) => {
@@ -120,6 +121,10 @@ const createJobOrderPatentDrafting = async (req, res) => {
       unassignedDraftingOrder.save();
       
       console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
+
+      await AllNotifications.sendToUser(userId, "Your Patent Drafting Form has been submitted successfully");
+      await AllNotifications.sendToAdmin("Patent Drafting Form of ID " + newUnassignedDraftingNo +" has been submitted successfully and is in Unassigned Jobs.")
+
       res.status(200).json(unassignedDraftingOrder);
 
     } if(findPartner) {
@@ -180,75 +185,11 @@ const createJobOrderPatentDrafting = async (req, res) => {
       await newJobOrder.save();
   
       console.log("Successfully Assigned Patent Drafting Task to a Partner");
-
-      // To send notification to User
-      const notificationHub = await Notification.findOne({user_Id: userId});
-      if (!notificationHub) {
-        const newNotificationDoc = new Notification({
-          user_Id: userId,
-          notifications: [
-            {
-              notifNum: 1,
-              notifText: "Your Patent Drafting Form has been submitted successfully",
-              notifDate: formattedDate,
-              seen: false,
-            }
-          ]
-        })
-        newNotificationDoc.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        })
-      } else {
-        const newNotification = {
-          notifNum: notificationHub.notifications.length + 1,
-          notifText: "Your Patent Drafting Form has been submitted successfully",
-          notifDate: formattedDate,
-          seen: false,
-        }
-        notificationHub.notifications.push(newNotification);
-        notificationHub.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        });
-
-      }
+      console.log(userId);
+      await AllNotifications.sendToUser(userId, "Your Patent Drafting Form has been submitted successfully");
+      await AllNotifications.sendToAdmin("Patent Drafting Form of ID " + newDraftingNo +" has been submitted successfully")
 
       // To send Notification to Admin
-      const notificationAdminHub = await NotificationAdmin.findOne({admin_Id: 1});
-      if (!notificationAdminHub) {
-        const newNotificationAdminDoc = new NotificationAdmin({
-          admin_Id: 1,
-          notifications: [
-            {
-              notifNum: 1,
-              notifText: "Patent Drafting Form of ID " + newDraftingNo +" has been submitted successfully",
-              notifDate: formattedDate,
-              seen: false,
-            }
-          ]
-        })
-        newNotificationAdminDoc.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        })
-      } else {
-        const newNotificationAdmin = {
-          notifNum: notificationAdminHub.notifications.length + 1,
-          notifText: "Patent Drafting Form of ID " + newDraftingNo +" has been submitted successfully",
-          notifDate: formattedDate,
-          seen: false,
-        }
-        notificationAdminHub.notifications.push(newNotificationAdmin);
-        notificationAdminHub.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        });
-      }
 
 
       res.status(200).json(savedDrafting);
@@ -356,6 +297,9 @@ const createJobOrderPatentFiling = async (req, res) => {
       unassignedFilingOrder.save();
       
       console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
+      await AllNotifications.sendToUser(userId, "Your Patent Filing Form has been submitted successfully");
+      await AllNotifications.sendToAdmin("Patent Filing Form of ID " + newUnassignedFilingNo +" has been submitted successfully and is in Unassigned Jobs.")
+
       res.status(200).json(unassignedFilingOrder);
     }
 
@@ -411,78 +355,12 @@ const createJobOrderPatentFiling = async (req, res) => {
     await newJobOrder.save();
 
     console.log("Successfully Assigned Patent Filing Task to a Partner");
-      // To send notification to User
-      const notificationHub = await Notification.findOne({user_Id: userId});
-      if (!notificationHub) {
-        const newNotificationDoc = new Notification({
-          user_Id: userId,
-          notifications: [
-            {
-              notifNum: 1,
-              notifText: "Your Patent Filing Form has been submitted successfully",
-              notifDate: formattedDate,
-              seen: false,
-            }
-          ]
-        })
-        newNotificationDoc.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        })
-      } else {
-        const newNotification = {
-          notifNum: notificationHub.notifications.length + 1,
-          notifText: "Your Patent Filing Form has been submitted successfully",
-          notifDate: formattedDate,
-          seen: false,
-        }
-        notificationHub.notifications.push(newNotification);
-        notificationHub.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        });
+      
+  await AllNotifications.sendToUser(userId, "Your Patent Filing Form has been submitted successfully");
+  await AllNotifications.sendToAdmin("Patent Filing Form of ID " + newFilingNo +" has been submitted successfully.")
 
-      }
-  
-// To send Notification to Admin
-      const notificationAdminHub = await NotificationAdmin.findOne({admin_Id: 1});
-      if (!notificationAdminHub) {
-        const newNotificationAdminDoc = new NotificationAdmin({
-          admin_Id: 1,
-          notifications: [
-            {
-              notifNum: 1,
-              notifText: "Patent Filing Form of ID " + newFilingNo +" has been submitted successfully",
-              notifDate: formattedDate,
-              seen: false,
-            }
-          ]
-        })
-        newNotificationAdminDoc.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        })
-      } else {
-        const newNotificationAdmin = {
-          notifNum: notificationAdminHub.notifications.length + 1,
-          notifText: "Patent Filing Form of ID " + newFilingNo +" has been submitted successfully",
-          notifDate: formattedDate,
-          seen: false,
-        }
-        notificationAdminHub.notifications.push(newNotificationAdmin);
-        notificationAdminHub.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        });
-      }
 
-    
-
-    res.status(200).json(savedFiling);
+      res.status(200).json(savedFiling);
 
     }
     const user = await Customer.findOne({ userID: userId });
@@ -612,6 +490,9 @@ const savePatentSearchData = async (req, res) => {
       unassignedSearchOrder.save();
       
       console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
+      await AllNotifications.sendToUser(userId, "Your Patent Search Form has been submitted successfully");
+      await AllNotifications.sendToAdmin("Patent Search Form of ID " + newUnassignedSearchNo +" has been submitted successfully and is in Unassigned Jobs.")
+
       res.status(200).json(unassignedSearchOrder);
     } 
     if(findPartner) {
@@ -662,74 +543,9 @@ const savePatentSearchData = async (req, res) => {
 
     await newJobOrder.save();
 
-      // To send notification to User
-      const notificationHub = await Notification.findOne({user_Id: userId});
-      if (!notificationHub) {
-        const newNotificationDoc = new Notification({
-          user_Id: userId,
-          notifications: [
-            {
-              notifNum: 1,
-              notifText: "Your Patent Search Form has been submitted successfully",
-              notifDate: formattedDate,
-              seen: false,
-            }
-          ]
-        })
-        newNotificationDoc.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        })
-      } else {
-        const newNotification = {
-          notifNum: notificationHub.notifications.length + 1,
-          notifText: "Your Patent Search Form has been submitted successfully",
-          notifDate: formattedDate,
-          seen: false,
-        }
-        notificationHub.notifications.push(newNotification);
-        notificationHub.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        });
+    await AllNotifications.sendToUser(userId, "Your Patent Search Form has been submitted successfully");
+    await AllNotifications.sendToAdmin("Patent Search Form of ID " + newSearchNo +" has been submitted successfully.")
 
-      }
-
-      // To send Notification to Admin
-      const notificationAdminHub = await NotificationAdmin.findOne({admin_Id: 1});
-      if (!notificationAdminHub) {
-        const newNotificationAdminDoc = new NotificationAdmin({
-          admin_Id: 1,
-          notifications: [
-            {
-              notifNum: 1,
-              notifText: "Patent Search Form of ID " + newSearchNo +" has been submitted successfully",
-              notifDate: formattedDate,
-              seen: false,
-            }
-          ]
-        })
-        newNotificationAdminDoc.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        })
-      } else {
-        const newNotificationAdmin = {
-          notifNum: notificationAdminHub.notifications.length + 1,
-          notifText: "Patent Search Form of ID " + newSearchNo +" has been submitted successfully",
-          notifDate: formattedDate,
-          seen: false,
-        }
-        notificationAdminHub.notifications.push(newNotificationAdmin);
-        notificationAdminHub.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        });
-      }
 
     console.log("Successfully Assigned Patent Search Task to a Partner");
     res.status(200).json(savedSearch);
@@ -826,6 +642,8 @@ const saveResponseToFerData = async (req, res) => {
       unassignedFEROrder.save();
       
       console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
+      await AllNotifications.sendToUser(userId, "Your Response to FER/Office Action Form has been submitted successfully");
+      await AllNotifications.sendToAdmin("Response to FER/Office Action Form of ID " + newUnassignedFERNo +" has been submitted successfully and is in Unassigned Jobs.")
       res.status(200).json(unassignedFEROrder);
     }
 
@@ -882,74 +700,9 @@ const saveResponseToFerData = async (req, res) => {
     });
 
     await newJobOrder.save();
-      // To send notification to User
-      const notificationHub = await Notification.findOne({user_Id: userId});
-      if (!notificationHub) {
-        const newNotificationDoc = new Notification({
-          user_Id: userId,
-          notifications: [
-            {
-              notifNum: 1,
-              notifText: "Your Response To FER/Office Action has been submitted successfully",
-              notifDate: formattedDate,
-              seen: false,
-            }
-          ]
-        })
-        newNotificationDoc.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        })
-      } else {
-        const newNotification = {
-          notifNum: notificationHub.notifications.length + 1,
-          notifText: "Your Response To FER/Office Action Form has been submitted successfully",
-          notifDate: formattedDate,
-          seen: false,
-        }
-        notificationHub.notifications.push(newNotification);
-        notificationHub.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        });
+    await AllNotifications.sendToUser(userId, "Your Response To FER/Office Action Form has been submitted successfully");
+    await AllNotifications.sendToAdmin("Response To FER/Office Action Form of ID " + newResponseToFerNo +" has been submitted successfully.")
 
-      }
-
-      // To send Notification to Admin
-      const notificationAdminHub = await NotificationAdmin.findOne({admin_Id: 1});
-      if (!notificationAdminHub) {
-        const newNotificationAdminDoc = new NotificationAdmin({
-          admin_Id: 1,
-          notifications: [
-            {
-              notifNum: 1,
-              notifText: "Response To FER Form of ID " + newResponseToFerNo +" has been submitted successfully",
-              notifDate: formattedDate,
-              seen: false,
-            }
-          ]
-        })
-        newNotificationAdminDoc.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        })
-      } else {
-        const newNotificationAdmin = {
-          notifNum: notificationAdminHub.notifications.length + 1,
-          notifText: "Response To FER Form of ID " + newResponseToFerNo +" has been submitted successfully",
-          notifDate: formattedDate,
-          seen: false,
-        }
-        notificationAdminHub.notifications.push(newNotificationAdmin);
-        notificationAdminHub.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        });
-      }
 
     console.log("Successfully Assigned Response to FER Task to a Partner");
     res.status(200).json(savedResponseToFer);
@@ -1065,6 +818,9 @@ const saveFreedomToOperateData = async (req, res) => {
       unassignedFTOOrder.save();
       
       console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
+      await AllNotifications.sendToUser(userId, "Your Freedom To Operate Search Form has been submitted successfully");
+      await AllNotifications.sendToAdmin("Freedom To Operate Search Form of ID " + newUnassignedFTONo +" has been submitted successfully and is in Unassigned Jobs.")
+
       res.status(200).json(unassignedFTOOrder);
 
     } 
@@ -1117,74 +873,10 @@ const saveFreedomToOperateData = async (req, res) => {
       });
   
       await newJobOrder.save();
-        // To send notification to User
-        const notificationHub = await Notification.findOne({user_Id: userId});
-        if (!notificationHub) {
-          const newNotificationDoc = new Notification({
-            user_Id: userId,
-            notifications: [
-              {
-                notifNum: 1,
-                notifText: "Your Freedom To Operate Search Form has been submitted successfully",
-                notifDate: formattedDate,
-                seen: false,
-              }
-            ]
-          })
-          newNotificationDoc.save().then(() => {
-            console.log("Notification sent Successfully");
-          }).catch((err) => {
-            console.error("Error in sending Notification : " + err);
-          })
-        } else {
-          const newNotification = {
-            notifNum: notificationHub.notifications.length + 1,
-            notifText: "Your Freedom To Operate Search Form has been submitted successfully",
-            notifDate: formattedDate,
-            seen: false,
-          }
-          notificationHub.notifications.push(newNotification);
-          notificationHub.save().then(() => {
-            console.log("Notification sent Successfully");
-          }).catch((err) => {
-            console.error("Error in sending Notification : " + err);
-          });
-  
-        }
+      
+      await AllNotifications.sendToUser(userId, "Freedom To Operate Search Form has been submitted successfully");
+      await AllNotifications.sendToAdmin("Freedom To Operate Search Form of ID " + newFTONo +" has been submitted successfully.")
 
-        // To send Notification to Admin
-      const notificationAdminHub = await NotificationAdmin.findOne({admin_Id: 1});
-      if (!notificationAdminHub) {
-        const newNotificationAdminDoc = new NotificationAdmin({
-          admin_Id: 1,
-          notifications: [
-            {
-              notifNum: 1,
-              notifText: "Freedom To Operate Search Form of ID " + newFTONo +" has been submitted successfully",
-              notifDate: formattedDate,
-              seen: false,
-            }
-          ]
-        })
-        newNotificationAdminDoc.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        })
-      } else {
-        const newNotificationAdmin = {
-          notifNum: notificationAdminHub.notifications.length + 1,
-          notifText: "Freedom To Operate Search Form of ID " + newFTONo +" has been submitted successfully",
-          notifDate: formattedDate,
-          seen: false,
-        }
-        notificationAdminHub.notifications.push(newNotificationAdmin);
-        notificationAdminHub.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        });
-      }
   
       console.log("Successfully Assigned Freedom To Operate Task to a Partner");
   
@@ -1304,6 +996,9 @@ const savePatentIllustrationData = async (req, res) => {
       unassignedPatentIllustrationOrder.save();
       
       console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
+      await AllNotifications.sendToUser(userId, "Your Patent Illustration Form has been submitted successfully");
+      await AllNotifications.sendToAdmin("Patent Illustration Form of ID " + newUnassignedPatentIllustrationNo +" has been submitted successfully and is in Unassigned Jobs.")
+
       res.status(200).json(unassignedPatentIllustrationOrder);
 
     }
@@ -1358,75 +1053,8 @@ const savePatentIllustrationData = async (req, res) => {
     });
 
     await newJobOrder.save();
-
-      // To send notification to User
-      const notificationHub = await Notification.findOne({user_Id: userId});
-      if (!notificationHub) {
-        const newNotificationDoc = new Notification({
-          user_Id: userId,
-          notifications: [
-            {
-              notifNum: 1,
-              notifText: "Your Patent Illustration Form has been submitted successfully",
-              notifDate: formattedDate,
-              seen: false,
-            }
-          ]
-        })
-        newNotificationDoc.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        })
-      } else {
-        const newNotification = {
-          notifNum: notificationHub.notifications.length + 1,
-          notifText: "Your Patent Illustration Form has been submitted successfully",
-          notifDate: formattedDate,
-          seen: false,
-        }
-        notificationHub.notifications.push(newNotification);
-        notificationHub.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        });
-
-      }
-
-      // To send Notification to Admin
-      const notificationAdminHub = await NotificationAdmin.findOne({admin_Id: 1});
-      if (!notificationAdminHub) {
-        const newNotificationAdminDoc = new NotificationAdmin({
-          admin_Id: 1,
-          notifications: [
-            {
-              notifNum: 1,
-              notifText: "Patent Illustration Form of ID " + newJobNo +" has been submitted successfully",
-              notifDate: formattedDate,
-              seen: false,
-            }
-          ]
-        })
-        newNotificationAdminDoc.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        })
-      } else {
-        const newNotificationAdmin = {
-          notifNum: notificationAdminHub.notifications.length + 1,
-          notifText: "Patent Illustration Form of ID " + newJobNo +" has been submitted successfully",
-          notifDate: formattedDate,
-          seen: false,
-        }
-        notificationAdminHub.notifications.push(newNotificationAdmin);
-        notificationAdminHub.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        });
-      }
+    await AllNotifications.sendToUser(userId, "Your Patent Illustration Form has been submitted successfully");
+    await AllNotifications.sendToAdmin("Patent Illustration Form of ID " + newJobNo +" has been submitted successfully..")
 
 
     console.log("Successfully Assigned Patent Illustration to a Partner");
@@ -1534,6 +1162,9 @@ const savePatentLandscapeData = async (req, res) => {
       unassignedPatentLandscapeOrder.save();
       
       console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
+      await AllNotifications.sendToUser(userId, "Your Patent Landscape Form has been submitted successfully");
+      await AllNotifications.sendToAdmin("Patent Landscape Form of ID " + newUnassignedPatentLandscapeNo +" has been submitted successfully and is in Unassigned Jobs.")
+
       res.status(200).json(unassignedPatentLandscapeOrder);
 
     }
@@ -1586,76 +1217,10 @@ const savePatentLandscapeData = async (req, res) => {
 
     await newJobOrder.save();
 
-      // To send notification to User
-      const notificationHub = await Notification.findOne({user_Id: userId});
-      if (!notificationHub) {
-        const newNotificationDoc = new Notification({
-          user_Id: userId,
-          notifications: [
-            {
-              notifNum: 1,
-              notifText: "Your Freedom To Patent Landscape Form has been submitted successfully",
-              notifDate: formattedDate,
-              seen: false,
-            }
-          ]
-        })
-        newNotificationDoc.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        })
-      } else {
-        const newNotification = {
-          notifNum: notificationHub.notifications.length + 1,
-          notifText: "Your Freedom To Patent Landscape Form has been submitted successfully",
-          notifDate: formattedDate,
-          seen: false,
-        }
-        notificationHub.notifications.push(newNotification);
-        notificationHub.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        });
+    await AllNotifications.sendToUser(userId, "Your Patent Landscape Form has been submitted successfully");
+    await AllNotifications.sendToAdmin("Patent Landscape Form of ID " + newJobNo +" has been submitted successfully.")
 
-      }
-
-      // To send Notification to Admin
-      const notificationAdminHub = await NotificationAdmin.findOne({admin_Id: 1});
-      if (!notificationAdminHub) {
-        const newNotificationAdminDoc = new NotificationAdmin({
-          admin_Id: 1,
-          notifications: [
-            {
-              notifNum: 1,
-              notifText: "Freedom To Patent Landscape Form of ID " + newJobNo +" has been submitted successfully",
-              notifDate: formattedDate,
-              seen: false,
-            }
-          ]
-        })
-        newNotificationAdminDoc.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        })
-      } else {
-        const newNotificationAdmin = {
-          notifNum: notificationAdminHub.notifications.length + 1,
-          notifText: "Freedom To Patent Landscape Form of ID " + newJobNo +" has been submitted successfully",
-          notifDate: formattedDate,
-          seen: false,
-        }
-        notificationAdminHub.notifications.push(newNotificationAdmin);
-        notificationAdminHub.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        });
-      }
-
-
+      
     console.log("Successfully Assigned Patent Landscape to a Partner");
 
     res.status(200).json(savedJobOrder._id);
@@ -1743,6 +1308,9 @@ const savePatentWatchData = async (req, res) => {
       unassignedPatentWatchOrder.save();
       
       console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
+      await AllNotifications.sendToUser(userId, "Your Patent Watch Form has been submitted successfully");
+      await AllNotifications.sendToAdmin("Patent Watch Form of ID " + newUnassignedPatentWatchNo +" has been submitted successfully and is in Unassigned Jobs.")
+
       res.status(200).json(unassignedPatentWatchOrder);
     }
 
@@ -1794,75 +1362,8 @@ const savePatentWatchData = async (req, res) => {
     });
 
     await newJobOrder.save();
-
-      // To send notification to User
-      const notificationHub = await Notification.findOne({user_Id: userId});
-      if (!notificationHub) {
-        const newNotificationDoc = new Notification({
-          user_Id: userId,
-          notifications: [
-            {
-              notifNum: 1,
-              notifText: "Your Patent Watch Form has been submitted successfully",
-              notifDate: formattedDate,
-              seen: false,
-            }
-          ]
-        })
-        newNotificationDoc.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        })
-      } else {
-        const newNotification = {
-          notifNum: notificationHub.notifications.length + 1,
-          notifText: "Your Patent Watch Form has been submitted successfully",
-          notifDate: formattedDate,
-          seen: false,
-        }
-        notificationHub.notifications.push(newNotification);
-        notificationHub.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        });
-
-      }
-
-      // To send Notification to Admin
-      const notificationAdminHub = await NotificationAdmin.findOne({admin_Id: 1});
-      if (!notificationAdminHub) {
-        const newNotificationAdminDoc = new NotificationAdmin({
-          admin_Id: 1,
-          notifications: [
-            {
-              notifNum: 1,
-              notifText: "Patent Watc Form of ID " + newJobNo +" has been submitted successfully",
-              notifDate: formattedDate,
-              seen: false,
-            }
-          ]
-        })
-        newNotificationAdminDoc.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        })
-      } else {
-        const newNotificationAdmin = {
-          notifNum: notificationAdminHub.notifications.length + 1,
-          notifText: "Patent Watch Form of ID " + newJobNo +" has been submitted successfully",
-          notifDate: formattedDate,
-          seen: false,
-        }
-        notificationAdminHub.notifications.push(newNotificationAdmin);
-        notificationAdminHub.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        });
-      }
+    await AllNotifications.sendToUser(userId, "Your Patent Watch Form has been submitted successfully");
+    await AllNotifications.sendToAdmin("Patent Watch Form of ID " + newJobNo +" has been submitted successfully.")
 
 
     console.log("Successfully Assigned Patent Watch to a Partner");
@@ -1953,7 +1454,9 @@ const savePatentLicenseData = async (req, res) => {
       unassignedPatentLicenseOrder._id.job_no =  newUnassignedPatentLicenseNo ;
       
       unassignedPatentLicenseOrder.save();
-      
+      await AllNotifications.sendToUser(userId, "Your Patent Licensing and Commercialization Services Form has been submitted successfully");
+      await AllNotifications.sendToAdmin("Patent Licensing and Commercialization Services Form of ID " + newUnassignedPatentLicenseNo +" has been submitted successfully and is in Unassigned Jobs.")
+
       console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
       res.status(200).json(unassignedPatentLicenseOrder);
     }
@@ -2005,77 +1508,10 @@ const savePatentLicenseData = async (req, res) => {
     });
 
     await newJobOrder.save();
+    await AllNotifications.sendToUser(userId, "Your Patent Licensing and Commercialization Form has been submitted successfully");
+    await AllNotifications.sendToAdmin("Patent Licensing and Commercialization Form of ID " + newUnassignedJobNo +" has been submitted successfully.")
 
-      // To send notification to User
-      const notificationHub = await Notification.findOne({user_Id: userId});
-      if (!notificationHub) {
-        const newNotificationDoc = new Notification({
-          user_Id: userId,
-          notifications: [
-            {
-              notifNum: 1,
-              notifText: "Your Patent Licensing and Commercialization Form has been submitted successfully",
-              notifDate: formattedDate,
-              seen: false,
-            }
-          ]
-        })
-        newNotificationDoc.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        })
-      } else {
-        const newNotification = {
-          notifNum: notificationHub.notifications.length + 1,
-          notifText: "Your Patent Licensing and Commercialization Form has been submitted successfully",
-          notifDate: formattedDate,
-          seen: false,
-        }
-        notificationHub.notifications.push(newNotification);
-        notificationHub.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        });
-
-      }
-
-      // To send Notification to Admin
-      const notificationAdminHub = await NotificationAdmin.findOne({admin_Id: 1});
-      if (!notificationAdminHub) {
-        const newNotificationAdminDoc = new NotificationAdmin({
-          admin_Id: 1,
-          notifications: [
-            {
-              notifNum: 1,
-              notifText: "Patent Licensing and Commercialization Form of ID " + newJobNo +" has been submitted successfully",
-              notifDate: formattedDate,
-              seen: false,
-            }
-          ]
-        })
-        newNotificationAdminDoc.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        })
-      } else {
-        const newNotificationAdmin = {
-          notifNum: notificationAdminHub.notifications.length + 1,
-          notifText: "Patent Licensing and Commercialization Form of ID " + newJobNo +" has been submitted successfully",
-          notifDate: formattedDate,
-          seen: false,
-        }
-        notificationAdminHub.notifications.push(newNotificationAdmin);
-        notificationAdminHub.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        });
-      }
-
-
+     
     console.log("Successfully Assigned Patent Licensing and Commercialization Services Task to a Partner");
 
     res.status(200).json(savedJobOrder._id);
@@ -2167,6 +1603,9 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
       unassignedPatentPortfolioOrder.save();
       
       console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
+      await AllNotifications.sendToUser(userId, "Your Patent Portfolio Analysis Form has been submitted successfully");
+      await AllNotifications.sendToAdmin("Patent Portfolio Analysis Form of ID " + newUnassignedPatentPortfolioNo +" has been submitted successfully.")
+
       res.status(200).json(unassignedPatentPortfolioOrder);
     }
 
@@ -2217,75 +1656,8 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
     });
 
     await newJobOrder.save();
-
-      // To send notification to User
-      const notificationHub = await Notification.findOne({user_Id: userId});
-      if (!notificationHub) {
-        const newNotificationDoc = new Notification({
-          user_Id: userId,
-          notifications: [
-            {
-              notifNum: 1,
-              notifText: "Your Patent Portfolio Analysis Form has been submitted successfully",
-              notifDate: formattedDate,
-              seen: false,
-            }
-          ]
-        })
-        newNotificationDoc.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        })
-      } else {
-        const newNotification = {
-          notifNum: notificationHub.notifications.length + 1,
-          notifText: "Your Patent Portfolio Analysis Form has been submitted successfully",
-          notifDate: formattedDate,
-          seen: false,
-        }
-        notificationHub.notifications.push(newNotification);
-        notificationHub.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        });
-
-      }
-    
-      // To send Notification to Admin
-      const notificationAdminHub = await NotificationAdmin.findOne({admin_Id: 1});
-      if (!notificationAdminHub) {
-        const newNotificationAdminDoc = new NotificationAdmin({
-          admin_Id: 1,
-          notifications: [
-            {
-              notifNum: 1,
-              notifText: "Patent Portfolio Analysis Form of ID " + newJobNo +" has been submitted successfully",
-              notifDate: formattedDate,
-              seen: false,
-            }
-          ]
-        })
-        newNotificationAdminDoc.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        })
-      } else {
-        const newNotificationAdmin = {
-          notifNum: notificationAdminHub.notifications.length + 1,
-          notifText: "Patent Portfolio Analysis Form of ID " + newJobNo +" has been submitted successfully",
-          notifDate: formattedDate,
-          seen: false,
-        }
-        notificationAdminHub.notifications.push(newNotificationAdmin);
-        notificationAdminHub.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        });
-      }
+    await AllNotifications.sendToUser(userId, "Your Patent Portfolio Analysis Form has been submitted successfully");
+    await AllNotifications.sendToAdmin("Patent Portfolio Analysis Form of ID " + newJobNo +" has been submitted successfuly.")
 
 
     console.log("Successfully Assigned Patent Portfolio Analysis Task to a Partner");
@@ -2395,6 +1767,9 @@ const savePatentTranslationData = async (req, res) => {
       unassignedPatentTranslationOrder._id.job_no =  newUnassignedPatentTranslationNo ;
       
       unassignedPatentTranslationOrder.save();
+      await AllNotifications.sendToUser(userId, "Your Patent Translation Services Form has been submitted successfully");
+      await AllNotifications.sendToAdmin("Patent Translation Services Form of ID " + newUnassignedPatentTranslationNo +" has been submitted successfully.")
+
       
       console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
       res.status(200).json(unassignedPatentTranslationOrder);
@@ -2448,74 +1823,9 @@ const savePatentTranslationData = async (req, res) => {
 
     await newJobOrder.save();
 
-      // To send notification to User
-      const notificationHub = await Notification.findOne({user_Id: userId});
-      if (!notificationHub) {
-        const newNotificationDoc = new Notification({
-          user_Id: userId,
-          notifications: [
-            {
-              notifNum: 1,
-              notifText: "Your Patent Translation Services Form has been submitted successfully",
-              notifDate: formattedDate,
-              seen: false,
-            }
-          ]
-        })
-        newNotificationDoc.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        })
-      } else {
-        const newNotification = {
-          notifNum: notificationHub.notifications.length + 1,
-          notifText: "Your Patent Translation Services Form has been submitted successfully",
-          notifDate: formattedDate,
-          seen: false,
-        }
-        notificationHub.notifications.push(newNotification);
-        notificationHub.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        });
+    await AllNotifications.sendToUser(userId, "Your Patent Translation Services Form has been submitted successfully");
+    await AllNotifications.sendToAdmin("Patent Translation Services of ID " + newJobNo +" has been submitted successfully.")
 
-      }
-
-      // To send Notification to Admin
-      const notificationAdminHub = await NotificationAdmin.findOne({admin_Id: 1});
-      if (!notificationAdminHub) {
-        const newNotificationAdminDoc = new NotificationAdmin({
-          admin_Id: 1,
-          notifications: [
-            {
-              notifNum: 1,
-              notifText: "Patent Translation Services Form of ID " + newJobNo +" has been submitted successfully",
-              notifDate: formattedDate,
-              seen: false,
-            }
-          ]
-        })
-        newNotificationAdminDoc.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        })
-      } else {
-        const newNotificationAdmin = {
-          notifNum: notificationAdminHub.notifications.length + 1,
-          notifText: "Patent Translation Services Form of ID " + newJobNo +" has been submitted successfully",
-          notifDate: formattedDate,
-          seen: false,
-        }
-        notificationAdminHub.notifications.push(newNotificationAdmin);
-        notificationAdminHub.save().then(() => {
-          console.log("Notification sent Successfully");
-        }).catch((err) => {
-          console.error("Error in sending Notification : " + err);
-        });
-      }
 
 
     console.log("Successfully Assigned Patent Translation Services Task to a Partner");
