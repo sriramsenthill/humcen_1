@@ -139,37 +139,9 @@ const acceptJobOrder = async (req, res) => {
     partner.save().then((response) => {console.log("Job added to In Progress section of Partner")})
     res.json({ message: "Job order accepted successfully" });
 
-    const assignedNotification = await Notification.findOne({ user_Id: Number(userID) });
-    if(!assignedNotification) {
-      const newNotification = new Notification({
-        user_Id: Number(userID),
-        notifications: [
-          {
-            notifNum: 1,
-            notifText: "Work  " + jobId+" has been assigned to Partner named " + partner.first_name + " " + partner.last_name + " Successfully.",
-            notifDate: formattedDate,
-            seen: false,
-          }
-        ] 
-      }).save().then(() => {
-        console.log("Notification sent Successfully.");
-      }).catch((err) => {
-        console.error("Error in sending Notification : " + err);
-      });
-    } else {
-      const oldNotification = {
-        notifNum: assignedNotification.notifications.length + 1,
-        notifText: "Work  " + jobId+" has been assigned to Partner named " + partner.first_name + " " + partner.last_name + " Successfully.",
-        notifDate: formattedDate,
-        seen: false,
-      }
-      assignedNotification.notifications.push(oldNotification);
-      assignedNotification.save().then(() => {
-        console.log("Notification sent Successfully.")
-      }).catch((err) => {
-        console.error("Error in sending Notifcation : " + err);
-      });
-    }
+    await AllNotifications.sendToUser(Number(userID), "Work  " + jobId+" has been assigned to Partner named " + partner.first_name + " " + partner.last_name + " Successfully.");
+    await AllNotifications.sendToPartner(Number(partner.userID), "Job Order of ID " + jobID + "is accepted and now, You can work on the Job without any hindrances.");
+    await AllNotifications.sendToAdmin("Partner ID " + partner.userID + " has accepted the Job ID " + jobId);
 
   } catch (error) {
     console.error("Error accepting job order:", error);
@@ -962,10 +934,9 @@ const rejectJobOrder = async (req, res) => {
           }
         }
       }
-      
-      
 
-      
+      await AllNotifications.sendToAdmin("Partner has rejected the Job ID " + jobId + " assigned by User of ID " + userID + ". Go to Unassigned Jobs section and assign the task to other Partners." )
+      await AllNotifications.sendToUser("A New Partner will be assigned for the Job " + jobID + " . Sorry for the Inconvenience.");
 
       return res.status(200).json({ error: "No available partner found. Sending the Job Order to Unassigned Jobs" });
     }
@@ -980,6 +951,9 @@ const rejectJobOrder = async (req, res) => {
     res.json({
       message: "Job order rejected successfully and reassigned to another partner",
     });
+
+    await AllNotifications.sendToAdmin("Job " + jobId + " has been re-assigned to the Partner ID " + findPartner.userID + " successfully.");
+    await AllNotifications.sendToUser("Job ID "+ jobId + " has been re-assigned to another Partner successfully. Thanks for Waiting.");
   } catch (error) {
     console.error("Error rejecting job order:", error);
     res.status(500).json({ error: "Internal Server Error" });

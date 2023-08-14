@@ -88,6 +88,7 @@ const createJobOrderPatentDrafting = async (req, res) => {
     const findPartner = await Partner.findOne({
       is_free: true,
       ["known_fields.Patent Drafting"]: true,
+      in_progress_jobs: { $lt: 5 },
       country: req.body.country
     });
 
@@ -123,7 +124,7 @@ const createJobOrderPatentDrafting = async (req, res) => {
       
       console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
 
-      await AllNotifications.sendToUser(userId, "Your Patent Drafting Form has been submitted successfully");
+      await AllNotifications.sendToUser(Number(userId), "Your Patent Drafting Form has been submitted successfully");
       await AllNotifications.sendToAdmin("Patent Drafting Form of ID " + newUnassignedDraftingNo +" has been submitted successfully and is in Unassigned Jobs.")
 
       res.status(200).json(unassignedDraftingOrder);
@@ -187,7 +188,8 @@ const createJobOrderPatentDrafting = async (req, res) => {
   
       console.log("Successfully Assigned Patent Drafting Task to a Partner");
       console.log(userId);
-      await AllNotifications.sendToUser(userId, "Your Patent Drafting Form has been submitted successfully");
+      await AllNotifications.sendToUser(Number(userId), "Your Patent Drafting Form has been submitted successfully");
+      await AllNotifications.sendToPartner(Number(findPartner.userID),"You have been auto-assigned the Job " + newDraftingNo + ". You can Accept or Reject the Job.");
       await AllNotifications.sendToAdmin("Patent Drafting Form of ID " + newDraftingNo +" has been submitted successfully")
 
       // To send Notification to Admin
@@ -266,7 +268,7 @@ const createJobOrderPatentFiling = async (req, res) => {
 
 
     // Find the partner and customer and update their jobs list
-    let findPartner = await Partner.findOne({ is_free: true, ["known_fields.Patent Filing"]: true, country: req.body.country });
+    let findPartner = await Partner.findOne({ is_free: true, ["known_fields.Patent Filing"]: true, country: req.body.country, in_progress_jobs: { $lt: 5 } });
     let findCustomer = await Customer.findOne({ userID: userId });
     const findAdmin=await Admin.findOne({_id:"64803aa4b57edc54d6b276cb"})
     if (!findCustomer) {
@@ -298,7 +300,7 @@ const createJobOrderPatentFiling = async (req, res) => {
       unassignedFilingOrder.save();
       
       console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
-      await AllNotifications.sendToUser(userId, "Your Patent Filing Form has been submitted successfully");
+      await AllNotifications.sendToUser(Number(userId), "Your Patent Filing Form has been submitted successfully");
       await AllNotifications.sendToAdmin("Patent Filing Form of ID " + newUnassignedFilingNo +" has been submitted successfully and is in Unassigned Jobs.")
 
       res.status(200).json(unassignedFilingOrder);
@@ -357,7 +359,8 @@ const createJobOrderPatentFiling = async (req, res) => {
 
     console.log("Successfully Assigned Patent Filing Task to a Partner");
       
-  await AllNotifications.sendToUser(userId, "Your Patent Filing Form has been submitted successfully");
+  await AllNotifications.sendToUser(Number(userId), "Your Patent Filing Form has been submitted successfully");
+  await AllNotifications.sendToPartner(Number(findPartner.userID),"You have been auto-assigned the Job " + newFilingNo + ". You can Accept or Reject the Job.");
   await AllNotifications.sendToAdmin("Patent Filing Form of ID " + newFilingNo +" has been submitted successfully.")
 
 
@@ -491,7 +494,7 @@ const savePatentSearchData = async (req, res) => {
       unassignedSearchOrder.save();
       
       console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
-      await AllNotifications.sendToUser(userId, "Your Patent Search Form has been submitted successfully");
+      await AllNotifications.sendToUser(Number(userId), "Your Patent Search Form has been submitted successfully");
       await AllNotifications.sendToAdmin("Patent Search Form of ID " + newUnassignedSearchNo +" has been submitted successfully and is in Unassigned Jobs.")
 
       res.status(200).json(unassignedSearchOrder);
@@ -544,7 +547,8 @@ const savePatentSearchData = async (req, res) => {
 
     await newJobOrder.save();
 
-    await AllNotifications.sendToUser(userId, "Your Patent Search Form has been submitted successfully");
+    await AllNotifications.sendToUser(Number(userId), "Your Patent Search Form has been submitted successfully");
+    await AllNotifications.sendToPartner(Number(findPartner.userID),"You have been auto-assigned the Job " + newSearchNo + ". You can Accept or Reject the Job.");
     await AllNotifications.sendToAdmin("Patent Search Form of ID " + newSearchNo +" has been submitted successfully.")
 
 
@@ -643,7 +647,7 @@ const saveResponseToFerData = async (req, res) => {
       unassignedFEROrder.save();
       
       console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
-      await AllNotifications.sendToUser(userId, "Your Response to FER/Office Action Form has been submitted successfully");
+      await AllNotifications.sendToUser(Number(userId), "Your Response to FER/Office Action Form has been submitted successfully");
       await AllNotifications.sendToAdmin("Response to FER/Office Action Form of ID " + newUnassignedFERNo +" has been submitted successfully and is in Unassigned Jobs.")
       res.status(200).json(unassignedFEROrder);
     }
@@ -701,7 +705,8 @@ const saveResponseToFerData = async (req, res) => {
     });
 
     await newJobOrder.save();
-    await AllNotifications.sendToUser(userId, "Your Response To FER/Office Action Form has been submitted successfully");
+    await AllNotifications.sendToUser(Number(userId), "Your Response To FER/Office Action Form has been submitted successfully");
+    await AllNotifications.sendToPartner(Number(findPartner.userID),"You have been auto-assigned the Job " + newResponseToFerNo + ". You can Accept or Reject the Job.");
     await AllNotifications.sendToAdmin("Response To FER/Office Action Form of ID " + newResponseToFerNo +" has been submitted successfully.")
 
 
@@ -819,7 +824,7 @@ const saveFreedomToOperateData = async (req, res) => {
       unassignedFTOOrder.save();
       
       console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
-      await AllNotifications.sendToUser(userId, "Your Freedom To Operate Search Form has been submitted successfully");
+      await AllNotifications.sendToUser(Number(userId), "Your Freedom To Operate Search Form has been submitted successfully");
       await AllNotifications.sendToAdmin("Freedom To Operate Search Form of ID " + newUnassignedFTONo +" has been submitted successfully and is in Unassigned Jobs.")
 
       res.status(200).json(unassignedFTOOrder);
@@ -875,7 +880,8 @@ const saveFreedomToOperateData = async (req, res) => {
   
       await newJobOrder.save();
       
-      await AllNotifications.sendToUser(userId, "Freedom To Operate Search Form has been submitted successfully");
+      await AllNotifications.sendToUser(Number(userId), "Freedom To Operate Search Form has been submitted successfully");
+      await AllNotifications.sendToPartner(Number(findPartner.userID),"You have been auto-assigned the Job " + newFTONo + ". You can Accept or Reject the Job.");
       await AllNotifications.sendToAdmin("Freedom To Operate Search Form of ID " + newFTONo +" has been submitted successfully.")
 
   
@@ -997,7 +1003,7 @@ const savePatentIllustrationData = async (req, res) => {
       unassignedPatentIllustrationOrder.save();
       
       console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
-      await AllNotifications.sendToUser(userId, "Your Patent Illustration Form has been submitted successfully");
+      await AllNotifications.sendToUser(Number(userId), "Your Patent Illustration Form has been submitted successfully");
       await AllNotifications.sendToAdmin("Patent Illustration Form of ID " + newUnassignedPatentIllustrationNo +" has been submitted successfully and is in Unassigned Jobs.")
 
       res.status(200).json(unassignedPatentIllustrationOrder);
@@ -1054,8 +1060,9 @@ const savePatentIllustrationData = async (req, res) => {
     });
 
     await newJobOrder.save();
-    await AllNotifications.sendToUser(userId, "Your Patent Illustration Form has been submitted successfully");
-    await AllNotifications.sendToAdmin("Patent Illustration Form of ID " + newJobNo +" has been submitted successfully..")
+    await AllNotifications.sendToUser(Number(userId), "Your Patent Illustration Form has been submitted successfully");
+    await AllNotifications.sendToPartner(Number(findPartner.userID),"You have been auto-assigned the Job " + newJobNo + ". You can Accept or Reject the Job.");
+    await AllNotifications.sendToAdmin("Patent Illustration Form of ID " + newJobNo +" has been submitted successfully.")
 
 
     console.log("Successfully Assigned Patent Illustration to a Partner");
@@ -1163,7 +1170,7 @@ const savePatentLandscapeData = async (req, res) => {
       unassignedPatentLandscapeOrder.save();
       
       console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
-      await AllNotifications.sendToUser(userId, "Your Patent Landscape Form has been submitted successfully");
+      await AllNotifications.sendToUser(Number(userId), "Your Patent Landscape Form has been submitted successfully");
       await AllNotifications.sendToAdmin("Patent Landscape Form of ID " + newUnassignedPatentLandscapeNo +" has been submitted successfully and is in Unassigned Jobs.")
 
       res.status(200).json(unassignedPatentLandscapeOrder);
@@ -1218,7 +1225,8 @@ const savePatentLandscapeData = async (req, res) => {
 
     await newJobOrder.save();
 
-    await AllNotifications.sendToUser(userId, "Your Patent Landscape Form has been submitted successfully");
+    await AllNotifications.sendToUser(Number(userId), "Your Patent Landscape Form has been submitted successfully");
+    await AllNotifications.sendToPartner(Number(findPartner.userID),"You have been auto-assigned the Job " + newJobNo + ". You can Accept or Reject the Job.");
     await AllNotifications.sendToAdmin("Patent Landscape Form of ID " + newJobNo +" has been submitted successfully.")
 
       
@@ -1309,7 +1317,7 @@ const savePatentWatchData = async (req, res) => {
       unassignedPatentWatchOrder.save();
       
       console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
-      await AllNotifications.sendToUser(userId, "Your Patent Watch Form has been submitted successfully");
+      await AllNotifications.sendToUser(Number(userId), "Your Patent Watch Form has been submitted successfully");
       await AllNotifications.sendToAdmin("Patent Watch Form of ID " + newUnassignedPatentWatchNo +" has been submitted successfully and is in Unassigned Jobs.")
 
       res.status(200).json(unassignedPatentWatchOrder);
@@ -1363,9 +1371,9 @@ const savePatentWatchData = async (req, res) => {
     });
 
     await newJobOrder.save();
-    await AllNotifications.sendToUser(userId, "Your Patent Watch Form has been submitted successfully");
+    await AllNotifications.sendToUser(Number(userId), "Your Patent Watch Form has been submitted successfully");
     await AllNotifications.sendToAdmin("Patent Watch Form of ID " + newJobNo +" has been submitted successfully.")
-
+    await AllNotifications.sendToPartner(Number(findPartner.userID),"You have been auto-assigned the Job " + newJobNo + ". You can Accept or Reject the Job.");
 
     console.log("Successfully Assigned Patent Watch to a Partner");
 
@@ -1455,7 +1463,7 @@ const savePatentLicenseData = async (req, res) => {
       unassignedPatentLicenseOrder._id.job_no =  newUnassignedPatentLicenseNo ;
       
       unassignedPatentLicenseOrder.save();
-      await AllNotifications.sendToUser(userId, "Your Patent Licensing and Commercialization Services Form has been submitted successfully");
+      await AllNotifications.sendToUser(Number(userId), "Your Patent Licensing and Commercialization Services Form has been submitted successfully");
       await AllNotifications.sendToAdmin("Patent Licensing and Commercialization Services Form of ID " + newUnassignedPatentLicenseNo +" has been submitted successfully and is in Unassigned Jobs.")
 
       console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
@@ -1509,9 +1517,9 @@ const savePatentLicenseData = async (req, res) => {
     });
 
     await newJobOrder.save();
-    await AllNotifications.sendToUser(userId, "Your Patent Licensing and Commercialization Form has been submitted successfully");
-    await AllNotifications.sendToAdmin("Patent Licensing and Commercialization Form of ID " + newUnassignedJobNo +" has been submitted successfully.")
-
+    await AllNotifications.sendToUser(Number(userId), "Your Patent Licensing and Commercialization Form has been submitted successfully");
+    await AllNotifications.sendToAdmin("Patent Licensing and Commercialization Form of ID " + newJobNo +" has been submitted successfully.")
+    await AllNotifications.sendToPartner(Number(findPartner.userID),"You have been auto-assigned the Job " + newJobNo + ". You can Accept or Reject the Job.");
      
     console.log("Successfully Assigned Patent Licensing and Commercialization Services Task to a Partner");
 
@@ -1604,7 +1612,7 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
       unassignedPatentPortfolioOrder.save();
       
       console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
-      await AllNotifications.sendToUser(userId, "Your Patent Portfolio Analysis Form has been submitted successfully");
+      await AllNotifications.sendToUser(Number(userId), "Your Patent Portfolio Analysis Form has been submitted successfully");
       await AllNotifications.sendToAdmin("Patent Portfolio Analysis Form of ID " + newUnassignedPatentPortfolioNo +" has been submitted successfully.")
 
       res.status(200).json(unassignedPatentPortfolioOrder);
@@ -1657,8 +1665,9 @@ const savePatentPortfolioAnalysisData = async (req, res) => {
     });
 
     await newJobOrder.save();
-    await AllNotifications.sendToUser(userId, "Your Patent Portfolio Analysis Form has been submitted successfully");
+    await AllNotifications.sendToUser(Number(userId), "Your Patent Portfolio Analysis Form has been submitted successfully");
     await AllNotifications.sendToAdmin("Patent Portfolio Analysis Form of ID " + newJobNo +" has been submitted successfuly.")
+    await AllNotifications.sendToPartner(Number(findPartner.userID),"You have been auto-assigned the Job " + newJobNo + ". You can Accept or Reject the Job.");
 
 
     console.log("Successfully Assigned Patent Portfolio Analysis Task to a Partner");
@@ -1768,7 +1777,7 @@ const savePatentTranslationData = async (req, res) => {
       unassignedPatentTranslationOrder._id.job_no =  newUnassignedPatentTranslationNo ;
       
       unassignedPatentTranslationOrder.save();
-      await AllNotifications.sendToUser(userId, "Your Patent Translation Services Form has been submitted successfully");
+      await AllNotifications.sendToUser(Number(userId), "Your Patent Translation Services Form has been submitted successfully");
       await AllNotifications.sendToAdmin("Patent Translation Services Form of ID " + newUnassignedPatentTranslationNo +" has been submitted successfully.")
 
       
@@ -1824,8 +1833,9 @@ const savePatentTranslationData = async (req, res) => {
 
     await newJobOrder.save();
 
-    await AllNotifications.sendToUser(userId, "Your Patent Translation Services Form has been submitted successfully");
+    await AllNotifications.sendToUser(Number(userId), "Your Patent Translation Services Form has been submitted successfully");
     await AllNotifications.sendToAdmin("Patent Translation Services of ID " + newJobNo +" has been submitted successfully.")
+    await AllNotifications.sendToPartner(Number(findPartner.userID),"You have been auto-assigned the Job " + newJobNo + ". You can Accept or Reject the Job.");
 
 
 
@@ -2191,6 +2201,9 @@ const storeBulkOrderData = async(req, res) => {
     }).catch((err) => {
       console.error("Error in receiving Bulk Order User Files")
     });
+
+    await AllNotifications.sendToAdmin("A Bulk Order has been received from User ID " + customerID + ". See the Bulk Order Files section to review the Order details.");
+    await AllNotifications.sendToUser(Number(customerID), "Your Bulk Order Request has been received by the Admin successfully.");
 
   } catch(error) {
     console.error("Error in storing the Bulk Order Files Data : " + error);

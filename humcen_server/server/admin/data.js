@@ -165,6 +165,7 @@ const updateJobFilesDetails = async (req, res) => {
           const formattedDate = new Date().toLocaleDateString(undefined, options);
 
           await AllNotifications.sendToAdmin("You have given access for Verification of Work " + jobID);
+          await AllNotifications.sendToPartner(Number(jobFile.partnerID), "Your Work for Job ID " + jobID + " is now sent for Verification to Customer.");
           await AllNotifications.sendToUser(Number(thatCustomer), "Admin has given access for Verification of Work " + jobID);
         }
       }
@@ -220,6 +221,9 @@ const updateJobFilesDetails = async (req, res) => {
           }).catch((err) => {
             console.error("Error in Updating Partner Schema: ", err);
           });
+
+        await AllNotifications.sendToAdmin("Partner ID " + workedPartner.userID + "'s Work for Job ID " + jobID + " has been rejected and Feedback has been sent successfully.");
+        await AllNotifications.sendToPartner(Number(workedPartner.userID), "Your Work for Job ID " + jobID + " has been rejected by the Admin due to some inaccuracies. Make sure to read up the Remarks to find the Issue.");
         } else {
           res.status(404).json({ error: "Partner Not Found" });
         }
@@ -439,6 +443,9 @@ const assignTask = async(req, res) => {
       // Pushing the Job Number to Partner's Jobs Array
       assignedPartner.jobs.push(newDraftingNo);
       assignedPartner.in_progress_jobs = assignedPartner.in_progress_jobs + 1;
+      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newDraftingNo + "successfully.");
+      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newDraftingNo +" has been assigned manually to you by Admin successfully.");
+      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newDraftingNo + " has been assigned to Partner ID" + partnerID +" successfully.")
       assignedPartner.save().then((response) => {
         console.log("Job Number " + newDraftingNo + " successfully pushed to the Partner");
       }).catch((error) => {
@@ -574,6 +581,11 @@ const assignTask = async(req, res) => {
       // Pushing the Job Number to Partner's Jobs Array
       assignedPartner.jobs.push(newFilingNo);
       assignedPartner.in_progress_jobs = assignedPartner.in_progress_jobs + 1;
+      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newFilingNo + "successfully.");
+      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newFilingNo +" has been assigned manually to you by Admin successfully.");
+      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newFilingNo + " has been assigned to Partner ID" + partnerID +" successfully")
+
+
       assignedPartner.save().then((response) => {
         console.log("Job Number " + newFilingNo + " successfully pushed to the Partner");
       }).catch((error) => {
@@ -734,6 +746,11 @@ const assignTask = async(req, res) => {
       // Pushing the Job Number to Partner's Jobs Array
       assignedPartner.jobs.push(newSearchNo);
       assignedPartner.in_progress_jobs = assignedPartner.in_progress_jobs + 1;
+      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newSearchNo + "successfully.");
+      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newSearchNo +" has been assigned manually to you by Admin successfully.");
+      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newSearchNo + " has been assigned to Partner ID" + partnerID +" successfully")
+
+
       assignedPartner.save().then((response) => {
         console.log("Job Number " + newSearchNo + " successfully pushed to the Partner");
       }).catch((error) => {
@@ -866,6 +883,11 @@ const assignTask = async(req, res) => {
       // Pushing the Job Number to Partner's Jobs Array
       assignedPartner.jobs.push(newFERNo);
       assignedPartner.in_progress_jobs = assignedPartner.in_progress_jobs + 1;
+      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newFERNo + "successfully.");
+      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newFERNo +" has been assigned manually to you by Admin successfully.");
+      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newFERNo + " has been assigned to Partner ID" + partnerID +" successfully")
+
+
       assignedPartner.save().then((response) => {
         console.log("Job Number " + newFERNo + " successfully pushed to the Partner");
       }).catch((error) => {
@@ -1014,6 +1036,11 @@ const assignTask = async(req, res) => {
       // Pushing the Job Number to Partner's Jobs Array
       assignedPartner.jobs.push(newFTONo);
       assignedPartner.in_progress_jobs = assignedPartner.in_progress_jobs + 1;
+      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newFTONo + "successfully.");
+      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newFTONo +" has been assigned manually to you by Admin successfully.");
+      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newFTONo + " has been assigned to Partner ID" + partnerID +" successfully")
+
+
       assignedPartner.save().then((response) => {
         console.log("Job Number " + newFTONo + " successfully pushed to the Partner");
       }).catch((error) => {
@@ -1159,6 +1186,11 @@ const assignTask = async(req, res) => {
       // Pushing the Job Number to Partner's Jobs Array
       assignedPartner.jobs.push(newLandscapeNo);
       assignedPartner.in_progress_jobs = assignedPartner.in_progress_jobs + 1;
+      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newLandscapeNo + "successfully.");
+      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newLandscapeNo +" has been assigned manually to you by Admin successfully.");
+      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newLandscapeNo + " has been assigned to Partner ID" + partnerID +" successfully")
+
+
       assignedPartner.save().then((response) => {
         console.log("Job Number " + newLandscapeNo + " successfully pushed to the Partner");
       }).catch((error) => {
@@ -1274,6 +1306,10 @@ const assignTask = async(req, res) => {
       // Pushing the Job Number to Partner's Jobs Array
       assignedPartner.jobs.push(newPortfolioNo);
       assignedPartner.in_progress_jobs = assignedPartner.in_progress_jobs + 1;
+      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newPortfolioNo + "successfully.");
+      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newPortfolioNo +" has been assigned manually to you by Admin successfully.");
+      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newPortfolioNo + " has been assigned to Partner ID" + partnerID +" successfully")
+
       assignedPartner.save().then((response) => {
         console.log("Job Number " + newPortfolioNo + " successfully pushed to the Partner");
       }).catch((error) => {
@@ -1408,6 +1444,11 @@ const assignTask = async(req, res) => {
       // Pushing the Job Number to Partner's Jobs Array
       assignedPartner.jobs.push(newTranslationNo);
       assignedPartner.in_progress_jobs = assignedPartner.in_progress_jobs + 1;
+      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newTranslationNo + "successfully.");
+      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newTranslationNo +" has been assigned manually to you by Admin successfully.");
+      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newTranslationNo + " has been assigned to Partner ID" + partnerID +" successfully")
+
+
       assignedPartner.save().then((response) => {
         console.log("Job Number " + newTranslationNo + " successfully pushed to the Partner");
       }).catch((error) => {
@@ -1542,6 +1583,11 @@ const assignTask = async(req, res) => {
       // Pushing the Job Number to Partner's Jobs Array
       assignedPartner.jobs.push(newIllustrationNo);
       assignedPartner.in_progress_jobs = assignedPartner.in_progress_jobs + 1;
+      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newIllustrationNo + "successfully.");
+      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newIllustrationNo +" has been assigned manually to you by Admin successfully.");
+      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newIllustrationNo + " has been assigned to Partner ID" + partnerID +" successfully")
+
+
       assignedPartner.save().then((response) => {
         console.log("Job Number " + newIllustrationNo + " successfully pushed to the Partner");
       }).catch((error) => {
@@ -1678,6 +1724,11 @@ const assignTask = async(req, res) => {
       // Pushing the Job Number to Partner's Jobs Array
       assignedPartner.jobs.push(newWatchNo);
       assignedPartner.in_progress_jobs = assignedPartner.in_progress_jobs + 1;
+      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newWatchNo + "successfully.");
+      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newWatchNo +" has been assigned manually to you by Admin successfully.");
+      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newWatchNo + " has been assigned to Partner ID" + partnerID +" successfully")
+
+
       assignedPartner.save().then((response) => {
         console.log("Job Number " + newWatchNo + " successfully pushed to the Partner");
       }).catch((error) => {
@@ -1803,6 +1854,10 @@ const assignTask = async(req, res) => {
       }).catch((error) => {
         console.log("Error in Pushing the Job to the Partner : " + error);
       });
+      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newLicenseNo + "successfully.");
+      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newLicenseNo +" has been assigned manually to you by Admin successfully.");
+      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newLicenseNo + " has been assigned to Partner ID" + partnerID +" successfully")
+
       if (assignedPartner){
         const partnerSubject="Request to accept the Patent Licensing and Commercialization Services Form"
       const partnerText="Accept the submission for Patent Licensing and Commercialization Services Form"
@@ -2546,6 +2601,8 @@ const createBulkOrders = async(req, res) => {
       try {
       newBulkOrder.save();
       console.log(`${orders + 1} Bulk Orders Successfully Created`);
+      await AllNotifications.sendToAdmin(`${orders + 1} has been created Successfully.`);
+      await AllNotifications.sendToUser(Number(thatCustomer), "Your Bulk Orders has been generated successfully and tasks are going to be assigned to the Partners by the Admin.");
     } catch (error) {
       console.error("Error in creating Bulk Orders: " + error);
     }
