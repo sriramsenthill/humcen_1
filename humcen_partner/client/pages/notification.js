@@ -236,10 +236,10 @@ export default function NotificationTable() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await api.get(`user/settings`);
+        const response = await api.get(`partner/settings`);
         setUserID(response.data.userID);
       } catch (error) {
-        console.error("Error fetching job order data:", error);
+        console.error("Error fetching Partner's Profile data:", error);
       }
     };
 
@@ -251,7 +251,7 @@ export default function NotificationTable() {
     if(userID) {
     const fetchNotifData = async () => {
       try {
-        const notifResponse = await api.get(`user/get-notifs/${userID}`);
+        const notifResponse = await api.get(`partner/get-notifs/${userID}`);
         setNotifications(notifResponse.data);
         console.log("Notifications " + notifResponse.data);
       } catch(error) {
@@ -265,7 +265,7 @@ export default function NotificationTable() {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - notifications.length) : 0;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -287,7 +287,7 @@ export default function NotificationTable() {
   };
 
   const clickedByUser = async(notifId, userID) => {
-    const clickConfirm = await api.put(`seen-notif/${userID}/${notifId}`, { seen: true})
+    const clickConfirm = await api.put(`partner/seen-notif/${userID}/${notifId}`, { seen: true})
     clickConfirm.then(() => {
       console.log("Successfully Updated" + clickConfirm.data);
     }).catch( (error) => {
@@ -310,7 +310,7 @@ export default function NotificationTable() {
   const deleteSelectedNotifs = async(userID, deleteTheseNotifs) => {
     const selectedNotifs = deleteTheseNotifs.map((elt) => elt=Number(elt));
     console.log(userID, selectedNotifs)
-    const response = await api.put(`delete-notif/${userID}`, {deletedNotifs: selectedNotifs}).then(() => {
+    const response = await api.put(`partner/delete-notif/${userID}`, {deletedNotifs: selectedNotifs}).then(() => {
       console.log("Successfully Deleted those Notifications.");
     }).catch((err) => {
       console.error("Error in deleting Notifications : " + err);
@@ -320,7 +320,7 @@ export default function NotificationTable() {
   const handleDaysSort = async (e, userID) => {
     const timeInterval = e.target.getAttribute("value");
     console.log(timeInterval, userID);
-    const sortedNotif = await api.get(`sort-notif/${userID}/${timeInterval}`);
+    const sortedNotif = await api.get(`partner/sort-notif/${userID}/${timeInterval}`);
     setNotifications(sortedNotif.data);
   }
 
@@ -513,7 +513,7 @@ export default function NotificationTable() {
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
                   colSpan={5}
-                  count={rows.length}
+                  count={notifications.length}
                   rowsPerPage={rowsPerPage}
                   page={page}
                   SelectProps={{

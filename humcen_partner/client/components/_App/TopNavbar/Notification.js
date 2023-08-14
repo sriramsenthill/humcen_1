@@ -43,7 +43,7 @@ const Notification = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await api.get(`user/settings`);
+        const response = await api.get(`partner/settings`);
         setUserID(response.data.userID);
       } catch (error) {
         console.error("Error fetching job order data:", error);
@@ -58,7 +58,7 @@ const Notification = () => {
     if(userID) {
     const fetchNotifData = async () => {
       try {
-        const notifResponse = await api.get(`user/get-notifs/${userID}`);
+        const notifResponse = await api.get(`partner/get-notifs/${userID}`);
         const unSeenNotifs = notifResponse.data.filter((notif) => {
           return notif.seen == false;
         })
@@ -75,7 +75,7 @@ const Notification = () => {
 
   const eraseRecent = async(userID) => {
 
-    const response = await api.get(`clear-notif/${userID}`).then(() => {
+    const response = await api.get(`partner/clear-notif/${userID}`).then(() => {
       console.log("Recent Notifications cleared Successfully");
     }).catch((err) => {
       console.error("Error in Clearing Unseen Notifications : " + err)
@@ -157,7 +157,7 @@ const Notification = () => {
       >
         <div className={styles.header}>
           <Typography variant="h4">Notifications</Typography>
-          <Button variant="text" disabled={notifications.length === 0} onClick={() => {eraseRecent(userID); window.location.reload(true);}}>clear all</Button>
+          <Button variant="text" disabled={notifications.length === 0} onClick={() => {eraseRecent(userID); window.location.reload(true)}}>clear all</Button>
         </div>
         { notifications.length === 0 && 
           <Typography

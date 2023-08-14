@@ -16,6 +16,7 @@ const Drafting = require("../mongoose_schemas/patent_drafting");
 const Filing = require("../mongoose_schemas/patent_filing");
 const AllNotifications = require("../notifications"); // Functions for sending Notification
 const Notification = require("../mongoose_schemas/notification"); // Import Notification Model
+const NotificationPartner = require("../mongoose_schemas/notification_partner"); // Import Notification Model declared for Partners
 const Admin=require("../mongoose_schemas/admin");
 const sendEmail=require("../email");
 const BulkOrder = require("../mongoose_schemas/bulk_order");
@@ -2017,6 +2018,100 @@ const sendIdleJobToUnassigned = async(req, res) => {
    }
 }
 
+const getPartnerNotification = async(req, res) => {
+  const partnerID = req.params.userID;
+  console.log(partnerID);
+  const thatPartnerNotifs = await NotificationPartner.findOne({partner_Id: Number(partnerID)});
+  if(!thatPartnerNotifs) {
+    console.error("Notifications for Partner ID " + partnerID + " not exists.");
+  } else {
+    res.json(thatPartnerNotifs.notifications);
+  }
+}
+
+const notificationPartnerSeen = async(req, res) => {
+  const notificID = req.params.userID;
+  const partnerID = req.params.notifId;
+
+  console.log(partnerID, notificID);
+  const thatPartnerNotifs = await NotificationPartner.findOne({partner_Id: Number(partnerID)});
+  console.log(thatPartnerNotifs);
+  if(!thatPartnerNotifs) {
+    console.error("That Notification doesn't exists.");
+  } else {
+    thatPartnerNotifs.notifications[parseInt(notificID) - 1].seen = true;
+    thatPartnerNotifs.save().then(() => {
+      console.log("Notification Seen");
+    }).catch((error) => {
+      console.error('Error in seeing the Notification : ' + error);
+    })
+  }
+}
+
+const notifcationsPartnerDelete = async(req, res) => {
+  const partnerID = req.params.userID;
+  const listOfNotifDeleted = req.body.deletedNotifs;
+
+  try {
+    const findNotification = await NotificationPartner.findOne({partner_Id: Number(partnerID)});
+    if(!findNotification) {
+      console.log("No Notifications available for Partner ID " + partnerID);
+    } else {
+      const updatedNotifs = findNotification.notifications.filter(notif => !listOfNotifDeleted.includes(notif.notifNum));
+      findNotification.notifications = updatedNotifs;
+      findNotification.save().then(() => {
+        console.log("Notifications deleted Successfully.")
+      }).catch((err) => {
+        console.error('Error in deleting Notifications : ' + err);
+      })
+    }
+  } catch(err) {
+    console.error("Error in deleting Notifications : " + err);
+  }
+}
+
+const sortPartnerNotifications = async(req, res) => {
+  const partnerID = req.params.userID;
+  const interval = req.params.days;
+
+  const today = new Date();
+  const totalNotifs = await NotificationPartner.findOne({partner_Id: Number(partnerID)});
+  if(!totalNotifs) {
+    console.log("No Notifcations Left to Sort.");
+  } else {
+    const sortedNotifs = totalNotifs.notifications.filter((notif) => {
+      return Math.round((today.getTime() - new Date(notif.notifDate).getTime())/(1000 * 3600 * 24)) <= Number(interval)
+    });
+    console.log(sortedNotifs.length);
+    console.log("Sorted Notifications sent Successfully. ");
+    res.status(200).json(sortedNotifs)
+  }
+}
+
+const clearRecentPartnerNotifs = async(req, res) => {
+  const partnerID = req.params.userID;
+
+  try {
+    const allNotifications = await NotificationPartner.findOne({partner_Id: Number(partnerID)});
+    if(!allNotifications) {
+      console.log("No Notifications found.");
+    } else {
+      allNotifications.notifications = allNotifications.notifications.map((notification) => {
+        notification.seen = true;
+        return notification;
+      });
+      allNotifications.save().then(() => {
+        console.log("All Recent Notifications Successfully Cleared");
+      }).catch((err) => {
+        console.error('Error in Clearing out Recent Notifications : ' + err)
+      })
+    }
+  } catch(error) {
+    console.error("Error in Clearing out Recent Notifications : " + error);
+  }
+}
+
+
 module.exports = {
   getPartnerJobsById,
   getPartnerJobOrders,
@@ -2030,4 +2125,9 @@ module.exports = {
   updateTimelineForUpload,
   getAssignedBulkOrderFile,
   sendIdleJobToUnassigned,
+  getPartnerNotification,
+  notificationPartnerSeen,
+  notifcationsPartnerDelete,
+  sortPartnerNotifications,
+  clearRecentPartnerNotifs
 };

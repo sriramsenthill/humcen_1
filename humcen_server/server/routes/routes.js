@@ -83,6 +83,8 @@ router.put("/api/user/job_order/approve/:jobID", verifyToken, forms.approveTheDo
 
 router.put("/api/user/job_order/reject/:jobID", verifyToken, forms.rejectTheDoneWork);
 
+// Users Notifications
+
 router.get("/api/user/get-notifs/:userID", verifyToken, forms.getNotification) // Get Notifications for Customer
 
 router.put("/api/seen-notif/:notifId/:userID", verifyToken, forms.notificationSeen); // Make the notification, a visited one
@@ -252,6 +254,19 @@ router.put("/api/partner/job-files", verifyPartner, engine.addJobFiles);
 router.get("/api/partner/job_files_details/:jobID", verifyPartner, engine.getJobFilesDetailsForPartners);
 router.get("/api/partner/get-bulk-order-file/:id", verifyPartner, engine.getAssignedBulkOrderFile);
 router.put("/api/idle-job/:partner", verifyPartner, engine.sendIdleJobToUnassigned);
+
+// Partner Notifications
+
+router.get("/api/partner/get-notifs/:userID", verifyPartner, engine.getPartnerNotification) // Get Notifications for Customer
+
+router.put("/api/partner/seen-notif/:notifId/:userID", verifyPartner, engine.notificationPartnerSeen); // Make the notification, a visited one
+
+router.put("/api/partner/delete-notif/:userID", verifyPartner, engine.notifcationsPartnerDelete); // For deleting the Selected Notifications
+
+router.get("/api/partner/sort-notif/:userID/:days", verifyPartner, engine.sortPartnerNotifications); // Sorting Notifications on the basis of Time Interval
+
+router.get("/api/partner/clear-notif/:userID", verifyPartner, engine.clearRecentPartnerNotifs); // Clearing out the Recent Notifications
+
 
 router.post("/api/find-partner", data.getPartnersData);
 module.exports = router;
