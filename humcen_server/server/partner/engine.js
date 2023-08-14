@@ -1632,9 +1632,124 @@ const sendIdleJobToUnassigned = async(req, res) => {
     : 1000;
 
     for(let job=0; job < jobOrders.length ; job++) {
+      if(jobOrders[job].service === "Patent Drafting") {
+        const draftDetails = await Drafting.findOne({"_id.job_no": jobOrders[job]._id.job_no});
+
+        const draftDoc = {
+          "_id.job_no": newUnassignedNo + job,
+          service: jobOrders[job].service,
+          domain: jobOrders[job].domain,
+          country: jobOrders[job].country,
+          budget: jobOrders[job].budget,
+          customerName: jobOrders[job].customerName,
+          status: jobOrders[job].status,
+          userID: jobOrders[job].userID,
+          time_of_delivery: jobOrders[job].time_of_delivery || "To be Assigned",
+          // Common for all services
+          service_specific_files: draftDetails.service_specific_files,
+          job_title: draftDetails.job_title,
+          keywords: draftDetails.keywords,
+        }
+        let result = Number(newUnassignedNo) + Number(job);
+        unassignedDocs.push(draftDoc);
+        await AllNotifications.sendToAdmin("Idle Job Order of ID " + jobOrders[job]._id.job_no +" has been redirected to Unassigned Jobs successfully as ID of " + result);
+        await AllNotifications.sendToPartner(Number(partID), "Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully");
+        const deleteService = await Drafting.deleteOne({"_id.job_no": jobOrders[job]._id.job_no}).then(() => {
+          console.log("Files deleted from Patent Drafting successfully.")
+        }).catch((err) => {
+          console.error("No files found.")
+        });
+
+      } else if(jobOrders[job].service === "Patent Filing") {
+        const filingDetails = await Filing.findOne({"_id.job_no": jobOrders[job]._id.job_no});
+
+        const filingDoc = {
+          "_id.job_no": newUnassignedNo + job,
+          service: jobOrders[job].service,
+          domain: jobOrders[job].domain,
+          country: jobOrders[job].country,
+          budget: jobOrders[job].budget,
+          customerName: jobOrders[job].customerName,
+          status: jobOrders[job].status,
+          userID: jobOrders[job].userID,
+          time_of_delivery: jobOrders[job].time_of_delivery || "To be Assigned",
+          // Common for all services
+          service_specific_files: filingDetails.service_specific_files,
+          job_title: filingDetails.job_title,
+          keywords: filingDetails.keywords,
+        }
+        let result = Number(newUnassignedNo) + Number(job);
+        unassignedDocs.push(filingDoc);
+        await AllNotifications.sendToAdmin("Idle Job Order of ID " + jobOrders[job]._id.job_no +" has been redirected to Unassigned Jobs successfully as ID of " + result);
+        await AllNotifications.sendToPartner(Number(partID), "Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully");
+        const deleteService = await Filing.deleteOne({"_id.job_no": jobOrders[job]._id.job_no}).then(() => {
+          console.log("Files deleted from Patent Filing successfully.")
+        }).catch((err) => {
+          console.error("No files found.")
+        });
+
+      } else if(jobOrders[job].service === "Patent Search") {
+        const searchDetails = await Search.findOne({"_id.job_no": jobOrders[job]._id.job_no});
+
+        const searchDoc = {
+          "_id.job_no": newUnassignedNo + job,
+          service: jobOrders[job].service,
+          domain: jobOrders[job].domain,
+          country: jobOrders[job].country,
+          budget: jobOrders[job].budget,
+          customerName: jobOrders[job].customerName,
+          status: jobOrders[job].status,
+          userID: jobOrders[job].userID,
+          time_of_delivery: jobOrders[job].time_of_delivery || "To be Assigned",
+          // Common for all
+          keywords: searchDetails.keywords,
+          technical_diagram: searchDetails.technical_diagram,
+          invention_description: searchDetails.invention_description
+        }
+        let result = Number(newUnassignedNo) + Number(job);
+        unassignedDocs.push(searchDoc);
+        await AllNotifications.sendToAdmin("Idle Job Order of ID " + jobOrders[job]._id.job_no +" has been redirected to Unassigned Jobs successfully as ID of " + result);
+        await AllNotifications.sendToPartner(Number(partID), "Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully");
+
+        const deleteService = await Search.deleteOne({"_id.job_no": jobOrders[job]._id.job_no}).then(() => {
+          console.log("Files deleted from Patent Search successfully.")
+        }).catch((err) => {
+          console.error("No files found.")
+        });
+      } else if(jobOrders[job].service === "Response to FER Office Action") {
+        // Getting Service Schema details from it and removing it after Unassigned Order is created
+        const ferDetails = await responseToFer.findOne({"_id.job_no": jobOrders[job]._id.job_no});
+
+        const ferDoc = {
+          "_id.job_no": newUnassignedNo + job,
+          service: jobOrders[job].service,
+          domain: jobOrders[job].domain,
+          country: jobOrders[job].country,
+          budget: jobOrders[job].budget,
+          customerName: jobOrders[job].customerName,
+          status: jobOrders[job].status,
+          userID: jobOrders[job].userID,
+          time_of_delivery: jobOrders[job].time_of_delivery || "To be Assigned",
+          // Common for all services upto this
+          fer: ferDetails.fer,
+          complete_specifications: ferDetails.complete_specifications,
+          response_strategy: ferDetails.response_strategy,
+
+        }
+        unassignedDocs.push(ferDoc);
+        let result = Number(newUnassignedNo) + Number(job);
+        await AllNotifications.sendToAdmin("Idle Job Order of ID " + jobOrders[job]._id.job_no +" has been redirected to Unassigned Jobs successfully as ID of " + result);
+        await AllNotifications.sendToPartner(Number(partID), "Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully");
+
+        const deleteService = await responseToFer.deleteOne({"_id.job_no": jobOrders[job]._id.job_no}).then(() => {
+          console.log("Files deleted from Response To FER/ Office Action successfully.")
+        }).catch((err) => {
+          console.error("No files found.")
+        });
+
+      } 
       
-      
-      if(jobOrders[job].service === "Freedom To Operate") {
+      else if(jobOrders[job].service === "Freedom To Operate") {
         // Getting Service Schema details from it and removing it after Unassigned Order is created
         const ftoDetails = await freedomToOperate.findOne({"_id.job_no": jobOrders[job]._id.job_no});
     
@@ -1654,7 +1769,8 @@ const sendIdleJobToUnassigned = async(req, res) => {
           keywords: ftoDetails.keywords
         }
         unassignedDocs.push(ftoDoc);
-        await AllNotifications.sendToAdmin("Idle Job Order of ID " + jobOrders[job]._id.job_no +" has been redirected to Unassigned Jobs successfully as ID of " + newUnassignedNo + job);
+        let result = Number(newUnassignedNo) + Number(job);
+        await AllNotifications.sendToAdmin("Idle Job Order of ID " + jobOrders[job]._id.job_no +" has been redirected to Unassigned Jobs successfully as ID of " + result);
         await AllNotifications.sendToPartner(Number(partID), "Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully");
 
         const deleteService = await freedomToOperate.deleteOne({"_id.job_no": jobOrders[job]._id.job_no}).then(() => {
@@ -1662,6 +1778,194 @@ const sendIdleJobToUnassigned = async(req, res) => {
         }).catch((err) => {
           console.error("No files found.")
         });
+
+      }
+
+      else if(jobOrders[job.service] === "Freedom to Patent Landscape") {
+        // Getting Service Schema details from it and removing it after Unassigned Order is created
+        const landscapeDetails = await patentLandscape.findOne({"_id.job_no": jobOrders[job]._id.job_no});
+
+        const landscapeDoc = {
+          "_id.job_no": newUnassignedNo + job,
+          service: jobOrders[job].service,
+          domain: jobOrders[job].domain,
+          country: jobOrders[job].country,
+          budget: jobOrders[job].budget,
+          customerName: jobOrders[job].customerName,
+          status: jobOrders[job].status,
+          userID: jobOrders[job].userID,
+          time_of_delivery: jobOrders[job].time_of_delivery || "To be Assigned",
+          // Common for all services upto this
+          technology_description: landscapeDetails.technology_description,
+          keywords: landscapeDetails.keywords,
+          competitor_information: landscapeDetails.competitor_information,
+        }
+        unassignedDocs.push(landscapeDoc);
+        let result = Number(newUnassignedNo) + Number(job);
+        await AllNotifications.sendToAdmin("Idle Job Order of ID " + jobOrders[job]._id.job_no +" has been redirected to Unassigned Jobs successfully as ID of " + result);
+        await AllNotifications.sendToPartner(Number(partID), "Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully");
+
+        const deleteService = await patentLandscape.deleteOne({"_id.job_no": jobOrders[job]._id.job_no}).then(() => {
+          console.log("Files deleted from Freedom to Patent Landscape successfully.");
+        }).catch((err) => {
+          console.error("No files found.")
+        });
+  
+        }
+
+      else if(jobOrders[job].service === "Patent Portfolio Analysis") {
+      // Getting Service Schema details from it and removing it after Unassigned Order is created
+      const portfolioDetails = await patentPortfolioAnalysis.findOne({"_id.job_no": jobOrders[job]._id.job_no});
+
+      const portfolioDoc = {
+        "_id.job_no": newUnassignedNo + job,
+        service: jobOrders[job].service,
+        domain: jobOrders[job].domain,
+        country: jobOrders[job].country,
+        budget: jobOrders[job].budget,
+        customerName: jobOrders[job].customerName,
+        status: jobOrders[job].status,
+        userID: jobOrders[job].userID,
+        time_of_delivery: jobOrders[job].time_of_delivery || "To be Assigned",
+        // Common for all services upto this
+        market_and_industry_information: portfolioDetails.market_and_industry_information,
+        business_objectives: portfolioDetails.business_objectives,
+        service_specific_files: portfolioDetails.service_specific_files,
+      }
+      unassignedDocs.push(portfolioDoc);
+      let result = Number(newUnassignedNo) + Number(job);
+      await AllNotifications.sendToAdmin("Idle Job Order of ID " + jobOrders[job]._id.job_no +" has been redirected to Unassigned Jobs successfully as ID of " + result);
+      await AllNotifications.sendToPartner(Number(partID), "Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully");
+
+      const deleteService = await patentPortfolioAnalysis.deleteOne({"_id.job_no": jobOrders[job]._id.job_no}).then(() => {
+        console.log("Files deleted from Patent Portfolio Analysis successfully.");
+      }).catch((err) => {
+        console.error("No files found.")
+      });
+      } else if (jobOrders[job].service === "Patent Translation Services") {
+      // Getting Service Schema details from it and removing it after Unassigned Order is created
+      const translationDetails = await patentTranslation.findOne({"_id.job_no": jobOrders[job]._id.job_no});
+
+      const translationDoc = {
+        "_id.job_no": newUnassignedNo + job,
+        service: jobOrders[job].service,
+        domain: jobOrders[job].domain,
+        country: jobOrders[job].country,
+        budget: jobOrders[job].budget,
+        customerName: jobOrders[job].customerName,
+        status: jobOrders[job].status,
+        userID: jobOrders[job].userID,
+        time_of_delivery: jobOrders[job].time_of_delivery || "To be Assigned",
+        // Common for all services upto this
+        source_language: translationDetails.source_language,
+        target_language: translationDetails.target_language,
+        additional_instructions: translationDetails.additional_instructions,
+        document_details: translationDetails.document_details,
+      }
+      unassignedDocs.push(translationDoc);
+      let result = Number(newUnassignedNo) + Number(job);
+      await AllNotifications.sendToAdmin("Idle Job Order of ID " + jobOrders[job]._id.job_no +" has been redirected to Unassigned Jobs successfully as ID of " + result);
+      await AllNotifications.sendToPartner(Number(partID), "Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully");
+
+      const deleteService = await patentTranslation.deleteOne({"_id.job_no": jobOrders[job]._id.job_no}).then(() => {
+        console.log("Files deleted from Patent Translation Service successfully.");
+      }).catch((err) => {
+        console.error("No files found.")
+      });
+
+
+      } else if (jobOrders[job].service === "Patent Illustration") {
+      // Getting Service Schema details from it and removing it after Unassigned Order is created
+      const illustrationDetails = await patentIllustration.findOne({"_id.job_no": jobOrders[job]._id.job_no});
+    
+      const illustrationDoc = {
+        "_id.job_no": newUnassignedNo + job,
+        service: jobOrders[job].service,
+        domain: jobOrders[job].domain,
+        country: jobOrders[job].country,
+        budget: jobOrders[job].budget,
+        customerName: jobOrders[job].customerName,
+        status: jobOrders[job].status,
+        userID: jobOrders[job].userID,
+        time_of_delivery: jobOrders[job].time_of_delivery || "To be Assigned",
+        // Common for all services upto this
+        patent_specifications: illustrationDetails.patent_specifications,
+        drawing_requirements: illustrationDetails.drawing_requirements,
+        preferred_style: illustrationDetails.preferred_style,
+      }
+      unassignedDocs.push(illustrationDoc);
+      let result = Number(newUnassignedNo) + Number(job);
+      await AllNotifications.sendToAdmin("Idle Job Order of ID " + jobOrders[job]._id.job_no +" has been redirected to Unassigned Jobs successfully as ID of " + result);
+      await AllNotifications.sendToPartner(Number(partID), "Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully");
+
+      const deleteService = await patentIllustration.deleteOne({"_id.job_no": jobOrders[job]._id.job_no}).then(() => {
+        console.log("Files deleted from Patent Illustration successfully.");
+      }).catch((err) => {
+        console.error("No files found.")
+      });
+
+      } else if ( jobOrders[job].service === "Patent Watch" ) {
+      // Getting Service Schema details from it and removing it after Unassigned Order is created
+      const watchDetails = await patentWatch.findOne({"_id.job_no": jobOrders[job]._id.job_no});
+
+      const watchDoc = {
+        "_id.job_no": newUnassignedNo + job,
+        service: jobOrders[job].service,
+        domain: jobOrders[job].domain,
+        country: jobOrders[job].country,
+        budget: jobOrders[job].budget,
+        customerName: jobOrders[job].customerName,
+        status: jobOrders[job].status,
+        userID: jobOrders[job].userID,
+        time_of_delivery: jobOrders[job].time_of_delivery || "To be Assigned",
+        // Common for all services upto this
+        industry_focus: watchDetails.industry_focus,
+        competitor_information: watchDetails.competitor_information,
+        geographic_scope: watchDetails.geographic_scope,
+        keywords: watchDetails.keywords,
+        monitoring_duration: watchDetails.monitoring_duration,
+      }
+      unassignedDocs.push(watchDoc);
+      let result = Number(newUnassignedNo) + Number(job);
+      await AllNotifications.sendToAdmin("Idle Job Order of ID " + jobOrders[job]._id.job_no +" has been redirected to Unassigned Jobs successfully as ID of " + result);
+      await AllNotifications.sendToPartner(Number(partID), "Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully");
+
+      const deleteService = await patentWatch.deleteOne({"_id.job_no": jobOrders[job]._id.job_no}).then(() => {
+        console.log("Files deleted from Patent Watch successfully.");
+      }).catch((err) => {
+        console.error("No files found.")
+      });
+
+      } else if (jobOrders[job].service === "Patent Licensing and Commercialization Services") {
+      // Getting Service Schema details from it and removing it after Unassigned Order is created
+      const licenseDetails = await patentLicense.findOne({"_id.job_no": jobOrders[job]._id.job_no});
+
+      const licenseDoc = {
+        "_id.job_no": newUnassignedNo + job,
+        service: jobOrders[job].service,
+        domain: jobOrders[job].domain,
+        country: jobOrders[job].country,
+        budget: jobOrders[job].budget,
+        customerName: jobOrders[job].customerName,
+        status: jobOrders[job].status,
+        userID: jobOrders[job].userID,
+        time_of_delivery: jobOrders[job].time_of_delivery || "To be Assigned",
+        // Common for all services upto this
+        patent_information: licenseDetails.patent_information,
+        commercialization_goals: licenseDetails.commercialization_goals,
+        competitive_landscape: licenseDetails.competitive_landscape,
+        technology_description: licenseDetails.technology_description,
+      }
+      unassignedDocs.push(watchDoc);
+      let result = Number(newUnassignedNo) + Number(job);
+      await AllNotifications.sendToAdmin("Idle Job Order of ID " + jobOrders[job]._id.job_no +" has been redirected to Unassigned Jobs successfully as ID of " + result);
+      await AllNotifications.sendToPartner(Number(partID), "Idle Job Order of ID " + jobOrders[job]._id.job_no + " has been redirected to Unassigned Jobs successfully");
+
+      const deleteService = await patentLicense.deleteOne({"_id.job_no": jobOrders[job]._id.job_no}).then(() => {
+        console.log("Files deleted from Patent Licensing and Commercialization Services successfully.");
+      }).catch((err) => {
+        console.error("No files found.")
+      });
 
       }
 
@@ -1708,16 +2012,9 @@ const sendIdleJobToUnassigned = async(req, res) => {
         console.error("Error in updating Customer Details : " + error);
       }
     }
-
-    
-
-
-  // Removing IDs from Customers and Partners Jobs
-
-
   } catch(error) {
-    console.error("Error in sending Idle Jobs to Unassigned : " + error)
-;  }
+    console.error("Error in sending Idle Jobs to Unassigned : " + error) 
+   }
 }
 
 module.exports = {
