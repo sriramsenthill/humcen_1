@@ -93,9 +93,9 @@ router.get("/api/sort-notif/:userID/:days", verifyToken, forms.sortNotifications
 
 router.get("/api/clear-notif/:userID", verifyToken, forms.clearRecentNotifs); // Clearing out the Recent Notifications
 
-router.get("/api/process-base64-csv/:base", forms.getCSVData); // Get CSV data through Python script
+// Users Bulk Order
 
-router.post("/api/user/create-bulk-orders",  forms.createBulkOrders); // Create Bulk Orders
+router.post("/api/user/bulk-order-files/:userID",  forms.storeBulkOrderData); // For storing User's Input Files
 
 //Users_Settings
 
@@ -160,6 +160,9 @@ router.post("/api/cross_assign", data.crossAssignTask); // To manually assign Ta
 router.get("/api/admin/user_files/:services/:id", data.getUnassignedJobFilesForAdmin); // To fetch Unassigned User Files for Admin
 
 // ADMIN BULK ORDERS
+router.get("/api/process-base64-csv/:base", data.getCSVData); // Get CSV data through Python script
+
+router.post("/api/admin/create-bulk-orders",  data.createBulkOrders); // Create Bulk Orders
 
 router.get("/api/get-bulk-orders",  data.getAllBulkOrders); // For Fetching Bulk Orders for Admin
 
@@ -170,6 +173,13 @@ router.get("/api/bulk-order-file/:id", data.getBulkOrderFileById); // Getting de
 router.get("/api/admin/bulk-order/partner/:service", data.getPartnersForBulkOrder); // Getting Partner's Details according to the service chosen by Admin
 
 router.post("/api/admin/bulk-order/assign/:id", data.assignBulkOrder); // API for Assigning Bulk Order Task to the Partner
+
+router.get("/api/bulk-order-files", data.getBulkOrderFilesDetails); // Get details of User uploaded Bulk Order Files
+
+router.get("/api/that-bulk-order-file/:fileNo", data.getParticularBulkOrderFileDetails); // This one fetches details from Bulk Order Files schema
+
+router.get("/api/only-that-bulk-order-file/:fileNo", data.getOnlyTheParticularBulkOrderFile); // This one fetches only files from Bulk Order Files schema
+
 
 // ADMIN SETTINGS
 router.get("/api/admin/settings", verifyAdmin, adminSettings.getAdminProfileSettings); // For fetching Admin's Profile Settings

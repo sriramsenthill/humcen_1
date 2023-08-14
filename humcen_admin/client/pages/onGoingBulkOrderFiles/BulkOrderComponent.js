@@ -1,11 +1,9 @@
 import React from "react";
 import Paper from '@material-ui/core/Paper';
-import Box from "@mui/material/Box";
 import { makeStyles } from '@material-ui/core/styles';
 import { styled } from "@mui/material/styles";
 import {Button} from "@mui/material";
 import { useState, useEffect } from "react";
-import TextField from "@mui/material/TextField";
 import { Typography, Card, CardContent, Grid,Container } from "@mui/material";
 import CustomDropZone from "./CustomDropBox"
 import Link from "next/link";
@@ -22,15 +20,6 @@ api.interceptors.request.use((config) => {
     config.headers["Authorization"] = token;
   }
   return config;
-});
-
-const TextAreaBox = styled(Box)({
-  width: "450px",
-  height: "119px",
-  padding: "15px 314px 87px 16px",
-  borderRadius: "8px",
-  backgroundColor: "#ECEFF0",
-  
 });
 
 
@@ -120,14 +109,31 @@ const useStyles = makeStyles((theme) => ({
 const BulkOrderComponent = () => {
     const classes = useStyles();
     const [files, setFiles] = useState([]);
+    const [bulkOrderJobs, setBulkOrderJobs] = useState([]);
     const [bulkOrderFiles, setBulkOrderFiles] = useState([]);
+    const [bulkOrderTitle, setBulkOrderTitle] = useState([]);
+    const [bulkOrderServices, setBulkOrderServices] = useState([]);
     const [base64ZipData, setBase64ZipData] = useState('');
     const [userID, setUserID] = useState("");
-    const [description, setDescription] = useState("");
+    const [csvFile, setCSVFile ] = useState([]);
+    const [zipFile, setZipFile] = useState([]);
+    const [getThat, setThat] = useState([]);
     const [csvBase64Data, setCsvBase64Data] = useState("");
     const [subFileData, setSubFileData] = useState([]);
 
-    
+    useEffect(() => {
+      // Run your asynchronous operations here
+      if (files.length === 2) {
+        handleFileChange(files);
+      }
+      if (csvBase64Data && base64ZipData) {
+        handleBulkOrder();
+      }
+    }, [csvBase64Data, base64ZipData, files]);
+
+    console.log(files);
+    console.log(bulkOrderFiles);
+
     const findUserID = async() => {
       const response = await api.get("user/settings").then((response) => {
         setUserID(response.data.userID);
@@ -136,36 +142,141 @@ const BulkOrderComponent = () => {
       }); 
     }
 
+    const createBulkOrders = async(jobs, titles, services, files, user) => {
+      console.log("Process has started");
+      const eventSource = new EventSource('http://localhost:3000/api/user/create-bulk-orders-progress');
+      eventSource.addEventListener('progress', (event) => {
+        const progress = parseFloat(event.data);
+        console.log(progress);
+      });
 
-    useEffect(() => {
-      findUserID();
-      handleFileChange(files);
-    }, [files]);
-
-    console.log(files);
-    console.log(description);
-    console.log(userID);
-
-    const handleDescriptionChange = async(e) => {
-      console.log(e.target.value);
-      setDescription(e.target.value);
+      const response = await api.post(`user/create-bulk-orders/`, {
+        bulkJobs: jobs,
+        bulkTitles: titles,
+        bulkServices: services,
+        bulkFiles: files,
+        userID: userID,
+      }).then(() => {
+        console.log("Bulk Job Orders created Successfully.");
+      }).catch((err) => {
+        console.error("Error in creating Bulk Orders : " + err);
+      });
     }
 
+
+    const runPythonScript = async (csvBase64) => {
+      try {
+        const response = await api.get(`process-base64-csv/${csvBase64}`);
+        // Assuming the server sends 'data' field in response
+        console.log(response.data);
+        setThat(response.data.fileDirectory);
+        setBulkOrderServices(response.data.bulkOrderService);
+        setBulkOrderTitle(response.data.bulkOrderTitle);
+        setBulkOrderJobs(response.data.fileDirectory);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
     
     const handleFileChange = async(newFiles) => {
         // Process the uploaded files data as needed
         setFiles(newFiles);
+        if(newFiles.length === 2){
+          if(newFiles[0].name.split('.')[1] === "zip") {
+          setBase64ZipData(newFiles[0].base64.split(',')[1]);
+          setCSVFile(newFiles[1]);
+          setZipFile(newFiles[0]);
+          setCsvBase64Data(newFiles[1].base64.split(',')[1]);
+          console.log(csvFile);
+        } else {
+          setCsvBase64Data(newFiles[0].base64.split(',')[1]);
+          setCSVFile(newFiles[0]);
+          setZipFile(newFiles[1]);
+          setBase64ZipData(newFiles[1].base64.split(',')[1]);
+          console.log(zipFile);
+        }}
       };
-    ;
-  const handleBulkOrder = async (user, files, desc) => {
-        const response = await api.post(`user/bulk-order-files/${user}`, {
-          userFiles: files,
-          message: desc
-        }).then(() => {
-          console.log("User's Bulk Order Files sent Successfully");
-        }).catch((error) => {
-          console.error('Error in sending the File to the Server : ' + error);
+    
+      const getMimeType = (fileName) => {
+        const extension = fileName.split('.').pop();
+        switch (extension) {
+          case 'jpg':
+            return 'image/jpeg';
+          case 'png':
+            return 'image/png';
+          case 'pdf':
+            return 'application/pdf';
+          // Add more cases for other file types
+          default:
+            return 'application/octet-stream'; // Default MIME type
+        }
+      };
+
+      const blobToBase64 = (blob) => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const base64Data = reader.result.split(',')[1];
+            resolve(base64Data);
+          };
+          reader.onerror = (error) => {
+            reject(error);
+          };
+          reader.readAsDataURL(blob);
         });
+      };
+
+      const handleBulkOrder = async () => {
+        console.log(files);
+        console.log("Say Hi");
+        console.log(files[1]);
+
+        try {
+          console.log("Hey");
+          runPythonScript(csvBase64Data);
+          console.log(getThat);
+          // Decode the base64 zip data to binary
+          const binaryZipData = atob(base64ZipData);
+          console.log(binaryZipData);
+          // Create a new JSZip instance and load the binary zip data
+          const zip = new JSZip();
+          const zipData = await zip.loadAsync(binaryZipData);
+      
+          const extractedData = [];
+          // Process entries that match the '0/' subdirectory
+          let subDirectory = getThat;
+          for (const [entryPath, entry] of Object.entries(zipData.files)) {
+            for(let directoryCount = 0; directoryCount < subDirectory.length; directoryCount++) {
+              if (entryPath.startsWith(subDirectory[directoryCount])) {
+                if (!entry.dir) {
+                  // If it's a file, extract and process its data
+                  const fileBinaryData = await entry.async('blob');
+                  const base64Data = await blobToBase64(fileBinaryData);
+
+                  extractedData[directoryCount] = extractedData[directoryCount] || [];
+
+        
+                  extractedData[directoryCount].push({
+                    name: entryPath.replace(subDirectory[directoryCount], ''), // Use just the name here
+                    type: getMimeType(entry.name),
+                    size: fileBinaryData.size,
+                    base64: base64Data,
+                  });
+
+                }
+              }
+
+            }
+
+          }
+          setBulkOrderFiles(extractedData);
+          await findUserID();
+
+          await createBulkOrders(bulkOrderJobs, bulkOrderTitle, bulkOrderServices, extractedData, userID);
+      
+        } catch (error) {
+          console.error('Error extracting subfiles:', error);
+        }
       };
       
   
@@ -260,61 +371,11 @@ const BulkOrderComponent = () => {
                 </Grid>
               </Grid>
             </Container>
-            <Grid container>
-              <Grid item xs={2}>
-                <Typography variant="h4" style={{
-                  textAlign: "center",
-                  fontWeight: "bold",
-                  position: "relative",
-                  top: "30%",
-                  left: "60%",
-                }}>
-                    Description 
-                </Typography>
-            </Grid>
-            <Grid item xs={10}>
-                <TextAreaBox style={{
-                  position: "relative",
-                  left: "30%",
-                }}>
-                <textarea
-                  rows={6}
-                  cols={60}
-                  placeholder="Type the Bulk Order Description"
-                  value={description}
-                  onChange={handleDescriptionChange}
-                  style={{ border: "none !important",fontFamily:'Roboto', outline: "none !important" ,backgroundColor:'transparent',borderWidth:"0px",outline:"none"}}
-  >
-                </textarea>
-          </TextAreaBox>
-          </Grid>
-      </Grid>
-      <Grid container>
-              <Grid item xs={6}>
-                <Typography variant="h4" style={{
-                  textAlign: "center",
-                  fontWeight: "bold",
-                  position: "relative",
-                  right: "10%",
-                  top: "50%",
-                }}>
-                    Upload Your Files 
-                </Typography>
-            </Grid>
-            <Grid item xs={6}>
-            <div style={{
-              position: "relative",
-              top: "10%",
-              right: "15%",
-              width: "75%",
-            }}>
-            <CustomDropZone
-           files={files} onFileChange={handleFileChange} />
-            </div>
-          </Grid>
-      </Grid> 
-         <div style={{textAlign: "center", position: "relative", top: "50px", right: "10%",paddingBottom: "30px"}}>
-         { (files.length > 0) && <Button
+            <div style={{textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 'auto'}}>
+           <CustomDropZone files={files} onFileChange={handleFileChange} />
+         </div>  
+         <div style={{textAlign: "center", position: "relative", top: "25px"}}>
+              { (files.length == 2 && ((files[0].name.split('.')[1] === "csv" && files[1].name.split('.')[1] === "zip") || (files[1].name.split('.')[1] === "csv" && files[0].name.split('.')[1] === "zip")))&& <Button
                   sx={{
                         background: "#27AE60", 
                         color: "white",
@@ -327,7 +388,7 @@ const BulkOrderComponent = () => {
                           background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
                         },
                       }}
-                onClick={() => handleBulkOrder(userID, files, description)}
+                onClick={handleBulkOrder}
               >
                 Submit File
               </Button>}

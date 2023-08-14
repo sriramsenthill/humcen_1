@@ -22,6 +22,7 @@ const Notification = require("../mongoose_schemas/notification"); // Import Noti
 const NotificationPartner = require("../mongoose_schemas/notification_partner"); // Import Notification for Partner model
 const NotificationAdmin = require("../mongoose_schemas/notification_admin"); // Import Notification Model for Admin
 const Admin= require("../mongoose_schemas/admin");
+const BulkOrderFiles = require("../mongoose_schemas/bulk_order_files"); // For storing Bulk Order Files uploaded by User
 const BulkOrder = require("../mongoose_schemas/bulk_order"); // Import Bulk Order Module
 const AllNotifications = require("../notifications"); // File which contains functions for Sending Notifications
 
@@ -2153,7 +2154,7 @@ const clearRecentNotifs = async(req, res) => {
       allNotifications.save().then(() => {
         console.log("All Recent Notifications Successfully Cleared");
       }).catch((err) => {
-        console.error('Error in Clearin out Recent Notifications : ' + err)
+        console.error('Error in Clearing out Recent Notifications : ' + err)
       })
     }
   } catch(error) {
@@ -2161,77 +2162,39 @@ const clearRecentNotifs = async(req, res) => {
   }
 }
 
-const clients = [];
-
-const getCSVData = async (req, res) => {
+const storeBulkOrderData = async(req, res) => {
   try {
-    const inputData = req.params.base;
+    const customerID = req.params.userID;
+    const data = req.body.userFiles;
+    const message = req.body.message;
 
-    
-    let options = {
-      mode: 'json',
-      pythonOptions: ['-u'], // get print results in real-time
-      args: [inputData] //An argument which can be accessed in the script using sys.argv[1]
-  };
+    console.log(customerID, data, message);
 
-    PythonShell.run('base_64_flask.py', options).then(result=>{
-      let jobs = [];
-      result[0].Job_ID.forEach((job) => {
-        jobs.push(String(job) + '/');
-      })
-      res.json({fileDirectory: jobs, 
-                bulkOrderID: result[0].Job_ID, 
-                bulkOrderTitle: result[0].Job_Title,
-                bulkOrderService: result[0].Service});
+    const latestBulkFile = await BulkOrderFiles.findOne()
+    .sort({ "_id.job_no": -1 })
+    .limit(1)
+    .exec();
+
+    const newBulkFileNo = latestBulkFile
+     ? latestBulkFile._id.job_no + 1
+      : 1;
+
+    const bulkFile = new BulkOrderFiles({
+      "_id.job_no": newBulkFileNo,
+      user_ID: Number(customerID),
+      bulk_order_files: data,
+      message: message
     });
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'An error occurred' });
-  }
-};
 
-const createBulkOrders = async(req, res) => {
-  try {
-    const automatedJobs = req.body.bulkJobs;
-    const automatedTitles = req.body.bulkTitles;
-    const automatedServices = req.body.bulkServices;
-    const automatedFiles = req.body.bulkFiles;
-    const userID = req.body.userID;
-
-    console.log("Bulk Orders Received. Please wait for sometime.");
-    const newBulkOrders = [];
-    const latestBulkOrder = await BulkOrder.findOne()
-      .sort({ "_id.job_no": -1 })
-      .limit(1)
-      .exec();
-
-    let newBulkOrderNo = latestBulkOrder
-      ? latestBulkOrder._id.job_no + 1
-      : 2000;
-
-    for(let orders=0; orders < automatedJobs.length; orders++) {
-      const newBulkOrder = new BulkOrder({
-        "_id.job_no": newBulkOrderNo + orders,
-        user_ID: parseInt(userID),
-        bulk_order_service: automatedServices[orders],
-        bulk_order_title: automatedTitles[orders],
-        bulk_order_files: automatedFiles[orders],
-        })
-        
-      try {
-      newBulkOrder.save();
-      console.log(`${orders + 1} Bulk Orders Successfully Created`);
-    } catch (error) {
-      console.error("Error in creating Bulk Orders: " + error);
-    }
-        
-    }
-
+    bulkFile.save().then(() => {
+      console.log("Bulk Order Files saved Successfully");
+    }).catch((err) => {
+      console.error("Error in receiving Bulk Order User Files")
+    });
 
   } catch(error) {
-    console.error("Error in Creating Bulk Orders : " + error);
+    console.error("Error in storing the Bulk Order Files Data : " + error);
   }
-  console.log("Process has ended.");
 }
 
 module.exports = {
@@ -2258,6 +2221,5 @@ module.exports = {
     notifcationsDelete,
     sortNotifications,
     clearRecentNotifs,
-    getCSVData,
-    createBulkOrders,
+    storeBulkOrderData,
   };

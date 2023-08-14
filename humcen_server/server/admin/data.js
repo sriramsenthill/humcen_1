@@ -7,6 +7,7 @@ const Unassigned=require("../mongoose_schemas/unassigned");
 const Drafting = require("../mongoose_schemas/patent_drafting");
 const Filing = require("../mongoose_schemas/patent_filing"); // Import Patent Filing Model
 const Search = require("../mongoose_schemas/search"); // Import Patent Search Model
+const {PythonShell} = require('python-shell');
 const responseToFER = require("../mongoose_schemas/response_to_fer"); // Import Response to FER Model
 const freedomToOperate = require("../mongoose_schemas/freedom_to_operate"); // Import Freedom to Operate Model
 const patentLandscape = require("../mongoose_schemas/freedom_to_patent_landscape"); // Import Patent Landscape Model
@@ -21,6 +22,7 @@ const AllNotifications = require("../notifications"); // Functions to send Notif
 const Notification = require("../mongoose_schemas/notification"); // Import Notification Model for Users
 const NotificationAdmin = require("../mongoose_schemas/notification_admin"); // Import Notification Model for Admin
 const BulkOrder = require("../mongoose_schemas/bulk_order"); // Importing Bulk Order Model
+const BulkOrderFiles = require("../mongoose_schemas/bulk_order_files");
 
 const getUsers = async (req, res) => {
   try {
@@ -2507,6 +2509,130 @@ const getAdminNotification = async (req, res) => {
   }
 };
 
+const createBulkOrders = async(req, res) => {
+  try {
+    const automatedJobs = req.body.bulkJobs;
+    const automatedTitles = req.body.bulkTitles;
+    const automatedServices = req.body.bulkServices;
+    const automatedFiles = req.body.bulkFiles;
+    const thatBulkOrderFileID = req.body.fileNumber;
+
+    const findThatBulkOrder = await BulkOrderFiles.findOne({"_id.job_no": Number(thatBulkOrderFileID)});
+    if(!findThatBulkOrder) {
+      console.log("No Bulk Order file present for File ID " + thatBulkOrderFileID);
+    } 
+    const thatCustomer = findThatBulkOrder.user_ID;
+
+    console.log("Bulk Orders Received. Please wait for sometime.");
+    const newBulkOrders = [];
+    const latestBulkOrder = await BulkOrder.findOne()
+      .sort({ "_id.job_no": -1 })
+      .limit(1)
+      .exec();
+
+    let newBulkOrderNo = latestBulkOrder
+      ? latestBulkOrder._id.job_no + 1
+      : 2000;
+
+    for(let orders=0; orders < automatedJobs.length; orders++) {
+      const newBulkOrder = new BulkOrder({
+        "_id.job_no": newBulkOrderNo + orders,
+        user_ID: Number(thatCustomer),
+        bulk_order_service: automatedServices[orders],
+        bulk_order_title: automatedTitles[orders],
+        bulk_order_files: automatedFiles[orders],
+        })
+        
+      try {
+      newBulkOrder.save();
+      console.log(`${orders + 1} Bulk Orders Successfully Created`);
+    } catch (error) {
+      console.error("Error in creating Bulk Orders: " + error);
+    }
+        
+    }
+
+
+  } catch(error) {
+    console.error("Error in Creating Bulk Orders : " + error);
+  }
+  console.log("Process has ended.");
+}
+
+const getCSVData = async (req, res) => {
+  try {
+    const inputData = req.params.base;
+
+    
+    let options = {
+      mode: 'json',
+      pythonOptions: ['-u'], // get print results in real-time
+      args: [inputData] //An argument which can be accessed in the script using sys.argv[1]
+  };
+
+    PythonShell.run('base_64_flask.py', options).then(result=>{
+      let jobs = [];
+      result[0].Job_ID.forEach((job) => {
+        jobs.push(String(job) + '/');
+      })
+      res.json({fileDirectory: jobs, 
+                bulkOrderID: result[0].Job_ID, 
+                bulkOrderTitle: result[0].Job_Title,
+                bulkOrderService: result[0].Service});
+    });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+};
+
+const getBulkOrderFilesDetails = async(req, res) => {
+  try {
+    const bulkFilesDetails = await BulkOrderFiles.find({}).select("_id user_ID message");
+    if(!bulkFilesDetails) {
+      console.log("No Bulk Order Files found.");
+    } else {
+      console.log("Sending Bulk Order Files Details");
+      res.json(bulkFilesDetails);
+    }
+
+  } catch(error) {
+    console.error("Error in fetching Bulk Order Files : " + error);
+  }
+}
+
+const getParticularBulkOrderFileDetails = async(req, res) => {
+  try {
+    const thatFile = req.params.fileNo;
+
+    const thatBulkOrderFile = await BulkOrderFiles.findOne({"_id.job_no": Number(thatFile)}).select("_id user_ID message");
+    if(!thatBulkOrderFile) {
+      console.log("No Bulk Order Files found for ID " + thatFile);
+    } else {
+      console.log("Sending the details of that Particular Bulk Order File...");
+      res.json(thatBulkOrderFile);
+    }
+  } catch(error) {
+    console.error("Error in getting the Bulk Order File Details : " + error);
+  }
+}
+
+const getOnlyTheParticularBulkOrderFile = async(req, res) => {
+  try {
+    const thatFile = req.params.fileNo;
+
+    const thatBulkOrderFile = await BulkOrderFiles.findOne({"_id.job_no": Number(thatFile)}).select("_id bulk_order_files");
+    if(!thatBulkOrderFile) {
+      console.log("No Bulk Order Files found for ID " + thatFile);
+    } else {
+      console.log("Sending the details of that Particular Bulk Order File...");
+      res.json(thatBulkOrderFile);
+    }
+  } catch(error) {
+    console.error("Error in getting the Bulk Order File Details : " + error);
+  }
+
+}
 
 
 module.exports = {
@@ -2537,4 +2663,9 @@ module.exports = {
   sortAdminNotifications,
   clearAdminRecentNotifs,
   getAdminNotification,
+  getCSVData,
+  createBulkOrders,
+  getBulkOrderFilesDetails,
+  getParticularBulkOrderFileDetails,
+  getOnlyTheParticularBulkOrderFile,
 };

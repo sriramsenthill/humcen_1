@@ -59,6 +59,13 @@ export const SidebarData = [
     iconOpened: <KeyboardArrowDownIcon />,
   },
   {
+    title: "Bulk Order Files",
+    path: "/BulkOrderFiles/",
+    icon: <LayersIcon/>,
+    iconClosed: <KeyboardArrowRightIcon />,
+    iconOpened: <KeyboardArrowDownIcon />,
+  },
+  {
     title: "Settings",
     path: "/settings/",
     icon: <SettingsIcon />,

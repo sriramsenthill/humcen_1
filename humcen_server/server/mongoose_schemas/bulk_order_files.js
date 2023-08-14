@@ -10,6 +10,9 @@ const bulkOrderFilesSchema = new mongoose.Schema({
   bulk_order_files: {
     type: Object,
   },
+  message: {
+    type: String,
+  }
 });
 
 const BulkOrderFiles = mongoose.model('BulkOrderFiles', bulkOrderFilesSchema, 'bulk_order_files');
