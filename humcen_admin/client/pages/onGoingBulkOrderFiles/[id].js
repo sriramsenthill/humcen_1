@@ -5,6 +5,7 @@ import styles from "@/styles/Patents.module.css";
 import style from "@/styles/PageTitle.module.css";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
+import DialogBox from "@/components/Dialog";
 import Generator from "./Generator";
 import withAuth from "@/components/withAuth";
 import { Button, FormControl, InputLabel, Select, MenuItem, Typography } from "@mui/material";

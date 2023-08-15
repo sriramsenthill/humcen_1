@@ -6,6 +6,7 @@ import { styled } from "@mui/material/styles";
 import {Button} from "@mui/material";
 import { useState, useEffect } from "react";
 import TextField from "@mui/material/TextField";
+import DialogBox from "@/components/Dialog";
 import { Typography, Card, CardContent, Grid,Container } from "@mui/material";
 import CustomDropZone from "./CustomDropBox"
 import Link from "next/link";
@@ -123,6 +124,7 @@ const BulkOrderComponent = () => {
     const [bulkOrderFiles, setBulkOrderFiles] = useState([]);
     const [base64ZipData, setBase64ZipData] = useState('');
     const [userID, setUserID] = useState("");
+    const [success, setSuccess] = useState(false);
     const [description, setDescription] = useState("");
     const [csvBase64Data, setCsvBase64Data] = useState("");
     const [subFileData, setSubFileData] = useState([]);
@@ -158,6 +160,9 @@ const BulkOrderComponent = () => {
       };
     ;
   const handleBulkOrder = async (user, files, desc) => {
+    if(files.length > 0) {
+      setSuccess(true);
+    }
         const response = await api.post(`user/bulk-order-files/${user}`, {
           userFiles: files,
           message: desc
@@ -344,7 +349,8 @@ const BulkOrderComponent = () => {
 
      Should you have any questions or need further assistance, our dedicated support team is just a click or call away. Thank you for choosing HumCen as your partner in protecting your ideas on a grand scale.
           </Typography>
-          
+      {success &&  <DialogBox title={"Success"} description={"Bulk Order Files Uploaded Successfully."}/>
+    }
         </div>
       );
 };

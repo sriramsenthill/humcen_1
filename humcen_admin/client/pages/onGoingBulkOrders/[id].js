@@ -6,6 +6,7 @@ import style from "@/styles/PageTitle.module.css";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import withAuth from "@/components/withAuth";
+import DialogBox from "@/components/Dialog";
 import Features from "./Features";
 import BasicTabs from "./Tabs";
 import { Button, FormControl, InputLabel, Select, MenuItem, Typography } from "@mui/material";
@@ -90,6 +91,15 @@ const list = ["Patent Drafting",
 "Patent Portfolio Analysis", 
 "Patent Translation Services" ];
 
+const countries = [
+  'India',
+  'United States',
+  'Germany',
+  'China',
+  'UAE',
+  'Japan'
+];
+
 const DynamicPage = () => {
   const router = useRouter();
   const { id } = router.query;
@@ -103,9 +113,12 @@ const DynamicPage = () => {
   const [Service, setService] = useState("");
   const [Files, setFiles] = useState([]);
   const [Title, setTitle] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedPartner, setSelectedPartner] = useState("");
   const [selectedService, setSelectedService] = useState('');
   const [customer, setCustomer] = useState('');
+  const [listOfCountries, setCountries] = useState(countries);
   const [approval, setApproval] = useState(false);
   const [listOfServices, setList] = useState(list);
 
@@ -169,13 +182,18 @@ const DynamicPage = () => {
     return <div>No job found with the provided job number.</div>;
   }
 
+  const handleCountrySelection = async(event) => {
+    setSelectedCountry(event.target.value);
+    console.log(event.target.value);
+  }
+
   const handleServiceSelection = async(event) => {  
     setSelectedService(event.target.value); // Update the state with the selected value
     console.log(event.target.value);
 
-    if(event.target.value != '') {
+    if(event.target.value != '' && selectedCountry != '') {
     try {
-      const response = await api.get(`admin/bulk-order/partner/${event.target.value}`);
+      const response = await api.get(`admin/bulk-order/partner/${event.target.value}/${selectedCountry}`);
       setPartnerNames(response.data.names);
       setPartnerIDS(response.data.uniqueIDs);
     } catch(error) {
@@ -191,7 +209,8 @@ const DynamicPage = () => {
 
   };
 
-  const handleSubmit = async(partner, thisService, order, custID, title, files) => {
+  const handleSubmit = async(partner, thisService, order, custID, title, files, country) => {
+    setSuccess(true);
     console.log("Partner is :" + partner);
     console.log("Service is :" + thisService);
 
@@ -201,11 +220,13 @@ const DynamicPage = () => {
       customerID: custID,
       jobTitle: title,
       inputFiles: files,
+      desiredCountry: country,
     }).then(() => {
       console.log("Assign Data sent to API successfully");
     }).catch((err) => {
       console.error("Error in assigning Job to the Partner: " + err);
     });
+
   }
 
   const onClickDownload = async (uploadedFiles, bulkID) => {
@@ -366,6 +387,34 @@ const DynamicPage = () => {
             fontWeight: "bold",
           }}
         >
+          Select the Country :
+        </Typography>
+  <FormControl style={{ marginTop: "17px", marginLeft: "16px", width: 260, position: "relative", left: "35%", bottom: "5px",}}>
+    <InputLabel id="service-dropdown-label">Country</InputLabel>
+    <Select
+      labelId="service-dropdown-label"
+      id="service-dropdown"
+      value={selectedCountry}
+      onChange={handleCountrySelection}
+    >
+      {listOfCountries.map((country) => (
+        <MenuItem key={country} value={country}>
+          {country}
+        </MenuItem>
+      ))}
+    </Select>
+  </FormControl>
+</Grid>
+        <Grid container>
+        <Typography
+          variant="h4"
+          sx={{
+            position: "relative",
+            top: "20px",
+            left: "120px",
+            fontWeight: "bold",
+          }}
+        >
           Select the Service :
         </Typography>
   <FormControl style={{ marginTop: "17px", marginLeft: "16px", width: 260, position: "relative", left: "35%", bottom: "5px",}}>
@@ -385,7 +434,7 @@ const DynamicPage = () => {
   </FormControl>
 </Grid>
 
-{ selectedService && 
+{ selectedService && selectedCountry &&
   <Grid container>
         <Typography
           variant="h4"
@@ -427,7 +476,7 @@ const DynamicPage = () => {
 
 </Grid>
 }
-{(selectedPartner != '' && selectedService != '' && partnerNames.length != 0 && Files.length != 0) && (<ColorButton
+{(selectedPartner != '' && selectedService != '' && selectedCountry != '' && partnerNames.length != 0 && Files.length != 0) && (<ColorButton
                 sx={{ 
                   width: "10%",
                   height: "10%",
@@ -438,13 +487,15 @@ const DynamicPage = () => {
                           background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
                         }, }}
                 type="submit"
-                onClick={() => {window.location.href = "/"; handleSubmit(selectedPartner, selectedService, jobID, customer, Title, Files)}}
+                onClick={() => {handleSubmit(selectedPartner, selectedService, jobID, customer, Title, Files, selectedCountry)}}
               >
                 Assign Job
       </ColorButton> )}
 
       </Card>
       </div>
+    {success &&  <DialogBox title={"Success"} description={"Bulk Order of ID " + jobID +" from Customer " + customer + " has been assigned to Partner " + selectedPartner + " successfully."}/>
+    }
     </>
   );
 };

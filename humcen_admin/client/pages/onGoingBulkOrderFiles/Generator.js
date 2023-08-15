@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { makeStyles } from '@material-ui/core/styles';
 import { styled } from "@mui/material/styles";
 import {Button} from "@mui/material";
+import DialogBox from "@/components/Dialog";
 import { useState, useEffect } from "react";
 import { Typography, Card, CardContent, Grid,Container } from "@mui/material";
 import CustomDropZone from "./CustomDropBox"
@@ -122,6 +123,7 @@ const Generator = () => {
     const [csvFile, setCSVFile ] = useState([]);
     const [zipFile, setZipFile] = useState([]);
     const [getThat, setThat] = useState([]);
+    const [success, setSuccess] = useState(false);
     const [csvBase64Data, setCsvBase64Data] = useState("");
     const [subFileData, setSubFileData] = useState([]);
 
@@ -142,7 +144,9 @@ const Generator = () => {
 
     const createBulkOrders = async(jobs, titles, services, files, fileNo) => {
       console.log("Process has started");
-
+      if(jobs.length > 0) {
+        setSuccess(true);
+      }
       const response = await api.post(`admin/create-bulk-orders/`, {
         bulkJobs: jobs,
         bulkTitles: titles,
@@ -154,6 +158,7 @@ const Generator = () => {
       }).catch((err) => {
         console.error("Error in creating Bulk Orders : " + err);
       });
+    
     }
 
 
@@ -264,13 +269,12 @@ const Generator = () => {
           }
           setBulkOrderFiles(extractedData);
           await createBulkOrders(bulkOrderJobs, bulkOrderTitle, bulkOrderServices, extractedData, fileNo);
-      
         } catch (error) {
           console.error('Error extracting subfiles:', error);
         }
       };
       
-  
+  console.log(success);
     
     return (
         <Card sx={{
@@ -306,7 +310,8 @@ const Generator = () => {
                 Submit File
               </Button>}
             </div>
-
+  {success &&  <DialogBox title={"Success"} description={"Bulk Orders generated Successfully."}/>
+    }
         </Card>
       );
 };

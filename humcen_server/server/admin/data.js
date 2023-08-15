@@ -2339,8 +2339,9 @@ const getBulkOrderFileById = async(req, res) => {
 const getPartnersForBulkOrder = async(req, res) => {
   try {
     const chosenService = req.params.service;
+    const chosenCountry = req.params.country;
     
-    const partnersList = await Partner.find({["known_fields."+chosenService]: true});
+    const partnersList = await Partner.find({["known_fields."+chosenService]: true, country: chosenCountry});
     const nameList = [];
     const idList = [];
     partnersList.forEach((partner) => {
@@ -2361,6 +2362,7 @@ const assignBulkOrder = async(req, res) => {
     const partner_ID = req.body.partnerID;
     const service = req.body.chosenService;
     const title = req.body.jobTitle;
+    const country = req.body.desiredCountry;
     let requiredFiles = req.body.inputFiles;
     requiredFiles.map((file) => {
       file.base64 = "data:"+file.type+";base64,"+file.base64;
@@ -2402,7 +2404,7 @@ const assignBulkOrder = async(req, res) => {
     const newBulkJob = {
       "_id.job_no": newJobNo,
       service: service,
-      country: "To be Assigned",
+      country: country,
       start_date: startDate,
       end_date: endDate,
       budget: "To be Assigned",
@@ -2463,7 +2465,7 @@ const assignBulkOrder = async(req, res) => {
     }
 
   await AllNotifications.sendToAdmin("Bulk Order of ID " + orderID + " has been assigned to Partner of ID " + partner_ID + " successfully.");
-  await AllNotifications.sendToPartner(Number(partner_ID), "You have been assigned a Bulk Order of ID " + orderID + " by Admin.");
+  await AllNotifications.sendToPartner(Number(partner_ID), "You have been assigned a Bulk Order of ID " + newJobNo + " by Admin.");
 
   }
   catch(error) {
@@ -2601,13 +2603,14 @@ const createBulkOrders = async(req, res) => {
       try {
       newBulkOrder.save();
       console.log(`${orders + 1} Bulk Orders Successfully Created`);
-      await AllNotifications.sendToAdmin(`${orders + 1} has been created Successfully.`);
-      await AllNotifications.sendToUser(Number(thatCustomer), "Your Bulk Orders has been generated successfully and tasks are going to be assigned to the Partners by the Admin.");
     } catch (error) {
       console.error("Error in creating Bulk Orders: " + error);
     }
-        
+
     }
+    await AllNotifications.sendToAdmin(`${automatedTitles.length} has been created Successfully.`);
+    await AllNotifications.sendToUser(Number(thatCustomer), "Your Bulk Orders has been generated successfully and tasks are going to be assigned to the Partners by the Admin.");
+ 
 
 
   } catch(error) {
