@@ -93,7 +93,9 @@ const AdminSchema = new mongoose.Schema({
       type: String,
     },
   },
-
+  notify_to: {
+    type: [String]
+  },
   pref: {
     essential_emails: {
       type: Boolean,
