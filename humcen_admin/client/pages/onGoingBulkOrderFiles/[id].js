@@ -305,7 +305,7 @@ const DynamicPage = () => {
           >
             <h2>
               <span className={styles.label1}>File No : </span>
-              1
+              {id}
             </h2>
           </Grid>
         </Grid>

@@ -2608,9 +2608,10 @@ const createBulkOrders = async(req, res) => {
     }
 
     }
-    await AllNotifications.sendToAdmin(`${automatedTitles.length} has been created Successfully.`);
+    if(automatedTitles.length > 0 ) {
+    await AllNotifications.sendToAdmin(`${automatedTitles.length} Bulk Orders has been created Successfully.`);
     await AllNotifications.sendToUser(Number(thatCustomer), "Your Bulk Orders has been generated successfully and tasks are going to be assigned to the Partners by the Admin.");
- 
+    } 
 
 
   } catch(error) {
