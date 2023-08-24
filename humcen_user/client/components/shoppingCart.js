@@ -1,4 +1,5 @@
 import * as React from "react";
+import {Grid, Item} from "@mui/material";
 import Card from "@mui/material/Card";
 import { Box, Typography } from "@mui/material";
 import Table from "@mui/material/Table";
@@ -9,9 +10,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
-const ShoppingCart = () => {
+const ShoppingCart = ({priceList, detailsList, service, total}) => {
   return (
     <>
+        {console.log(priceList)}
       <Card
         sx={{
           boxShadow: "none",
@@ -20,15 +22,51 @@ const ShoppingCart = () => {
           mb: "15px",
         }}
       >
-        <Typography
+      <Typography
           as="h3"
           sx={{
             fontSize: 18,
             fontWeight: 500,
+            mb: "25px",
+          }}
+        >
+          {service}
+        </Typography>
+
+
+    {
+  detailsList.map((detail, index) => (
+    <Grid container>
+      <Grid item sm={2} md={3} lg={6} xl={6}>
+      <Typography sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "18px",
+                    textAlign: "left",
+                    fontWeight: "bold",
+                    paddingBottom: "15px",
+                  }}>{detail.title}</Typography>
+      </Grid>
+      <Grid item sm={10} md={9} lg={6} xl={6}>
+      <Typography sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    textAlign: "right",
+                    fontSize: "15px",
+                    paddingBottom: "15px",
+                  }} >{detail.text}</Typography>
+      </Grid>
+    </Grid>
+  ))
+}
+<Typography
+          as="h3"
+          sx={{
+            fontSize: 18,
+            fontWeight: 500,
+            mt: "25px",
             mb: "10px",
           }}
         >
-          Shopping Cart
+          Bill
         </Typography>
 
         <TableContainer
@@ -46,7 +84,7 @@ const ShoppingCart = () => {
                     fontSize: "13px",
                   }}
                 >
-                  Product
+                  Country
                 </TableCell>
 
                 <TableCell
@@ -56,350 +94,59 @@ const ShoppingCart = () => {
                     fontSize: "13px",
                   }}
                 >
-                  Price
+                  Drafting Cost
                 </TableCell>
               </TableRow>
             </TableHead>
 
             <TableBody>
-              <TableRow
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell
-                  sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "12px",
-                    padding: "8px 10px",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <img
-                      src="/images/product1.png"
-                      alt="Product Img"
-                      width={50}
-                      className="borderRadius10"
-                    />
-                    <Typography
-                      sx={{
-                        fontWeight: "500",
-                        fontSize: "12px",
-                      }}
-                      className='ml-10px'
-                    >
-                      Laptop Macos Pro
-                    </Typography>
-                  </Box>
-                </TableCell>
 
-                <TableCell
-                  align="right"
-                  sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "12px",
-                    padding: "8px 10px",
-                  }}
-                >
-                  $100.00
-                </TableCell>
-              </TableRow>
+            {
+  priceList.map((price, index) => (
+    <TableRow
+      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+      key={index}
+    >
+      <TableCell
+        sx={{
+          borderBottom: "1px solid #F7FAFF",
+          fontSize: "12px",
+          padding: "8px 10px",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <Typography
+            sx={{
+              fontWeight: "500",
+              fontSize: "12px",
+            }}
+            className='ml-10px'
+          >
+            {price.country}
+          </Typography>
+        </Box>
+      </TableCell>
 
-              <TableRow
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell
-                  sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "12px",
-                    padding: "8px 10px",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <img
-                      src="/images/product2.png"
-                      alt="Product Img"
-                      width={50}
-                      className="borderRadius10"
-                    />
-                    <Typography
-                      sx={{
-                        fontWeight: "500",
-                        fontSize: "12px",
-                      }}
-                      className='ml-10px'
-                    >
-                      Smart Camera XD6
-                    </Typography>
-                  </Box>
-                </TableCell>
+      <TableCell
+        align="right"
+        sx={{
+          borderBottom: "1px solid #F7FAFF",
+          fontSize: "12px",
+          padding: "8px 10px",
+        }}
+      >
+        &#36;{price.cost}.00
+      </TableCell>
+    </TableRow>
+  ))
+}
 
-                <TableCell
-                  align="right"
-                  sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "12px",
-                    padding: "8px 10px",
-                  }}
-                >
-                  $200.00
-                </TableCell>
-              </TableRow>
 
-              <TableRow
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell
-                  sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "12px",
-                    padding: "8px 10px",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <img
-                      src="/images/product3.png"
-                      alt="Product Img"
-                      width={50}
-                      className="borderRadius10"
-                    />
-                    <Typography
-                      sx={{
-                        fontWeight: "500",
-                        fontSize: "12px",
-                      }}
-                      className='ml-10px'
-                    >
-                      Pixi 8 Wireless Airphone
-                    </Typography>
-                  </Box>
-                </TableCell>
-
-                <TableCell
-                  align="right"
-                  sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "12px",
-                    padding: "8px 10px",
-                  }}
-                >
-                  $120.00
-                </TableCell>
-              </TableRow>
-
-              <TableRow
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell
-                  sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "12px",
-                    padding: "8px 10px",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <img
-                      src="/images/product4.png"
-                      alt="Product Img"
-                      width={50}
-                      className="borderRadius10"
-                    />
-                    <Typography
-                      sx={{
-                        fontWeight: "500",
-                        fontSize: "12px",
-                      }}
-                      className='ml-10px'
-                    >
-                      Jebble Smart Watch
-                    </Typography>
-                  </Box>
-                </TableCell>
-
-                <TableCell
-                  align="right"
-                  sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "12px",
-                    padding: "8px 10px",
-                  }}
-                >
-                  $120.00
-                </TableCell>
-              </TableRow>
-
-              <TableRow
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell
-                  sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "12px",
-                    padding: "8px 10px",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <img
-                      src="/images/product5.png"
-                      alt="Product Img"
-                      width={50}
-                      className="borderRadius10"
-                    />
-                    <Typography
-                      sx={{
-                        fontWeight: "500",
-                        fontSize: "12px",
-                      }}
-                      className='ml-10px'
-                    >
-                      Airpod
-                    </Typography>
-                  </Box>
-                </TableCell>
-
-                <TableCell
-                  align="right"
-                  sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "12px",
-                    padding: "8px 10px",
-                  }}
-                >
-                  $120.00
-                </TableCell>
-              </TableRow>
-
-              <TableRow
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell
-                  align="left"
-                  sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "12px",
-                    padding: "8px 10px",
-                    fontWeight: "500",
-                  }}
-                >
-                  Sub Total :
-                </TableCell>
-
-                <TableCell
-                  align="right"
-                  sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "12px",
-                    padding: "8px 10px",
-                    fontWeight: "500",
-                  }}
-                >
-                  $760.00
-                </TableCell>
-              </TableRow>
-
-              <TableRow
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell
-                  sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "12px",
-                    padding: "8px 10px",
-                    fontWeight: "500",
-                  }}
-                >
-                  Discount :
-                </TableCell>
-
-                <TableCell
-                  align="right"
-                  sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "12px",
-                    padding: "8px 10px",
-                    fontWeight: "500",
-                  }}
-                >
-                  $60.00
-                </TableCell>
-              </TableRow>
-
-              <TableRow
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell
-                  sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "12px",
-                    padding: "8px 10px",
-                    fontWeight: "500",
-                  }}
-                >
-                  Shipping Charge :
-                </TableCell>
-
-                <TableCell
-                  align="right"
-                  sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "12px",
-                    padding: "8px 10px",
-                    fontWeight: "500",
-                  }}
-                >
-                  $50.00
-                </TableCell>
-              </TableRow>
-
-              <TableRow
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell
-                  sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "12px",
-                    padding: "8px 10px",
-                    fontWeight: "500",
-                  }}
-                >
-                  Estimated Tax :
-                </TableCell>
-
-                <TableCell
-                  align="right"
-                  sx={{
-                    borderBottom: "1px solid #F7FAFF",
-                    fontSize: "12px",
-                    padding: "8px 10px",
-                    fontWeight: "500",
-                  }}
-                >
-                  $00.00
-                </TableCell>
-              </TableRow>
 
               <TableRow
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -426,7 +173,7 @@ const ShoppingCart = () => {
                     color: "#000",
                   }}
                 >
-                  $750.00
+                  &#36;{total}.00
                 </TableCell>
               </TableRow>
             </TableBody>

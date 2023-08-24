@@ -26,6 +26,12 @@ router.post(
 );
 
 router.post(
+  "/api/patent_drafting",
+  verifyToken,
+  forms.newVersionPatentDrafting
+);
+
+router.post(
   "/api/job_order",
   verifyToken,
   forms.createJobOrderPatentDrafting

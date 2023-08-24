@@ -2210,6 +2210,133 @@ const storeBulkOrderData = async(req, res) => {
   }
 }
 
+const newVersionPatentDrafting = async(req, res) => {
+  try {
+    const data = req.body;
+    const userId = req.userId;
+    const countries = data.countries;
+
+    // for(let totalCountries=0; totalCountries < countries.length; countries++) {
+    //   const findPartner = await Partner.findOne({
+    //     is_free: true,
+    //     ["known_fields.Patent Drafting"]: true,
+    //     in_progress_jobs: { $lt: 5 },
+    //     country: countries[totalCountries]
+    //   })
+
+    //   const findCustomer = await Customer.findOne({ userID: userId });
+    //   const findAdmin = await Admin.findOne({_id:"64803aa4b57edc54d6b276cb"})
+    //   if (!findCustomer) {
+    //     // Handle the case when no customer is found
+    //     throw new Error("No customer found for the given user ID");
+    //   }
+      
+    //   if (!findPartner) {
+    //     // Handle the case when no partner is found
+    //     const latestUnassignedDraftingOrder = await Unassigned.findOne()
+    //     .sort({ "_id.job_no": -1 })
+    //     .limit(1)
+    //     .exec();
+  
+    //     const newUnassignedDraftingNo = latestUnassignedDraftingOrder
+    //     ? latestUnassignedDraftingOrder._id.job_no + 1
+    //     : 1000;
+  
+  
+    //     stepsInitial = 2;
+    //     const newDraftingData = draftingData;
+    //     newDraftingData.service = "Patent Drafting";
+    //     newDraftingData.startDate = new Date();
+    //     newDraftingData.customerName = findCustomer.first_name;
+    //     newDraftingData.status = "In Progress";
+    //     console.log(newDraftingData);
+    //     const unassignedDraftingOrder = new Unassigned(newDraftingData);
+    //     unassignedDraftingOrder._id.job_no =  newUnassignedDraftingNo ;
+        
+    //     unassignedDraftingOrder.save();
+        
+    //     console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
+  
+    //     await AllNotifications.sendToUser(Number(userId), "Your Patent Drafting Form has been submitted successfully");
+    //     await AllNotifications.sendToAdmin("Patent Drafting Form of ID " + newUnassignedDraftingNo +" has been submitted successfully and is in Unassigned Jobs.")
+  
+    //     res.status(200).json(unassignedDraftingOrder);
+  
+    //   } if(findPartner) {
+    //     const latestDraftingOrder = await JobOrder.findOne()
+    //     .sort({ "_id.job_no": -1 })
+    //     .limit(1)
+    //     .exec();
+  
+    //     const newDraftingNo = latestDraftingOrder
+    //     ? latestDraftingOrder._id.job_no + 1
+    //     : 1000;
+  
+    //     stepsInitial = 3;
+    //     // Save the draftingData in the Drafting collection
+    //     const draftingOrder = new Drafting(draftingData);
+    //     draftingOrder._id = { job_no: newDraftingNo };
+    
+    //     // Ensure findPartner and findCustomer are not null before accessing their properties
+    //     draftingOrder.partnerName = findPartner.first_name; // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+    //     draftingOrder.customerName = findCustomer.first_name;// Assuming the customer's name is stored in the 'customerName' field of the Customer collection
+    
+    //     const savedDrafting = await draftingOrder.save();
+    
+    //     // Update partner and customer jobs lists
+    //     findPartner.jobs.push(draftingOrder._id.job_no);
+    //     findCustomer.jobs.push(draftingOrder._id.job_no);
+    
+    //     await Promise.all([findPartner.save(), findCustomer.save()]);
+    
+    //     const startDate = new Date();
+    //     const endDate = new Date();
+    //     endDate.setDate(endDate.getDate() + 7);
+  
+    //     const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    //     const formattedDate = new Date().toLocaleDateString(undefined, options);
+    
+    //     const newJobOrder = new JobOrder({
+    //       _id: { job_no: newDraftingNo },
+    //       service: "Patent Drafting",
+    //       userID: userId,
+    //       partnerID: findPartner.userID,
+    //       partnerName: findPartner.first_name, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+    //       customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
+    //       country: req.body.country,
+    //       start_date: startDate,
+    //       end_date: endDate,
+    //       steps_done: 1,
+    //       steps_done_user: 1,
+    //       steps_done_activity: 2,
+    //       date_partner: [formattedDate, " ", " ", " "], 
+    //       date_user: [formattedDate, " ", " ", " ", " ", " "],
+    //       date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " ", " ", " "],
+    //       status: "In Progress",
+    //       budget: req.body.budget,
+    //       domain: req.body.field,
+    //     });
+    
+    //     await newJobOrder.save();
+    
+    //     console.log("Successfully Assigned Patent Drafting Task to a Partner");
+    //     console.log(userId);
+    //     await AllNotifications.sendToUser(Number(userId), "Your Patent Drafting Form has been submitted successfully");
+    //     await AllNotifications.sendToPartner(Number(findPartner.userID),"You have been auto-assigned the Job " + newDraftingNo + ". You can Accept or Reject the Job.");
+    //     await AllNotifications.sendToAdmin("Patent Drafting Form of ID " + newDraftingNo +" has been submitted successfully")
+  
+    //     // To send Notification to Admin
+  
+  
+    //     res.status(200).json(savedDrafting);
+  
+
+    // }
+  } catch(error) {
+      console.error("Error in saving up the Patent Drafting Form : " + error);
+  }
+}
+
 module.exports = {
     getJobOrderOnID,
     getJobOrders,
@@ -2235,4 +2362,5 @@ module.exports = {
     sortNotifications,
     clearRecentNotifs,
     storeBulkOrderData,
+    newVersionPatentDrafting,
   };
