@@ -151,11 +151,11 @@ api.interceptors.request.use((config) => {
 async function fetchJobOrders() {
   try {
     const response = await api.get('/job_order');
-    const { jobOrders } = response.data; // Extract the jobOrders array from the response data
+    const { copyJobs } = response.data; // Extract the jobOrders array from the response data
 
-    if (Array.isArray(jobOrders)) {
-      console.log(jobOrders);
-      return jobOrders;
+    if (Array.isArray(copyJobs)) {
+      console.log(copyJobs);
+      return copyJobs;
     } else {
       console.error('Invalid data format: Expected an array');
       return [];

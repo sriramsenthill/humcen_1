@@ -21,7 +21,6 @@ const drafting = new mongoose.Schema({
     invention_details: { type: Object },
   },
   domain: { type: String },
-  time_of_delivery: { type: String },
 });
 
 const Drafting = mongoose.model('drafting', drafting, 'patent_drafting');

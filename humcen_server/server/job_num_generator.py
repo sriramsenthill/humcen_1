@@ -1,6 +1,6 @@
 import sys
 
-data = sys.argv[1]
+import sys
 
 def create_new_character(string_part):
     new_char = True
@@ -72,5 +72,13 @@ def generate_next_job_number(previous_job):
         elif number_part < 9999 and string_part != "Z":
             new_num = string_part + "-" + str(number_part + 1).zfill(4)
             return new_num
+        elif string_part == "Z" and number_part < 9999:
+            new_num = string_part + "-" + str(number_part + 1).zfill(4)
+            return new_num
 
-print(generate_next_job_number(data))
+
+
+if __name__ == '__main__':
+    prevJobNo = sys.argv[1]
+    nextJobNo = generate_next_job_number(prevJobNo)
+    print(nextJobNo)
