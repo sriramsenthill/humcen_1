@@ -43,7 +43,7 @@ export default function Features() {
     const fetchStepData = async () => {
       try {
         const response = await api.get(`job_order/${id}`);
-        const job = response.data;
+        const job = response.data.copyJobs;
         console.log(job);
         const stepCount = job.steps_done_user;
         const dates = job.date_user;        

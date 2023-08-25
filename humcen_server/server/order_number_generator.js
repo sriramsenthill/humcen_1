@@ -29,12 +29,20 @@ const renderJobNumbers = async( jobNumberLists) => {
             pythonOptions: ['-u'],
             args: [jobNumberLists]
         };
-
+        console.log(jobNumberLists);
         PythonShell.run('render_job_code.py', options)
             .then((result) => {
-                const correctArray = result[0].slice(1, result[0].length-1).split(",")
-                console.log(correctArray);
-                resolve(correctArray); // Resolve the promise with result[0]
+                console.log(result[0]);
+                if(result[0].length > 1) {
+                    const correctArray = result[0].slice(1, result[0].length-1).split(",")
+                    console.log(correctArray);
+                    resolve(correctArray);
+                } else {
+
+                    resolve(result[0]); 
+                }
+
+// Resolve the promise with result[0]
             })
             .catch((err) => {
                 reject(err); // Reject the promise if there's an error

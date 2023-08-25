@@ -100,7 +100,7 @@ const TrackOrder = () => {
     const fetchStepData = async () => {
       try {
         const response = await api.get(`job_order/${id}`);
-        const jobData = response.data;
+        const jobData = response.data.copyJobs;
         setJob(jobData);
         const stepCount = jobData.steps_done_activity; // For choosing the last Step done
        

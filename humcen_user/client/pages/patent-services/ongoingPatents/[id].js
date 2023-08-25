@@ -79,7 +79,7 @@ const DynamicPage = () => {
     const fetchJobData = async () => {
       try {
         const response = await api.get(`/job_order/${id}`);
-        const specificJob = response.data;
+        const specificJob = response.data.copyJobs;
         console.log(specificJob);
         if (specificJob) {
           setJob(specificJob);
@@ -295,7 +295,7 @@ const DynamicPage = () => {
                           background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
                         },
                       }}
-                      onClick={()=>onClickDownload(job._id.job_no)}
+                      onClick={()=>onClickDownload(job.og_id)}
                       disabled={!approval}
                     >
                       Download now

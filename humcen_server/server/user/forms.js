@@ -34,9 +34,27 @@ const getJobOrderOnID = async (req, res) => {
 
   try {
     const specificJob = await JobOrder.findOne({ "_id.job_no": id, userID });
+    const jobLists = [specificJob._id.job_no];
+    const copyJobs = JSON.parse(JSON.stringify(specificJob));
+
+// Remove the _id.job_no field from the copy
+if (copyJobs._id) {
+  delete copyJobs._id.job_no;
+}
+    console.log("California " , copyJobs)
+
+    const fakeIDs = await renderJobNumbers(jobLists);
+    const cleanedArray = fakeIDs[0].replace(/\[|\]|'/g, '').trim();
+    console.log(cleanedArray);
+    copyJobs.og_id = jobLists[0];
+    console.log("This " + copyJobs);  
+
+    copyJobs._id.job_no = cleanedArray;
+
 
     if (specificJob) {
-      res.json(specificJob);
+      console.log(copyJobs);
+      res.json({ copyJobs });
     } else {
       res.status(404).json({
         error: "No job found with the provided id or unauthorized access",
@@ -67,9 +85,10 @@ copyJobs.forEach((job) => {
     const cleanedArray = fakeIDs.map(item => item.replace(/'/g, '').trim());
     
     for(let jobs=0; jobs<copyJobs.length; jobs++) {
-      
+      copyJobs[jobs].og_id = jobLists[jobs]
       copyJobs[jobs]._id.job_no = cleanedArray[jobs]
     }
+    console.log(copyJobs);
     res.json({ copyJobs });
   } catch (error) {
     console.error("Error fetching job orders:", error);

@@ -114,7 +114,7 @@ const Verifications = ({ jobNumber }) => {
     const fetchJobData = async () => {
       try {
         const response = await api.get(`/job_order/${id}`);
-        const specificJob = response.data;
+        const specificJob = response.data.copyJobs;
 
         if (specificJob) {
           setJobID(id);

@@ -361,7 +361,7 @@ function CompletedOrders() {
                       fontSize: "13px",
                       textAlign: "center",
                     }}>
-                      <Link href={`patent-services/onGoingPatents/${row._id.job_no}`} passHref>
+                      <Link href={`patent-services/onGoingPatents/${row.og_id}`} passHref>
                       <Button
                     sx={{
                       background: "#01ACF6",
