@@ -338,7 +338,7 @@ const DynamicPage = () => {
                         backgroundColor: Files.length !== 0 ? "#27AE60" : "#D3D3D3"    , // approval ? "#27AE60" : "#D3D3D3"  
                         color: "white",
                         borderRadius: "100px",
-                        width: "60%",
+                        width: "120px",
                         height: "88%",
                         textTransform: "none",
                         "&:hover": {
