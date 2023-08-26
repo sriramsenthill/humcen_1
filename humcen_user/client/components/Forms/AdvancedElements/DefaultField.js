@@ -14,26 +14,8 @@ export default function DefaultSelect({ domain, onDomainChange }) {
 
   return (
     <>
-      <Card
-        sx={{
-          boxShadow: "none",
-          borderRadius: "10px",
-          p: "25px",
-        }}
-      >
-        <Typography
-          as="h3"
-          sx={{
-            fontSize: 18,
-            fontWeight: 500,
-            mb: "10px",
-          }}
-        >
-          Select your Field:
-        </Typography>
-
         <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Field</InputLabel>
+          <InputLabel id="demo-simple-select-label">Domain</InputLabel>
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
@@ -56,7 +38,7 @@ export default function DefaultSelect({ domain, onDomainChange }) {
             <MenuItem value={"Others"}>Others</MenuItem>
           </Select>
         </FormControl>
-      </Card>
+     
     </>
   );
 }

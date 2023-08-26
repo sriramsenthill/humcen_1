@@ -21,15 +21,15 @@ const FileUploadWrapper = ({ files, onFileChange }) => {
   };
 
   const handleFileChange = async (newFiles) => {
-    const updatedFiles = await Promise.all(
+    let updatedFiles = await Promise.all(
       newFiles.map(async (file) => {
-        const base64 = await createBase64DataUrl(file);
-        return {
-          name: file.name,
-          type: file.type,
-          size: formatSize(file.size),
-          base64: base64,
-        };
+          const base64 = await createBase64DataUrl(file);
+          return {
+            name: file.name,
+            type: file.type,
+            size: formatSize(file.size),
+            base64: base64,
+          };
       })
     );
     onFileChange(updatedFiles);

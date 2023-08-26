@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import axios from 'axios';
+import CustomDropZone from "@/components/CustomDropBox";
+import DefaultSelect from "@/components/Forms/AdvancedElements/DefaultField";
 import ShoppingCart from '@/components/shoppingCart';
 import { Checkbox } from '@mui/material';
 import {
+  InputLabel,
   Container,
   Typography,
   Paper,
@@ -31,6 +34,8 @@ api.interceptors.request.use((config) => {
 const IndexPage = () => {
   const [draftingOpen, setDraftingOpen] = useState(true);
   const [title, setTitle] = useState('');
+  const [detailsFile, setFiles] = useState([]);
+  const [keywords, setKeyword] = useState([]);
   const [domain, setDomain] = useState('');
   const [shoppingList, setList] = useState([]);
   const [countriesOpen, setCountriesOpen] = useState(false);
@@ -43,10 +48,17 @@ const IndexPage = () => {
     setTitle(event.target.value);
   };
 
+  const handleKeywordChange = (event) => {
+    setKeyword(event.target.value);
+  }
 
-  const handleDomainChange = (event) => {
-    setDomain(event.target.value);
+  const handleDomainChange = (value) => {
+    setDomain(value);
   };
+
+  const handleDetailsFileChange = (file) => {
+    setFiles(file);
+  }
 
   const handleSubmit = async() => {
     const infoDocument = {
@@ -54,8 +66,12 @@ const IndexPage = () => {
       domain: domain,
       countries: country,
       bills: totalBill,
+      keywords: keywords,
+      service_specific_files: {
+        invention_details: detailsFile
     }
-
+  }
+    console.log(infoDocument);
     try {
       const response = await api.post("patent_drafting", infoDocument);
     } catch(error) {
@@ -84,6 +100,14 @@ const IndexPage = () => {
         title: "Domain",
         text: domain,
       },
+      {
+        title: "Keywords",
+        text: keywords.toString()
+      },
+      {
+        title: "Uploaded Files",
+        text: [detailsFile.map((file) => file.name)].toString()
+      }
     ]);
 
     for(let choices=0; choices < country.length; choices++){
@@ -114,17 +138,27 @@ const IndexPage = () => {
             onChange={handleTitleChange}
             style={{ marginBottom: '1rem' }}
           />
-          <Select
-            label="Domain"
+          <DefaultSelect domain={domain} onDomainChange={handleDomainChange}/>
+          <TextField
+            label="Keywords"
             variant="outlined"
             fullWidth
-            value={domain}
-            onChange={handleDomainChange}
-          >
-            <MenuItem value="technology">Technology</MenuItem>
-            <MenuItem value="finance">Finance</MenuItem>
-            <MenuItem value="healthcare">Healthcare</MenuItem>
-          </Select>
+            value={keywords}
+            onChange={handleKeywordChange}
+            style={{ marginBottom: '1rem', marginTop: "1rem" }}
+          />
+            <Typography
+                as="h3"
+                sx={{
+                  fontSize: 18,
+                  fontWeight: 500,
+                  mb: "10px",
+                }}
+              >
+                Upload your invention details
+              </Typography>
+              {/* <DottedCard> */}
+              <CustomDropZone files={detailsFile} onFileChange={handleDetailsFileChange}/>
           <Button variant="contained" color="primary" onClick={handleDraftingContinue} style={{ marginTop: '1rem' }}>
             Continue
           </Button>
