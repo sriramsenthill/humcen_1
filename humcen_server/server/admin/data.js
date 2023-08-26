@@ -7,6 +7,7 @@ const Unassigned=require("../mongoose_schemas/unassigned");
 const Drafting = require("../mongoose_schemas/patent_drafting");
 const Filing = require("../mongoose_schemas/patent_filing"); // Import Patent Filing Model
 const Search = require("../mongoose_schemas/search"); // Import Patent Search Model
+const {renderJobNumbers} = require("../order_number_generator");
 const {PythonShell} = require('python-shell');
 const responseToFER = require("../mongoose_schemas/response_to_fer"); // Import Response to FER Model
 const freedomToOperate = require("../mongoose_schemas/freedom_to_operate"); // Import Freedom to Operate Model
@@ -101,7 +102,26 @@ const getAdmins = async (req, res) => {
 const getJobOrders = async (req, res) => {
   try {
     const jobOrders = await JobOrder.find({});
-    res.send(jobOrders);
+    let jobLists = [];
+    const copyJobs = JSON.parse(JSON.stringify(jobOrders));
+
+// Remove the _id field from each object in copyJobs
+copyJobs.forEach((job) => {
+  delete job._id.job_no;
+});
+    jobOrders.forEach((job) => {
+      jobLists.push(job._id.job_no);
+    })
+
+    const fakeIDs = await renderJobNumbers(jobLists);
+    const cleanedArray = fakeIDs.map(item => item.replace(/'/g, '').trim());
+    
+    for(let jobs=0; jobs<copyJobs.length; jobs++) {
+      copyJobs[jobs].og_id = jobLists[jobs]
+      copyJobs[jobs]._id.job_no = cleanedArray[jobs]
+    }
+    console.log(copyJobs);
+    res.send( copyJobs );
   } catch (error) {
     console.error("Error fetching job orders:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -308,9 +328,34 @@ const getJobFilesDetails = async(req, res) => {
 const getJobOrderById = async (req, res) => {
   const jobId = req.params.jobID
   try {
-    const jobOrders = await JobOrder.find({"_id.job_no": jobId});
-    console.log("jo: " + jobOrders);
-    res.json(jobOrders);
+    const jobOrders = await JobOrder.find({"_id.job_no": jobId}).select("-_id");
+    console.log("New thing " + jobOrders);
+    const jobLists = [jobId];
+    let copyJobs = JSON.parse(JSON.stringify(jobOrders));
+// Remove the _id.job_no field from the copy
+    console.log("California " , copyJobs)
+
+    const fakeIDs = await renderJobNumbers(jobLists);
+    const cleanedArray = fakeIDs[0].replace(/\[|\]|'/g, '').trim();
+    console.log(cleanedArray);
+    copyJobs[0].og_id = jobLists[0];
+    console.log("Clean " +cleanedArray);
+    copyJobs = {...copyJobs[0], _id: {
+      job_no: cleanedArray
+    }};
+    console.log("This " , JSON.parse(JSON.stringify(copyJobs)));  
+
+
+
+
+    if (jobOrders) {
+      console.log(copyJobs);
+      res.json( copyJobs );
+    } else {
+      res.status(404).json({
+        error: "No job found with the provided id or unauthorized access",
+      });
+    }
   } catch (error) {
     console.error("Error fetching job orders:", error);
     res.status(500).json({ error: "Internal Server Error" });

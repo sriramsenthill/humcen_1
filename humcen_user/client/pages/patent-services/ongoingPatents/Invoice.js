@@ -166,7 +166,7 @@ const Invoice = ({jobNumber}) => {
                 </td>
               </tr>
               <tr>
-                <td style={{ padding: "5px" }}>{id}</td>
+                <td style={{ padding: "5px" }}>{job._id.job_no}</td>
                 <td style={{ padding: "5px" }}>{service}</td>
                 <td style={{ padding: "5px" }}>{country}</td>
                 <td style={{ padding: "5px" }}>{budget}</td>

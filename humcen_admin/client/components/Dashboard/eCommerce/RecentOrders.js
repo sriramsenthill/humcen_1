@@ -440,7 +440,7 @@ function RecentOrders() {
                       fontSize: "13px",
                       textAlign: "center",
                     }}>
-                      <Link href={`onGoingPatents/${row._id.job_no}`} passHref>
+                      <Link href={`onGoingPatents/${row.og_id}`} passHref>
                       <Button  sx={{
                        background: "#01ACF6",
                       color: "white",

@@ -131,7 +131,7 @@ const  DynamicPage = () => {
         const data = await response.json();
 
         // Find the specific job object you want to return
-        const specificJob = data.find((job) => job._id.job_no === Number(id));
+        const specificJob = data.find((job) => job.og_id === Number(id));
 
         if (specificJob) {
           setJob(specificJob);
@@ -183,7 +183,7 @@ const  DynamicPage = () => {
     };
 
     if (jobID) {
-      fetchJobFileData(jobID);
+      fetchJobFileData(job.og_id);
     }
 
   }, [jobID]);
@@ -450,7 +450,7 @@ console.log(job)
                           background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
                         },
                       }}
-                      onClick={()=>onClickDownload(job._id.job_no)}
+                      onClick={()=>onClickDownload(job.og_id)}
                       disabled={!downloadStatus}
                     >
                       Download now
