@@ -164,7 +164,7 @@ const DynamicPage = () =>{
         const response = await api.get(`/Unassigned/only-details/${id}`);
 
         const specificJob = response.data;
-        console.log(specificJob);
+        console.log("Dei ", specificJob);
 
         if (specificJob) {
           setJob(specificJob);
@@ -339,7 +339,7 @@ const DynamicPage = () =>{
           >
             <h2>
               <span className={styles.label1}>Job No(UA) : </span>
-              {id}
+              {job._id.job_no}
             </h2>
           </Grid>
         </Grid>

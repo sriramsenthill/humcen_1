@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const UnassignedJobOrderSchema = new mongoose.Schema({
     _id : {
         job_no: {
-            type: String,
+            type: Number,
         }
     }
 }, {strict: false});

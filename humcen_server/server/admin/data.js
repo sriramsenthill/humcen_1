@@ -59,7 +59,26 @@ const getUnassignedJobOrders = async (req, res) => {
   try {
     // Assuming you have a MongoDB model named "JobOrder"
     const unassignedJobOrders = await Unassigned.find({ }).select("domain country _id status customerName budget service");
-    res.send(unassignedJobOrders);
+    let jobLists = [];
+    const copyJobs = JSON.parse(JSON.stringify(unassignedJobOrders));
+
+// Remove the _id field from each object in copyJobs
+copyJobs.forEach((job) => {
+  delete job._id.job_no;
+});
+    unassignedJobOrders.forEach((job) => {
+      jobLists.push(job._id.job_no);
+    })
+
+    const fakeIDs = await renderJobNumbers(jobLists);
+    const cleanedArray = fakeIDs.map(item => item.replace(/'/g, '').trim());
+    
+    for(let jobs=0; jobs<copyJobs.length; jobs++) {
+      copyJobs[jobs].og_id = jobLists[jobs]
+      copyJobs[jobs]._id.job_no = cleanedArray[jobs]
+    }
+    console.log(copyJobs);
+    res.send( copyJobs );
   } catch (error) {
     console.error("Error fetching unassigned job orders:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -367,6 +386,31 @@ const getUnassignedJobById = async (req, res) => {
   console.log("Hey " + jobId);
   try {
     const jobOrders = await Unassigned.findOne({"_id.job_no": jobId});
+    const jobLists = [jobId];
+    const copyJobs = JSON.parse(JSON.stringify(jobOrders));
+
+// Remove the _id.job_no field from the copy
+if (copyJobs._id) {
+  delete copyJobs._id.job_no;
+}
+    console.log("California " , copyJobs)
+
+    const fakeIDs = await renderJobNumbers(jobLists);
+    const cleanedArray = fakeIDs[0].replace(/\[|\]|'/g, '').trim();
+    console.log(cleanedArray);
+    copyJobs.og_id = jobLists[0];
+  
+    copyJobs._id.job_no = cleanedArray;
+    console.log("Before this " , copyJobs);
+
+    if (jobOrders) {
+      console.log(copyJobs);
+      res.json({ copyJobs });
+    } else {
+      res.status(404).json({
+        error: "No job found with the provided id or unauthorized access",
+      });
+    }
     console.log("jo: " + jobOrders);
     res.json(jobOrders);
   } catch (error) {
@@ -379,10 +423,30 @@ const getUnassignedJobDetailsById = async (req, res) => {
   const jobId = req.params.jobID;
   try {
     const jobOrder = await Unassigned.findOne({"_id.job_no": Number(jobId)}).select("customerName service domain country budget status _id");
-    if(!jobOrder) {
-      console.log("No Unassigned Job Order found for ID " + jobId);
+    const jobLists = [jobId];
+    const copyJobs = JSON.parse(JSON.stringify(jobOrder));
+
+// Remove the _id.job_no field from the copy
+if (copyJobs._id) {
+  delete copyJobs._id.job_no;
+}
+    console.log("California " , copyJobs)
+
+    const fakeIDs = await renderJobNumbers(jobLists);
+    const cleanedArray = fakeIDs[0].replace(/\[|\]|'/g, '').trim();
+    console.log(cleanedArray);
+    copyJobs.og_id = jobLists[0];
+  
+    copyJobs._id.job_no = cleanedArray;
+    console.log("Before this " , copyJobs);
+
+    if (jobOrder) {
+      console.log(copyJobs);
+      res.json(copyJobs );
     } else {
-      res.json(jobOrder);
+      res.status(404).json({
+        error: "No job found with the provided id or unauthorized access",
+      })
     }
   }  catch(error) {
     console.error("Error in sending the Details : " + error);

@@ -331,7 +331,7 @@ function UnAssignedJob() {
                     </TableCell>
                   
                   <TableCell>
-                  <Link href={`assignJobs/${row._id.job_no}`} passHref>
+                  <Link href={`assignJobs/${row.og_id}`} passHref>
                     <Button
                       sx={{
                         background: "#27AE60",
