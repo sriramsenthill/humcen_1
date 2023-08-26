@@ -174,9 +174,9 @@ function RecentBulkOrders() {
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchPartnerData();
-      console.log(data.bulkOrders);
-      setCount(data.bulkOrders.length);
-      setRows(data.bulkOrders);
+      console.log(data.copyJobs);
+      setCount(data.copyJobs.length);
+      setRows(data.copyJobs);
     };
 
     fetchData();
@@ -193,7 +193,7 @@ function RecentBulkOrders() {
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, count - page * rowsPerPage);
 
-    const sortedData = rows.sort((a, b) => parseInt(b._id.job_no) - parseInt(a._id.job_no));
+    const sortedData = rows.sort((a, b) => parseInt(b.og_id) - parseInt(a.og_id));
 
   return (
     <Card>
@@ -282,7 +282,7 @@ function RecentBulkOrders() {
     
                   
                   <TableCell>
-                  <Link href={`onGoingBulkOrders/${row._id.job_no}`} passHref>
+                  <Link href={`onGoingBulkOrders/${row.og_id}`} passHref>
                     <Button
                       sx={{
                         background: "#27AE60",

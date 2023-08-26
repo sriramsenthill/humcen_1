@@ -2399,12 +2399,31 @@ const getPartnersDataForCrossAssign = async  (req, res) => {
 const getAllBulkOrders = async(req, res) => {
   try {
     const bulkOrders = await BulkOrder.find({Assigned: false}).select("-bulk_order_files");
+    let jobLists = [];
+    const copyJobs = JSON.parse(JSON.stringify(bulkOrders));
+
+    // Remove the _id field from each object in copyJobs
+    copyJobs.forEach((job) => {
+      delete job._id.job_no;
+    });
+        bulkOrders.forEach((job) => {
+          jobLists.push(job._id.job_no);
+        })
+    
+        const fakeIDs = await renderJobNumbers(jobLists);
+        const cleanedArray = fakeIDs.map(item => item.replace(/'/g, '').trim());
+        
+        for(let jobs=0; jobs<copyJobs.length; jobs++) {
+          copyJobs[jobs].og_id = jobLists[jobs]
+          copyJobs[jobs]._id.job_no = cleanedArray[jobs]
+        }
+
     if(!bulkOrders) {
       console.log("No Pending Bulk Orders");
     } else {
       console.log("Sending the Pending Bulk Orders");
-      console.log(bulkOrders);
-      res.json({bulkOrders});
+      console.log(copyJobs);
+      res.json({ copyJobs });
     }
   } catch(error) {
     console.error("Error in finding Bulk Orders : " +error);
@@ -2417,11 +2436,29 @@ const getBulkOrderById = async(req, res) => {
     const bulkOrderId = req.params.id;
     console.log("Hey" + bulkOrderId);
     const foundBulkOrder = await BulkOrder.findOne({"_id.job_no": Number(bulkOrderId)}).select("-bulk_order_files");
+    const jobLists = [foundBulkOrder._id.job_no];
+    const copyJobs = JSON.parse(JSON.stringify(foundBulkOrder));
+
+// Remove the _id.job_no field from the copy
+if (copyJobs._id) {
+  delete copyJobs._id.job_no;
+}
+    console.log("California " , copyJobs)
+
+    const fakeIDs = await renderJobNumbers(jobLists);
+    const cleanedArray = fakeIDs[0].replace(/\[|\]|'/g, '').trim();
+    console.log(cleanedArray);
+    copyJobs.og_id = jobLists[0];
+    console.log("This " + copyJobs);  
+
+    copyJobs._id.job_no = cleanedArray;
+
     if(!foundBulkOrder) {
       console.log("No Bulk Order found for Job Number " + bulkOrderId);
     } else {
       console.log("Sending the details of that particular Bulk Order..");
-      res.json(foundBulkOrder);
+      console.log(copyJobs);
+      res.json( copyJobs );
     } 
   } catch(error) {
     console.error('Error in getting the Bulk Order Details : ' + error);
