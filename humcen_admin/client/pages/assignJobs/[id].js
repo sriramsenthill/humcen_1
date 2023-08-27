@@ -234,7 +234,7 @@ const DynamicPage = () =>{
     console.log(selectedPartner);
     try {
       const assignResponse = await api.post("/assign", {
-        uaJobID: job._id.job_no,
+        uaJobID: job.og_id,
         partID: selectedPartner,
         service: job.service,
       }).then((response) => {
@@ -484,7 +484,7 @@ const DynamicPage = () =>{
                           background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
                         }, }}
                 type="submit"
-                onClick={() => {window.location.href = '/', handleSubmit()}}
+                onClick={() => { handleSubmit()}}
               >
                 Assign Job
       </ColorButton> )}

@@ -462,38 +462,34 @@ const assignTask = async(req, res) => {
   if(patentService === "Patent Drafting") {
     const unassignedDraftingData = await Unassigned.findOne({"_id.job_no": parseInt(unassignedJobID)});
     const assignedPartner = await Partner.findOne({userID: parseInt(partnerID)});
-    const latestDraftingOrder = await JobOrder.findOne()
-      .sort({ "_id.job_no": -1 })
-      .limit(1)
-      .exec();
-
-      const newDraftingNo = latestDraftingOrder
-      ? latestDraftingOrder._id.job_no + 1
-      : 1000;
 
       const startDate = new Date();
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
 
-     // Push job details to the Customer 
+
+
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = new Date().toLocaleDateString(undefined, options);
+
+    // Creating a new Job Order Document
+    const dummyJobOrder = await JobOrder.findOne({"unassignedID": unassignedJobID});
+    const newJobID = dummyJobOrder._id.job_no;
+
+    //  Push job details to the Customer 
     const findCustomer = await Customer.findOne({userID: unassignedDraftingData.userID})
     if(!findCustomer) {
       console.error("No Customer exists with ID " + unassignedDraftingData.userID);
     }
-    findCustomer.jobs.push(newDraftingNo);
+    findCustomer.jobs.push(newJobID);
     findCustomer.save().then(() => {
       console.log("Job Number pushed to Customer Schema");
     }).catch((err) => {
       console.error("Error in pushing the Job to Customer Schema: " + err);
     });  
 
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    const formattedDate = new Date().toLocaleDateString(undefined, options);
-
-    // Creating a new Job Order Document
-
       const jobOrderDoc = {
-      "_id.job_no": newDraftingNo,
+      "_id.job_no": newJobID,
       service: patentService,
       country: unassignedDraftingData.country,
       start_date: startDate,
@@ -515,16 +511,22 @@ const assignTask = async(req, res) => {
       partnerID: partnerID,
     }
 
+    const deleteDummyJobOrder = await JobOrder.deleteOne({"unassignedID": unassignedJobID}).then(() => {
+      console.log("Dummy Job Order deleted Successfully");
+    }).catch((err) => {
+      console.error("Error in deleting the Dummy Job Order : " + err);
+    });
+
     const jobSchemaDoc = await new JobOrder(jobOrderDoc).save().then((response) => {
-      console.log("Job Order " + newDraftingNo + " saved successfully in Job Order Schema" );
+      console.log("Job Order " + newJobID + " saved successfully in Job Order Schema" );
     }).catch((error) => {
       console.error("Error in saving Document inside Job Order Schema : " + error);
     });
 
-      // Creating a new Service Document
+    //   Creating a new Service Document
 
       const draftingDoc = {
-        "_id.job_no": newDraftingNo,
+        "_id.job_no": newJobID,
         country: unassignedDraftingData.country,
         budget: unassignedDraftingData.budget,
         userID: unassignedDraftingData.userID,
@@ -537,26 +539,26 @@ const assignTask = async(req, res) => {
       }
 
       const draftingSchemaDoc = await new Drafting(draftingDoc).save().then((response) => {
-        console.log("Job Order " + newDraftingNo + " saved successfully in Drafting Schema" );
+        console.log("Job Order " + newJobID + " saved successfully in Drafting Schema" );
       }).catch((error) => {
         console.error("Error in saving Document inside Drafting Schema : " + error);
       });
 
-      // Deleting the Old Unassigned Document
+    //   Deleting the Old Unassigned Document
       const noLongerUnassigned = await Unassigned.deleteOne({"_id.job_no": parseInt(unassignedJobID)}).then((response) => {
         console.log("Unassigned Task with Job Number " + unassignedJobID + " has been deleted successfully");
       }).catch((error) => {
         console.error("Error in deleting the Unassigned Task : " + error);
       })
 
-      // Pushing the Job Number to Partner's Jobs Array
-      assignedPartner.jobs.push(newDraftingNo);
+    //   Pushing the Job Number to Partner's Jobs Array
+      assignedPartner.jobs.push(newJobID);
       assignedPartner.in_progress_jobs = assignedPartner.in_progress_jobs + 1;
-      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newDraftingNo + "successfully.");
-      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newDraftingNo +" has been assigned manually to you by Admin successfully.");
-      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newDraftingNo + " has been assigned to Partner ID" + partnerID +" successfully.")
+      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newJobID + "successfully.");
+      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newJobID +" has been assigned manually to you by Admin successfully.");
+      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newJobID + " has been assigned to Partner ID" + partnerID +" successfully.")
       assignedPartner.save().then((response) => {
-        console.log("Job Number " + newDraftingNo + " successfully pushed to the Partner");
+        console.log("Job Number " + newJobID + " successfully pushed to the Partner");
       }).catch((error) => {
         console.log("Error in Pushing the Job to the Partner : " + error);
       });
@@ -572,14 +574,14 @@ const assignTask = async(req, res) => {
         {label:'Job Title :',value:unassignedDraftingData.job_title},
         {label:'Budget :',value:unassignedDraftingData.budget},
         {label:'Time Of Delivery :',value:unassignedDraftingData.time_of_delivery},
-        // Add more rows as needed
+    //     Add more rows as needed
       ];
 
       const { invention_details } = unassignedDraftingData.service_specific_files;
           
-      // Ensure invention_details is an array and not empty
+    //   Ensure invention_details is an array and not empty
       if (Array.isArray(invention_details) && invention_details.length > 0) {
-        // Iterate through the invention_details array and add each file as a separate attachment
+    //     Iterate through the invention_details array and add each file as a separate attachment
         for (const item of invention_details) {
           if (item.name && item.base64) {
             const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
