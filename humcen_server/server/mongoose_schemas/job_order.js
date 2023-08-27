@@ -5,6 +5,7 @@ const jobOrderSchema = new mongoose.Schema({
     job_no: { type: Number }
   },
   service: { type: String },
+  unassignedID: {type: Number},
   country: { type: String },
   start_date: { type: Date },
   end_date: { type: Date },
