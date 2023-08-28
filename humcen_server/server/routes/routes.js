@@ -52,7 +52,7 @@ router.post(
 router.post(
     "/api/response_to_fer",
     verifyToken,
-    forms.saveResponseToFerData
+    forms.newVersionFER
 );
 
 router.post(

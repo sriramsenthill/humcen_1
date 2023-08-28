@@ -277,7 +277,7 @@ const DynamicPage = () => {
               <tr>
                 <td style={{ padding: "10px", textAlign:"center", fontWeight: "bold", fontSize: "13.5px",  }}>{service}</td>
                 <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{customerName}</td>
-                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{partnerName}</td>
+                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{partnerName == '' ? "To be Assigned" : partnerName }</td>
                 <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{country}</td>
                 <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{budget}</td>
                 <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{formattedStartDate}</td>

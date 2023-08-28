@@ -44,24 +44,11 @@ export default function Inbox() {
     const [countriesOpen, setCountriesOpen] = useState(false);
     const [contactOpen, setContactOpen] = useState(false);
     const [domain, setDomain] = useState("");
-    const [country, setCountry] = useState("");
-    const [applicationType, setApplicatonType] = useState("");
-    const [title, setTitle] = useState("");
-    const [detailsFile, setDetailsFile] = useState(null);
-    const [applicantsFile, setApplicantsFile] = useState(null);
-    const [investorsFile, setInvestorsFile] = useState(null);
-    const [time, setTime] = useState("");
-    const [budget, setBudget] = useState("");
-    const [isSubmitted, setIsSubmitted] = useState(false);
-    const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
-    const [isErrorDialogOpenStatus, setIsErrorDialogOpenStatus] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("");
+    const [country, setCountry] = useState([]);
     const [summary, setSummary] = useState([]);
   const [totalBill, setBill] = useState([]); // Bill amount state
   const [shoppingList, setList] = useState([]);
-  const [keywords, setKeyword] = useState([]);
-  const [description, setDescription] = useState("");
-  const [techDrawings, setTechDrawings] = useState(null);
+
 
   const [strategy, setStrategy] = useState("");
 
@@ -93,7 +80,6 @@ export default function Inbox() {
     };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
 
     if (!isFormValid()) {
       setIsErrorDialogOpen(true);
@@ -106,7 +92,8 @@ export default function Inbox() {
       fer: fer,
       complete_specifications: specs,
       response_strategy: strategy,
-      country: country,
+      countries: country,
+      bills: totalBill,
     };
 
     try {
@@ -140,20 +127,16 @@ export default function Inbox() {
 
     setSummary([
       {
-        title: "Title",
-        text: title,
-      },
-      {
         title: "Domain",
         text: domain,
       },
       {
-        title: "Keywords",
-        text: keywords.toString()
+        title: "Response Strategy",
+        text: strategy.toString()
       },
       {
         title: "Uploaded Files",
-        text: [detailsFile.map((file) => file.name)].toString()
+        text: [fer.map((file) => file.name)].toString() + ", " + [specs.map((file) => file.name)].toString()
       }
     ]);
 
@@ -356,7 +339,7 @@ export default function Inbox() {
       <Typography variant="h5">Summary</Typography>
       { contactOpen && <div style={{ padding: '1rem 0' }}>
           {/* Your content for the 'Contact' section */}
-          <ShoppingCart priceList={shoppingList} detailsList={summary} total={totalBill.reduce((a,b)=> a+b,0)}service="Patent Drafting"/>
+          <ShoppingCart priceList={shoppingList} detailsList={summary} total={totalBill.reduce((a,b)=> a+b,0)} service="Response To FER/ Office Action"/>
           <Button variant="contained" onClick={() => handleSubmit()} style={{ marginTop: '0.5rem', backgroundColor: "#00B69B" }}>
             Submit
         </Button>
