@@ -422,7 +422,7 @@ if (copyJobs._id) {
 const getUnassignedJobDetailsById = async (req, res) => {
   const jobId = req.params.jobID;
   try {
-    const jobOrder = await Unassigned.findOne({"_id.job_no": Number(jobId)}).select("customerName service domain country budget status _id");
+    const jobOrder = await Unassigned.findOne({"_id.job_no": Number(jobId)}).select("customerName service domain field country budget status _id");
     const jobLists = [jobId];
     const copyJobs = JSON.parse(JSON.stringify(jobOrder));
 

@@ -58,7 +58,7 @@ router.post(
 router.post(
     "/api/freedom_to_operate",
     verifyToken,
-    forms.saveFreedomToOperateData
+    forms.newVersionFTO
 );
 
 router.post("/api/patent_illustration", verifyToken, forms.savePatentIllustrationData);

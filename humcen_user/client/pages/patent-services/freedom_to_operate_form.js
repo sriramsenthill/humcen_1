@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import BannerCard from "@/components/BannerCard";
 import Link from "next/link";
+import ShoppingCart from "@/components/shoppingCart";
 import style from "@/styles/PageTitle.module.css";
 import { Button, ButtonProps, Card } from "@mui/material";
 import { styled } from "@mui/system";
@@ -44,7 +45,7 @@ export default function Inbox() {
     const [countriesOpen, setCountriesOpen] = useState(false);
     const [contactOpen, setContactOpen] = useState(false);
     const [domain, setDomain] = useState("");
-    const [country, setCountry] = useState("");
+    const [country, setCountry] = useState([]);
     const [title, setTitle] = useState("");
     const [detailsFile, setDetailsFile] = useState(null);
     const [time, setTime] = useState("");
@@ -84,14 +85,15 @@ export default function Inbox() {
     return domain && description && patentDetails && keywords && country;
   };
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    
     if (!isFormValid()) {
       setIsErrorDialogOpen(true);
       return;
     }
     const formData = {
       field: domain,
-      country: country,
+      countries: country,
+      bills: totalBill,
       keywords: keywords,
       invention_description: description,
       patent_application_details: patentDetails,
@@ -127,10 +129,6 @@ export default function Inbox() {
 
     setSummary([
       {
-        title: "Title",
-        text: title,
-      },
-      {
         title: "Domain",
         text: domain,
       },
@@ -140,7 +138,7 @@ export default function Inbox() {
       },
       {
         title: "Uploaded Files",
-        text: [detailsFile.map((file) => file.name)].toString()
+        text: [description.map((file) => file.name)].toString() + ", " + [patentDetails.map((file) => file.name)].toString()
       }
     ]);
 
@@ -175,7 +173,7 @@ export default function Inbox() {
 
     <Container maxWidth="md" style={{ marginTop: '2rem' }}>
       <Head>
-        <title>FER</title>
+        <title>FTO</title>
       </Head>
       <BannerCard
   title="Freedom to Operate"

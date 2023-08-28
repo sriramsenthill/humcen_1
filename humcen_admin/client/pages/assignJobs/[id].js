@@ -293,6 +293,7 @@ const DynamicPage = () =>{
     country,
     customerName,
     domain,
+    field,
     job_title,
     service,
     status,
@@ -378,7 +379,8 @@ const DynamicPage = () =>{
               <tr>
                 <td style={{ padding: "10px", textAlign:"center", fontWeight: "bold", fontSize: "13.5px",  }}>{customerName}</td>
                 <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{service}</td>
-                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{domain}</td>
+               { domain && <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{domain}</td> }
+               { field && <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{field}</td> }
                 <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{country}</td>
                 <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{budget}</td>
                 <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{status}</td>

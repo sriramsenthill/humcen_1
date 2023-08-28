@@ -2578,7 +2578,220 @@ const newVersionFER = async(req, res) => {
   }
 }
 
+const newVersionFTO = async(req, res) => {
+  try {
+    const userId = req.userId;
+    let partnerName, partnerID, mapID, ftoData, newFTONo;
+    for(let totalCountries = 0; totalCountries < req.body.countries.length; totalCountries++) {
+      console.log("Finding for " + req.body.countries[totalCountries]);
+      const findPartner = await Partner.findOne({
+        is_free: true,
+        ["known_fields.Freedom To Operate"]: true,
+        in_progress_jobs: { $lt: 5 },                       // Finding Availability of Partner for each and every chosen Country
+        country: req.body.countries[totalCountries]
+      });
+      const findCustomer = await Customer.findOne({ userID: userId });
+      const findAdmin=await Admin.findOne({_id:"64803aa4b57edc54d6b276cb"})
+      if (!findCustomer) {
+        // Handle the case when no customer is found
+        throw new Error("No customer found for the given user ID");
+      }
+      
+      if (!findPartner) {
+        partnerName = "";
+        partnerID = "";                                   // If there's no availability of Partner
+        // Handle the case when no partner is found
+        const latestUnassignedFTOOrder = await Unassigned.findOne()
+        .sort({ "_id.job_no": -1 })
+        .limit(1)
+        .exec();
+  
+      const newUnassignedFTONo = latestUnassignedFTOOrder
+        ? latestUnassignedFTOOrder._id.job_no + 1
+        : 1000;
+      
+        console.log("Yes");
+        // Changes
+        mapID = newUnassignedFTONo;
+      ftoData = {                                         // Creating a new Drafting Document for saving Details
+        country: req.body.countries[totalCountries],
+        budget: req.body.bills[totalCountries],
+        keywords: req.body.keywords,
+        field: req.body.field,
+        userID: userId,
+        invention_description: req.body.invention_description,
+        patent_application_details: req.body.patent_application_details,
+      }
+  
+        stepsInitial = 2;
+        const newFTOData = ftoData;
+        newFTOData.service = "Freedom To Operate";
+        newFTOData.customerName = findCustomer.first_name;
+        newFTOData.status = "In Progress";
+        console.log(newFTOData);
+        const unassignedFTOOrder = new Unassigned(newFTOData);  // Creating a new Unassigned Job Order
+        unassignedFTOOrder._id.job_no =  newUnassignedFTONo ;
+        
+        unassignedFTOOrder.save();
+        
+        console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
+  
+        await AllNotifications.sendToUser(Number(userId), "Your Patent Drafting Form has been submitted successfully");
+        await AllNotifications.sendToAdmin("Patent Drafting Form of ID " + newUnassignedFTONo +" has been submitted successfully and is in Unassigned Jobs.")
+  
+  
+      } 
+      const latestFTOOrder = await JobOrder.findOne()
+      .sort({ "_id.job_no": -1 })                                                 // Finding the latest Job Order to assign next Job Number to 
+      .limit(1)                                                                   // new Dummy Job Orderr
+      .exec();
 
+      newFTONo = latestFTOOrder
+      ? latestFTOOrder._id.job_no + 1
+      : 1000;
+         // Changes 
+      console.log(newFTONo);
+      ftoData._id = { job_no: newFTONo };
+      const startDate = new Date();
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() + 7);
+
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      const formattedDate = new Date().toLocaleDateString(undefined, options);
+      console.log("Fine till now" ,ftoData);
+      const newJobOrder = new JobOrder({
+        _id: { job_no: newFTONo },                                             // Creating a new Job Order for both Dummy and Assigned one
+        service: "Freedom To Operate",
+        userID: userId,
+        unassignedID: !findPartner && mapID,
+        partnerID: partnerID,
+        partnerName: partnerName, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+        customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
+        country: req.body.countries[totalCountries],
+        start_date: startDate,
+        end_date: endDate,
+        steps_done: 1,
+        steps_done_user: 1,
+        steps_done_activity: 2,
+        date_partner: [formattedDate, " ", " ", " "], 
+        date_user: [formattedDate, " ", " ", " ", " ", " "],
+        date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " ", " ", " "],
+        status: "In Progress",
+        budget: "$ " +  req.body.bills[totalCountries],
+        domain: req.body.domain,
+      });
+  
+      await newJobOrder.save();
+      console.log("Saved");
+      
+      if(findPartner) {
+        // Changes
+        partnerName = findPartner.first_name;
+        partnerID = findPartner.userID;
+        console.log("Partner Found");
+        stepsInitial = 3;
+        // Save the draftingData in the Drafting collection
+        const ftoOrder = new responseToFer(ftoData);                       // Creating a new Drafting Document
+        ftoOrder._id.job_no = newFTONo ;
+        // Ensure findPartner and findCustomer are not null before accessing their properties
+        ftoOrder.partnerName = findPartner.first_name; // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+        ftoOrder.customerName = findCustomer.first_name;// Assuming the customer's name is stored in the 'customerName' field of the Customer collection
+    
+        const savedFTO = await ftoOrder.save();
+    
+        // Update partner and customer jobs lists
+        findPartner.jobs.push(ftoOrder._id.job_no);
+        findCustomer.jobs.push(ftoOrder._id.job_no);
+    
+        await Promise.all([findPartner.save(), findCustomer.save()]);
+    
+
+  
+    
+        console.log("Successfully Assigned Freedom To Operate Search Task to a Partner");
+        console.log(userId);
+        await AllNotifications.sendToUser(Number(userId), "Your Patent Drafting Form has been submitted successfully");
+        await AllNotifications.sendToPartner(Number(findPartner.userID),"You have been auto-assigned the Job " + newFTONo + ". You can Accept or Reject the Job.");
+        await AllNotifications.sendToAdmin("Patent Drafting Form of ID " + newFTONo +" has been submitted successfully")
+  
+        // To send Notification to Admin
+  
+
+  
+      }
+    
+          // Fetch user's email from MongoDB and send the email
+          const user = await Customer.findOne({ userID: userId });
+          const attachments = [];
+          if (user && user.email) {
+            const subject = 'Freedom To Operate Search Submission Successful';
+            const text = 'Your Freedom To Operate Search form has been submitted successfully.';
+            
+            // Prepare the data for the table in the email
+            const tableData = [
+              { label: 'Service :', value: 'Freedom To Operate Search' },
+              { label: 'Customer Name :', value: findCustomer.first_name },
+              {label:'Domain :',value:req.body.field},
+              {label:'Keywords :',value:req.body.keywords},
+              {label:'Country :',value:req.body.countries[totalCountries]},
+              {label:'Budget :',value:req.body.bills[totalCountries]},
+              // Add more rows as needed
+            ];
+      
+            const inventionDescriptionFile=req.body.invention_description
+            const patentApplicationFile=req.body.patent_application_details
+            
+            // Ensure invention_details is an array and not empty
+            if (Array.isArray(inventionDescriptionFile) && inventionDescriptionFile.length > 0) {
+              // Iterate through the invention_details array and add each file as a separate attachment
+              for (const item of inventionDescriptionFile) {
+                if (item.name && item.base64) {
+                  const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+                  attachments.push({
+                    filename: item.name,
+                    content: base64Content,
+                    encoding: 'base64', // Specify that the content is base64-encoded
+                  });
+                }
+              }
+            }
+      
+            if (Array.isArray(patentApplicationFile) && patentApplicationFile.length > 0) {
+              // Iterate through the invention_details array and add each file as a separate attachment
+              for (const item of patentApplicationFile) {
+                if (item.name && item.base64) {
+                  const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+                  attachments.push({
+                    filename: item.name,
+                    content: base64Content,
+                    encoding: 'base64', // Specify that the content is base64-encoded
+                  });
+                }
+              }
+            }
+            
+            // Send the email with tableData and attachments
+            sendEmail(user.email, subject, text, tableData,attachments);
+            if (findPartner){
+          
+              const partnerSubject="Request to accept the Freedom To Operate Search Form"
+              const partnerText="Accept the submission for Freedom To Operate Search Form"
+              sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
+            }
+            else{
+              const partnerSubject="Request to accept the Freedom To Operate Search Form"
+              const partnerText="Assign the partner for Freedom To Operate Search Form"
+              sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
+            }
+            } 
+  
+    }
+    res.status(200);
+     }
+     catch(error) {
+      console.error("Error in saving up the Freedom To Operate Form : " + error);
+  }
+}
 
 module.exports = {
     getJobOrderOnID,
@@ -2606,4 +2819,5 @@ module.exports = {
     newVersionPatentFiling,
     newVersionPatentSearch,
     newVersionFER,
+    newVersionFTO,
   };
