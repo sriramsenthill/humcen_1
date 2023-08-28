@@ -126,25 +126,33 @@ const IndexPage = () => {
 
   return (
     <>
+      <div style={{ margin: '0 1rem' }}>
+        <Paper elevation={3} style={{ borderRadius: '16px', padding: '1rem', margin: '1rem 0' }}>
+          {/* Banner */}
+
 
     {/* Page title */}
     <div className={style.pageTitle}>
-      <ul>
-        <li>
-          <Link href="/">Dashboard</Link>
-        </li>
-        <li>
-          <Link href="/patent-services">My Patent Services</Link>
-        </li>
-        <li>Patent Filing</li>
-      </ul>
-    </div>
+  <ul>
+    <li>
+      <Link href="/">Dashboard</Link>
+    </li>
+    <li>
+      <Link href="/patent-services">My Patent Services</Link>
+    </li>
+    <li>Patent Drafting</li>
+  </ul>
+</div>
 
     <Container maxWidth="md" style={{ marginTop: '2rem' }}>
       <Head>
-        <title>Form Example</title>
+        <title>Patent Drafting</title>
       </Head>
-      <BannerCard title="Patent Drafting" imageSrc="/images/banner_img/bg.png" color="white"></BannerCard>
+      <BannerCard
+  title="Patent Drafting"
+  imageSrc="/images/banner_img/bg.png"
+  color="white"
+  style={{ width: '100%', maxWidth: '1200px', margin: '550%' }}></BannerCard>
 
       <Typography variant="h5" onClick={() => setDraftingOpen(!draftingOpen)} style={{ cursor: 'pointer' }}>
         Drafting
@@ -277,6 +285,9 @@ const IndexPage = () => {
 
 
     </Container>
+    </Paper>
+    </div>
+
     </>
   );
 };
