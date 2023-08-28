@@ -94,7 +94,7 @@ const ShoppingCart = ({priceList, detailsList, service, total}) => {
                     fontSize: "13px",
                   }}
                 >
-                  Drafting Cost
+                  Cost
                 </TableCell>
               </TableRow>
             </TableHead>

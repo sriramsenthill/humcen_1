@@ -114,17 +114,17 @@ const DynamicPage = () =>{
       try {
         const noFileInputServices = ['Patent Licensing and Commercialization Services', "Patent Watch", "Freedom to Patent Landscape" ];
         const response = await api.get(`admin/job_order/${id}`);
-
+        console.log(response.data);
         const specificJob = response.data;
         console.log(specificJob);
 
         if (specificJob) {
-          setJob(specificJob[0]);
-          setJobID(specificJob[0].job_no);
-          setPrevPartner(specificJob[0].partnerID);
-          setService(specificJob[0].service);
-          setCountry(specificJob[0].country);
-          setFile(noFileInputServices.includes(specificJob[0].service));
+          setJob(specificJob);
+          setJobID(specificJob._id.job_no);
+          setPrevPartner(specificJob.partnerID);
+          setService(specificJob.service);
+          setCountry(specificJob.country);
+          setFile(noFileInputServices.includes(specificJob.service));
         } else {
           console.log("No job found with the provided job number:", id);
           setJob(null);
@@ -143,7 +143,7 @@ const DynamicPage = () =>{
     };
   }, [id]);
   
-
+console.log(job);
   if (!job) {
     return <div>No job found with the provided job number.</div>;
   }

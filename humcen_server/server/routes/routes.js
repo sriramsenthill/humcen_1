@@ -40,7 +40,7 @@ router.post(
 router.post(
   "/api/patent_filing",
   verifyToken,
-  forms.createJobOrderPatentFiling
+  forms.newVersionPatentFiling
 );
 
 router.post(

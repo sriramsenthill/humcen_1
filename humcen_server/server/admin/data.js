@@ -615,7 +615,7 @@ const assignTask = async(req, res) => {
     if(!findCustomer) {
       console.error("No Customer exists with ID " + unassignedFilingData.userID);
     }
-    findCustomer.jobs.push(newJobNo);
+    findCustomer.jobs.push(newJobID);
     findCustomer.save().then(() => {
       console.log("Job Number pushed to Customer Schema");
     }).catch((err) => {
@@ -628,7 +628,7 @@ const assignTask = async(req, res) => {
       // Creating a new Job Order Document
 
       const jobOrderDoc = {
-        "_id.job_no": newJobNo,
+        "_id.job_no": newJobID,
         service: patentService,
         country: unassignedFilingData.country,
         start_date: realStartDate,
@@ -651,7 +651,7 @@ const assignTask = async(req, res) => {
       }
 
       const jobSchemaDoc = await new JobOrder(jobOrderDoc).save().then((response) => {
-        console.log("Job Order " + newJobNo + " saved successfully in Job Order Schema" );
+        console.log("Job Order " + newJobID + " saved successfully in Job Order Schema" );
       }).catch((error) => {
         console.error("Error in saving Document inside Job Order Schema : " + error);
       });
@@ -659,7 +659,7 @@ const assignTask = async(req, res) => {
       // Creating a new Service Document
 
       const filingDoc = {
-        "_id.job_no": newJobNo,
+        "_id.job_no": newJobID,
         country: unassignedFilingData.country,
         budget: unassignedFilingData.budget,
         userID: unassignedFilingData.userID,
@@ -671,7 +671,7 @@ const assignTask = async(req, res) => {
       }
 
       const filingSchemaDoc = await new Filing(filingDoc).save().then((response) => {
-        console.log("Job Order " + newJobNo + " saved successfully in Filing Schema" );
+        console.log("Job Order " + newJobID + " saved successfully in Filing Schema" );
       }).catch((error) => {
         console.error("Error in saving Document inside Filing Schema : " + error);
       });      
@@ -684,15 +684,15 @@ const assignTask = async(req, res) => {
       })
 
       // Pushing the Job Number to Partner's Jobs Array
-      assignedPartner.jobs.push(newJobNo);
+      assignedPartner.jobs.push(newJobID);
       assignedPartner.in_progress_jobs = assignedPartner.in_progress_jobs + 1;
-      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newJobNo + "successfully.");
-      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newJobNo +" has been assigned manually to you by Admin successfully.");
-      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newJobNo + " has been assigned to Partner ID" + partnerID +" successfully")
+      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newJobID + "successfully.");
+      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newJobID +" has been assigned manually to you by Admin successfully.");
+      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newJobID + " has been assigned to Partner ID" + partnerID +" successfully")
 
 
       assignedPartner.save().then((response) => {
-        console.log("Job Number " + newJobNo + " successfully pushed to the Partner");
+        console.log("Job Number " + newJobID + " successfully pushed to the Partner");
       }).catch((error) => {
         console.log("Error in Pushing the Job to the Partner : " + error);
       });
@@ -772,7 +772,7 @@ const assignTask = async(req, res) => {
     if(!findCustomer) {
       console.error("No Customer exists with ID " + unassignedSearchData.userID);
     }
-    findCustomer.jobs.push(newJobNo);
+    findCustomer.jobs.push(newJobID);
     findCustomer.save().then(() => {
       console.log("Job Number pushed to Customer Schema");
     }).catch((err) => {
@@ -785,7 +785,7 @@ const assignTask = async(req, res) => {
       // Creating a new Job Order Document
 
       const jobOrderDoc = {
-        "_id.job_no": newJobNo,
+        "_id.job_no": newJobID,
         service: patentService,
         country: unassignedSearchData.country,
         start_date: realStartDate,
@@ -808,7 +808,7 @@ const assignTask = async(req, res) => {
       }
 
       const jobSchemaDoc = await new JobOrder(jobOrderDoc).save().then((response) => {
-        console.log("Job Order " + newJobNo + " saved successfully in Job Order Schema" );
+        console.log("Job Order " + newJobID + " saved successfully in Job Order Schema" );
       }).catch((error) => {
         console.error("Error in saving Document inside Job Order Schema : " + error);
       });
@@ -816,7 +816,7 @@ const assignTask = async(req, res) => {
       // Creating a new Service Document
 
       const searchDoc = {
-        "_id.job_no": newJobNo,
+        "_id.job_no": newJobID,
         country: unassignedSearchData.country,
         userID: unassignedSearchData.userID,
         invention_description: unassignedSearchData.invention_description,
@@ -826,7 +826,7 @@ const assignTask = async(req, res) => {
       }
 
       const searchSchemaDoc = await new Search(searchDoc).save().then((response) => {
-        console.log("Job Order " + newJobNo + " saved successfully in Patent Search Schema" );
+        console.log("Job Order " + newJobID + " saved successfully in Patent Search Schema" );
       }).catch((error) => {
         console.error("Error in saving Document inside Patent Search Schema : " + error);
       });      
@@ -839,15 +839,15 @@ const assignTask = async(req, res) => {
       })
 
       // Pushing the Job Number to Partner's Jobs Array
-      assignedPartner.jobs.push(newJobNo);
+      assignedPartner.jobs.push(newJobID);
       assignedPartner.in_progress_jobs = assignedPartner.in_progress_jobs + 1;
-      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newJobNo + "successfully.");
-      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newJobNo +" has been assigned manually to you by Admin successfully.");
-      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newJobNo + " has been assigned to Partner ID" + partnerID +" successfully")
+      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newJobID + "successfully.");
+      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newJobID +" has been assigned manually to you by Admin successfully.");
+      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newJobID + " has been assigned to Partner ID" + partnerID +" successfully")
 
 
       assignedPartner.save().then((response) => {
-        console.log("Job Number " + newJobNo + " successfully pushed to the Partner");
+        console.log("Job Number " + newJobID + " successfully pushed to the Partner");
       }).catch((error) => {
         console.log("Error in Pushing the Job to the Partner : " + error);
       });
@@ -897,7 +897,7 @@ const assignTask = async(req, res) => {
     if(!findCustomer) {
       console.error("No Customer exists with ID " + unassignedFERData.userID);
     }
-    findCustomer.jobs.push(newJobNo);
+    findCustomer.jobs.push(newJobID);
     findCustomer.save().then(() => {
       console.log("Job Number pushed to Customer Schema");
     }).catch((err) => {
@@ -910,7 +910,7 @@ const assignTask = async(req, res) => {
       const formattedDate = new Date().toLocaleDateString(undefined, options);
 
       const jobOrderDoc = {
-        "_id.job_no": newJobNo,
+        "_id.job_no": newJobID,
         service: patentService,
         country: unassignedFERData.country,
         start_date: realStartDate,
@@ -933,7 +933,7 @@ const assignTask = async(req, res) => {
       }
 
       const jobSchemaDoc = await new JobOrder(jobOrderDoc).save().then((response) => {
-        console.log("Job Order " + newJobNo + " saved successfully in Job Order Schema" );
+        console.log("Job Order " + newJobID + " saved successfully in Job Order Schema" );
       }).catch((error) => {
         console.error("Error in saving Document inside Job Order Schema : " + error);
       });
@@ -941,7 +941,7 @@ const assignTask = async(req, res) => {
       // Creating a new Service Document
 
       const FERDoc = {
-        "_id.job_no": newJobNo,
+        "_id.job_no": newJobID,
         country: unassignedFERData.country,
         userID: unassignedFERData.userID,
         response_strategy: unassignedFERData.response_strategy,
@@ -951,7 +951,7 @@ const assignTask = async(req, res) => {
       }
 
       const FERSchemaDoc = await new responseToFER(FERDoc).save().then((response) => {
-        console.log("Job Order " + newJobNo + " saved successfully in Response to FER / Office Action Schema" );
+        console.log("Job Order " + newJobID + " saved successfully in Response to FER / Office Action Schema" );
       }).catch((error) => {
         console.error("Error in saving Document inside Response to FER / Office Action Schema : " + error);
       });      
@@ -964,15 +964,15 @@ const assignTask = async(req, res) => {
       })
 
       // Pushing the Job Number to Partner's Jobs Array
-      assignedPartner.jobs.push(newJobNo);
+      assignedPartner.jobs.push(newJobID);
       assignedPartner.in_progress_jobs = assignedPartner.in_progress_jobs + 1;
-      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newJobNo + "successfully.");
-      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newJobNo +" has been assigned manually to you by Admin successfully.");
-      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newJobNo + " has been assigned to Partner ID" + partnerID +" successfully")
+      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newJobID + "successfully.");
+      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newJobID +" has been assigned manually to you by Admin successfully.");
+      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newJobID + " has been assigned to Partner ID" + partnerID +" successfully")
 
 
       assignedPartner.save().then((response) => {
-        console.log("Job Number " + newJobNo + " successfully pushed to the Partner");
+        console.log("Job Number " + newJobID + " successfully pushed to the Partner");
       }).catch((error) => {
         console.log("Error in Pushing the Job to the Partner : " + error);
       });
@@ -1039,7 +1039,7 @@ const assignTask = async(req, res) => {
     if(!findCustomer) {
       console.error("No Customer exists with ID " + unassignedFTOData.userID);
     }
-    findCustomer.jobs.push(newJobNo);
+    findCustomer.jobs.push(newJobID);
     findCustomer.save().then(() => {
       console.log("Job Number pushed to Customer Schema");
     }).catch((err) => {
@@ -1052,7 +1052,7 @@ const assignTask = async(req, res) => {
       const formattedDate = new Date().toLocaleDateString(undefined, options);
 
       const jobOrderDoc = {
-        "_id.job_no": newJobNo,
+        "_id.job_no": newJobID,
         service: patentService,
         country: unassignedFTOData.country,
         start_date: realStartDate,
@@ -1075,7 +1075,7 @@ const assignTask = async(req, res) => {
       }
 
       const jobSchemaDoc = await new JobOrder(jobOrderDoc).save().then((response) => {
-        console.log("Job Order " + newJobNo + " saved successfully in Job Order Schema" );
+        console.log("Job Order " + newJobID + " saved successfully in Job Order Schema" );
       }).catch((error) => {
         console.error("Error in saving Document inside Job Order Schema : " + error);
       });
@@ -1083,7 +1083,7 @@ const assignTask = async(req, res) => {
       // Creating a new Service Document
 
       const FTODoc = {
-        "_id.job_no": newJobNo,
+        "_id.job_no": newJobID,
         field: unassignedFTOData.field,
         invention_description: unassignedFTOData.invention_description,
         patent_application_details: unassignedFTOData.patent_application_details,
@@ -1093,7 +1093,7 @@ const assignTask = async(req, res) => {
       }
 
       const FTOSchemaDoc = await new freedomToOperate(FTODoc).save().then((response) => {
-        console.log("Job Order " + newJobNo + " saved successfully in Freedom To Operate Search Schema" );
+        console.log("Job Order " + newJobID + " saved successfully in Freedom To Operate Search Schema" );
       }).catch((error) => {
         console.error("Error in saving Document inside Freedom To Operate Search Schema : " + error);
       });      
@@ -1106,15 +1106,15 @@ const assignTask = async(req, res) => {
       })
 
       // Pushing the Job Number to Partner's Jobs Array
-      assignedPartner.jobs.push(newJobNo);
+      assignedPartner.jobs.push(newJobID);
       assignedPartner.in_progress_jobs = assignedPartner.in_progress_jobs + 1;
-      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newJobNo + "successfully.");
-      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newJobNo +" has been assigned manually to you by Admin successfully.");
-      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newJobNo + " has been assigned to Partner ID" + partnerID +" successfully")
+      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newJobID + "successfully.");
+      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newJobID +" has been assigned manually to you by Admin successfully.");
+      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newJobID + " has been assigned to Partner ID" + partnerID +" successfully")
 
 
       assignedPartner.save().then((response) => {
-        console.log("Job Number " + newJobNo + " successfully pushed to the Partner");
+        console.log("Job Number " + newJobID + " successfully pushed to the Partner");
       }).catch((error) => {
         console.log("Error in Pushing the Job to the Partner : " + error);
       });
@@ -1177,7 +1177,7 @@ const assignTask = async(req, res) => {
     if(!findCustomer) {
       console.error("No Customer exists with ID " + unassignedLandscapeData.userID);
     }
-    findCustomer.jobs.push(newJobNo);
+    findCustomer.jobs.push(newJobID);
     findCustomer.save().then(() => {
       console.log("Job Number pushed to Customer Schema");
     }).catch((err) => {
@@ -1190,7 +1190,7 @@ const assignTask = async(req, res) => {
       // Creating a new Job Order Document
 
       const jobOrderDoc = {
-        "_id.job_no": newJobNo,
+        "_id.job_no": newJobID,
         service: patentService,
         country: unassignedLandscapeData.country,
         start_date: realStartDate,
@@ -1213,7 +1213,7 @@ const assignTask = async(req, res) => {
       }
 
       const jobSchemaDoc = await new JobOrder(jobOrderDoc).save().then((response) => {
-        console.log("Job Order " + newJobNo + " saved successfully in Job Order Schema" );
+        console.log("Job Order " + newJobID + " saved successfully in Job Order Schema" );
       }).catch((error) => {
         console.error("Error in saving Document inside Job Order Schema : " + error);
       });
@@ -1221,7 +1221,7 @@ const assignTask = async(req, res) => {
       // Creating a new Service Document
 
       const landscapeDoc = {
-        "_id.job_no": newJobNo,
+        "_id.job_no": newJobID,
         field: unassignedLandscapeData.field,
         technology_description: unassignedLandscapeData.technology_description,
         keywords: unassignedLandscapeData.keywords,
@@ -1231,7 +1231,7 @@ const assignTask = async(req, res) => {
       }
 
       const landscapeSchemaDoc = await new patentLandscape(landscapeDoc).save().then((response) => {
-        console.log("Job Order " + newJobNo + " saved successfully in Freedom To Patent Landscape Schema" );
+        console.log("Job Order " + newJobID + " saved successfully in Freedom To Patent Landscape Schema" );
       }).catch((error) => {
         console.error("Error in saving Document inside Freedom To Patent Landscape Schema : " + error);
       });      
@@ -1244,15 +1244,15 @@ const assignTask = async(req, res) => {
       })
 
       // Pushing the Job Number to Partner's Jobs Array
-      assignedPartner.jobs.push(newJobNo);
+      assignedPartner.jobs.push(newJobID);
       assignedPartner.in_progress_jobs = assignedPartner.in_progress_jobs + 1;
-      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newJobNo + "successfully.");
-      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newJobNo +" has been assigned manually to you by Admin successfully.");
-      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newJobNo + " has been assigned to Partner ID" + partnerID +" successfully")
+      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newJobID + "successfully.");
+      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newJobID +" has been assigned manually to you by Admin successfully.");
+      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newJobID + " has been assigned to Partner ID" + partnerID +" successfully")
 
 
       assignedPartner.save().then((response) => {
-        console.log("Job Number " + newJobNo + " successfully pushed to the Partner");
+        console.log("Job Number " + newJobID + " successfully pushed to the Partner");
       }).catch((error) => {
         console.log("Error in Pushing the Job to the Partner : " + error);
       });
@@ -1291,7 +1291,7 @@ const assignTask = async(req, res) => {
     if(!findCustomer) {
       console.error("No Customer exists with ID " + unassignedPortfolioData.userID);
     }
-    findCustomer.jobs.push(newJobNo);
+    findCustomer.jobs.push(newJobID);
     findCustomer.save().then(() => {
       console.log("Job Number pushed to Customer Schema");
     }).catch((err) => {
@@ -1299,7 +1299,7 @@ const assignTask = async(req, res) => {
     }); 
 
       const jobOrderDoc = {
-        "_id.job_no": newJobNo,
+        "_id.job_no": newJobID,
         service: patentService,
         country: unassignedPortfolioData.country,
         start_date: realStartDate,
@@ -1322,7 +1322,7 @@ const assignTask = async(req, res) => {
       }
 
       const jobSchemaDoc = await new JobOrder(jobOrderDoc).save().then((response) => {
-        console.log("Job Order " + newJobNo + " saved successfully in Job Order Schema" );
+        console.log("Job Order " + newJobID + " saved successfully in Job Order Schema" );
       }).catch((error) => {
         console.error("Error in saving Document inside Job Order Schema : " + error);
       });
@@ -1330,7 +1330,7 @@ const assignTask = async(req, res) => {
       // Creating a new Service Document
 
       const portfolioDoc = {
-        "_id.job_no": newJobNo,
+        "_id.job_no": newJobID,
         country: unassignedPortfolioData.country,
         market_and_industry_information: unassignedPortfolioData.market_and_industry_information,
         business_objectives: unassignedPortfolioData.business_objectives,
@@ -1339,7 +1339,7 @@ const assignTask = async(req, res) => {
       }
 
       const portfolioSchemaDoc = await new patentPortfolioAnalysis(portfolioDoc).save().then((response) => {
-        console.log("Job Order " + newJobNo + " saved successfully in Freedom To Patent Portfolio Analysis Schema" );
+        console.log("Job Order " + newJobID + " saved successfully in Freedom To Patent Portfolio Analysis Schema" );
       }).catch((error) => {
         console.error("Error in saving Document inside Freedom To Patent Portfolio Analysis Schema : " + error);
       });      
@@ -1352,14 +1352,14 @@ const assignTask = async(req, res) => {
       })
 
       // Pushing the Job Number to Partner's Jobs Array
-      assignedPartner.jobs.push(newJobNo);
+      assignedPartner.jobs.push(newJobID);
       assignedPartner.in_progress_jobs = assignedPartner.in_progress_jobs + 1;
-      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newJobNo + "successfully.");
-      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newJobNo +" has been assigned manually to you by Admin successfully.");
-      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newJobNo + " has been assigned to Partner ID" + partnerID +" successfully")
+      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newJobID + "successfully.");
+      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newJobID +" has been assigned manually to you by Admin successfully.");
+      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newJobID + " has been assigned to Partner ID" + partnerID +" successfully")
 
       assignedPartner.save().then((response) => {
-        console.log("Job Number " + newJobNo + " successfully pushed to the Partner");
+        console.log("Job Number " + newJobID + " successfully pushed to the Partner");
       }).catch((error) => {
         console.log("Error in Pushing the Job to the Partner : " + error);
       });
@@ -1416,7 +1416,7 @@ const assignTask = async(req, res) => {
     if(!findCustomer) {
       console.error("No Customer exists with ID " + unassignedTranslationData.userID);
     }
-    findCustomer.jobs.push(newJobNo);
+    findCustomer.jobs.push(newJobID);
     findCustomer.save().then(() => {
       console.log("Job Number pushed to Customer Schema");
     }).catch((err) => {
@@ -1424,7 +1424,7 @@ const assignTask = async(req, res) => {
     }); 
 
       const jobOrderDoc = {
-        "_id.job_no": newJobNo,
+        "_id.job_no": newJobID,
         service: patentService,
         country: unassignedTranslationData.country,
         start_date: realStartDate,
@@ -1447,7 +1447,7 @@ const assignTask = async(req, res) => {
       }
 
       const jobSchemaDoc = await new JobOrder(jobOrderDoc).save().then((response) => {
-        console.log("Job Order " + newJobNo + " saved successfully in Job Order Schema" );
+        console.log("Job Order " + newJobID + " saved successfully in Job Order Schema" );
       }).catch((error) => {
         console.error("Error in saving Document inside Job Order Schema : " + error);
       });
@@ -1455,7 +1455,7 @@ const assignTask = async(req, res) => {
       // Creating a new Service Document
 
       const translationDoc = {
-        "_id.job_no": newJobNo,
+        "_id.job_no": newJobID,
         source_language: unassignedTranslationData.source_language,
         target_language: unassignedTranslationData.target_language,
         document_details: unassignedTranslationData.document_details,
@@ -1465,7 +1465,7 @@ const assignTask = async(req, res) => {
       }
 
       const translationSchemaDoc = await new patentTranslation(translationDoc).save().then((response) => {
-        console.log("Job Order " + newJobNo + " saved successfully in Patent Translation Services Schema" );
+        console.log("Job Order " + newJobID + " saved successfully in Patent Translation Services Schema" );
       }).catch((error) => {
         console.error("Error in saving Document inside Patent Translation Services Schema : " + error);
       });      
@@ -1478,15 +1478,15 @@ const assignTask = async(req, res) => {
       })
 
       // Pushing the Job Number to Partner's Jobs Array
-      assignedPartner.jobs.push(newJobNo);
+      assignedPartner.jobs.push(newJobID);
       assignedPartner.in_progress_jobs = assignedPartner.in_progress_jobs + 1;
-      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newJobNo + "successfully.");
-      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newJobNo +" has been assigned manually to you by Admin successfully.");
-      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newJobNo + " has been assigned to Partner ID" + partnerID +" successfully")
+      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newJobID + "successfully.");
+      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newJobID +" has been assigned manually to you by Admin successfully.");
+      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newJobID + " has been assigned to Partner ID" + partnerID +" successfully")
 
 
       assignedPartner.save().then((response) => {
-        console.log("Job Number " + newJobNo + " successfully pushed to the Partner");
+        console.log("Job Number " + newJobID + " successfully pushed to the Partner");
       }).catch((error) => {
         console.log("Error in Pushing the Job to the Partner : " + error);
       });
@@ -1537,7 +1537,7 @@ const assignTask = async(req, res) => {
     if(!findCustomer) {
       console.error("No Customer exists with ID " + unassignedIllustrationData.userID);
     }
-    findCustomer.jobs.push(newJobNo);
+    findCustomer.jobs.push(newJobID);
     findCustomer.save().then(() => {
       console.log("Job Number pushed to Customer Schema");
     }).catch((err) => {
@@ -1550,7 +1550,7 @@ const assignTask = async(req, res) => {
       // Creating a new Job Order Document
 
       const jobOrderDoc = {
-        "_id.job_no": newJobNo,
+        "_id.job_no": newJobID,
         service: patentService,
         country: unassignedIllustrationData.country,
         start_date: realStartDate,
@@ -1573,7 +1573,7 @@ const assignTask = async(req, res) => {
       }
 
       const jobSchemaDoc = await new JobOrder(jobOrderDoc).save().then((response) => {
-        console.log("Job Order " + newJobNo + " saved successfully in Job Order Schema" );
+        console.log("Job Order " + newJobID + " saved successfully in Job Order Schema" );
       }).catch((error) => {
         console.error("Error in saving Document inside Job Order Schema : " + error);
       });
@@ -1581,7 +1581,7 @@ const assignTask = async(req, res) => {
       // Creating a new Service Document
 
       const illustrationDoc = {
-        "_id.job_no": newJobNo,
+        "_id.job_no": newJobID,
         field: unassignedIllustrationData.field,
         country: unassignedIllustrationData.country,
         patent_specifications: unassignedIllustrationData.patent_specifications,
@@ -1592,7 +1592,7 @@ const assignTask = async(req, res) => {
       }
 
       const illustrationSchemaDoc = await new patentIllustration(illustrationDoc).save().then((response) => {
-        console.log("Job Order " + newJobNo + " saved successfully in Patent Illustration Schema" );
+        console.log("Job Order " + newJobID + " saved successfully in Patent Illustration Schema" );
       }).catch((error) => {
         console.error("Error in saving Document inside Patent Illustration Schema : " + error);
       });      
@@ -1605,15 +1605,15 @@ const assignTask = async(req, res) => {
       })
 
       // Pushing the Job Number to Partner's Jobs Array
-      assignedPartner.jobs.push(newJobNo);
+      assignedPartner.jobs.push(newJobID);
       assignedPartner.in_progress_jobs = assignedPartner.in_progress_jobs + 1;
-      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newJobNo + "successfully.");
-      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newJobNo +" has been assigned manually to you by Admin successfully.");
-      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newJobNo + " has been assigned to Partner ID" + partnerID +" successfully")
+      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newJobID + "successfully.");
+      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newJobID +" has been assigned manually to you by Admin successfully.");
+      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newJobID + " has been assigned to Partner ID" + partnerID +" successfully")
 
 
       assignedPartner.save().then((response) => {
-        console.log("Job Number " + newJobNo + " successfully pushed to the Partner");
+        console.log("Job Number " + newJobID + " successfully pushed to the Partner");
       }).catch((error) => {
         console.log("Error in Pushing the Job to the Partner : " + error);
       });
@@ -1665,7 +1665,7 @@ const assignTask = async(req, res) => {
     if(!findCustomer) {
       console.error("No Customer exists with ID " + unassignedWatchData.userID);
     }
-    findCustomer.jobs.push(newJobNo);
+    findCustomer.jobs.push(newJobID);
     findCustomer.save().then(() => {
       console.log("Job Number pushed to Customer Schema");
     }).catch((err) => {
@@ -1678,7 +1678,7 @@ const assignTask = async(req, res) => {
       // Creating a new Job Order Document
 
       const jobOrderDoc = {
-        "_id.job_no": newJobNo,
+        "_id.job_no": newJobID,
         service: patentService,
         country: unassignedWatchData.country,
         start_date: realStartDate,
@@ -1701,7 +1701,7 @@ const assignTask = async(req, res) => {
       }
 
       const jobSchemaDoc = await new JobOrder(jobOrderDoc).save().then((response) => {
-        console.log("Job Order " + newJobNo + " saved successfully in Job Order Schema" );
+        console.log("Job Order " + newJobID + " saved successfully in Job Order Schema" );
       }).catch((error) => {
         console.error("Error in saving Document inside Job Order Schema : " + error);
       });
@@ -1709,7 +1709,7 @@ const assignTask = async(req, res) => {
       // Creating a new Service Document
 
       const watchDoc = {
-        "_id.job_no": newJobNo,
+        "_id.job_no": newJobID,
         field: unassignedWatchData.field,
         industry_focus: unassignedWatchData.industry_focus,
         competitor_information: unassignedWatchData.competitor_information,
@@ -1721,7 +1721,7 @@ const assignTask = async(req, res) => {
       }
 
       const watchSchemaDoc = await new patentWatch(watchDoc).save().then((response) => {
-        console.log("Job Order " + newJobNo + " saved successfully in Patent Watch Schema" );
+        console.log("Job Order " + newJobID + " saved successfully in Patent Watch Schema" );
       }).catch((error) => {
         console.error("Error in saving Document inside Patent Watch Schema : " + error);
       });      
@@ -1734,15 +1734,15 @@ const assignTask = async(req, res) => {
       })
 
       // Pushing the Job Number to Partner's Jobs Array
-      assignedPartner.jobs.push(newJobNo);
+      assignedPartner.jobs.push(newJobID);
       assignedPartner.in_progress_jobs = assignedPartner.in_progress_jobs + 1;
-      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newJobNo + "successfully.");
-      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newJobNo +" has been assigned manually to you by Admin successfully.");
-      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newJobNo + " has been assigned to Partner ID" + partnerID +" successfully")
+      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newJobID + "successfully.");
+      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newJobID +" has been assigned manually to you by Admin successfully.");
+      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newJobID + " has been assigned to Partner ID" + partnerID +" successfully")
 
 
       assignedPartner.save().then((response) => {
-        console.log("Job Number " + newJobNo + " successfully pushed to the Partner");
+        console.log("Job Number " + newJobID + " successfully pushed to the Partner");
       }).catch((error) => {
         console.log("Error in Pushing the Job to the Partner : " + error);
       });
@@ -1778,7 +1778,7 @@ const assignTask = async(req, res) => {
     if(!findCustomer) {
       console.error("No Customer exists with ID " + unassignedLicenseData.userID);
     }
-    findCustomer.jobs.push(newJobNo);
+    findCustomer.jobs.push(newJobID);
     findCustomer.save().then(() => {
       console.log("Job Number pushed to Customer Schema");
     }).catch((err) => {
@@ -1791,7 +1791,7 @@ const assignTask = async(req, res) => {
       // Creating a new Job Order Document
 
       const jobOrderDoc = {
-        "_id.job_no": newJobNo,
+        "_id.job_no": newJobID,
         service: patentService,
         country: unassignedLicenseData.country,
         start_date: realStartDate,
@@ -1814,7 +1814,7 @@ const assignTask = async(req, res) => {
       }
 
       const jobSchemaDoc = await new JobOrder(jobOrderDoc).save().then((response) => {
-        console.log("Job Order " + newJobNo + " saved successfully in Job Order Schema" );
+        console.log("Job Order " + newJobID + " saved successfully in Job Order Schema" );
       }).catch((error) => {
         console.error("Error in saving Document inside Job Order Schema : " + error);
       });
@@ -1822,7 +1822,7 @@ const assignTask = async(req, res) => {
       // Creating a new Service Document
 
       const licenseDoc = {
-        "_id.job_no": newJobNo,
+        "_id.job_no": newJobID,
         field: unassignedLicenseData.field,
         patent_information: unassignedLicenseData.patent_information,
         commercialization_goals: unassignedLicenseData.commercialization_goals,
@@ -1833,7 +1833,7 @@ const assignTask = async(req, res) => {
       }
 
       const licenseSchemaDoc = await new patentLicense(licenseDoc).save().then((response) => {
-        console.log("Job Order " + newJobNo + " saved successfully in Patent Licensing and Commercialization Schema" );
+        console.log("Job Order " + newJobID + " saved successfully in Patent Licensing and Commercialization Schema" );
       }).catch((error) => {
         console.error("Error in saving Document inside Patent Licensing and Commercialization Schema : " + error);
       });      
@@ -1846,16 +1846,16 @@ const assignTask = async(req, res) => {
       })
 
       // Pushing the Job Number to Partner's Jobs Array
-      assignedPartner.jobs.push(newJobNo);
+      assignedPartner.jobs.push(newJobID);
       assignedPartner.in_progress_jobs = assignedPartner.in_progress_jobs + 1;
       assignedPartner.save().then((response) => {
-        console.log("Job Number " + newJobNo + " successfully pushed to the Partner");
+        console.log("Job Number " + newJobID + " successfully pushed to the Partner");
       }).catch((error) => {
         console.log("Error in Pushing the Job to the Partner : " + error);
       });
-      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newJobNo + "successfully.");
-      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newJobNo +" has been assigned manually to you by Admin successfully.");
-      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newJobNo + " has been assigned to Partner ID" + partnerID +" successfully")
+      await AllNotifications.sendToAdmin("Unassigned Job ID " + unassignedJobID + " has been assigned to Partner ID "+ partnerID +" as " + newJobID + "successfully.");
+      await AllNotifications.sendToPartner(Number(partnerID), "Job ID" + newJobID +" has been assigned manually to you by Admin successfully.");
+      await AllNotifications.sendToUser(Number(findCustomer.userID), "Your Job of ID " + newJobID + " has been assigned to Partner ID" + partnerID +" successfully")
 
       if (assignedPartner){
         const partnerSubject="Request to accept the Patent Licensing and Commercialization Services Form"
