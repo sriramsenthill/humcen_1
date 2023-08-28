@@ -43,14 +43,13 @@ export default function Inbox() {
     const [countriesOpen, setCountriesOpen] = useState(false);
     const [contactOpen, setContactOpen] = useState(false);
     const [domain, setDomain] = useState("");
-    const [country, setCountry] = useState("");
+    const [country, setCountry] = useState([]);
     const [applicationType, setApplicatonType] = useState("");
     const [title, setTitle] = useState("");
     const [detailsFile, setDetailsFile] = useState(null);
     const [applicantsFile, setApplicantsFile] = useState(null);
     const [investorsFile, setInvestorsFile] = useState(null);
     const [time, setTime] = useState("");
-    const [budget, setBudget] = useState("");
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
     const [isErrorDialogOpenStatus, setIsErrorDialogOpenStatus] = useState(false);
@@ -80,16 +79,13 @@ export default function Inbox() {
 
   
   const isFormValid = () => {
-    if (!domain || !country || !description || !keyword || !techDrawings){
+    if (!domain || !country || !description || !keywords || !techDrawings){
       return false;
     }
     return true;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    
+  const handleSubmit = async (e) => {    
 
 if (!isFormValid()) {
   setIsErrorDialogOpen(true);
@@ -101,8 +97,9 @@ if (!isFormValid()) {
     const formData = {
       field: domain,
       invention_description: description,
-      keywords: keyword,
-      country: country,
+      keywords: keywords,
+      countries: country,
+      bills: totalBill,
       technical_diagram: techDrawings,
     };
 
@@ -131,12 +128,12 @@ if (!isFormValid()) {
 
     setSummary([
       {
-        title: "Title",
-        text: title,
-      },
-      {
         title: "Domain",
         text: domain,
+      },
+      {
+        title: "Invention Description",
+        text: description,
       },
       {
         title: "Keywords",
@@ -144,7 +141,7 @@ if (!isFormValid()) {
       },
       {
         title: "Uploaded Files",
-        text: [detailsFile.map((file) => file.name)].toString()
+        text: [techDrawings.map((file) => file.name)].toString()
       }
     ]);
 
@@ -341,7 +338,7 @@ if (!isFormValid()) {
       <Typography variant="h5">Summary</Typography>
       { contactOpen && <div style={{ padding: '1rem 0' }}>
           {/* Your content for the 'Contact' section */}
-          <ShoppingCart priceList={shoppingList} detailsList={summary} total={totalBill.reduce((a,b)=> a+b,0)}service="Patent Drafting"/>
+          <ShoppingCart priceList={shoppingList} detailsList={summary} total={totalBill.reduce((a,b)=> a+b,0)} service="Patent Search"/>
           <Button variant="contained" onClick={() => handleSubmit()} style={{ marginTop: '0.5rem', backgroundColor: "#00B69B" }}>
             Submit
         </Button>

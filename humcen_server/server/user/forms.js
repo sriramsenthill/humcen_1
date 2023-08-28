@@ -113,539 +113,6 @@ const createPatentConsultation = async (req, res) => {
   }
 };
 
-
-const createJobOrderPatentDrafting = async (req, res) => {
-  try {
-    const userId = req.userId;
-    let stepsInitial = 0;
-    const draftingData = req.body;
-    console.log(draftingData);
-    draftingData.userID = userId;
-
-    // Find the partner and customer
-    const findPartner = await Partner.findOne({
-      is_free: true,
-      ["known_fields.Patent Drafting"]: true,
-      in_progress_jobs: { $lt: 5 },
-      country: req.body.country
-    });
-
-    const findCustomer = await Customer.findOne({ userID: userId });
-    const findAdmin=await Admin.findOne({_id:"64803aa4b57edc54d6b276cb"})
-    if (!findCustomer) {
-      // Handle the case when no customer is found
-      throw new Error("No customer found for the given user ID");
-    }
-    
-    if (!findPartner) {
-      // Handle the case when no partner is found
-      const latestUnassignedDraftingOrder = await Unassigned.findOne()
-      .sort({ "_id.job_no": -1 })
-      .limit(1)
-      .exec();
-
-    const newUnassignedDraftingNo = latestUnassignedDraftingOrder
-      ? latestUnassignedDraftingOrder._id.job_no + 1
-      : 1000;
-
-
-      stepsInitial = 2;
-      const newDraftingData = draftingData;
-      newDraftingData.service = "Patent Drafting";
-      newDraftingData.customerName = findCustomer.first_name;
-      newDraftingData.status = "In Progress";
-      console.log(newDraftingData);
-      const unassignedDraftingOrder = new Unassigned(newDraftingData);
-      unassignedDraftingOrder._id.job_no =  newUnassignedDraftingNo ;
-      
-      unassignedDraftingOrder.save();
-      
-      console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
-
-      await AllNotifications.sendToUser(Number(userId), "Your Patent Drafting Form has been submitted successfully");
-      await AllNotifications.sendToAdmin("Patent Drafting Form of ID " + newUnassignedDraftingNo +" has been submitted successfully and is in Unassigned Jobs.")
-
-      res.status(200).json(unassignedDraftingOrder);
-
-    } if(findPartner) {
-      const latestDraftingOrder = await JobOrder.findOne()
-      .sort({ "_id.job_no": -1 })
-      .limit(1)
-      .exec();
-
-      const newDraftingNo = latestDraftingOrder
-      ? latestDraftingOrder._id.job_no + 1
-      : 1000;
-
-      stepsInitial = 3;
-      // Save the draftingData in the Drafting collection
-      const draftingOrder = new Drafting(draftingData);
-      draftingOrder._id = { job_no: newDraftingNo };
-  
-      // Ensure findPartner and findCustomer are not null before accessing their properties
-      draftingOrder.partnerName = findPartner.first_name; // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
-      draftingOrder.customerName = findCustomer.first_name;// Assuming the customer's name is stored in the 'customerName' field of the Customer collection
-  
-      const savedDrafting = await draftingOrder.save();
-  
-      // Update partner and customer jobs lists
-      findPartner.jobs.push(draftingOrder._id.job_no);
-      findCustomer.jobs.push(draftingOrder._id.job_no);
-  
-      await Promise.all([findPartner.save(), findCustomer.save()]);
-  
-      const startDate = new Date();
-      const endDate = new Date();
-      endDate.setDate(endDate.getDate() + 7);
-
-      const options = { year: 'numeric', month: 'long', day: 'numeric' };
-      const formattedDate = new Date().toLocaleDateString(undefined, options);
-  
-      const newJobOrder = new JobOrder({
-        _id: { job_no: newDraftingNo },
-        service: "Patent Drafting",
-        userID: userId,
-        partnerID: findPartner.userID,
-        partnerName: findPartner.first_name, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
-        customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
-        country: req.body.country,
-        start_date: startDate,
-        end_date: endDate,
-        steps_done: 1,
-        steps_done_user: 1,
-        steps_done_activity: 2,
-        date_partner: [formattedDate, " ", " ", " "], 
-        date_user: [formattedDate, " ", " ", " ", " ", " "],
-        date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " ", " ", " "],
-        status: "In Progress",
-        budget: req.body.budget,
-        domain: req.body.field,
-      });
-  
-      await newJobOrder.save();
-  
-      console.log("Successfully Assigned Patent Drafting Task to a Partner");
-      console.log(userId);
-      await AllNotifications.sendToUser(Number(userId), "Your Patent Drafting Form has been submitted successfully");
-      await AllNotifications.sendToPartner(Number(findPartner.userID),"You have been auto-assigned the Job " + newDraftingNo + ". You can Accept or Reject the Job.");
-      await AllNotifications.sendToAdmin("Patent Drafting Form of ID " + newDraftingNo +" has been submitted successfully")
-
-      // To send Notification to Admin
-
-
-      res.status(200).json(savedDrafting);
-
-    }
-  
-        // Fetch user's email from MongoDB and send the email
-        const user = await Customer.findOne({ userID: userId });
-        const attachments = [];
-        if (user && user.email) {
-          const subject = 'Patent Drafting Submission Successful';
-          const text = 'Your Patent Drafting form has been submitted successfully.';
-          
-          // Prepare the data for the table in the email
-          const tableData = [
-            { label: 'Service :', value: 'Patent Drafting' },
-            { label: 'Customer Name :', value: findCustomer.first_name },
-            {label:'Domain :',value:req.body.domain},
-            {label:'Country :',value:req.body.country},
-            {label:'Job Title :',value:req.body.job_title},
-            {label:'Budget :',value:req.body.budget},
-            {label:'Time Of Delivery :',value:req.body.time_of_delivery},
-            // Add more rows as needed
-          ];
-
-          const { invention_details } = req.body.service_specific_files;
-          
-          // Ensure invention_details is an array and not empty
-          if (Array.isArray(invention_details) && invention_details.length > 0) {
-            // Iterate through the invention_details array and add each file as a separate attachment
-            for (const item of invention_details) {
-              if (item.name && item.base64) {
-                const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
-                attachments.push({
-                  filename: item.name,
-                  content: base64Content,
-                  encoding: 'base64', // Specify that the content is base64-encoded
-                });
-              }
-            }
-          }
-          
-          // Send the email with tableData and attachments
-          sendEmail(user.email, subject, text, tableData,attachments);
-          if (findPartner){
-            const partnerSubject="Request to accept the Patent Drafting Form"
-            const partnerText="Accept the submission for Patent Drafting Form"
-            sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments)
-          }
-          else{
-            const partnerSubject="Request to accept the Patent Drafting Form"
-            const partnerText="Assign the partner for Patent Drafting Form"
-            sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
-          }
-          } 
-
-  } catch (error) {
-    console.error("Error creating Patent Drafting Order:", error);
-    res.status(500).send("Error creating Patent Drafting Order");
-  }
-};
-      
-
-
-const createJobOrderPatentFiling = async (req, res) => {
-  try {
-    const userId = req.userId;
-    const filingData = req.body;
-    let stepsInitial = 0;
-    console.log(filingData);
-    filingData.userID = userId;
-
-
-
-    // Find the partner and customer and update their jobs list
-    let findPartner = await Partner.findOne({ is_free: true, ["known_fields.Patent Filing"]: true, country: req.body.country, in_progress_jobs: { $lt: 5 } });
-    let findCustomer = await Customer.findOne({ userID: userId });
-    const findAdmin=await Admin.findOne({_id:"64803aa4b57edc54d6b276cb"})
-    if (!findCustomer) {
-      // Handle the case when no customer is found
-      throw new Error("No customer found for the given user ID");
-    }
-
-    if (!findPartner) {
-      // Handle the case when no partner is found
-      const latestUnassignedFilingOrder = await Unassigned.findOne()
-      .sort({ "_id.job_no": -1 })
-      .limit(1)
-      .exec();
-
-    const newUnassignedFilingNo = latestUnassignedFilingOrder
-      ? latestUnassignedFilingOrder._id.job_no + 1
-      : 1000;
-
-
-      stepsInitial = 2;
-      const newFilingData = filingData;
-      newFilingData.service = "Patent Filing";
-      newFilingData.customerName = findCustomer.first_name;
-      newFilingData.status = "In Progress";
-      console.log(newFilingData);
-      const unassignedFilingOrder = new Unassigned(newFilingData);
-      unassignedFilingOrder._id.job_no =  newUnassignedFilingNo ;
-      
-      unassignedFilingOrder.save();
-      
-      console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
-      await AllNotifications.sendToUser(Number(userId), "Your Patent Filing Form has been submitted successfully");
-      await AllNotifications.sendToAdmin("Patent Filing Form of ID " + newUnassignedFilingNo +" has been submitted successfully and is in Unassigned Jobs.")
-
-      res.status(200).json(unassignedFilingOrder);
-    }
-
-     if(findPartner) {
-      const latestFilingOrder = await JobOrder.findOne()
-      .sort({ "_id.job_no": -1 })
-      .limit(1)
-      .exec();
-
-    const newFilingNo = latestFilingOrder
-      ? latestFilingOrder._id.job_no + 1
-      : 1000;
-
-    // Save the filingData in the Filing collection
-    const filingOrder = new Filing(filingData);
-    filingOrder._id = { job_no: newFilingNo };
-    const savedFiling = await filingOrder.save();
-
-    stepsInitial = 3;
-    findPartner.jobs.push(filingOrder._id.job_no);
-    findCustomer.jobs.push(filingOrder._id.job_no);
-
-    await Promise.all([findPartner.save(), findCustomer.save()]);
-
-    const startDate = new Date();
-    const endDate = new Date();
-    endDate.setDate(endDate.getDate() + 7);
-
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    const formattedDate = new Date().toLocaleDateString(undefined, options);
-
-    const newJobOrder = new JobOrder({
-      _id: { job_no: newFilingNo },
-      service: "Patent Filing",
-      userID: userId,
-      partnerID: findPartner.userID,
-      partnerName: findPartner.first_name, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
-      customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
-      country: req.body.country,
-      start_date: startDate,
-      end_date: endDate,
-      steps_done: 1,
-      steps_done_user: 1,
-      steps_done_activity: 2,
-      date_partner: [formattedDate, " ", " ", " "], 
-      date_user: [formattedDate, " ", " ", " ", " ", " "],
-      date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " ", " ", " "],
-      status: "In Progress",
-      budget: req.body.budget,
-      domain: req.body.field,
-    });
-
-    await newJobOrder.save();
-
-    console.log("Successfully Assigned Patent Filing Task to a Partner");
-      
-  await AllNotifications.sendToUser(Number(userId), "Your Patent Filing Form has been submitted successfully");
-  await AllNotifications.sendToPartner(Number(findPartner.userID),"You have been auto-assigned the Job " + newFilingNo + ". You can Accept or Reject the Job.");
-  await AllNotifications.sendToAdmin("Patent Filing Form of ID " + newFilingNo +" has been submitted successfully.")
-
-
-      res.status(200).json(savedFiling);
-
-    }
-    const user = await Customer.findOne({ userID: userId });
-    const attachments = [];
-        if (user && user.email) {
-          const subject = 'Patent Filing Submission Successful';
-          const text = 'Your Patent Filing form has been submitted successfully.';
-          
-          // Prepare the data for the table in the email
-          const tableData = [
-            { label: 'Service :', value: 'Patent Filing' },
-            { label: 'Customer Name :', value: findCustomer.first_name },
-            {label:'Domain :',value:req.body.domain},
-            {label:'Country :',value:req.body.country},
-            {label:'Job Title :',value:req.body.job_title},
-            {label:'Application Type :',value:req.body.service_specific_files.application_type},
-            {label:'Budget :',value:req.body.budget},
-            {label:'Time Of Delivery :',value:req.body.time_of_delivery},
-            // Add more rows as needed
-          ];
-
-          const { details,applicants,investors } = req.body.service_specific_files;
-          
-          // Ensure invention_details is an array and not empty
-          if (Array.isArray(details) && details.length > 0) {
-            // Iterate through the invention_details array and add each file as a separate attachment
-            for (const item of details) {
-              if (item.name && item.base64) {
-                const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
-                attachments.push({
-                  filename: item.name,
-                  content: base64Content,
-                  encoding: 'base64', // Specify that the content is base64-encoded
-                });
-              }
-            }
-          }
-          if (Array.isArray(applicants) && applicants.length > 0) {
-            // Iterate through the invention_details array and add each file as a separate attachment
-            for (const item of applicants) {
-              if (item.name && item.base64) {
-                const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
-                attachments.push({
-                  filename: item.name,
-                  content: base64Content,
-                  encoding: 'base64', // Specify that the content is base64-encoded
-                });
-              }
-            }
-          }
-          if (Array.isArray(investors) && investors.length > 0) {
-            // Iterate through the invention_details array and add each file as a separate attachment
-            for (const item of investors) {
-              if (item.name && item.base64) {
-                const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
-                attachments.push({
-                  filename: item.name,
-                  content: base64Content,
-                  encoding: 'base64', // Specify that the content is base64-encoded
-                });
-              }
-            }
-          }
-          
-          // Send the email with tableData and attachments
-          sendEmail(user.email, subject, text, tableData,attachments);
-    if (findPartner){
-      const partnerSubject="Request to accept the Patent Filing Form"
-      const partnerText="Accept the submission for Patent Filing Form"
-      sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
-    }
-    else{
-      const partnerSubject="Request to accept the Patent Filing Form"
-      const partnerText="Assign the partner for Patent Filing Form"
-      sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
-    }
-  }
-
-    
-  } catch (error) {
-    console.error("Error creating Patent Filing Order:", error);
-    res.status(500).send("Error creating Patent Filing Order");
-  }
-};
-
-
-
-const savePatentSearchData = async (req, res) => {
-  try {
-    const userId = req.userId;
-    let stepsInitial = 0;
-    const searchData = req.body;
-    searchData.userID = userId;
-
-    let findPartner = await Partner.findOne({ is_free: true, ["known_fields.Patent Search"]: true, country: req.body.country, in_progress_jobs: { $lt: 5 } });
-    let findCustomer = await Customer.findOne({ userID: userId });
-    const findAdmin=await Admin.findOne({_id:"64803aa4b57edc54d6b276cb"})
-
-
-    if (!findCustomer) {
-      // Handle the case when no customer is found
-      throw new Error("No customer found for the given user ID");
-    }
-    
-    if (!findPartner) {
-      // Handle the case when no partner is found
-      const latestUnassignedSearchOrder = await Unassigned.findOne()
-      .sort({ "_id.job_no": -1 })
-      .limit(1)
-      .exec();
-
-    const newUnassignedSearchNo = latestUnassignedSearchOrder
-      ? latestUnassignedSearchOrder._id.job_no + 1
-      : 1000;
-
-
-      stepsInitial = 2;
-      const newSearchData = searchData;
-      newSearchData.service = "Patent Search";
-      newSearchData.customerName = findCustomer.first_name;
-      newSearchData.budget = "To be Allocated";
-      newSearchData.status = "In Progress";
-      console.log(newSearchData);
-      const unassignedSearchOrder = new Unassigned(newSearchData);
-      unassignedSearchOrder._id.job_no =  newUnassignedSearchNo ;
-      
-      unassignedSearchOrder.save();
-      
-      console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
-      await AllNotifications.sendToUser(Number(userId), "Your Patent Search Form has been submitted successfully");
-      await AllNotifications.sendToAdmin("Patent Search Form of ID " + newUnassignedSearchNo +" has been submitted successfully and is in Unassigned Jobs.")
-
-      res.status(200).json(unassignedSearchOrder);
-    } 
-    if(findPartner) {
-      const latestSearchOrder = await JobOrder.findOne()
-      .sort({ "_id.job_no": -1 })
-      .limit(1)
-      .exec();
-
-    const newSearchNo = latestSearchOrder
-      ? latestSearchOrder._id.job_no + 1
-      : 1000;
-
-    const searchOrder = new Search(searchData);
-    searchOrder._id = { job_no: newSearchNo };
-    const savedSearch = await searchOrder.save();
-      stepsInitial = 3;
-    findPartner.jobs.push(searchOrder._id.job_no);
-    findCustomer.jobs.push(searchOrder._id.job_no);
-
-    await Promise.all([findPartner.save(), findCustomer.save()]);
-
-    const endDate = new Date();
-    endDate.setDate(endDate.getDate() + 7);
-
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    const formattedDate = new Date().toLocaleDateString(undefined, options);
-
-    const newJobOrder = new JobOrder({
-      _id: { job_no: newSearchNo },
-      service: "Patent Search",
-      userID: userId,
-      partnerID: findPartner.userID,
-      partnerName: findPartner.first_name, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
-      customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
-      start_date: new Date(),
-      end_date: endDate,
-      steps_done: 1,
-      steps_done_user: 1,
-      steps_done_activity: 2,
-      date_partner: [formattedDate, " ", " ", " "], 
-      date_user: [formattedDate, " ", " ", " ", " ", " "],
-      date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " ", " ", " "],
-      budget: "To be Allocated",
-      status: "In Progress",
-      country: req.body.country,
-      domain: req.body.field,
-    });
-
-    await newJobOrder.save();
-
-    await AllNotifications.sendToUser(Number(userId), "Your Patent Search Form has been submitted successfully");
-    await AllNotifications.sendToPartner(Number(findPartner.userID),"You have been auto-assigned the Job " + newSearchNo + ". You can Accept or Reject the Job.");
-    await AllNotifications.sendToAdmin("Patent Search Form of ID " + newSearchNo +" has been submitted successfully.")
-
-
-    console.log("Successfully Assigned Patent Search Task to a Partner");
-    res.status(200).json(savedSearch);
-
-    }
-    const user = await Customer.findOne({ userID: userId });
-    const attachments = [];
-        if (user && user.email) {
-          const subject = 'Patent Search Submission Successful';
-          const text = 'Your Patent Search form has been submitted successfully.';
-          
-          // Prepare the data for the table in the email
-          const tableData = [
-            { label: 'Service :', value: 'Patent Search' },
-            { label: 'Customer Name :', value: findCustomer.first_name },
-            {label:'Domain :',value:req.body.field},
-            {label:'Country :',value:req.body.country},
-            {label:'Invention Description :',value:req.body.invention_description},
-            // Add more rows as needed
-          ];
-         const fileData=req.body.technical_diagram
-          
-          // Ensure invention_details is an array and not empty
-          if (Array.isArray(fileData) && fileData.length > 0) {
-            // Iterate through the invention_details array and add each file as a separate attachment
-            for (const item of fileData) {
-              if (item.name && item.base64) {
-                const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
-                attachments.push({
-                  filename: item.name,
-                  content: base64Content,
-                  encoding: 'base64', // Specify that the content is base64-encoded
-                });
-              }
-            }
-          }
-          
-          // Send the email with tableData and attachments
-          sendEmail(user.email, subject, text, tableData,attachments);
-          if (findPartner){
-            const partnerSubject="Request to accept the Patent Search Form"
-            const partnerText="Accept the submission for Patent Search Form"
-            sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
-          }
-          else{
-            const partnerSubject="Request to accept the Patent Search Form"
-            const partnerText="Assign the partner for Patent Search Form"
-            sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
-          }
-        }
-  } catch (error) {
-    console.error("Error creating Search Order:", error);
-    res.status(500).send("Error creating Search Order");
-  }
-};
-
-
 const saveResponseToFerData = async (req, res) => {
   try {
     const userId = req.userId;
@@ -2387,57 +1854,83 @@ const newVersionPatentDrafting = async(req, res) => {
   
         // To send Notification to Admin
   
-
-  
       }
     
           // Fetch user's email from MongoDB and send the email
           const user = await Customer.findOne({ userID: userId });
-          const attachments = [];
-          if (user && user.email) {
-            const subject = 'Patent Drafting Submission Successful';
-            const text = 'Your Patent Drafting form has been submitted successfully.';
-            
-            // Prepare the data for the table in the email
-            const tableData = [
-              { label: 'Service :', value: 'Patent Drafting' },
-              { label: 'Customer Name :', value: findCustomer.first_name },
-              {label:'Domain :',value:req.body.domain},
-              {label:'Country :',value:req.body.countries[totalCountries]},
-              {label:'Job Title :',value:req.body.title},
-              {label:'Budget :',value:req.body.bills[totalCountries]},
-              // Add more rows as needed
-            ];
-            const { invention_details } = req.body.service_specific_files;
-            
-            // Ensure invention_details is an array and not empty
-            if (Array.isArray(invention_details) && invention_details.length > 0) {
-              // Iterate through the invention_details array and add each file as a separate attachment
-              for (const item of invention_details) {
-                if (item.name && item.base64) {
-                  const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
-                  attachments.push({
-                    filename: item.name,
-                    content: base64Content,
-                    encoding: 'base64', // Specify that the content is base64-encoded
-                  });
-                }
+    const attachments = [];
+        if (user && user.email) {
+          const subject = 'Patent Filing Submission Successful';
+          const text = 'Your Patent Filing form has been submitted successfully.';
+          
+          // Prepare the data for the table in the email
+          const tableData = [
+            { label: 'Service :', value: 'Patent Filing' },
+            { label: 'Customer Name :', value: findCustomer.first_name },
+            {label:'Domain :',value:req.body.domain},
+            {label:'Country :',value:req.body.countries[totalCountries]},
+            {label:'Job Title :',value:req.body.title},
+            {label:'Application Type :',value:req.body.service_specific_files.application_type},
+            {label:'Budget :',value:req.body.bills[totalCountries]},
+            // Add more rows as needed
+          ];
+
+          const { details,applicants,investors } = req.body.service_specific_files;
+          
+          // Ensure invention_details is an array and not empty
+          if (Array.isArray(details) && details.length > 0) {
+            // Iterate through the invention_details array and add each file as a separate attachment
+            for (const item of details) {
+              if (item.name && item.base64) {
+                const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+                attachments.push({
+                  filename: item.name,
+                  content: base64Content,
+                  encoding: 'base64', // Specify that the content is base64-encoded
+                });
               }
             }
-            
-            // Send the email with tableData and attachments
-            sendEmail(user.email, subject, text, tableData,attachments);
-            if (findPartner){
-              const partnerSubject="Request to accept the Patent Drafting Form"
-              const partnerText="Accept the submission for Patent Drafting Form"
-              sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments)
+          }
+          if (Array.isArray(applicants) && applicants.length > 0) {
+            // Iterate through the invention_details array and add each file as a separate attachment
+            for (const item of applicants) {
+              if (item.name && item.base64) {
+                const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+                attachments.push({
+                  filename: item.name,
+                  content: base64Content,
+                  encoding: 'base64', // Specify that the content is base64-encoded
+                });
+              }
             }
-            else{
-              const partnerSubject="Request to accept the Patent Drafting Form"
-              const partnerText="Assign the partner for Patent Drafting Form"
-              sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
+          }
+          if (Array.isArray(investors) && investors.length > 0) {
+            // Iterate through the invention_details array and add each file as a separate attachment
+            for (const item of investors) {
+              if (item.name && item.base64) {
+                const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+                attachments.push({
+                  filename: item.name,
+                  content: base64Content,
+                  encoding: 'base64', // Specify that the content is base64-encoded
+                });
+              }
             }
-            } 
+          }
+          
+          // Send the email with tableData and attachments
+          sendEmail(user.email, subject, text, tableData,attachments);
+    if (findPartner){
+      const partnerSubject="Request to accept the Patent Filing Form"
+      const partnerText="Accept the submission for Patent Filing Form"
+      sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
+    }
+    else{
+      const partnerSubject="Request to accept the Patent Filing Form"
+      const partnerText="Assign the partner for Patent Filing Form"
+      sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
+    }
+    } 
   
     }
     res.status(200);
@@ -2446,6 +1939,7 @@ const newVersionPatentDrafting = async(req, res) => {
       console.error("Error in saving up the Patent Drafting Form : " + error);
   }
 }
+
 
 const newVersionPatentFiling = async(req, res) => {
   try {
@@ -2559,7 +2053,7 @@ const newVersionPatentFiling = async(req, res) => {
         console.log("Partner Found");
         stepsInitial = 3;
         // Save the draftingData in the Drafting collection
-        const filingOrder = new Filing(filngData);                       // Creating a new Drafting Document
+        const filingOrder = new Filing(filingData);                       // Creating a new Drafting Document
         filingOrder._id.job_no = newFilingNo ;
         // Ensure findPartner and findCustomer are not null before accessing their properties
         filingOrder.partnerName = findPartner.first_name; // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
@@ -2588,52 +2082,79 @@ const newVersionPatentFiling = async(req, res) => {
   
       }
     
-          // Fetch user's email from MongoDB and send the email
           const user = await Customer.findOne({ userID: userId });
-          const attachments = [];
-          if (user && user.email) {
-            const subject = 'Patent Filing Submission Successful';
-            const text = 'Your Patent Filing form has been submitted successfully.';
-            
-            // Prepare the data for the table in the email
-            const tableData = [
-              { label: 'Service :', value: 'Patent Filing' },
-              { label: 'Customer Name :', value: findCustomer.first_name },
-              {label:'Domain :',value:req.body.domain},
-              {label:'Country :',value:req.body.countries[totalCountries]},
-              {label:'Job Title :',value:req.body.title},
-              {label:'Budget :',value:req.body.bills[totalCountries]},
-              // Add more rows as needed
-            ];
-            const { invention_details } = req.body.service_specific_files;
-            
-            // Ensure invention_details is an array and not empty
-            if (Array.isArray(invention_details) && invention_details.length > 0) {
-              // Iterate through the invention_details array and add each file as a separate attachment
-              for (const item of invention_details) {
-                if (item.name && item.base64) {
-                  const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
-                  attachments.push({
-                    filename: item.name,
-                    content: base64Content,
-                    encoding: 'base64', // Specify that the content is base64-encoded
-                  });
-                }
+    const attachments = [];
+        if (user && user.email) {
+          const subject = 'Patent Filing Submission Successful';
+          const text = 'Your Patent Filing form has been submitted successfully.';
+          
+          // Prepare the data for the table in the email
+          const tableData = [
+            { label: 'Service :', value: 'Patent Filing' },
+            { label: 'Customer Name :', value: findCustomer.first_name },
+            {label:'Domain :',value:req.body.domain},
+            {label:'Country :',value:req.body.country},
+            {label:'Job Title :',value:req.body.job_title},
+            {label:'Application Type :',value:req.body.service_specific_files.application_type},
+            {label:'Budget :',value:req.body.budget},
+            // Add more rows as needed
+          ];
+
+          const { details,applicants,investors } = req.body.service_specific_files;
+          
+          // Ensure invention_details is an array and not empty
+          if (Array.isArray(details) && details.length > 0) {
+            // Iterate through the invention_details array and add each file as a separate attachment
+            for (const item of details) {
+              if (item.name && item.base64) {
+                const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+                attachments.push({
+                  filename: item.name,
+                  content: base64Content,
+                  encoding: 'base64', // Specify that the content is base64-encoded
+                });
               }
             }
-            
-            // Send the email with tableData and attachments
-            sendEmail(user.email, subject, text, tableData,attachments);
-            if (findPartner){
-              const partnerSubject="Request to accept the Patent Filing Form"
-              const partnerText="Accept the submission for Patent Filing Form"
-              sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments)
+          }
+          if (Array.isArray(applicants) && applicants.length > 0) {
+            // Iterate through the invention_details array and add each file as a separate attachment
+            for (const item of applicants) {
+              if (item.name && item.base64) {
+                const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+                attachments.push({
+                  filename: item.name,
+                  content: base64Content,
+                  encoding: 'base64', // Specify that the content is base64-encoded
+                });
+              }
             }
-            else{
-              const partnerSubject="Request to accept the Patent Filing Form"
-              const partnerText="Assign the partner for Patent Filing Form"
-              sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
+          }
+          if (Array.isArray(investors) && investors.length > 0) {
+            // Iterate through the invention_details array and add each file as a separate attachment
+            for (const item of investors) {
+              if (item.name && item.base64) {
+                const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+                attachments.push({
+                  filename: item.name,
+                  content: base64Content,
+                  encoding: 'base64', // Specify that the content is base64-encoded
+                });
+              }
             }
+          }
+          
+          // Send the email with tableData and attachments
+          sendEmail(user.email, subject, text, tableData,attachments);
+    if (findPartner){
+      const partnerSubject="Request to accept the Patent Filing Form"
+      const partnerText="Accept the submission for Patent Filing Form"
+      sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
+    }
+    else{
+      const partnerSubject="Request to accept the Patent Filing Form"
+      const partnerText="Assign the partner for Patent Filing Form"
+      sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
+    }
             } 
   
     }
@@ -2644,7 +2165,203 @@ const newVersionPatentFiling = async(req, res) => {
   }
 }
 
+const newVersionPatentSearch = async(req, res) => {
+  try {
+    const userId = req.userId;
+    let partnerName, partnerID, mapID, searchData, newSearchNo;
+    for(let totalCountries = 0; totalCountries < req.body.countries.length; totalCountries++) {
+      console.log("Finding for " + req.body.countries[totalCountries]);
+      const findPartner = await Partner.findOne({
+        is_free: true,
+        ["known_fields.Patent Search"]: true,
+        in_progress_jobs: { $lt: 5 },                       // Finding Availability of Partner for each and every chosen Country
+        country: req.body.countries[totalCountries]
+      });
+      const findCustomer = await Customer.findOne({ userID: userId });
+      const findAdmin=await Admin.findOne({_id:"64803aa4b57edc54d6b276cb"})
+      if (!findCustomer) {
+        // Handle the case when no customer is found
+        throw new Error("No customer found for the given user ID");
+      }
+      
+      if (!findPartner) {
+        partnerName = "";
+        partnerID = "";                                   // If there's no availability of Partner
+        // Handle the case when no partner is found
+        const latestUnassignedSearchOrder = await Unassigned.findOne()
+        .sort({ "_id.job_no": -1 })
+        .limit(1)
+        .exec();
+  
+      const newUnassignedSearchNo = latestUnassignedSearchOrder
+        ? latestUnassignedSearchOrder._id.job_no + 1
+        : 1000;
+      
+        console.log("Yes");
+        // Changes
+        mapID = newUnassignedSearchNo;
+      searchData = {                                         // Creating a new Drafting Document for saving Details
+        country: req.body.countries[totalCountries],
+        budget: req.body.bills[totalCountries],
+        invention_description: req.body.invention_description,
+        keywords: req.body.keywords,
+        field: req.body.domain,
+        userID: userId,
+        technical_diagram: req.body.technical_diagram, 
+      }
+  
+        stepsInitial = 2;
+        const newSearchData = searchData;
+        newSearchData.service = "Patent Search";
+        newSearchData.customerName = findCustomer.first_name;
+        newSearchData.status = "In Progress";
+        console.log(newSearchData);
+        const unassignedSearchOrder = new Unassigned(newSearchData);  // Creating a new Unassigned Job Order
+        unassignedSearchOrder._id.job_no =  newUnassignedSearchNo ;
+        
+        unassignedSearchOrder.save();
+        
+        console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
+  
+        await AllNotifications.sendToUser(Number(userId), "Your Patent Drafting Form has been submitted successfully");
+        await AllNotifications.sendToAdmin("Patent Drafting Form of ID " + newUnassignedSearchNo +" has been submitted successfully and is in Unassigned Jobs.")
+  
+  
+      } 
+      const latestSearchOrder = await JobOrder.findOne()
+      .sort({ "_id.job_no": -1 })                                                 // Finding the latest Job Order to assign next Job Number to 
+      .limit(1)                                                                   // new Dummy Job Orderr
+      .exec();
 
+      newSearchNo = latestSearchOrder
+      ? latestSearchOrder._id.job_no + 1
+      : 1000;
+         // Changes 
+      console.log(newSearchNo);
+      searchData._id = { job_no: newSearchNo };
+      const startDate = new Date();
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() + 7);
+
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      const formattedDate = new Date().toLocaleDateString(undefined, options);
+      console.log("Fine till now" ,searchData);
+      const newJobOrder = new JobOrder({
+        _id: { job_no: newSearchNo },                                             // Creating a new Job Order for both Dummy and Assigned one
+        service: "Patent Search",
+        userID: userId,
+        unassignedID: !findPartner && mapID,
+        partnerID: partnerID,
+        partnerName: partnerName, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+        customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
+        country: req.body.countries[totalCountries],
+        start_date: startDate,
+        end_date: endDate,
+        steps_done: 1,
+        steps_done_user: 1,
+        steps_done_activity: 2,
+        date_partner: [formattedDate, " ", " ", " "], 
+        date_user: [formattedDate, " ", " ", " ", " ", " "],
+        date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " ", " ", " "],
+        status: "In Progress",
+        budget: "$ " +  req.body.bills[totalCountries],
+        domain: req.body.domain,
+      });
+  
+      await newJobOrder.save();
+      console.log("Saved");
+      
+      if(findPartner) {
+        // Changes
+        partnerName = findPartner.first_name;
+        partnerID = findPartner.userID;
+        console.log("Partner Found");
+        stepsInitial = 3;
+        // Save the draftingData in the Drafting collection
+        const searchOrder = new Search(searchData);                       // Creating a new Drafting Document
+        searchOrder._id.job_no = newSearchNo ;
+        // Ensure findPartner and findCustomer are not null before accessing their properties
+        searchOrder.partnerName = findPartner.first_name; // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+        searchOrder.customerName = findCustomer.first_name;// Assuming the customer's name is stored in the 'customerName' field of the Customer collection
+    
+        const savedSearch = await searchOrder.save();
+    
+        // Update partner and customer jobs lists
+        findPartner.jobs.push(searchOrder._id.job_no);
+        findCustomer.jobs.push(searchOrder._id.job_no);
+    
+        await Promise.all([findPartner.save(), findCustomer.save()]);
+    
+
+  
+    
+        console.log("Successfully Assigned Patent Search Task to a Partner");
+        console.log(userId);
+        await AllNotifications.sendToUser(Number(userId), "Your Patent Drafting Form has been submitted successfully");
+        await AllNotifications.sendToPartner(Number(findPartner.userID),"You have been auto-assigned the Job " + newSearchNo + ". You can Accept or Reject the Job.");
+        await AllNotifications.sendToAdmin("Patent Drafting Form of ID " + newSearchNo +" has been submitted successfully")
+  
+        // To send Notification to Admin
+  
+
+  
+      }
+    
+          // Fetch user's email from MongoDB and send the email
+          const user = await Customer.findOne({ userID: userId });
+          const attachments = [];
+              if (user && user.email) {
+                const subject = 'Patent Search Submission Successful';
+                const text = 'Your Patent Search form has been submitted successfully.';
+                
+                // Prepare the data for the table in the email
+                const tableData = [
+                  { label: 'Service :', value: 'Patent Search' },
+                  { label: 'Customer Name :', value: findCustomer.first_name },
+                  {label:'Domain :',value:req.body.field},
+                  {label: "Budget :", value: req.body.bills[totalCountries]},
+                  {label:'Country :',value:req.body.countries[totalCountries]},
+                  {label:'Invention Description :',value:req.body.invention_description},
+                  // Add more rows as needed
+                ];
+               const fileData=req.body.technical_diagram
+                
+                // Ensure invention_details is an array and not empty
+                if (Array.isArray(fileData) && fileData.length > 0) {
+                  // Iterate through the invention_details array and add each file as a separate attachment
+                  for (const item of fileData) {
+                    if (item.name && item.base64) {
+                      const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+                      attachments.push({
+                        filename: item.name,
+                        content: base64Content,
+                        encoding: 'base64', // Specify that the content is base64-encoded
+                      });
+                    }
+                  }
+                }
+                
+                // Send the email with tableData and attachments
+                sendEmail(user.email, subject, text, tableData,attachments);
+                if (findPartner){
+                  const partnerSubject="Request to accept the Patent Search Form"
+                  const partnerText="Accept the submission for Patent Search Form"
+                  sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
+                }
+                else{
+                  const partnerSubject="Request to accept the Patent Search Form"
+                  const partnerText="Assign the partner for Patent Search Form"
+                  sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
+                }
+            } 
+  
+    }
+    res.status(200);
+     }
+     catch(error) {
+      console.error("Error in saving up the Patent Search Form : " + error);
+  }
+}
 
 module.exports = {
     getJobOrderOnID,
@@ -2672,5 +2389,6 @@ module.exports = {
     clearRecentNotifs,
     storeBulkOrderData,
     newVersionPatentDrafting,
-    newVersionPatentFiling
+    newVersionPatentFiling,
+    newVersionPatentSearch
   };

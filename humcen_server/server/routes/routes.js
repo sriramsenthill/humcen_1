@@ -46,7 +46,7 @@ router.post(
 router.post(
     "/api/patent_search",
     verifyToken,
-    forms.savePatentSearchData
+    forms.newVersionPatentSearch
 );
 
 router.post(
