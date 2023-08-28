@@ -220,7 +220,7 @@ function RecentOrders() {
                     fontWeight: 'bold',
                     width: "200px",
                     padding: "15px 10px",
-                    textAlign: "center",
+                    textAlign: "Left",
                   }}>
               Service
               </TableCell>
@@ -301,7 +301,7 @@ function RecentOrders() {
                       borderBottom: "1px solid #F7FAFF",
                       padding: "8px 10px",
                       fontSize: "13px",
-                      textAlign: "center",
+                      textAlign: "Left",
                     }}>
                   {row.service}
                   </TableCell>

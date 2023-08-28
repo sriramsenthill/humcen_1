@@ -142,7 +142,7 @@ if (!isFormValid()) {
           <li>Patent Licensing and Commercialization Services</li>
         </ul>
       </div>
-      <BannerCard title="Patent Licensing and Commercialization" imageSrc="/images/banner_img/12.png" color="#5C469C"></BannerCard>
+      <BannerCard title="Patent Licensing and Commercialization" imageSrc="/images/banner_img/bg.png" color="white"></BannerCard>
       <div className={style.ccard}>
       {/* <h1 className={`${style.heading} ${style.align}`}>Patent Licensing and Commercialization Services</h1>
 

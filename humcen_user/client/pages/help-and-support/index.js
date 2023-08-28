@@ -36,14 +36,6 @@ const Products =() => {
             </li>
           </ul>
           <hr className={styles.line} style={{ width: "70%" }}></hr>
-          <ul className={styles.list}>
-            <li>
-              <h2 className={styles.emailheading}>Phone</h2>
-            </li>
-            <li>
-              <p className={styles.email}>+91 98765-43210</p>
-            </li>
-          </ul>
           <hr className={styles.line} style={{ width: "70%" }}></hr>
           <div>
             <h2 className={styles.head}>Frequently Asked Qusetions</h2>

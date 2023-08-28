@@ -18,7 +18,6 @@ const ProductDetails = () => {
       </div>
       <h1 className={styles.heading}>Bulk Orders</h1>
 
-     <BulkOrderComponent/>
       </div>
     </>
   );

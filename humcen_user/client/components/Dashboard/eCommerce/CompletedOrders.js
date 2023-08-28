@@ -219,7 +219,7 @@ function CompletedOrders() {
                     fontWeight: 'bold',
                     width: "100px",
                     padding: "15px 10px",
-                    textAlign: "center",
+                    textAlign: "Left",
                   }}>
               Service
               </TableCell>
@@ -306,7 +306,7 @@ function CompletedOrders() {
                       borderBottom: "1px solid #F7FAFF",
                       padding: "8px 10px",
                       fontSize: "13px",
-                      textAlign: "center",
+                      textAlign: "Left",
                     }}>
                   {row.service}
                   </TableCell>

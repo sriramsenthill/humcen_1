@@ -25,7 +25,7 @@ export const SidebarData = [
     iconOpened: <KeyboardArrowDownIcon />,
   },
   {
-    title: "My Patent",
+    title: "IP Tracker",
     path: "/my-patents/",
     icon: <MailOutlineIcon />,
     iconClosed: <KeyboardArrowRightIcon />,
@@ -39,8 +39,8 @@ export const SidebarData = [
     iconOpened: <KeyboardArrowDownIcon />,
   },
   {
-    title: "My Patent NFTs",
-    path: "/my-patent-nft/",
+    title: "IP NFT’s",
+    path: "https://humcen.io", // Updated link path
     icon: <RequestPageIcon />,
     iconClosed: <KeyboardArrowRightIcon />,
     iconOpened: <KeyboardArrowDownIcon />,
@@ -53,16 +53,16 @@ export const SidebarData = [
     iconOpened: <KeyboardArrowDownIcon />,
   },
   {
-    title: "Settings",
-    path: "/settings/",
-    icon: <SettingsIcon />,
+    title: "Help & Support",
+    path: "/help-and-support/",
+    icon: <ShoppingCartCheckoutIcon />,
     iconClosed: <KeyboardArrowRightIcon />,
     iconOpened: <KeyboardArrowDownIcon />,
   },
   {
-    title: "Help & Support",
-    path: "/help-and-support/",
-    icon: <ShoppingCartCheckoutIcon />,
+    title: "Settings",
+    path: "/settings/",
+    icon: <SettingsIcon />,
     iconClosed: <KeyboardArrowRightIcon />,
     iconOpened: <KeyboardArrowDownIcon />,
   },

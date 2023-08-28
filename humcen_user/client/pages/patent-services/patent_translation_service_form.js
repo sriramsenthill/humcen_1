@@ -136,7 +136,7 @@ if (!isFormValid()) {
           <li>Patent Translation Service Form</li>
         </ul>
       </div>
-      <BannerCard title="Patent Translation Service" imageSrc="/images/banner_img/9.png" color="red"></BannerCard>
+      <BannerCard title="Patent Translation Service" imageSrc="/images/banner_img/bg.png" color="white"></BannerCard>
       <div className={style.ccard}>
       {/* <h1 className={`${style.heading} ${style.align}`}>Patent Translation Service</h1>
 

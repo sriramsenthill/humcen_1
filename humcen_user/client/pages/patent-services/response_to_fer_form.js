@@ -129,7 +129,7 @@ export default function Inbox() {
           <li>Response To FER/Office Action</li>
         </ul>
       </div>
-      <BannerCard title="Response to FER/Office Action" imageSrc="/images/banner_img/5.png" color="common.white"></BannerCard>
+      <BannerCard title="Response to FER/Office Action" imageSrc="/images/banner_img/bg.png" color="white"></BannerCard>
       <div className={style.ccard}>
       {/* <h1 className={`${style.heading} ${style.align}`}>Response To FER/Office Action</h1>
 

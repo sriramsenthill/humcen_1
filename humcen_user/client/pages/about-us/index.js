@@ -5,6 +5,7 @@ import ModernCard from "@/components/Educard.js";
 import Card from "../../components/Cards.js";
 import Grid from "@mui/material/Grid";
 import withAuth from "@/components/withAuth.js";
+import { textAlign } from "@mui/system";
 
 const serviceList = [
   {
@@ -106,38 +107,23 @@ const Projects = () => {
           <li>Why Us</li>
         </ul>
       </div>
-      <h1 className={styles.heading}>Why Us?</h1>
-      <h2 className={styles.head} style={{ marginTop: 20 }}>
-        Unlock unparalleled opportunities as an IP professional by joining our
-        IP marketplace.
-      </h2>
-      <div className={styles.head1}>
-        <p style={{ fontSize: 15 , textAlign: "justify" }}>
-        Discover boundless opportunities as an intellectual property (IP) professional through our dynamic IP marketplace. By joining our platform, you gain direct access to a global demand for your expertise, unlocking the potential for higher earnings and embracing the freedom of flexible work arrangements. Immerse yourself in a vibrant community of like-minded experts, where collaboration and connection thrive. Experience unparalleled growth and career advancement as you leverage your skills in the world of intellectual property. Embrace the transformative power of our platform today, and witness your career soar to new heights. Don't miss the chance to elevate your professional journey and become part of our thriving IP marketplace. Join us now and embark on a journey of innovation, collaboration, and success.
-        </p>
-      </div>
+      <h1 className={styles.heading}>About Us</h1>
+      <h4 className={styles.head} style={{ marginTop: 20, textAlign:"justify"}}>
+      Welcome to HumCen.io – a collaborative endeavor undertaken by a group of dedicated IP specialists and passionate tech enthusiasts, all united with a common goal: to revolutionize the realm of Intellectual Property.
+
+At HumCen.io, we've harnessed our collective expertise to reshape the way Intellectual Property is navigated. Our platform serves as a catalyst for seamless cross-border IP journeys, catering to the needs of innovators, businesses, and IP professionals alike. 
+
+We take pride in offering a comprehensive suite of tools that empower you in every step of your IP endeavors, from safeguarding to asset management and even monetization.
+
+Our mission is to provide a nurturing ecosystem where innovation thrives and where Intellectual Property is not just protected, but elevated. Through cutting-edge technology and a deep-rooted commitment to excellence, we're here to redefine how IP is perceived and utilized in today's dynamic landscape.
+
+Join us on this transformative expedition and be a part of the future of Intellectual Property.
+      </h4>
+    
       <br></br>
-      <div>
-        <h1 className={styles.heading}>Our Services</h1>
-      </div>
+     
       <br></br>
-      <Grid
-        container
-        rowSpacing={1}
-        columnSpacing={{ xs: 1, sm: 1, md: 1, lg: 1, xl: 2 }}
-        sx={{ pl: "1%" }}
-      >
-         {serviceList.map((service, index) => (
-        <ModernCard
-          key={index}
-          title={service.title}
-          description={service.desc}
-          description1={service.desc1} 
-          imageSrc={service.image}
-          link={service.link}
-        />
-      ))}
-      </Grid>
+      
       </div>
     </>
   );

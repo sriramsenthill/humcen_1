@@ -125,7 +125,7 @@ export default function Inbox() {
           <li>Freedom to Operate</li>
         </ul>
       </div>
-      <BannerCard title="Freedom to Operate" imageSrc="/images/banner_img/6.png" color="brown"></BannerCard>
+      <BannerCard title="Freedom to Operate" imageSrc="/images/banner_img/bg.png" color="white"></BannerCard>
       <div className={style.ccard}>
       {/* <h1 className={`${style.heading} ${style.align}`}>Freedom to Operate</h1>
 

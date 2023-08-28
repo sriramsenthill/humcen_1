@@ -97,10 +97,10 @@ const SignInForm = () => {
                     className={styles.favicon}
                   /> 
                   <Typography className={styles.textt}>
-                  Let's Empower your <strong>cross </strong>
+                  Let's Empower your
                   </Typography>
                   <Typography className={styles.text}>
-                    <strong> border patent</strong> seamlessly 
+                    <strong>Cross Border IP</strong> seamlessly 
                   </Typography>
                   <Typography className={styles.text2}>
                   Blockchain Driven One Stop IP platform to protect your <br></br>Inventions Globally. 

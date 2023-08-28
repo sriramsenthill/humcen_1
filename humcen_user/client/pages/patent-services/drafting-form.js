@@ -5,6 +5,11 @@ import CustomDropZone from "@/components/CustomDropBox";
 import DefaultSelect from "@/components/Forms/AdvancedElements/DefaultField";
 import ShoppingCart from '@/components/shoppingCart';
 import { Checkbox } from '@mui/material';
+import BannerCard from "@/components/BannerCard";
+import style from "@/styles/PageTitle.module.css";
+import Link from "next/link";
+  
+
 import {
   InputLabel,
   Container,
@@ -120,14 +125,32 @@ const IndexPage = () => {
 
 
   return (
+    <>
+
+    {/* Page title */}
+    <div className={style.pageTitle}>
+      <ul>
+        <li>
+          <Link href="/">Dashboard</Link>
+        </li>
+        <li>
+          <Link href="/patent-services">My Patent Services</Link>
+        </li>
+        <li>Patent Filing</li>
+      </ul>
+    </div>
+
     <Container maxWidth="md" style={{ marginTop: '2rem' }}>
       <Head>
         <title>Form Example</title>
       </Head>
+      <BannerCard title="Patent Drafting" imageSrc="/images/banner_img/bg.png" color="white"></BannerCard>
+
       <Typography variant="h5" onClick={() => setDraftingOpen(!draftingOpen)} style={{ cursor: 'pointer' }}>
         Drafting
         <ExpandMoreIcon style={{ transform: draftingOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
       </Typography>
+
       {draftingOpen && (
         <div style={{ padding: '1rem 0' }}>
           <TextField
@@ -254,6 +277,7 @@ const IndexPage = () => {
 
 
     </Container>
+    </>
   );
 };
 

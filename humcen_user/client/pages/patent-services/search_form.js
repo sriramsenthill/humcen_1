@@ -136,7 +136,7 @@ if (!isFormValid()) {
           <li>Patent Search</li>
         </ul>
       </div>
-      <BannerCard title="Patent Search" imageSrc="/images/banner_img/4.png" color="common.black"></BannerCard>
+      <BannerCard title="Patent Search" imageSrc="/images/banner_img/bg.png" color="white"></BannerCard>
       <div className={style.ccard}>
       {/* <h1 className={`${style.heading} ${style.align}`}>Patent Search</h1>
 

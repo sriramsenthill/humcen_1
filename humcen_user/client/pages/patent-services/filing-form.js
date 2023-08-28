@@ -165,7 +165,7 @@ export default function Inbox() {
           <li>Patent Filing</li>
         </ul>
       </div>
-      <BannerCard title="Patent Filling" imageSrc="/images/banner_img/3.png" color="common.black"></BannerCard>
+      <BannerCard title="Patent Filing" imageSrc="/images/banner_img/bg.png" color="white"></BannerCard>
       <div className={style.ccard}>
       {/* <h1 className={`${style.heading} ${style.align}`}>Patent Filing</h1>
 

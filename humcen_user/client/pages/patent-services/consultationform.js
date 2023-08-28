@@ -86,7 +86,7 @@ export default function Inbox() {
           <li>Patent Consultation</li>
         </ul>
       </div>
-      <BannerCard title="Patent Consultation" imageSrc="/images/banner_img/1.png" color="common.white"></BannerCard>
+      <BannerCard title="Patent Consultation" imageSrc="/images/banner_img/bg.png" color="white"></BannerCard>
       {/* <p
         style={{
           fontFamily: "Inter",
