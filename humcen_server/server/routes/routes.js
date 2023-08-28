@@ -31,11 +31,11 @@ router.post(
   forms.newVersionPatentDrafting
 );
 
-router.post(
-  "/api/job_order",
-  verifyToken,
-  forms.createJobOrderPatentDrafting
-);
+// router.post(
+//   "/api/job_order",
+//   verifyToken,
+//   forms.createJobOrderPatentDrafting
+// );
 
 router.post(
   "/api/patent_filing",

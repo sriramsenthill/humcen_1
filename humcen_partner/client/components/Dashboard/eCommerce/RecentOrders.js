@@ -151,7 +151,8 @@ api.interceptors.request.use((config) => {
 async function fetchJobOrders() {
   try {
     const response = await api.get('/partner/job_order');
-    const { jobOrders } = response.data; // Extract the jobOrders array from the response data
+    console.log(response.data);
+    const jobOrders  = response.data; // Extract the jobOrders array from the response data
 
     if (Array.isArray(jobOrders)) {
       const filteredJobOrders = jobOrders.filter(order => order.Accepted === true);
@@ -177,7 +178,8 @@ function RecentOrders() {
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchJobOrders();
-      const sortedData = data.sort((a, b) => b._id.job_no - a._id.job_no); // Sort by job_no in descending order
+      console.log(data);
+      const sortedData = data.sort((a, b) => b.og_id - a.og_id); // Sort by job_no in descending order
       setCount(sortedData.length);
       setRows(sortedData);
     };
@@ -285,7 +287,7 @@ function RecentOrders() {
             {rows
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => (
-                <TableRow key={row._id.job_no}>
+                <TableRow key={row.og_id}>
                   <TableCell sx={{
                       width: 100,
                       fontWeight: "bold",
@@ -361,7 +363,7 @@ function RecentOrders() {
                       fontSize: "13px",
                       textAlign: "center",
                     }}>
-                      <Link href={`onGoingPatents/${row._id.job_no}`} passHref>
+                      <Link href={`onGoingPatents/${row.og_id}`} passHref>
                       <Button
                     sx={{
                       background: "#01ACF6",

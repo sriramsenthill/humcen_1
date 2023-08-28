@@ -11,6 +11,7 @@ const responseToFer = require("../mongoose_schemas/response_to_fer");
 const freedomToOperate = require("../mongoose_schemas/freedom_to_operate"); // Import the Freedom To Operate Search Model
 const patentIllustration = require("../mongoose_schemas/patent_illustration"); // Import Patent Illustration Model
 const Consultation = require("../mongoose_schemas/consultation");
+const {renderJobNumbers} = require("../order_number_generator");
 const Unassigned = require("../mongoose_schemas/unassigned"); // Import Unassigned Job Model
 const Drafting = require("../mongoose_schemas/patent_drafting");
 const Filing = require("../mongoose_schemas/patent_filing");
@@ -48,13 +49,31 @@ const getPartnerJobsById = async (req, res) => {
     const specificJob = await JobOrder.findOne({ "_id.job_no": jobNumber });
     console.log("specificJob:", specificJob); // Check the fetched specific job order
 
+    const jobLists = [specificJob._id.job_no];
+    const copyJobs = JSON.parse(JSON.stringify(specificJob));
+
+// Remove the _id.job_no field from the copy
+if (copyJobs._id) {
+  delete copyJobs._id.job_no;
+}
+    console.log("California " , copyJobs)
+
+    const fakeIDs = await renderJobNumbers(jobLists);
+    const cleanedArray = fakeIDs[0].replace(/\[|\]|'/g, '').trim();
+    console.log(cleanedArray);
+    copyJobs.og_id = jobLists[0];
+    console.log("This " + copyJobs);  
+
+    copyJobs._id.job_no = cleanedArray;
+
+
     if (!specificJob) {
       return res
         .status(404)
         .json({ error: "No job found with the provided job number" });
     }
 
-    res.json(specificJob);
+    res.json(copyJobs);
   } catch (error) {
     console.error("Error fetching job order:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -64,6 +83,7 @@ const getPartnerJobsById = async (req, res) => {
 const getPartnerJobOrders = async (req, res) => {
   try {
     const userID = req.userID;
+    let jobLists = [];
     console.log("userID:", userID); // Check the value of userID
 
     // Fetch the partner document based on the user ID
@@ -82,8 +102,24 @@ const getPartnerJobOrders = async (req, res) => {
       "_id.job_no": { $in: jobOrderIds },
     });
     // console.log("jobOrders:", jobOrders); // Check the fetched job orders
+    // Remove the _id field from each object in copyJobs
+    const copyJobs = JSON.parse(JSON.stringify(jobOrders));
+copyJobs.forEach((job) => {
+  delete job._id.job_no;
+});
+    jobOrders.forEach((job) => {
+      jobLists.push(job._id.job_no);
+    })
 
-    res.json({ jobOrders });
+    const fakeIDs = await renderJobNumbers(jobLists);
+    const cleanedArray = fakeIDs.map(item => item.replace(/'/g, '').trim());
+    
+    for(let jobs=0; jobs<copyJobs.length; jobs++) {
+      copyJobs[jobs].og_id = jobLists[jobs]
+      copyJobs[jobs]._id.job_no = cleanedArray[jobs]
+    }
+    res.json( copyJobs );
+
   } catch (error) {
     console.error("Error fetching job orders:", error);
     res.status(500).json({ error: "Internal Server Error" });

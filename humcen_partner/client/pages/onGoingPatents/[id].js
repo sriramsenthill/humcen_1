@@ -342,7 +342,7 @@ const DynamicPage = () => {
                           background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
                         },
                       }}
-                      onClick={()=>onClickDownload(job._id.job_no)}
+                      onClick={()=>onClickDownload(job.og_id)}
                       disabled={noFile}
                     >
                       Download now
@@ -364,7 +364,7 @@ const DynamicPage = () => {
                         },
                       }}
                       disabled={bulkFiles.length === 0}
-                      onClick={() => downloadBulkFiles(bulkFiles, Service, job._id.job_no)}
+                      onClick={() => downloadBulkFiles(bulkFiles, Service, job.og_id)}
                     >
                       Download Here
                     </Button>

@@ -28,7 +28,7 @@ api.interceptors.request.use((config) => {
 async function fetchJobOrders() {
   try {
     const response = await api.get('/partner/job_order');
-    const { jobOrders } = response.data;
+    const jobOrders  = response.data;
     console.log("This is it " + jobOrders);
 
     if (Array.isArray(jobOrders)) {

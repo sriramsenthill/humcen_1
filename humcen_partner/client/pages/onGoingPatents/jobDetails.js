@@ -53,6 +53,8 @@ const api = axios.create({
 
 
 const JobDetails = ({services, jobNo}) => {
+    const router = useRouter();
+    const {id} = router.query;
     const [jobData,setJobData]=useState(null);
     const [files, setFiles] = useState(null);
     const [jobNum, setJobNum] = useState("");
@@ -69,7 +71,6 @@ const JobDetails = ({services, jobNo}) => {
     const [personalInfo, setPersonalInfo] = useState([]);
     const [isEmpty, setEmpty ] = useState(false);
     const [isAccepted, setAccepted] = useState(false); // To show up the Submit button if and only if the Partner accepts the Job
-    const router = useRouter();
 
 
     const getFiles = (files) => {
@@ -133,7 +134,7 @@ const JobDetails = ({services, jobNo}) => {
     }
   };
   
-
+console.log(id);
   const handleOk = async() => {
     setIsSubmitted(false);
     try {
@@ -148,7 +149,7 @@ const JobDetails = ({services, jobNo}) => {
       const timelineResponse = await api.put(
         "partner/uploaded",
         {
-          job_no: job,
+          job_no: id,
           activity: 5,
         },
         {
@@ -174,9 +175,9 @@ const JobDetails = ({services, jobNo}) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-        setJobNum(jobNo);
+        setJobNum(id);
         api
-          .get(`${services}/${jobNo}`, {
+          .get(`${services}/${id}`, {
             headers: {
               Authorization: token,
             },
@@ -193,7 +194,7 @@ const JobDetails = ({services, jobNo}) => {
           );
 
           api
-          .get(`partner-details/${services}/${jobNo}`, {
+          .get(`partner-details/${services}/${id}`, {
             headers: {
               Authorization: token,
             },
@@ -212,7 +213,7 @@ const JobDetails = ({services, jobNo}) => {
           });
 
           api
-          .get(`partner/job_files_details/${jobNo}`, {
+          .get(`partner/job_files_details/${id}`, {
             headers: {
               Authorization: token,
             },
@@ -235,7 +236,7 @@ const JobDetails = ({services, jobNo}) => {
             console.error("Error fetching Partner Details", error);
           });
           
-          api.get(`partner/jobs/${jobNo}`, {
+          api.get(`partner/jobs/${id}`, {
             headers: {
               Authorization: token,
             },
@@ -248,7 +249,7 @@ const JobDetails = ({services, jobNo}) => {
 
           
       }
-    }, [services, jobNo]);
+    }, [services, jobNo, id]);
             
         
            

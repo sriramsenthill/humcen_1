@@ -2258,7 +2258,7 @@ const newVersionPatentDrafting = async(req, res) => {
       const findPartner = await Partner.findOne({
         is_free: true,
         ["known_fields.Patent Drafting"]: true,
-        in_progress_jobs: { $lt: 5 },
+        in_progress_jobs: { $lt: 5 },                       // Finding Availability of Partner for each and every chosen Country
         country: req.body.countries[totalCountries]
       });
       const findCustomer = await Customer.findOne({ userID: userId });
@@ -2270,7 +2270,7 @@ const newVersionPatentDrafting = async(req, res) => {
       
       if (!findPartner) {
         partnerName = "";
-        partnerID = "";
+        partnerID = "";                                   // If there's no availability of Partner
         // Handle the case when no partner is found
         const latestUnassignedDraftingOrder = await Unassigned.findOne()
         .sort({ "_id.job_no": -1 })
@@ -2284,7 +2284,7 @@ const newVersionPatentDrafting = async(req, res) => {
         console.log("Yes");
         // Changes
         mapID = newUnassignedDraftingNo;
-      draftingData = {
+      draftingData = {                                         // Creating a new Drafting Document for saving Details
         country: req.body.countries[totalCountries],
         budget: req.body.bills[totalCountries],
         job_title: req.body.title,
@@ -2300,7 +2300,7 @@ const newVersionPatentDrafting = async(req, res) => {
         newDraftingData.customerName = findCustomer.first_name;
         newDraftingData.status = "In Progress";
         console.log(newDraftingData);
-        const unassignedDraftingOrder = new Unassigned(newDraftingData);
+        const unassignedDraftingOrder = new Unassigned(newDraftingData);  // Creating a new Unassigned Job Order
         unassignedDraftingOrder._id.job_no =  newUnassignedDraftingNo ;
         
         unassignedDraftingOrder.save();
@@ -2313,8 +2313,8 @@ const newVersionPatentDrafting = async(req, res) => {
   
       } 
       const latestDraftingOrder = await JobOrder.findOne()
-      .sort({ "_id.job_no": -1 })
-      .limit(1)
+      .sort({ "_id.job_no": -1 })                                                 // Finding the latest Job Order to assign next Job Number to 
+      .limit(1)                                                                   // new Dummy Job Orderr
       .exec();
 
       newDraftingNo = latestDraftingOrder
@@ -2331,7 +2331,7 @@ const newVersionPatentDrafting = async(req, res) => {
       const formattedDate = new Date().toLocaleDateString(undefined, options);
       console.log("Fine till now" ,draftingData);
       const newJobOrder = new JobOrder({
-        _id: { job_no: newDraftingNo },
+        _id: { job_no: newDraftingNo },                                             // Creating a new Job Order for both Dummy and Assigned one
         service: "Patent Drafting",
         userID: userId,
         unassignedID: !findPartner && mapID,
@@ -2362,7 +2362,7 @@ const newVersionPatentDrafting = async(req, res) => {
         console.log("Partner Found");
         stepsInitial = 3;
         // Save the draftingData in the Drafting collection
-        const draftingOrder = new Drafting(draftingData);
+        const draftingOrder = new Drafting(draftingData);                       // Creating a new Drafting Document
         draftingOrder._id.job_no = newDraftingNo ;
         // Ensure findPartner and findCustomer are not null before accessing their properties
         draftingOrder.partnerName = findPartner.first_name; // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
