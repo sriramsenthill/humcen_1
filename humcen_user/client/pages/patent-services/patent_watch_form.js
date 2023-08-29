@@ -4,6 +4,7 @@ import Link from "next/link";
 import style from "@/styles/PageTitle.module.css";
 import { Button, ButtonProps, Card } from "@mui/material";
 import { styled } from "@mui/system";
+import ShoppingCart from "@/components/shoppingCart";
 import DefaultSelect from "@/components/Forms/AdvancedElements/DefaultField";
 import { Typography } from "@mui/material";
 import TextField from "@mui/material/TextField";
@@ -44,7 +45,7 @@ export default function Inbox() {
     const [countriesOpen, setCountriesOpen] = useState(false);
     const [contactOpen, setContactOpen] = useState(false);
     const [domain, setDomain] = useState("");
-    const [country, setCountry] = useState("");
+    const [country, setCountry] = useState([]);
     const [title, setTitle] = useState("");
     const [detailsFile, setDetailsFile] = useState(null);
     const [time, setTime] = useState("");
@@ -99,7 +100,7 @@ export default function Inbox() {
   };
 
   const handleKeywordChange = (event) => {
-    setKeyword(event.target.value);
+    setKeywords(event.target.value);
   };
 
   const handleMonDurationChange = (event) => {
@@ -114,12 +115,11 @@ export default function Inbox() {
       country &&
       compInfo &&
       geoScope &&
-      keyword &&
+      keywords &&
       monDuration
     );
   };
   const handleSubmit = async (e) => {
-    e.preventDefault();
     if (!isFormValid()) {
       setIsErrorDialogOpen(true);
       return;
@@ -128,10 +128,11 @@ export default function Inbox() {
     const formData = {
       field: domain,
       industry_focus: focus,
-      country: country,
+      countries: country,
+      bills: totalBill,
       competitor_information: compInfo,
       geographic_scope: geoScope,
-      keywords: keyword,
+      keywords: keywords,
       monitoring_duration: monDuration,
     };
 
@@ -165,21 +166,29 @@ export default function Inbox() {
 
     setSummary([
       {
-        title: "Title",
-        text: title,
+        title: "Technology or Industry Focus",
+        text: focus,
       },
       {
         title: "Domain",
         text: domain,
+      },      
+      {
+        title: "Geographic Scope",
+        text: geoScope,
+      },
+      {
+        title: "Competitor Information",
+        text: compInfo,
       },
       {
         title: "Keywords",
         text: keywords.toString()
       },
       {
-        title: "Uploaded Files",
-        text: [detailsFile.map((file) => file.name)].toString()
-      }
+        title: "Monitoring Duration",
+        text: monDuration,
+      },
     ]);
 
     for(let choices=0; choices < country.length; choices++){
@@ -429,7 +438,7 @@ export default function Inbox() {
       <Typography variant="h5">Summary</Typography>
       { contactOpen && <div style={{ padding: '1rem 0' }}>
           {/* Your content for the 'Contact' section */}
-          <ShoppingCart priceList={shoppingList} detailsList={summary} total={totalBill.reduce((a,b)=> a+b,0)}service="Patent Drafting"/>
+          <ShoppingCart priceList={shoppingList} detailsList={summary} total={totalBill.reduce((a,b)=> a+b,0)}service="Patent Watch"/>
           <Button variant="contained" onClick={() => handleSubmit()} style={{ marginTop: '0.5rem', backgroundColor: "#00B69B" }}>
             Submit
         </Button>

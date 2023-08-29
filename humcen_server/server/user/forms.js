@@ -3443,7 +3443,7 @@ const newVersionIllustration = async(req, res) => {
         console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
   
         await AllNotifications.sendToUser(Number(userId), "Your Patent Illustration Form has been submitted successfully");
-        await AllNotifications.sendToAdmin("Patent Patent Illustration Form of ID " + newUnassignedIllustrationNo +" has been submitted successfully and is in Unassigned Jobs.")
+        await AllNotifications.sendToAdmin("Patent Illustration Form of ID " + newUnassignedIllustrationNo +" has been submitted successfully and is in Unassigned Jobs.")
   
   
       } 
@@ -3570,7 +3570,7 @@ const newVersionIllustration = async(req, res) => {
    sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
  }
  else{
-   const partnerSubject="Request to accept the PPatent Illustration Form"
+   const partnerSubject="Request to accept the Patent Illustration Form"
    const partnerText="Assign the partner for Patent Illustration Form"
    sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
  } 
@@ -3584,6 +3584,194 @@ const newVersionIllustration = async(req, res) => {
   }
 }
 
+// Patent Watch Form
+
+const newVersionWatch = async(req, res) => {
+  try {
+    const userId = req.userId;
+    let partnerName, partnerID, mapID, watchData, newWatchNo;
+    for(let totalCountries = 0; totalCountries < req.body.countries.length; totalCountries++) {
+      console.log("Finding for " + req.body.countries[totalCountries]);
+      const findPartner = await Partner.findOne({
+        is_free: true,
+        ["known_fields.Patent Watch"]: true,
+        in_progress_jobs: { $lt: 5 },                       // Finding Availability of Partner for each and every chosen Country
+        country: req.body.countries[totalCountries]
+      });
+      const findCustomer = await Customer.findOne({ userID: userId });
+      const findAdmin=await Admin.findOne({_id:"64803aa4b57edc54d6b276cb"})
+      if (!findCustomer) {
+        // Handle the case when no customer is found
+        throw new Error("No customer found for the given user ID");
+      }
+      
+      if (!findPartner) {
+        partnerName = "";
+        partnerID = "";                                   // If there's no availability of Partner
+        // Handle the case when no partner is found
+        const latestUnassignedWatchOrder = await Unassigned.findOne()
+        .sort({ "_id.job_no": -1 })
+        .limit(1)
+        .exec();
+  
+      const newUnassignedWatchNo = latestUnassignedWatchOrder
+        ? latestUnassignedWatchOrder._id.job_no + 1
+        : 1000;
+      
+        console.log("Yes");
+        // Changes
+        mapID = newUnassignedWatchNo;
+      watchData = {                                         // Creating a new Drafting Document for saving Details
+        country: req.body.countries[totalCountries],
+        budget: req.body.bills[totalCountries],
+        field: req.body.field,
+        userID: userId,
+        competitor_information: req.body.competitor_information,
+        geographic_scope: req.body.geographic_scope,
+        industry_focus: req.body.industry_focus,
+        keywords: req.body.keywords,
+        monitoring_duration: req.body.monitoring_duration,
+      }
+  
+        stepsInitial = 2;
+        const newWatchData = watchData;
+        newWatchData.service = "Patent Watch";
+        newWatchData.customerName = findCustomer.first_name;
+        newWatchData.status = "In Progress";
+        console.log(newWatchData);
+        const unassignedWatchOrder = new Unassigned(newWatchData);  // Creating a new Unassigned Job Order
+        unassignedWatchOrder._id.job_no =  newUnassignedWatchNo ;
+        
+        unassignedWatchOrder.save();
+        
+        console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
+  
+        await AllNotifications.sendToUser(Number(userId), "Your Patent Watch Form has been submitted successfully");
+        await AllNotifications.sendToAdmin("Patent Watch Form of ID " + newUnassignedWatchNo +" has been submitted successfully and is in Unassigned Jobs.")
+  
+  
+      } 
+      const latestWatchOrder = await JobOrder.findOne()
+      .sort({ "_id.job_no": -1 })                                                 // Finding the latest Job Order to assign next Job Number to 
+      .limit(1)                                                                   // new Dummy Job Orderr
+      .exec();
+
+      newWatchNo = latestWatchOrder
+      ? latestWatchOrder._id.job_no + 1
+      : 1000;
+         // Changes 
+      console.log(newWatchNo);
+      watchData._id = { job_no: newWatchNo };
+      const startDate = new Date();
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() + 7);
+
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      const formattedDate = new Date().toLocaleDateString(undefined, options);
+      console.log("Fine till now" ,watchData);
+      const newJobOrder = new JobOrder({
+        _id: { job_no: newWatchNo },                                             // Creating a new Job Order for both Dummy and Assigned one
+        service: "Patent Watch",
+        userID: userId,
+        unassignedID: !findPartner && mapID,
+        partnerID: partnerID,
+        partnerName: partnerName, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+        customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
+        country: req.body.countries[totalCountries],
+        start_date: startDate,
+        end_date: endDate,
+        steps_done: 1,
+        steps_done_user: 1,
+        steps_done_activity: 2,
+        date_partner: [formattedDate, " ", " ", " "], 
+        date_user: [formattedDate, " ", " ", " ", " ", " "],
+        date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " ", " ", " "],
+        status: "In Progress",
+        budget: "$ " +  req.body.bills[totalCountries],
+        domain: req.body.domain,
+      });
+  
+      await newJobOrder.save();
+      console.log("Saved");
+      
+      if(findPartner) {
+        // Changes
+        partnerName = findPartner.first_name;
+        partnerID = findPartner.userID;
+        console.log("Partner Found");
+        stepsInitial = 3;
+        // Save the draftingData in the Drafting collection
+        const watchOrder = new patentWatch(watchData);                       // Creating a new Drafting Document
+        watchOrder._id.job_no = newWatchNo ;
+        // Ensure findPartner and findCustomer are not null before accessing their properties
+        watchOrder.partnerName = findPartner.first_name; // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+        watchOrder.customerName = findCustomer.first_name;// Assuming the customer's name is stored in the 'customerName' field of the Customer collection
+    
+        const savedWatch= await watchOrder.save();
+    
+        // Update partner and customer jobs lists
+        findPartner.jobs.push(watchOrder._id.job_no);
+        findCustomer.jobs.push(watchOrder._id.job_no);
+    
+        await Promise.all([findPartner.save(), findCustomer.save()]);
+    
+
+  
+    
+        console.log("Successfully Assigned Patent Watch Task to a Partner");
+        console.log(userId);
+        await AllNotifications.sendToUser(Number(userId), "Your Patent Watch Form has been submitted successfully");
+        await AllNotifications.sendToPartner(Number(findPartner.userID),"You have been auto-assigned the Job " + newWatchNo + ". You can Accept or Reject the Job.");
+        await AllNotifications.sendToAdmin("Patent Watch Form of ID " + newWatchNo +" has been submitted successfully")
+  
+        // To send Notification to Admin
+  
+
+  
+      }
+    
+ // Fetch user's email from MongoDB and send the email
+ const user = await Customer.findOne({ userID: userId });
+ const attachments = [];
+ if (user && user.email) {
+   const subject = 'Patent Watch Submission Successful';
+   const text = 'Your Patent Watch form has been submitted successfully.';
+   
+   // Prepare the data for the table in the email
+   const tableData = [
+     { label: 'Service :', value: 'Patent Watch' },
+     { label: 'Customer Name :', value: findCustomer.first_name },
+     {label:'Domain :',value:req.body.field},
+     {label:'Country :',value:req.body.countries[totalCountries]},
+     {label:'Budget :',value:req.body.bills[totalCountries]},
+     {label:'Technology or Industry Focus :',value:req.body.industry_focus},
+     {label:'Competitor Information :',value:req.body.competitor_information},
+     {label:'Geographic Scope :',value:req.body.geographic_scope},
+     {label:'Monitoring Duration :',value:req.body.monitoring_duration},
+     // Add more rows as needed
+   ];
+   // Send the email with tableData and attachments
+   sendEmail(user.email, subject, text, tableData,attachments);
+ if (findPartner){
+   const partnerSubject="Request to accept the Patent Watch Form"
+   const partnerText="Accept the submission for Patent Watch Form"
+   sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
+ }
+ else{
+   const partnerSubject="Request to accept the Patent Watch Form"
+   const partnerText="Assign the partner for Patent Watch Form"
+   sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
+ }
+
+  
+    }
+    res.status(200);
+     } 
+    }
+     catch(error) {
+      console.error("Error in saving up the Patent Illustration Form : " + error);
+  }
+}
 
 
 module.exports = {
@@ -3617,4 +3805,5 @@ module.exports = {
     newVersionPortfolioAnalysis,
     newVersionTranslation,
     newVersionIllustration,
+    newVersionWatch,
   };
