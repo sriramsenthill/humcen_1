@@ -67,7 +67,7 @@ router.post("/api/patent_landscape", verifyToken, forms.newVersionLandscape);
 
 router.post("/api/patent_watch", verifyToken, forms.newVersionWatch);
 
-router.post("/api/patent_licensing", verifyToken, forms.savePatentLicenseData);
+router.post("/api/patent_licensing", verifyToken, forms.newVersionLicense);
 
 router.post(
   "/api/freedom_to_patent_portfolio_analysis",

@@ -3773,6 +3773,193 @@ const newVersionWatch = async(req, res) => {
   }
 }
 
+// Patent Licensing
+
+const newVersionLicense = async(req, res) => {
+  try {
+    const userId = req.userId;
+    let partnerName, partnerID, mapID, licenseData, newLicenseNo;
+    for(let totalCountries = 0; totalCountries < req.body.countries.length; totalCountries++) {
+      console.log("Finding for " + req.body.countries[totalCountries]);
+      const findPartner = await Partner.findOne({
+        is_free: true,
+        ["known_fields.Patent Licensing and Commercialization Services"]: true,
+        in_progress_jobs: { $lt: 5 },                       // Finding Availability of Partner for each and every chosen Country
+        country: req.body.countries[totalCountries]
+      });
+      const findCustomer = await Customer.findOne({ userID: userId });
+      const findAdmin=await Admin.findOne({_id:"64803aa4b57edc54d6b276cb"})
+      if (!findCustomer) {
+        // Handle the case when no customer is found
+        throw new Error("No customer found for the given user ID");
+      }
+      
+      if (!findPartner) {
+        partnerName = "";
+        partnerID = "";                                   // If there's no availability of Partner
+        // Handle the case when no partner is found
+        const latestUnassignedLicenseOrder = await Unassigned.findOne()
+        .sort({ "_id.job_no": -1 })
+        .limit(1)
+        .exec();
+  
+      const newUnassignedLicenseNo = latestUnassignedLicenseOrder
+        ? latestUnassignedLicenseOrder._id.job_no + 1
+        : 1000;
+      
+        console.log("Yes");
+        // Changes
+        mapID = newUnassignedLicenseNo;
+      licenseData = {                                         // Creating a new Drafting Document for saving Details
+        country: req.body.countries[totalCountries],
+        budget: req.body.bills[totalCountries],
+        field: req.body.field,
+        userID: userId,
+        commercialization_goals: req.body.commercialization_goals,
+        competitive_landscape: req.body.competitive_landscape,
+        patent_information: req.body.patent_information,
+        technology_description: req.body.technology_description,
+      }
+  
+        stepsInitial = 2;
+        const newLicenseData = licenseData;
+        newLicenseData.service = "Patent Licensing and Commercialization Services";
+        newLicenseData.customerName = findCustomer.first_name;
+        newLicenseData.status = "In Progress";
+        console.log(newLicenseData);
+        const unassignedLicenseOrder = new Unassigned(newLicenseData);  // Creating a new Unassigned Job Order
+        unassignedLicenseOrder._id.job_no =  newUnassignedLicenseNo ;
+        
+        unassignedLicenseOrder.save();
+        
+        console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
+  
+        await AllNotifications.sendToUser(Number(userId), "Your Patent Licensing and Commercialization Services Form has been submitted successfully");
+        await AllNotifications.sendToAdmin("Patent Licensing and Commercialization Services Form of ID " + newUnassignedLicenseNo +" has been submitted successfully and is in Unassigned Jobs.")
+  
+  
+      } 
+      const latestLicenseOrder = await JobOrder.findOne()
+      .sort({ "_id.job_no": -1 })                                                 // Finding the latest Job Order to assign next Job Number to 
+      .limit(1)                                                                   // new Dummy Job Orderr
+      .exec();
+
+      newLicenseNo = latestLicenseOrder
+      ? latestLicenseOrder._id.job_no + 1
+      : 1000;
+         // Changes 
+      console.log(newLicenseNo);
+      licenseData._id = { job_no: newLicenseNo };
+      const startDate = new Date();
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() + 7);
+
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      const formattedDate = new Date().toLocaleDateString(undefined, options);
+      console.log("Fine till now" ,licenseData);
+      const newJobOrder = new JobOrder({
+        _id: { job_no: newLicenseNo },                                             // Creating a new Job Order for both Dummy and Assigned one
+        service: "Patent Licensing and Commercialization Services",
+        userID: userId,
+        unassignedID: !findPartner && mapID,
+        partnerID: partnerID,
+        partnerName: partnerName, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+        customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
+        country: req.body.countries[totalCountries],
+        start_date: startDate,
+        end_date: endDate,
+        steps_done: 1,
+        steps_done_user: 1,
+        steps_done_activity: 2,
+        date_partner: [formattedDate, " ", " ", " "], 
+        date_user: [formattedDate, " ", " ", " ", " ", " "],
+        date_activity: [formattedDate, formattedDate, " ", " ", " ", " ", " ", " ", " ", " "],
+        status: "In Progress",
+        budget: "$ " +  req.body.bills[totalCountries],
+        domain: req.body.domain,
+      });
+  
+      await newJobOrder.save();
+      console.log("Saved");
+      
+      if(findPartner) {
+        // Changes
+        partnerName = findPartner.first_name;
+        partnerID = findPartner.userID;
+        console.log("Partner Found");
+        stepsInitial = 3;
+        // Save the draftingData in the Drafting collection
+        const licenseOrder = new patentLicense(licenseData);                       // Creating a new Drafting Document
+        licenseOrder._id.job_no = newLicenseNo ;
+        // Ensure findPartner and findCustomer are not null before accessing their properties
+        licenseOrder.partnerName = findPartner.first_name; // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+        licenseOrder.customerName = findCustomer.first_name;// Assuming the customer's name is stored in the 'customerName' field of the Customer collection
+    
+        const savedLicense= await licenseOrder.save();
+    
+        // Update partner and customer jobs lists
+        findPartner.jobs.push(licenseOrder._id.job_no);
+        findCustomer.jobs.push(licenseOrder._id.job_no);
+    
+        await Promise.all([findPartner.save(), findCustomer.save()]);
+    
+
+  
+    
+        console.log("Successfully Assigned Patent Licensing and Commercialization Services Task to a Partner");
+        console.log(userId);
+        await AllNotifications.sendToUser(Number(userId), "Your Patent Licensing and Commercialization Services Form has been submitted successfully");
+        await AllNotifications.sendToPartner(Number(findPartner.userID),"You have been auto-assigned the Job " + newLicenseNo + ". You can Accept or Reject the Job.");
+        await AllNotifications.sendToAdmin("Patent Watch Form of ID " + newLicenseNo +" has been submitted successfully")
+  
+        // To send Notification to Admin
+  
+
+  
+      }
+    
+ // Fetch user's email from MongoDB and send the email
+ const user = await Customer.findOne({ userID: userId });
+    const attachments = [];
+    if (user && user.email) {
+      const subject = 'Patent Licensing and Commercialization Services Submission Successful';
+      const text = 'Your Patent Licensing and Commercialization Services form has been submitted successfully.';
+      
+      // Prepare the data for the table in the email
+      const tableData = [
+        { label: 'Service :', value: 'Patent Licensing and Commercialization Services' },
+        { label: 'Customer Name :', value: findCustomer.first_name },
+        {label:'Domain :',value:req.body.field},
+        {label:'Country :',value:req.body.countries[totalCountries]},
+        {label:'Budget :',value:req.body.bills[totalCountries]},
+        {label:'Patent Information :',value:req.body.patent_information},
+        {label:'Commercialization Goals :',value:req.body.commercialization_goals},
+        {label:'Competitive Landscape :',value:req.body.competitive_landscape},
+        {label:'Technology Description :',value:req.body.technology_description},
+        // Add more rows as needed
+      ];
+      // Send the email with tableData and attachments
+      sendEmail(user.email, subject, text, tableData,attachments);
+    if (findPartner){
+      const partnerSubject="Request to accept the Patent Licensing and Commercialization Services Form"
+      const partnerText="Accept the submission for Patent Licensing and Commercialization Services Form"
+      sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
+    }
+    else{
+      const partnerSubject="Request to accept the Patent Licensing and Commercialization Services Form"
+      const partnerText="Assign the partner for Patent Licensing and Commercialization Services Form"
+      sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
+    }
+
+  
+    }
+    res.status(200);
+     } 
+    }
+     catch(error) {
+      console.error("Error in saving up the Patent Licensing and Commercialization Services Form : " + error);
+  }
+}
 
 module.exports = {
     getJobOrderOnID,
@@ -3806,4 +3993,5 @@ module.exports = {
     newVersionTranslation,
     newVersionIllustration,
     newVersionWatch,
+    newVersionLicense,
   };
