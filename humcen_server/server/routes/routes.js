@@ -61,7 +61,7 @@ router.post(
     forms.newVersionFTO
 );
 
-router.post("/api/patent_illustration", verifyToken, forms.savePatentIllustrationData);
+router.post("/api/patent_illustration", verifyToken, forms.newVersionIllustration);
 
 router.post("/api/patent_landscape", verifyToken, forms.newVersionLandscape);
 

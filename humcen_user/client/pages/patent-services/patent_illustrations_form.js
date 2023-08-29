@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import BannerCard from "@/components/BannerCard";
 import Link from "next/link";
 import style from "@/styles/PageTitle.module.css";
+import ShoppingCart from "@/components/shoppingCart";
 import { Button, ButtonProps, Card } from "@mui/material";
 import { styled } from "@mui/system";
 import DefaultSelect from "@/components/Forms/AdvancedElements/DefaultField";
@@ -44,11 +45,9 @@ export default function Inbox() {
     const [countriesOpen, setCountriesOpen] = useState(false);
     const [contactOpen, setContactOpen] = useState(false);
     const [domain, setDomain] = useState("");
-    const [country, setCountry] = useState("");
+    const [country, setCountry] = useState([]);
     const [title, setTitle] = useState("");
     const [detailsFile, setDetailsFile] = useState(null);
-    const [time, setTime] = useState("");
-    const [budget, setBudget] = useState("");
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
     const [isErrorDialogOpenStatus, setIsErrorDialogOpenStatus] = useState(false);
@@ -96,7 +95,6 @@ export default function Inbox() {
 
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
 
 
     if (!isFormValid()) {
@@ -108,7 +106,8 @@ export default function Inbox() {
 
     const formData = {
       field: domain,
-      country: country,
+      countries: country,
+      bills: totalBill,
       patent_specifications:patentSpe,
       drawing_requirements:drawingReq,
       preferred_style: preferredStyleFile,
@@ -144,31 +143,36 @@ export default function Inbox() {
 
     setSummary([
       {
-        title: "Title",
-        text: title,
+        title: "Patent Specifications",
+        text: patentSpe,
       },
       {
         title: "Domain",
         text: domain,
       },
       {
-        title: "Keywords",
-        text: keywords.toString()
+        title: "Drawing Requirements",
+        text: drawingReq,
       },
       {
         title: "Uploaded Files",
-        text: [detailsFile.map((file) => file.name)].toString()
+        text: [preferredStyleFile.map((file) => file.name)].toString()
       }
     ]);
-
-    for(let choices=0; choices < country.length; choices++){
-      setList(shoppingList => [...shoppingList, {
+    const newList = []
+    console.log(country);
+    for (let choices = 0; choices < country.length; choices++) {
+      newList.push({
         country: country[choices],
         cost: totalBill[choices]
-      }])
+      });
+      
     }
+    setList(newList)
+    console.log(shoppingList);
   };
 
+  console.log(shoppingList)
 
   return (
     <>
@@ -222,7 +226,8 @@ export default function Inbox() {
               fullWidth
               id="name"
               name="name"
-              label="Provide a copy of the patent specification, including the detailed description."
+              label={!patentSpe &&"Provide a copy of the patent specification, including the detailed description."}
+              value={patentSpe}
               autoComplete="name"
               InputProps={{
                 style: { borderRadius: 8 },
@@ -244,7 +249,8 @@ export default function Inbox() {
               fullWidth
               id="name"
               name="name"
-              label="Specify any specific requirements or guidelines for the patent illustration."
+              label={ !drawingReq && "Specify any specific requirements or guidelines for the patent illustration."}
+              value={drawingReq}
               autoComplete="name"
               InputProps={{
                 style: { borderRadius: 8 },
@@ -362,7 +368,7 @@ export default function Inbox() {
       <Typography variant="h5">Summary</Typography>
       { contactOpen && <div style={{ padding: '1rem 0' }}>
           {/* Your content for the 'Contact' section */}
-          <ShoppingCart priceList={shoppingList} detailsList={summary} total={totalBill.reduce((a,b)=> a+b,0)}service="Patent Drafting"/>
+          <ShoppingCart priceList={shoppingList} detailsList={summary} total={totalBill.reduce((a,b)=> a+b,0)} service="Patent Illustration"/>
           <Button variant="contained" onClick={() => handleSubmit()} style={{ marginTop: '0.5rem', backgroundColor: "#00B69B" }}>
             Submit
         </Button>

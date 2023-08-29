@@ -1,4 +1,5 @@
-import * as React from "react";
+import { useState } from "react";
+import { useEffect } from "react";
 import {Grid, Item} from "@mui/material";
 import Card from "@mui/material/Card";
 import { Box, Typography } from "@mui/material";
@@ -10,7 +11,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
+
 const ShoppingCart = ({priceList, detailsList, service, total}) => {
+  const [realDetails, setDetails] = useState([]);
+
   return (
     <>
         {console.log(priceList)}
