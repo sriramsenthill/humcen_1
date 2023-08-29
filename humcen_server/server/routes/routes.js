@@ -78,7 +78,7 @@ router.post(
 router.post(
   "/api/patent_translation_services",
   verifyToken,
-  forms.savePatentTranslationData
+  forms.newVersionTranslation
 );
 
 router.get("/api/user/job_files_details/:jobID", verifyToken, forms.getJobFilesDetailsForUsers);

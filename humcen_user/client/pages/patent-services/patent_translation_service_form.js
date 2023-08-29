@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import BannerCard from "@/components/BannerCard";
 import Link from "next/link";
+import ShoppingCart from "@/components/shoppingCart";
 import style from "@/styles/PageTitle.module.css";
 import { Button, ButtonProps, Card } from "@mui/material";
 import { styled } from "@mui/system";
@@ -93,8 +94,6 @@ export default function Inbox() {
     return domain && sourceLanguage && targetLanguage && files && country;
   };
   const handleSubmit = async (e) => {
-    e.preventDefault();
-
     
 if (!isFormValid()) {
   setIsErrorDialogOpen(true);
@@ -109,7 +108,8 @@ if (!isFormValid()) {
       target_language:targetLanguage,
       additional_instructions:additionalInfo,
       document_details: files,
-      country: country,
+      countries: country,
+      bills: totalBill,
     };
 
     try {
@@ -144,20 +144,24 @@ if (!isFormValid()) {
 
     setSummary([
       {
-        title: "Title",
-        text: title,
+        title: "Source Language",
+        text: sourceLanguage,
+      },
+      {
+        title: "Source Language",
+        text: sourceLanguage,
       },
       {
         title: "Domain",
         text: domain,
       },
       {
-        title: "Keywords",
-        text: keywords.toString()
+        title: "Additional Instructions",
+        text: additionalInfo
       },
       {
         title: "Uploaded Files",
-        text: [detailsFile.map((file) => file.name)].toString()
+        text: [files.map((file) => file.name)].toString()
       }
     ]);
 
@@ -381,7 +385,7 @@ if (!isFormValid()) {
       <Typography variant="h5">Summary</Typography>
       { contactOpen && <div style={{ padding: '1rem 0' }}>
           {/* Your content for the 'Contact' section */}
-          <ShoppingCart priceList={shoppingList} detailsList={summary} total={totalBill.reduce((a,b)=> a+b,0)}service="Patent Drafting"/>
+          <ShoppingCart priceList={shoppingList} detailsList={summary} total={totalBill.reduce((a,b)=> a+b,0)}service="Patent Translation Services"/>
           <Button variant="contained" onClick={() => handleSubmit()} style={{ marginTop: '0.5rem', backgroundColor: "#00B69B" }}>
             Submit
         </Button>
