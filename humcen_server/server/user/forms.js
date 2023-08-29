@@ -2691,7 +2691,7 @@ const newVersionFTO = async(req, res) => {
         console.log("Partner Found");
         stepsInitial = 3;
         // Save the draftingData in the Drafting collection
-        const ftoOrder = new responseToFer(ftoData);                       // Creating a new Drafting Document
+        const ftoOrder = new freedomToOperate(ftoData);                       // Creating a new Drafting Document
         ftoOrder._id.job_no = newFTONo ;
         // Ensure findPartner and findCustomer are not null before accessing their properties
         ftoOrder.partnerName = findPartner.first_name; // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
