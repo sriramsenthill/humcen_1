@@ -2980,12 +2980,12 @@ const newVersionLandscape = async(req, res) => {
 const newVersionPortfolioAnalysis = async(req, res) => {
   try {
     const userId = req.userId;
-    let partnerName, partnerID, mapID, landscapeData, newLandscapeNo;
+    let partnerName, partnerID, mapID, portfolioData, newPortfolioNo;
     for(let totalCountries = 0; totalCountries < req.body.countries.length; totalCountries++) {
       console.log("Finding for " + req.body.countries[totalCountries]);
       const findPartner = await Partner.findOne({
         is_free: true,
-        ["known_fields.Freedom to Patent Landscape"]: true,
+        ["known_fields.Freedom to Patent Portfolio Analysis"]: true,
         in_progress_jobs: { $lt: 5 },                       // Finding Availability of Partner for each and every chosen Country
         country: req.body.countries[totalCountries]
       });
@@ -3000,67 +3000,66 @@ const newVersionPortfolioAnalysis = async(req, res) => {
         partnerName = "";
         partnerID = "";                                   // If there's no availability of Partner
         // Handle the case when no partner is found
-        const latestUnassignedLandscapeOrder = await Unassigned.findOne()
+        const latestUnassignedPortfolioOrder = await Unassigned.findOne()
         .sort({ "_id.job_no": -1 })
         .limit(1)
         .exec();
   
-      const newUnassignedLandscapeNo = latestUnassignedLandscapeOrder
-        ? latestUnassignedLandscapeOrder._id.job_no + 1
+      const newUnassignedPortfolioNo = latestUnassignedPortfolioOrder
+        ? latestUnassignedPortfolioOrder._id.job_no + 1
         : 1000;
       
         console.log("Yes");
         // Changes
-        mapID = newUnassignedLandscapeNo;
-      landscapeData = {                                         // Creating a new Drafting Document for saving Details
+        mapID = newUnassignedPortfolioNo;
+      portfolioData = {                                         // Creating a new Drafting Document for saving Details
         country: req.body.countries[totalCountries],
         budget: req.body.bills[totalCountries],
-        keywords: req.body.keywords,
         field: req.body.field,
         userID: userId,
-        invention_description: req.body.invention_description,
-        patent_application_details: req.body.patent_application_details,
+        business_objectives: req.body.business_objectives,
+        market_and_industry_information: req.body.market_and_industry_information,
       }
   
         stepsInitial = 2;
-        const newLandscapeData = landscapeData;
-        newLandscapeData.service = "Freedom to Patent Landscape";
-        newLandscapeData.customerName = findCustomer.first_name;
-        newLandscapeData.status = "In Progress";
-        console.log(newLandscapeData);
-        const unassignedLandscapeOrder = new Unassigned(newLandscapeData);  // Creating a new Unassigned Job Order
-        unassignedLandscapeOrder._id.job_no =  newUnassignedLandscapeNo ;
+        const newPortfolioData = portfolioData;
+        newPortfolioData.service = "Freedom to Patent Portfolio Analysis";
+        newPortfolioData.customerName = findCustomer.first_name;
+        newPortfolioData.status = "In Progress";
+        console.log(newPortfolioData);
+        const unassignedPortfolioOrder = new Unassigned(newPortfolioData);  // Creating a new Unassigned Job Order
+        unassignedPortfolioOrder._id.job_no =  newUnassignedPortfolioNo ;
         
-        unassignedLandscapeOrder.save();
+        unassignedPortfolioOrder.save();
         
         console.log("No Partner found. Therefore, Sending it to Unassigned Tasks");
   
-        await AllNotifications.sendToUser(Number(userId), "Your Freedom to Patent Landscape Form has been submitted successfully");
-        await AllNotifications.sendToAdmin("Freedom to Patent Landscape Form of ID " + newUnassignedLandscapeNo +" has been submitted successfully and is in Unassigned Jobs.")
+        await AllNotifications.sendToUser(Number(userId), "Your Freedom to Patent Portfolio Analysis Form has been submitted successfully");
+        await AllNotifications.sendToAdmin("Freedom to Patent Portfolio Analysis Form of ID " + newUnassignedPortfolioNo +" has been submitted successfully and is in Unassigned Jobs.")
   
   
       } 
-      const latestLandscapeOrder = await JobOrder.findOne()
+      const latestPortfolioOrder = await JobOrder.findOne()
       .sort({ "_id.job_no": -1 })                                                 // Finding the latest Job Order to assign next Job Number to 
       .limit(1)                                                                   // new Dummy Job Orderr
       .exec();
 
-      newLandscapeNo = latestLandscapeOrder
-      ? latestLandscapeOrder._id.job_no + 1
+      newPortfolioNo = latestPortfolioOrder
+      ? latestPortfolioOrder._id.job_no + 1
       : 1000;
          // Changes 
-      console.log(newLandscapeNo);
-      landscapeData._id = { job_no: newLandscapeNo };
+      console.log(newPortfolioNo);
+      portfolioData._id = { job_no: newPortfolioNo };
       const startDate = new Date();
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
 
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
       const formattedDate = new Date().toLocaleDateString(undefined, options);
-      console.log("Fine till now" ,landscapeData);
+      console.log("Fine till now" ,portfolioData);
       const newJobOrder = new JobOrder({
-        _id: { job_no: newLandscapeNo },                                             // Creating a new Job Order for both Dummy and Assigned one
-        service: "Freedom to Patent Landscape",
+        _id: { job_no: newPortfolioNo },                                             // Creating a new Job Order for both Dummy and Assigned one
+        service: "Freedom to Patent Portfolio Analysis",
         userID: userId,
         unassignedID: !findPartner && mapID,
         partnerID: partnerID,
@@ -3090,28 +3089,28 @@ const newVersionPortfolioAnalysis = async(req, res) => {
         console.log("Partner Found");
         stepsInitial = 3;
         // Save the draftingData in the Drafting collection
-        const landscapeOrder = new patentLandscape(landscapeData);                       // Creating a new Drafting Document
-        landscapeOrder._id.job_no = newLandscapeNo ;
+        const portfolioOrder = new patentPortfolioAnalysis(portfolioData);                       // Creating a new Drafting Document
+        portfolioOrder._id.job_no = newPortfolioNo ;
         // Ensure findPartner and findCustomer are not null before accessing their properties
-        landscapeOrder.partnerName = findPartner.first_name; // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
-        landscapeOrder.customerName = findCustomer.first_name;// Assuming the customer's name is stored in the 'customerName' field of the Customer collection
+        portfolioOrder.partnerName = findPartner.first_name; // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+        portfolioOrder.customerName = findCustomer.first_name;// Assuming the customer's name is stored in the 'customerName' field of the Customer collection
     
-        const savedLandscape = await landscapeOrder.save();
+        const savedPortfolio = await portfolioOrder.save();
     
         // Update partner and customer jobs lists
-        findPartner.jobs.push(landscapeOrder._id.job_no);
-        findCustomer.jobs.push(landscapeOrder._id.job_no);
+        findPartner.jobs.push(portfolioOrder._id.job_no);
+        findCustomer.jobs.push(portfolioOrder._id.job_no);
     
         await Promise.all([findPartner.save(), findCustomer.save()]);
     
 
   
     
-        console.log("Successfully Assigned Freedom To Operate Search Task to a Partner");
+        console.log("Successfully Assigned Freedom to Patent Portfolio Analysis Task to a Partner");
         console.log(userId);
-        await AllNotifications.sendToUser(Number(userId), "Your Freedom to Patent Landscape Form has been submitted successfully");
-        await AllNotifications.sendToPartner(Number(findPartner.userID),"You have been auto-assigned the Job " + newLandscapeNo + ". You can Accept or Reject the Job.");
-        await AllNotifications.sendToAdmin("Freedom to Patent Landscape Form of ID " + newLandscapeNo +" has been submitted successfully")
+        await AllNotifications.sendToUser(Number(userId), "Your Freedom to Patent Portfolio Analysis Form has been submitted successfully");
+        await AllNotifications.sendToPartner(Number(findPartner.userID),"You have been auto-assigned the Job " + newPortfolioNo + ". You can Accept or Reject the Job.");
+        await AllNotifications.sendToAdmin("Freedom to Patent Portfolio Analysis Form of ID " + newPortfolioNo +" has been submitted successfully")
   
         // To send Notification to Admin
   
@@ -3121,40 +3120,58 @@ const newVersionPortfolioAnalysis = async(req, res) => {
     
  // Fetch user's email from MongoDB and send the email
  const user = await Customer.findOne({ userID: userId });
- const attachments = [];
- if (user && user.email) {
-   const subject = 'Freedom to Patent Landscape Submission Successful';
-   const text = 'Your Freedom to Patent Landscape form has been submitted successfully.';
-   
-   // Prepare the data for the table in the email
-   const tableData = [
-     { label: 'Service :', value: 'Freedom to Patent Landscape' },
-     { label: 'Customer Name :', value: findCustomer.first_name },
-     {label:'Domain :',value:req.body.field},
-     {label:'Country :',value:req.body.countries[totalCountries]},
-     {label:'Budget :',value:req.body.bills[totalCountries]},
-     {label:'Technology Description :',value:req.body.technology_description},
-     {label:'Competitor Information :',value:req.body.competitor_information},
-     
-   ];
-   
-   // Send the email with tableData and attachments
-   sendEmail(user.email, subject, text, tableData,attachments);
- if (findPartner){
-   const partnerSubject="Request to accept the Freedom to Patent Landscape Form"
-   const partnerText="Accept the submission for Freedom to Patent Landscape Form"
-   sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
- }
- else{
-   const partnerSubject="Request to accept the Freedom to Patent Landscape Form"
-   const partnerText="Assign the partner for Freedom to Patent Landscape Form"
-   sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
- }
-  } 
+    const attachments = [];
+    if (user && user.email) {
+      const subject = 'Freedom To Patent Portfolio Analysis Submission Successful';
+      const text = 'Your Freedom To Patent Portfolio Analysis form has been submitted successfully.';
+      
+      // Prepare the data for the table in the email
+      const tableData = [
+        { label: 'Service :', value: 'Freedom To Patent Portfolio Analysis' },
+        { label: 'Customer Name :', value: findCustomer.first_name },
+        {label:'Domain :',value:req.body.domain},
+        {label:'Country :',value:req.body.countries[totalCountries]},
+        {label:'Country :',value:req.body.bills[totalCountries]},
+        {label:'Business Objectives :',value:req.body.business_objectives},
+        {label:'Market and Industry Information :',value:req.body.market_and_industry_information},
+        // Add more rows as needed
+      ];
+
+      const {invention_details}=req.body.service_specific_files
+    
+      
+      // Ensure invention_details is an array and not empty
+      if (Array.isArray(invention_details) && invention_details.length > 0) {
+        // Iterate through the invention_details array and add each file as a separate attachment
+        for (const item of invention_details) {
+          if (item.name && item.base64) {
+            const base64Content = item.base64.split(';base64,').pop(); // Get the actual base64 content
+            attachments.push({
+              filename: item.name,
+              content: base64Content,
+              encoding: 'base64', // Specify that the content is base64-encoded
+            });
+          }
+        }
+      }
+      
+      // Send the email with tableData and attachments
+      sendEmail(user.email, subject, text, tableData,attachments);
+    if (findPartner){
+      const partnerSubject="Request to accept the Freedom To Patent Portfolio Analysis Form"
+      const partnerText="Accept the submission for Freedom To Patent Portfolio Analysis Form"
+      sendEmail(findPartner.email,partnerSubject,partnerText,tableData,attachments);
+    }
+    else{
+      const partnerSubject="Request to accept the Freedom To Patent Portfolio Analysis Form"
+      const partnerText="Assign the partner for Freedom To Patent Portfolio Analysis Form"
+      sendEmail(findAdmin.email,partnerSubject,partnerText,tableData,attachments)
+    } 
   
     }
     res.status(200);
-     }
+     } 
+    }
      catch(error) {
       console.error("Error in saving up the Freedom To Patent Landscape Form : " + error);
   }
@@ -3192,4 +3209,5 @@ module.exports = {
     newVersionFER,
     newVersionFTO,
     newVersionLandscape,
+    newVersionPortfolioAnalysis,
   };

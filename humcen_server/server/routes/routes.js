@@ -72,7 +72,7 @@ router.post("/api/patent_licensing", verifyToken, forms.savePatentLicenseData);
 router.post(
   "/api/freedom_to_patent_portfolio_analysis",
   verifyToken,
-  forms.savePatentPortfolioAnalysisData
+  forms.newVersionPortfolioAnalysis
 );
 
 router.post(

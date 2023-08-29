@@ -3,6 +3,7 @@ import BannerCard from "@/components/BannerCard";
 import Link from "next/link";
 import style from "@/styles/PageTitle.module.css";
 import { Button, ButtonProps, Card } from "@mui/material";
+import ShoppingCart from "@/components/shoppingCart";
 import { styled } from "@mui/system";
 import DefaultSelect from "@/components/Forms/AdvancedElements/DefaultField";
 import { Typography } from "@mui/material";
@@ -44,11 +45,8 @@ export default function Inbox() {
     const [countriesOpen, setCountriesOpen] = useState(false);
     const [contactOpen, setContactOpen] = useState(false);
     const [domain, setDomain] = useState("");
-    const [country, setCountry] = useState("");
+    const [country, setCountry] = useState([]);
     const [title, setTitle] = useState("");
-    const [detailsFile, setDetailsFile] = useState(null);
-    const [time, setTime] = useState("");
-    const [budget, setBudget] = useState("");
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
     const [isErrorDialogOpenStatus, setIsErrorDialogOpenStatus] = useState(false);
@@ -88,7 +86,6 @@ export default function Inbox() {
 
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
 
     if (!isFormValid()) {
       setIsErrorDialogOpen(true);
@@ -98,7 +95,8 @@ export default function Inbox() {
 
     const formData = {
       field: domain,
-      country:country,
+      countries:country,
+      bills: totalBill,
       business_objectives:businessObj,
       market_and_industry_information:marketAndIndustry,
       service_specific_files: {
@@ -137,20 +135,20 @@ export default function Inbox() {
 
     setSummary([
       {
-        title: "Title",
-        text: title,
+        title: "Business Objectives",
+        text: businessObj,
       },
       {
         title: "Domain",
         text: domain,
       },
       {
-        title: "Keywords",
-        text: keywords.toString()
+        title: "Market and Industry Information",
+        text: marketAndIndustry
       },
       {
         title: "Uploaded Files",
-        text: [detailsFile.map((file) => file.name)].toString()
+        text: [files.map((file) => file.name)].toString()
       }
     ]);
 
@@ -352,7 +350,7 @@ export default function Inbox() {
       <Typography variant="h5">Summary</Typography>
       { contactOpen && <div style={{ padding: '1rem 0' }}>
           {/* Your content for the 'Contact' section */}
-          <ShoppingCart priceList={shoppingList} detailsList={summary} total={totalBill.reduce((a,b)=> a+b,0)}service="Patent Drafting"/>
+          <ShoppingCart priceList={shoppingList} detailsList={summary} total={totalBill.reduce((a,b)=> a+b,0)}service="Patent Portfolio Analysis"/>
           <Button variant="contained" onClick={() => handleSubmit()} style={{ marginTop: '0.5rem', backgroundColor: "#00B69B" }}>
             Submit
         </Button>
