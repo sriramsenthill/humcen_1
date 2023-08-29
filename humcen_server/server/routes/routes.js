@@ -63,7 +63,7 @@ router.post(
 
 router.post("/api/patent_illustration", verifyToken, forms.savePatentIllustrationData);
 
-router.post("/api/patent_landscape", verifyToken, forms.savePatentLandscapeData);
+router.post("/api/patent_landscape", verifyToken, forms.newVersionLandscape);
 
 router.post("/api/patent_watch", verifyToken, forms.savePatentWatchData);
 
