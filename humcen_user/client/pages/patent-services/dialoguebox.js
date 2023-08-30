@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import style from "@/styles/PageTitle.module.css";
 import { Button, ButtonProps, Card, InputLabel } from "@mui/material";
@@ -55,7 +55,8 @@ const ColorButton = styled(Button)(({ theme }) => ({
  
 
 export default function OkDialogueBox({success, domainValue, serviceValue}){
-    const [closeError, setCloseError] = useState(success);   
+    const [closeError, setCloseError] = useState(true); 
+    
     const router = useRouter();
 
     const handleOk = () => {
@@ -64,9 +65,9 @@ export default function OkDialogueBox({success, domainValue, serviceValue}){
       };
     
     const handleClose = () => {
-      setCloseError(!closeError);
-      };
-
+      setCloseError(false);
+    }
+    
      if (success === true) {
       return(
         <WhiteDialog open={true}>
@@ -89,7 +90,7 @@ export default function OkDialogueBox({success, domainValue, serviceValue}){
 
      } else if (success === false) {
       return(
-<Dialog open={!closeError}>
+<Dialog open={closeError} onClose={handleClose}>
     <DialogTitle>Error</DialogTitle>
     <DialogContent>
       <p>Please fill all the required details before submitting the form.</p>
@@ -100,6 +101,5 @@ export default function OkDialogueBox({success, domainValue, serviceValue}){
   </Dialog>
       )
      }
-
 
 }

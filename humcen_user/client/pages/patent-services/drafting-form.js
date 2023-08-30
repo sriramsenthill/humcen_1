@@ -68,7 +68,7 @@ const IndexPage = () => {
   }
 
   const handleSubmit = async() => {
-
+    setSuccess(true);
     const infoDocument = {
       title: title,
       domain: domain,
@@ -101,10 +101,11 @@ const IndexPage = () => {
   };
 
   const handleCountriesContinue = () => {
-    if (countries) {
+    console.log(country);
+    if (country.length != 0) {
       setCountriesOpen(false);
       setContactOpen(true);
-  
+      console.log(success);
       setSummary([
         {
           title: "Title",
@@ -135,6 +136,8 @@ const IndexPage = () => {
       }
       setList(newList)
     } else {
+      console.log("Yes");
+      setContactOpen(false);
       setSuccess(false);
     }
 
@@ -220,7 +223,7 @@ const IndexPage = () => {
       <Divider style={{ margin: '2rem 0' }} />
       <Typography variant="h5" sx={{
         fontWeight: "bold",
-      }} onClick={() => setCountriesOpen(!countriesOpen)}>
+      }} onClick={() => { if (!draftingOpen) { setCountriesOpen(!countriesOpen) }}}>
       Countries
       <ExpandMoreIcon style={{ transform: countriesOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
       </Typography>
@@ -329,9 +332,7 @@ const IndexPage = () => {
     </Container>
     </Paper>
     </div>
-  <OkDialogueBox success={success} serviceValue={"Patent Drafting"} />
-  {console.log(success)}
-
+    <OkDialogueBox success={success} serviceValue={"Patent Drafting"} />
     </>
   );
 };
