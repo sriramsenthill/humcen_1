@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import axios from 'axios';
+import OkDialogueBox from './dialoguebox';
 import CustomDropZone from "@/components/CustomDropBox";
 import DefaultSelect from "@/components/Forms/AdvancedElements/DefaultField";
 import ShoppingCart from '@/components/shoppingCart';
@@ -39,6 +40,7 @@ api.interceptors.request.use((config) => {
 const IndexPage = () => {
   const [draftingOpen, setDraftingOpen] = useState(true);
   const [title, setTitle] = useState('');
+  const [success, setSuccess] = useState("");
   const [detailsFile, setFiles] = useState([]);
   const [keywords, setKeyword] = useState([]);
   const [domain, setDomain] = useState('');
@@ -66,6 +68,7 @@ const IndexPage = () => {
   }
 
   const handleSubmit = async() => {
+
     const infoDocument = {
       title: title,
       domain: domain,
@@ -88,43 +91,54 @@ const IndexPage = () => {
   }
 
   const handleDraftingContinue = () => {
-    setDraftingOpen(false);
-    setCountriesOpen(true);
+    if(title != "" && domain != "" && keywords != [] && detailsFile != []) {
+      setDraftingOpen(false);
+      setCountriesOpen(true);
+    } else {
+      setSuccess(false);
+    }
+
   };
 
   const handleCountriesContinue = () => {
-    setCountriesOpen(false);
-    setContactOpen(true);
-
-    setSummary([
-      {
-        title: "Title",
-        text: title,
-      },
-      {
-        title: "Domain",
-        text: domain,
-      },
-      {
-        title: "Keywords",
-        text: keywords.toString()
-      },
-      {
-        title: "Uploaded Files",
-        text: [detailsFile.map((file) => file.name)].toString()
+    if (countries) {
+      setCountriesOpen(false);
+      setContactOpen(true);
+  
+      setSummary([
+        {
+          title: "Title",
+          text: title,
+        },
+        {
+          title: "Domain",
+          text: domain,
+        },
+        {
+          title: "Keywords",
+          text: keywords.toString()
+        },
+        {
+          title: "Uploaded Files",
+          text: [detailsFile.map((file) => file.name)].toString()
+        }
+      ]);
+  
+      const newList = []
+      console.log(country);
+      for (let choices = 0; choices < country.length; choices++) {
+        newList.push({
+          country: country[choices],
+          cost: totalBill[choices]
+        });
+        
       }
-    ]);
-
-    const newList = []
-    console.log(country);
-    for (let choices = 0; choices < country.length; choices++) {
-      newList.push({
-        country: country[choices],
-        cost: totalBill[choices]
-      });
-      
+      setList(newList)
+    } else {
+      setSuccess(false);
     }
-    setList(newList)
+
+    
   };
 
 
@@ -315,6 +329,8 @@ const IndexPage = () => {
     </Container>
     </Paper>
     </div>
+  <OkDialogueBox success={success} serviceValue={"Patent Drafting"} />
+  {console.log(success)}
 
     </>
   );

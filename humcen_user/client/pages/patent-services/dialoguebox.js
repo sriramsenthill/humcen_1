@@ -54,15 +54,20 @@ const ColorButton = styled(Button)(({ theme }) => ({
 
  
 
-export default function OkDialogueBox({domainValue,serviceValue}){
-   
+export default function OkDialogueBox({success, domainValue, serviceValue}){
+    const [closeError, setCloseError] = useState(success);   
     const router = useRouter();
+
     const handleOk = () => {
 
         router.push("/");
       };
     
+    const handleClose = () => {
+      setCloseError(!closeError);
+      };
 
+     if (success === true) {
       return(
         <WhiteDialog open={true}>
      <CenteredDialogActions>
@@ -81,4 +86,20 @@ export default function OkDialogueBox({domainValue,serviceValue}){
 
 </WhiteDialog>
       )
+
+     } else if (success === false) {
+      return(
+<Dialog open={!closeError}>
+    <DialogTitle>Error</DialogTitle>
+    <DialogContent>
+      <p>Please fill all the required details before submitting the form.</p>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={handleClose}>OK</Button>
+    </DialogActions>
+  </Dialog>
+      )
+     }
+
+
 }
