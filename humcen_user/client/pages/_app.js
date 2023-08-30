@@ -15,6 +15,8 @@ import '../styles/rtl.css'
 import '../styles/dark.css'
 // Left Sidebar Dark Mode Styles
 import '../styles/leftSidebarDark.css'
+// SVG Override Color
+import "../styles/FileUploadWrapper.module.css"
 // Theme Styles
 import theme from '../styles/theme'
 

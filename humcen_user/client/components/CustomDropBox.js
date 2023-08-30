@@ -1,5 +1,6 @@
 import React from 'react';
 import FileUpload from 'react-material-file-upload';
+import "../styles/FileUploadWrapper.module.css";
 
 const FileUploadWrapper = ({ files, onFileChange }) => {
   const formatSize = (bytes) => {
@@ -46,9 +47,16 @@ const FileUploadWrapper = ({ files, onFileChange }) => {
     onFileChange(updatedFiles);
   };
 
+  const colorClass = {
+    background : "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)",
+  }
+
   return (
-    <FileUpload value={files}  onChange={handleFileChange}  />
+    <FileUpload value={files} buttonProps={{
+      style: colorClass,
+    }} onChange={handleFileChange} className="custom-svg-color" />
   );
 };
+// SVG Color - #79E0EE
 
 export default FileUploadWrapper;

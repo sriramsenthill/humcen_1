@@ -33,6 +33,7 @@
     "eslint": "8.28.0",
     "eslint-config-next": "13.0.5",
     "fs": "^0.0.1-security",
+    "html-react-parser": "^4.2.1",
     "jszip": "^3.10.1",
     "luxon": "^3.3.0",
     "moment": "^2.29.4",
