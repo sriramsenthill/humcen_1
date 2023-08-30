@@ -77,8 +77,9 @@ export default function OkDialogueBox({success, domainValue, serviceValue}){
         <img src="/images/done 2done.jpg" alt="Done" style={{width:"80px",height:'80px', marginBottom:"0px"}}/>
       </DialogTitle>
       <DialogContent>
-        <h1 style={{textAlign:"center",fontWeight:"600",fontSize:"22px",fontFamily:'Inter',color:"#00002B"}}>{serviceValue} Form Submitted Successfully!</h1>
-        <p style={{textAlign:"center",fontWeight:"500",fontSize:"15px",fontFamily:'Inter',color:"#8C8E8F"}}>Track the status of your order to know how close it is to completion</p>
+        <h1 style={{textAlign:"center",fontWeight:"600",fontSize:"21px",color:"#00002B"}}>We're On It!
+We've Received Your Request.</h1>
+        <p style={{textAlign:"center",fontWeight:"500",fontSize:"15px",fontFamily:'Inter',color:"#8C8E8F"}}>Track Step-by-Step Progress Ahead!</p>
       </DialogContent>
       <DialogActions>
         <ColorButton onClick={handleOk} style={{width:"120px",height:"40px",fontFamily:'Inter'}}>Done</ColorButton>
