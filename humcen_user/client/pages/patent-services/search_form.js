@@ -145,12 +145,16 @@ if (!isFormValid()) {
       }
     ]);
 
-    for(let choices=0; choices < country.length; choices++){
-      setList(shoppingList => [...shoppingList, {
+    const newList = []
+    console.log(country);
+    for (let choices = 0; choices < country.length; choices++) {
+      newList.push({
         country: country[choices],
         cost: totalBill[choices]
-      }])
+      });
+      
     }
+    setList(newList)
   };
 
 
