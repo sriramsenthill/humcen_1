@@ -108,17 +108,17 @@ const Projects = () => {
         </ul>
       </div>
       <h1 className={styles.heading}>About Us</h1>
-      <h4 className={styles.head} style={{ marginTop: 20, textAlign:"justify"}}>
-      Welcome to HumCen.io – a collaborative endeavor undertaken by a group of dedicated IP specialists and passionate tech enthusiasts, all united with a common goal: to revolutionize the realm of Intellectual Property.
+      <p style={{color:"grey", fontSize:"20px", marginTop: 20, textAlign:"justify"}}>
+      Welcome to HumCen.io – a collaborative endeavor undertaken by a group of dedicated IP specialists and passionate tech enthusiasts, all united with a common goal: to revolutionize the realm of Intellectual Property. <br/> <br/>
 
-At HumCen.io, we've harnessed our collective expertise to reshape the way Intellectual Property is navigated. Our platform serves as a catalyst for seamless cross-border IP journeys, catering to the needs of innovators, businesses, and IP professionals alike. 
+At HumCen.io, we've harnessed our collective expertise to reshape the way Intellectual Property is navigated. Our platform serves as a catalyst for seamless cross-border IP journeys, catering to the needs of innovators, businesses, and IP professionals alike. <br/> <br/>
 
-We take pride in offering a comprehensive suite of tools that empower you in every step of your IP endeavors, from safeguarding to asset management and even monetization.
+We take pride in offering a comprehensive suite of tools that empower you in every step of your IP endeavors, from safeguarding to asset management and even monetization.<br/> <br/>
 
-Our mission is to provide a nurturing ecosystem where innovation thrives and where Intellectual Property is not just protected, but elevated. Through cutting-edge technology and a deep-rooted commitment to excellence, we're here to redefine how IP is perceived and utilized in today's dynamic landscape.
+Our mission is to provide a nurturing ecosystem where innovation thrives and where Intellectual Property is not just protected, but elevated. Through cutting-edge technology and a deep-rooted commitment to excellence, we're here to redefine how IP is perceived and utilized in today's dynamic landscape. <br/> <br/>
 
 Join us on this transformative expedition and be a part of the future of Intellectual Property.
-      </h4>
+      </p>
     
       <br></br>
      

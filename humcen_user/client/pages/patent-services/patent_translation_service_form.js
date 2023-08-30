@@ -254,7 +254,7 @@ if (!isFormValid()) {
               id="name"
               name="name"
               value={targetLanguage}
-              label={ !targetLanguage && "Provide specific keywords or phrases related to your technology or industry."}
+              label={ !targetLanguage && "Indicate the language into which you require the patent document to be translated."}
               autoComplete="name"
               InputProps={{
                 style: { borderRadius: 8 },
@@ -297,7 +297,7 @@ if (!isFormValid()) {
               fullWidth
               id="name"
               name="name"
-              label={!additionalInfo && "Any known competitors or organizations operating in the same field."}
+              label={!additionalInfo && "Provide any additional instructions or preferences regarding formatting, terminology, or specific requirements for the translation."}
               value={additionalInfo}
               autoComplete="name"
               InputProps={{

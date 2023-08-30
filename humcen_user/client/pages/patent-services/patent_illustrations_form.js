@@ -226,7 +226,7 @@ export default function Inbox() {
               fullWidth
               id="name"
               name="name"
-              label={!patentSpe &&"Provide a copy of the patent specification, including the detailed description."}
+              label={!patentSpe &&"Provide a copy of the patent specification, including the detailed description, claims, and any relevant drawings or diagrams."}
               value={patentSpe}
               autoComplete="name"
               InputProps={{
@@ -249,7 +249,7 @@ export default function Inbox() {
               fullWidth
               id="name"
               name="name"
-              label={ !drawingReq && "Specify any specific requirements or guidelines for the patent illustration."}
+              label={ !drawingReq && "Specify any specific requirements or guidelines for the patent illustrations, such as the type of drawings needed (e.g., utility, design, or flowcharts), dimensions, or specific features that should be highlighted."}
               value={drawingReq}
               autoComplete="name"
               InputProps={{

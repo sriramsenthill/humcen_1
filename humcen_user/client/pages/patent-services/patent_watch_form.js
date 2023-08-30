@@ -258,7 +258,7 @@ export default function Inbox() {
               id="name"
               name="name"
               value={focus}
-              label={ !focus && "Specify the specific technology or industry sector  ."}
+              label={ !focus && "Specify the specific technology or industry sector that you want us to monitor for patent activity."}
               autoComplete="name"
               InputProps={{
                 style: { borderRadius: 8 },
@@ -281,7 +281,7 @@ export default function Inbox() {
               id="name"
               name="name"
               value={compInfo}
-              label={ !compInfo && "Share the names or details of key competitors in your industry ."}
+              label={ !compInfo && "Share the names or details of key competitors in your industry that you want us to track."}
               autoComplete="name"
               InputProps={{
                 style: { borderRadius: 8 },
@@ -305,7 +305,7 @@ export default function Inbox() {
               id="name"
               name="name"
               value={geoScope}
-              label={!geoScope && "Indicate the geographic regions or countries."}
+              label={!geoScope && "Indicate the geographic regions or countries where you want us to monitor patent activity."}
               autoComplete="name"
               InputProps={{
                 style: { borderRadius: 8 },
@@ -328,7 +328,7 @@ export default function Inbox() {
               id="name"
               name="name"
               value={keywords}
-              label={ !keywords && "Provide specific keywords or phrases related to your technology or industry."}
+              label={ !keywords && "Provide specific keywords or phrases related to your technology or industry that will help us in conducting targeted patent searches."}
               autoComplete="name"
               InputProps={{
                 style: { borderRadius: 8 },
@@ -351,7 +351,7 @@ export default function Inbox() {
               id="name"
               name="name"
               value={monDuration}
-              label={ !monDuration && "Specify the duration for which you want us to monitor patent activity."}
+              label={ !monDuration && "Specify the duration for which you want us to monitor patent activity, whether it's a specific time period or ongoing monitoring."}
               autoComplete="name"
               InputProps={{
                 style: { borderRadius: 8 },
