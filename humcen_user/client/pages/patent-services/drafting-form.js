@@ -158,20 +158,20 @@ const IndexPage = () => {
   color="white"
   style={{ width: '100%', maxWidth: '1200px', margin: '550%' }}></BannerCard>
 
-      <Typography variant="h5" onClick={() => setDraftingOpen(!draftingOpen)} style={{ cursor: 'pointer' }}>
+      <Typography variant="h5" onClick={() => setDraftingOpen(!draftingOpen)} style={{ cursor: 'pointer', fontWeight: "bold" }}>
         Drafting
         <ExpandMoreIcon style={{ transform: draftingOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
       </Typography>
 
       {draftingOpen && (
-        <div style={{ padding: '1rem 0' }}>
+        <div style={{ padding: '1rem 0', }}>
           <TextField
             label="Title"
             variant="outlined"
             fullWidth
             value={title}
             onChange={handleTitleChange}
-            style={{ marginBottom: '1rem' }}
+            style={{ marginBottom: '2rem' }}
           />
           <DefaultSelect domain={domain} onDomainChange={handleDomainChange}/>
           <TextField
@@ -180,7 +180,7 @@ const IndexPage = () => {
             fullWidth
             value={keywords}
             onChange={handleKeywordChange}
-            style={{ marginBottom: '1rem', marginTop: "1rem" }}
+            style={{ marginBottom: '2rem', marginTop: "2rem" }}
           />
             <Typography
                 as="h3"
@@ -194,13 +194,22 @@ const IndexPage = () => {
               </Typography>
               {/* <DottedCard> */}
               <CustomDropZone files={detailsFile} onFileChange={handleDetailsFileChange}/>
-          <Button variant="contained" color="primary" onClick={handleDraftingContinue} style={{ marginTop: '1rem' }}>
+          <div style={{
+            textAlign: "center",
+          }}>    
+          <Button variant="contained" onClick={handleDraftingContinue} style={{ marginTop: '1rem', borderRadius: "100px", boxShadow: "none" ,background: "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" }}>
             Continue
           </Button>
+          </div>
         </div>
       )}
       <Divider style={{ margin: '2rem 0' }} />
-      <Typography variant="h5">Countries</Typography>
+      <Typography variant="h5" sx={{
+        fontWeight: "bold",
+      }} onClick={() => setCountriesOpen(!countriesOpen)}>
+      Countries
+      <ExpandMoreIcon style={{ transform: countriesOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+      </Typography>
       {countriesOpen && (
         <div style={{ padding: '1rem 0' }}>
           {/* Country Selection Buttons */}
@@ -215,11 +224,13 @@ const IndexPage = () => {
             Select the Country
           </Typography>
           <Button
-            style={{
-              background: country.includes("India") ? "#68BDFD" : "#F8FCFF",
+            style={{                                  // 68BDFD
+              background: country.includes("India") ? "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" : "#F8FCFF",
               color: country.includes("India") ? "white" : "#BFBFBF",
               width: "15%",
               marginRight: "2%",
+              boxShadow: "none",
+              borderRadius: "100px",
               height: "60px",
               textTransform: "none",
             }}
@@ -242,10 +253,12 @@ const IndexPage = () => {
             &nbsp;&nbsp;India <br />&nbsp;&nbsp;&#40;&#36;625&#41;
           </Button>
           <Button
-            style={{
-              background: country.includes("United States") ? "#68BDFD" : "#F8FCFF",
+            style={{                                            // 68BDFD
+              background: country.includes("United States") ? "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" : "#F8FCFF",
               color: country.includes("United States") ? "white" : "#BFBFBF",
               width: "18%",
+              boxShadow: "none",
+              borderRadius: "100px",
               marginRight: "2%",
               height: "60px",
               textTransform: "none",
@@ -270,22 +283,33 @@ const IndexPage = () => {
             &nbsp;&nbsp;United States <br />&nbsp;&nbsp;&#40;&#36;900&#41;
           </Button>
           {/* Add other country buttons similarly */}
-          <Button variant="contained" color="primary" onClick={handleCountriesContinue} style={{ marginTop: '1rem' }}>
-            Continue
-          </Button>
+          
         </div>
       )}
+      { countriesOpen && <div style={{
+        textAlign: "center",
+      }}>
+      <Button variant="contained" onClick={handleCountriesContinue} style={{ marginTop: '1rem', borderRadius: "100px" , boxShadow: "none", background: "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" }}>
+            Continue
+          </Button>
+      </div> }
 
       <Divider style={{ margin: '2rem 0' }} />
-      <Typography variant="h5">Summary</Typography>
-      { contactOpen && <div style={{ padding: '1rem 0' }}>
+      <Typography variant="h5" sx={{
+        fontWeight: "bold"
+      }}>Summary</Typography>
+      { contactOpen && <div style={{ padding: '0.5rem 0' }}>
           {/* Your content for the 'Contact' section */}
           <ShoppingCart priceList={shoppingList} detailsList={summary} total={totalBill.reduce((a,b)=> a+b,0)}service="Patent Drafting"/>
-          <Button variant="contained" onClick={() => handleSubmit()} style={{ marginTop: '0.5rem', backgroundColor: "#00B69B" }}>
-            Submit
-        </Button>
         </div>
         }
+       { contactOpen && <div style={{
+        textAlign: "center",
+       }}>
+        <Button variant="contained" onClick={() => handleSubmit()} style={{ marginTop: '0.25rem', borderRadius: "100px" , boxShadow: "none",background: "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" }}>
+            Submit
+        </Button>
+        </div> }
 
 
     </Container>

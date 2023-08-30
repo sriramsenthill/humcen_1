@@ -8,11 +8,8 @@ import Link from "next/link";
 
 const BannerCard = ({ title, description, imageSrc, color}) => {
   const cardStyle = {
-    marginTop: '20px',
-    marginBottom: '40px',
-    marginLeft: '2%',
-    marginRight: '2%',
-    width: '95%',
+    marginBottom: '2rem',
+    width: '100%',
     height: '275px',
     position: 'relative',
     borderRadius: '16px',

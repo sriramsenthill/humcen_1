@@ -47,7 +47,7 @@ const FileUploadWrapper = ({ files, onFileChange }) => {
   };
 
   return (
-    <FileUpload value={files} onChange={handleFileChange}  />
+    <FileUpload value={files}  onChange={handleFileChange}  />
   );
 };
 

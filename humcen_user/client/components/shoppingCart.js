@@ -31,6 +31,7 @@ const ShoppingCart = ({priceList, detailsList, service, total}) => {
           sx={{
             fontSize: 18,
             fontWeight: 500,
+            textAlign: "center",
             mb: "25px",
           }}
         >
