@@ -63,7 +63,7 @@ const eCommerce = () => {
 
   const carouselImages = [
     {
-      src: "https://tse4.mm.bing.net/th?id=OIP.vi2If3c1dba6xSKiYvpITgHaEK&pid=Api&P=0&h=180",
+      src: "/images/b1.jpeg",
       alt: "image1",
       link: "https://www.youtube.com/watch?v=49HTIoCccDY",
     },

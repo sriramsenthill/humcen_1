@@ -7,62 +7,83 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import CopyAllIcon from "@mui/icons-material/CopyAll";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
-import RequestPageIcon from "@mui/icons-material/RequestPage";
+  import { ReactComponent as RequestPageIcon } from "../../../public/images/icons/NFT.png";
 
 export const SidebarData = [
   {
     title: "Dashboard",
     path: "/",
-    icon: <GridViewIcon />,
-    iconClosed: <KeyboardArrowRightIcon />,
+    icon:   <img
+    src="/images/icons/dashboard.png"
+    alt="NFT Icon"
+    style={{width: "16px", height: "16px" }} // Adjust the width and height as needed
+  /> ,    iconClosed: <KeyboardArrowRightIcon />,
     iconOpened: <KeyboardArrowDownIcon />,
   },
   {
     title: "Patent Services",
     path: "/patent-services/",
-    icon: <LayersIcon />,
+    icon:   <img
+    src="/images/icons/PATENT SERVICES.png"
+    alt="NFT Icon"
+    style={{ width: "17px", height: "17px" }} // Adjust the width and height as needed
+  /> ,
     iconClosed: <KeyboardArrowRightIcon />,
     iconOpened: <KeyboardArrowDownIcon />,
   },
   {
     title: "IP Tracker",
     path: "/my-patents/",
-    icon: <MailOutlineIcon />,
+    icon:   <img
+    src="/images/icons/IP TRACKER.png"
+    alt="NFT Icon"
+    style={{ width: "20px", height: "20px"  }} // Adjust the width and height as needed
+  /> ,
     iconClosed: <KeyboardArrowRightIcon />,
     iconOpened: <KeyboardArrowDownIcon />,
   },
   {
     title: "Bulk Orders",
     path: "/bulk-orders/",
-    icon: <LayersIcon />,
+    icon: <LayersIcon style={{ fill: "white" }} />, // Use "fill" to change the icon color
     iconClosed: <KeyboardArrowRightIcon />,
     iconOpened: <KeyboardArrowDownIcon />,
   },
   {
     title: "IP NFT’s",
     path: "https://humcen.io", // Updated link path
-    icon: <RequestPageIcon />,
+    icon:<img
+    src="/images/icons/NFT.png"
+    alt="NFT Icon"
+    style={{
+      width: "20px",
+      height: "20px",
+    }}
+  />,
     iconClosed: <KeyboardArrowRightIcon />,
     iconOpened: <KeyboardArrowDownIcon />,
   },
   {
     title: "About Us",
     path: "/about-us/",
-    icon: <CopyAllIcon />,
+    icon: <CopyAllIcon style={{ fill: "white" }} />, // Use "fill" to change the icon color
     iconClosed: <KeyboardArrowRightIcon />,
     iconOpened: <KeyboardArrowDownIcon />,
   },
   {
     title: "Help & Support",
     path: "/help-and-support/",
-    icon: <ShoppingCartCheckoutIcon />,
-    iconClosed: <KeyboardArrowRightIcon />,
+    icon:   <img
+    src="/images/icons/HELP & SUPPORT.png"
+    alt="NFT Icon"
+    style={{width: "20px", height: "20px" }} // Adjust the width and height as needed
+  /> ,    iconClosed: <KeyboardArrowRightIcon />,
     iconOpened: <KeyboardArrowDownIcon />,
   },
   {
     title: "Settings",
     path: "/settings/",
-    icon: <SettingsIcon />,
+    icon: <SettingsIcon style={{ fill: "white" }} />, // Use "fill" to change the icon color
     iconClosed: <KeyboardArrowRightIcon />,
     iconOpened: <KeyboardArrowDownIcon />,
   },
