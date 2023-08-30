@@ -218,8 +218,9 @@ export default function Inbox() {
               fullWidth
               id="name"
               name="name"
-              label="Share your specific business goals and objectives related to your patent portfolio."
+              label={ !businessObj && "Share your specific business goals and objectives related to your patent portfolio."}
               autoComplete="name"
+              value={businessObj}
               InputProps={{
                 style: { borderRadius: 8 },
               }}
@@ -239,7 +240,8 @@ export default function Inbox() {
               fullWidth
               id="name"
               name="name"
-              label="Provide insights into your target market and industry."
+              label={ !marketAndIndustry && "Provide insights into your target market and industry."}
+              value={marketAndIndustry}
               autoComplete="name"
               InputProps={{
                 style: { borderRadius: 8 },

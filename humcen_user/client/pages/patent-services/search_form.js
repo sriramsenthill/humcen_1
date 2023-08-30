@@ -207,7 +207,7 @@ if (!isFormValid()) {
               Invention Description
             </Typography>
           <TextField
-            label="A clear and detailed description of the invention. Minimum 200-300 words."
+            label={ !description && "A clear and detailed description of the invention. Minimum 200-300 words."}
             variant="outlined"
             fullWidth
             value={description}
@@ -228,7 +228,8 @@ if (!isFormValid()) {
               fullWidth
               id="name"
               name="name"
-              label="Specific keywords, phrases, or concepts related to your invention."
+              value={keywords}
+              label={ !keywords && "Specific keywords, phrases, or concepts related to your invention."}
               autoComplete="name"
               InputProps={{
                 style: { borderRadius: 8 },

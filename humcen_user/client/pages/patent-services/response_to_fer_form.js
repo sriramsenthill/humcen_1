@@ -206,7 +206,8 @@ export default function Inbox() {
               fullWidth
               id="name"
               name="name"
-              label="Specific instructions or preferences regarding the response strategy."
+              value={strategy}
+              label={ !strategy && "Specific instructions or preferences regarding the response strategy."}
               autoComplete="name"
               InputProps={{
                 style: { borderRadius: 8 },

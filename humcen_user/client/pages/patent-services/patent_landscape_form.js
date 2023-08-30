@@ -209,7 +209,8 @@ export default function Inbox() {
               fullWidth
               id="name"
               name="name"
-              label="A detailed description of the technology or industry sector for which you require the Patent Landscape analysis."
+              label={ !description &&"A detailed description of the technology or industry sector for which you require the Patent Landscape analysis."}
+              value={description}
               autoComplete="name"
               InputProps={{
                 style: { borderRadius: 8 },
@@ -230,7 +231,8 @@ export default function Inbox() {
               fullWidth
               id="name"
               name="name"
-              label="Provide specific keywords or phrases related to your technology or industry that will help us focus the analysis."
+              label={!keywords &&"Provide specific keywords or phrases related to your technology or industry that will help us focus the analysis."}
+              value={keywords}
               autoComplete="name"
               InputProps={{
                 style: { borderRadius: 8 },
@@ -251,7 +253,8 @@ export default function Inbox() {
               fullWidth
               id="name"
               name="name"
-              label="Information of any known competitors or organizations operating in the same field."
+              label={ !compInfo && "Information of any known competitors or organizations operating in the same field."}
+              value={compInfo}
               autoComplete="name"
               InputProps={{
                 style: { borderRadius: 8 },

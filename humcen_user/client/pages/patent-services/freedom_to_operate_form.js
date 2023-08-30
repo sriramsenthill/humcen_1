@@ -208,7 +208,8 @@ export default function Inbox() {
               fullWidth
               id="name"
               name="name"
-              label="Provide specific keywords or phrases related to your technology or industry."
+              label={!keywords && "Provide specific keywords or phrases related to your technology or industry."}
+              value={keywords}
               autoComplete="name"
               InputProps={{
                 style: { borderRadius: 8 },

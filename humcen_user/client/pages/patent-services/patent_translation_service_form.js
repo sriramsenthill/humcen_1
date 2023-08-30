@@ -148,8 +148,8 @@ if (!isFormValid()) {
         text: sourceLanguage,
       },
       {
-        title: "Source Language",
-        text: sourceLanguage,
+        title: "Target Language",
+        text: targetLanguage,
       },
       {
         title: "Domain",
@@ -200,7 +200,7 @@ if (!isFormValid()) {
 
     <Container maxWidth="md" style={{ marginTop: '2rem' }}>
       <Head>
-        <title>Patent Portfolio Analysis</title>
+        <title>Patent Translation Services</title>
       </Head>
       <BannerCard
   title="Patent Translation Service"
@@ -231,7 +231,8 @@ if (!isFormValid()) {
               fullWidth
               id="name"
               name="name"
-              label="Specify the language in which the original patent document is written.."
+              value={sourceLanguage}
+              label={ !sourceLanguage && "Specify the language in which the original patent document is written.."}
               autoComplete="name"
               InputProps={{
                 style: { borderRadius: 8 },
@@ -252,7 +253,8 @@ if (!isFormValid()) {
               fullWidth
               id="name"
               name="name"
-              label="Provide specific keywords or phrases related to your technology or industry."
+              value={targetLanguage}
+              label={ !targetLanguage && "Provide specific keywords or phrases related to your technology or industry."}
               autoComplete="name"
               InputProps={{
                 style: { borderRadius: 8 },
@@ -295,7 +297,8 @@ if (!isFormValid()) {
               fullWidth
               id="name"
               name="name"
-              label="Any known competitors or organizations operating in the same field."
+              label={!additionalInfo && "Any known competitors or organizations operating in the same field."}
+              value={additionalInfo}
               autoComplete="name"
               InputProps={{
                 style: { borderRadius: 8 },
