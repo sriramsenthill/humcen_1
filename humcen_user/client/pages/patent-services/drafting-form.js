@@ -193,7 +193,7 @@ const IndexPage = () => {
   color="white"
   style={{ width: '100%', maxWidth: '1200px', margin: '550%' }}></BannerCard>
 
-      <Typography variant="h5" onClick={() => {setDraftingOpen(!draftingOpen); if(contactOpen) {setContactOpen(false)}}} style={{ cursor: 'pointer', fontWeight: "bold" }}>
+      <Typography variant="h5" onClick={() => {setDraftingOpen(!draftingOpen); if(contactOpen) {setContactOpen(false)}}} style={{ cursor: 'pointer', fontWeight: "bold", color: !draftingOpen && "#D3D3D3" }}>
         Drafting
         <ExpandMoreIcon style={{ transform: draftingOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
       </Typography>
@@ -241,6 +241,7 @@ const IndexPage = () => {
       <Divider style={{ margin: '2rem 0' }} />
       <Typography variant="h5" sx={{
         fontWeight: "bold",
+        color: !countriesOpen && "#D3D3D3"
       }} onClick={() => { if (!draftingOpen) { setCountriesOpen(!countriesOpen); if(contactOpen) {setContactOpen(false)} }}}>
       Countries
       <ExpandMoreIcon style={{ transform: countriesOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
@@ -331,7 +332,8 @@ const IndexPage = () => {
 
       <Divider style={{ margin: '2rem 0' }} />
       <Typography variant="h5" sx={{
-        fontWeight: "bold"
+        fontWeight: "bold",
+        color: !contactOpen && "#D3D3D3"
       }}>Summary</Typography>
       { contactOpen && <div style={{ padding: '0.5rem 0' }}>
           {/* Your content for the 'Contact' section */}

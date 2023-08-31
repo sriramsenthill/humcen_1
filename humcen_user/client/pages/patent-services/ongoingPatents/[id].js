@@ -285,14 +285,14 @@ const DynamicPage = () => {
                 <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px", }}>
                 <Button
                       sx={{
-                        background: approval ? "#27AE60" : "#D3D3D3"  , 
+                        background: approval ?  "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" : "#D3D3D3"  , 
                         color: "white",
                         borderRadius: "100px",
                         width: "100%",
                         height: "88%",
                         textTransform: "none",
                         "&:hover": {
-                          background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
+                          background: "#00002B",
                         },
                       }}
                       onClick={()=>onClickDownload(job.og_id)}

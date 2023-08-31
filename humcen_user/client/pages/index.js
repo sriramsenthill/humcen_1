@@ -112,30 +112,41 @@ const eCommerce = () => {
               borderRadius: "20px",
               marginBottom:"20px" 
             }}>
-              <Carousel
-                autoPlay={true}
-                infiniteLoop={true}
-                interval={3000}
-                showArrows={false}
-                showThumbs={false}
-                showStatus={false}
-                showIndicators={true}
-                dynamicHeight={false}
-              
-                style={{ maxWidth: "400px", margin: "0 auto",}}
-              >
-                {carouselImages.map((image, index) => (
-                  <div
-                    key={index}
-                    style={{ borderRadius: "20px", overflow: "hidden", cursor: "pointer" }}
-                    onClick={() => handleClick(image.link)}
-                  >
-                    <img
-                      src={image.src}
-                      alt={image.alt}
-                      style={{ width: "100%", height: "300px", borderRadius: "20px" }}
-                    />
-                  </div>
+        <Carousel
+  autoPlay={true}
+  infiniteLoop={true}
+  interval={3000}
+  showArrows={false}
+  showThumbs={false}
+  showStatus={false}
+  showIndicators={true}
+  dynamicHeight={false}
+  style={{ maxWidth: "400px", margin: "0 auto" }}
+>
+  {carouselImages.map((image, index) => (
+    <div
+      key={index}
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: "20px",
+        overflow: "hidden",
+        cursor: "pointer",
+        height: "300px", // Set a fixed height for the carousel items
+      }}
+      onClick={() => handleClick(image.link)}
+    >
+      <img
+        src={image.src}
+        alt={image.alt}
+        style={{
+          maxWidth: "100%", // Ensure the image scales within its container
+          maxHeight: "100%", // Maintain the aspect ratio of the image
+          borderRadius: "20px",
+        }}
+      />
+    </div>
                 ))}
               </Carousel>
               </Card>

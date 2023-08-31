@@ -345,7 +345,7 @@ const Verifications = ({ jobNumber }) => {
                   rowSpan={2}
                 > <Button
                     sx={{
-                      background: !decisions ?  "#00ACF6" : "#D3D3D3"   , 
+                      background: !decisions ?  "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" : "#D3D3D3"   , 
                       color: "white",
                       borderRadius: "100px",
                       width:"95%",
