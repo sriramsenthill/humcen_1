@@ -364,7 +364,7 @@ function CompletedOrders() {
                       <Link href={`patent-services/onGoingPatents/${row.og_id}`} passHref>
                       <Button
                     sx={{
-                      background: "#01ACF6",
+                      background: "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)",
                       position: "relative",
                       left: "5px",
                       color: "white",
