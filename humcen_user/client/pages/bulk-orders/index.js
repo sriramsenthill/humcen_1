@@ -186,6 +186,7 @@ const ProductDetails = () => {
           <TextField
             label="Quantity"
             variant="outlined"
+            type= "number"
             fullWidth
             value={quantity}
             onChange={handleQuantity}
