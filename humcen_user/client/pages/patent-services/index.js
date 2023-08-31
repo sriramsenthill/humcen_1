@@ -101,12 +101,12 @@ const MyPage = () => {
         marginBottom: "50px",
         marginTop: "10px"
       }}>My Patent Services</h1>
-          <Grid
-    container
+          <Grid    container
     rowSpacing={1}
-    columnSpacing={{ xs: 1, sm: 1, md: 1, lg: 1, xl: 2 }}
+    columnSpacing={{ xs: 1, sm: 1, md: 1, lg: 1, xl: 1 }}
   >
-      {serviceList.map((service, index) => (
+  {serviceList.map((service, index) => (
+    <Grid item xs={12} md={6} lg={4} xl={4}>
         <ModernCard
           key={index}
           title={service.title}
@@ -115,7 +115,9 @@ const MyPage = () => {
           link={service.link}
           className={styles.card}
         />
+       </Grid>   
       ))}
+
       </Grid>
       </div>
       </>

@@ -10,8 +10,8 @@ const ModernCard = ({ title, description, imageSrc, link }) => {
   const cardStyle = {
     marginTop: '20px',
     marginBottom: '40px',
-    marginLeft: '20px',
-    marginRight: '40px',
+    marginLeft: '40px',
+    maxWidth: "100%",
     width: '307px',
     height: '400px',
     position: 'relative',

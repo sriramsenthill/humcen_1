@@ -56,7 +56,7 @@ const ColorButton = styled(Button)(({ theme }) => ({
 
 export default function OkDialogueBox({success, domainValue, serviceValue}){
     const [closeError, setCloseError] = useState(true); 
-    
+
     const router = useRouter();
 
     const handleOk = () => {
@@ -64,10 +64,7 @@ export default function OkDialogueBox({success, domainValue, serviceValue}){
         router.push("/");
       };
     
-    const handleClose = () => {
-      setCloseError(false);
-    }
-    
+
      if (success === true) {
       return(
         <WhiteDialog open={true}>
@@ -91,15 +88,17 @@ We've Received Your Request.</h1>
 
      } else if (success === false) {
       return(
-<Dialog open={closeError} onClose={handleClose}>
+        <>
+{ closeError && <Dialog open={true}>
     <DialogTitle>Error</DialogTitle>
     <DialogContent>
       <p>Please fill all the required details before submitting the form.</p>
     </DialogContent>
     <DialogActions>
-      <Button onClick={handleClose}>OK</Button>
+      <Button onClick={() => setCloseError(false)}>OK</Button>
     </DialogActions>
-  </Dialog>
+  </Dialog> }
+  </>
       )
      }
 

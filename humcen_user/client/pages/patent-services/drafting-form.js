@@ -211,13 +211,13 @@ const IndexPage = () => {
               </Typography>
               {/* <DottedCard> */}
               <CustomDropZone files={detailsFile} onFileChange={handleDetailsFileChange}/>
-          <div style={{
+          { draftingOpen && <div style={{
             textAlign: "center",
           }}>    
           <Button variant="contained" onClick={handleDraftingContinue} style={{ marginTop: '1rem', borderRadius: "100px", boxShadow: "none" ,background: "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" }}>
             Continue
           </Button>
-          </div>
+          </div>}
         </div>
       )}
       <Divider style={{ margin: '2rem 0' }} />
@@ -320,7 +320,7 @@ const IndexPage = () => {
           <ShoppingCart priceList={shoppingList} detailsList={summary} total={totalBill.reduce((a,b)=> a+b,0)}service="Patent Drafting"/>
         </div>
         }
-       { contactOpen && <div style={{
+       { contactOpen && isFormValid () && <div style={{
         textAlign: "center",
        }}>
         <Button variant="contained" onClick={() => handleSubmit()} style={{ marginTop: '0.25rem', borderRadius: "100px" , boxShadow: "none",background: "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" }}>
@@ -332,7 +332,7 @@ const IndexPage = () => {
     </Container>
     </Paper>
     </div>
-    <OkDialogueBox success={success} serviceValue={"Patent Drafting"} />
+    <OkDialogueBox success={success} />
     </>
   );
 };
