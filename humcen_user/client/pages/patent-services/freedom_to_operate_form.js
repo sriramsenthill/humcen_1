@@ -121,6 +121,21 @@ export default function Inbox() {
     if(isFormValid()) {
       setDraftingOpen(false);
       setCountriesOpen(true);
+
+      setSummary([
+        {
+          title: "Domain",
+          text: domain,
+        },
+        {
+          title: "Keywords",
+          text: keywords.toString()
+        },
+        {
+          title: "Uploaded Files",
+          text: [description.map((file) => file.name)].toString() + ", " + [patentDetails.map((file) => file.name)].toString()
+        }
+      ]);
     } else {
       setSuccess(false);
     }
@@ -158,6 +173,10 @@ export default function Inbox() {
         
       }
       setList(newList)
+    } else {
+      console.log("Yes");
+      setContactOpen(false);
+      setSuccess(false);
     }
 
   };
@@ -193,7 +212,7 @@ export default function Inbox() {
   color="white"
   style={{ width: '100%', maxWidth: '1200px', margin: '550%' }}></BannerCard>
 
-      <Typography variant="h5" onClick={() => setDraftingOpen(!draftingOpen)} style={{ cursor: 'pointer', fontWeight: "bold" }}>
+      <Typography variant="h5" onClick={() => {setDraftingOpen(!draftingOpen); if(contactOpen) {setContactOpen(false)}}} style={{ cursor: 'pointer', fontWeight: "bold" }}>
       Freedom to Operate
       <ExpandMoreIcon style={{ transform: draftingOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
       </Typography>
@@ -284,7 +303,7 @@ export default function Inbox() {
       </div>}
       <Divider style={{ margin: '2rem 0' }} />
       <Typography variant="h5" style={{ fontWeight: "bold"}} 
-      onClick={() => { if (!draftingOpen) { setCountriesOpen(!countriesOpen) }}}>
+      onClick={() => { if (!draftingOpen) { setCountriesOpen(!countriesOpen) } if(contactOpen) {setContactOpen(false)}}}>
       Target Country
       <ExpandMoreIcon style={{ transform: countriesOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
       </Typography>

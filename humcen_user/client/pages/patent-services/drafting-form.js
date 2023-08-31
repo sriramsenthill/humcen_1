@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import axios from 'axios';
 import OkDialogueBox from './dialoguebox';
@@ -94,6 +94,24 @@ const IndexPage = () => {
     if(title != "" && domain != "" && keywords != [] && detailsFile != []) {
       setDraftingOpen(false);
       setCountriesOpen(true);
+      setSummary([
+        {
+          title: "Title",
+          text: title,
+        },
+        {
+          title: "Domain",
+          text: domain,
+        },
+        {
+          title: "Keywords",
+          text: keywords.toString()
+        },
+        {
+          title: "Uploaded Files",
+          text: [detailsFile.map((file) => file.name)].toString()
+        }
+      ]);
     } else {
       setSuccess(false);
     }
@@ -175,7 +193,7 @@ const IndexPage = () => {
   color="white"
   style={{ width: '100%', maxWidth: '1200px', margin: '550%' }}></BannerCard>
 
-      <Typography variant="h5" onClick={() => setDraftingOpen(!draftingOpen)} style={{ cursor: 'pointer', fontWeight: "bold" }}>
+      <Typography variant="h5" onClick={() => {setDraftingOpen(!draftingOpen); if(contactOpen) {setContactOpen(false)}}} style={{ cursor: 'pointer', fontWeight: "bold" }}>
         Drafting
         <ExpandMoreIcon style={{ transform: draftingOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
       </Typography>
@@ -223,7 +241,7 @@ const IndexPage = () => {
       <Divider style={{ margin: '2rem 0' }} />
       <Typography variant="h5" sx={{
         fontWeight: "bold",
-      }} onClick={() => { if (!draftingOpen) { setCountriesOpen(!countriesOpen) }}}>
+      }} onClick={() => { if (!draftingOpen) { setCountriesOpen(!countriesOpen); if(contactOpen) {setContactOpen(false)} }}}>
       Countries
       <ExpandMoreIcon style={{ transform: countriesOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
       </Typography>
@@ -320,7 +338,7 @@ const IndexPage = () => {
           <ShoppingCart priceList={shoppingList} detailsList={summary} total={totalBill.reduce((a,b)=> a+b,0)}service="Patent Drafting"/>
         </div>
         }
-       { contactOpen && isFormValid () && <div style={{
+       { contactOpen && title != "" && domain != "" && keywords.length != 0  && detailsFile.length != 0 && <div style={{
         textAlign: "center",
        }}>
         <Button variant="contained" onClick={() => handleSubmit()} style={{ marginTop: '0.25rem', borderRadius: "100px" , boxShadow: "none",background: "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" }}>

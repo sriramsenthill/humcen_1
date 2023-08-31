@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import axios from 'axios';
+import OkDialogueBox from './dialoguebox';
 import CustomDropZone from "@/components/CustomDropBox";
 import DefaultSelect from "@/components/Forms/AdvancedElements/DefaultField";
 import ShoppingCart from '@/components/shoppingCart';
@@ -44,6 +45,7 @@ export default function Inbox() {
     const [countriesOpen, setCountriesOpen] = useState(false);
     const [contactOpen, setContactOpen] = useState(false);
     const [domain, setDomain] = useState("");
+    const [success, setSuccess] = useState("");
     const [country, setCountry] = useState([]);
     const [summary, setSummary] = useState([]);
   const [totalBill, setBill] = useState([]); // Bill amount state
@@ -76,7 +78,7 @@ export default function Inbox() {
 
     const isFormValid = () => {
       // Add any other required fields here and modify the condition as needed
-      return domain && fer && specs && strategy && country;
+      return domain && fer && specs && strategy;
     };
 
   const handleSubmit = async (e) => {
@@ -115,14 +117,34 @@ export default function Inbox() {
 
 
   const handleDraftingContinue = () => {
-    setDraftingOpen(false);
-    setCountriesOpen(true);
+    if(isFormValid()) {
+      setDraftingOpen(false);
+      setCountriesOpen(true);
+
+      setSummary([
+        {
+          title: "Domain",
+          text: domain,
+        },
+        {
+          title: "Response Strategy",
+          text: strategy.toString()
+        },
+        {
+          title: "Uploaded Files",
+          text: [fer.map((file) => file.name)].toString() + ", " + [specs.map((file) => file.name)].toString()
+        }
+      ])
+    } else {
+      setSuccess(false);
+    }
   };
 
 
 
   const handleCountriesContinue = () => {
-    setCountriesOpen(false);
+    if(country.length != 0) {
+      setCountriesOpen(false);
     setContactOpen(true);
 
     setSummary([
@@ -150,6 +172,13 @@ export default function Inbox() {
       
     }
     setList(newList)
+
+    } else {
+      console.log("Yes");
+      setContactOpen(false);
+      setSuccess(false);
+    }
+    
   };
 
 
@@ -183,7 +212,7 @@ export default function Inbox() {
   color="white"
   style={{ width: '100%', maxWidth: '1200px', margin: '550%' }}></BannerCard>
 
-      <Typography variant="h5" onClick={() => setDraftingOpen(!draftingOpen)} style={{ cursor: 'pointer' }}>
+      <Typography variant="h5" onClick={() => {setDraftingOpen(!draftingOpen); if(contactOpen) {setContactOpen(false)}}} style={{ cursor: 'pointer', fontWeight: "bold" }}>
       Response To FER/Office Action
         <ExpandMoreIcon style={{ transform: draftingOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
       </Typography>
@@ -197,7 +226,8 @@ export default function Inbox() {
               sx={{
                 fontSize: 18,
                 fontWeight: 500,
-                mb: "10px",
+                mb: "1rem",
+                mt: "2rem"
               }}
             >
               Response Strategy : 
@@ -221,6 +251,7 @@ export default function Inbox() {
                 fontSize: 18,
                 fontWeight: 500,
                 mb: "10px",
+                mt: "2rem"
               }}
             >
               FER or Office Action :
@@ -231,7 +262,7 @@ export default function Inbox() {
               sx={{
                 fontSize: 12,
                 fontWeight: 350,
-                mb: "10px",
+                mb: "1.5rem",
               }}
             >
              ( Please provide the official document received from the patent office, such as the First Examination Report or Office Action. )
@@ -243,6 +274,7 @@ export default function Inbox() {
                 fontSize: 18,
                 fontWeight: 500,
                 mb: "10px",
+                mt: "2rem"
               }}
             >
               Complete Specification :
@@ -252,19 +284,27 @@ export default function Inbox() {
               sx={{
                 fontSize: 12,
                 fontWeight: 350,
-                mb: "10px",
+                mb: "2rem",
               }}
             >
              ( A Copy of the complete specification that was initially filed with the patent application. )
             </Typography>
             <CustomDropZone files={specs} onFileChange={setSpecs}/>
-          <Button variant="contained" color="primary" onClick={handleDraftingContinue} style={{ marginTop: '1rem' }}>
-            Continue
-          </Button>
+          
         </div>
       )}
+      {draftingOpen && <div style={{
+        textAlign: "center"
+      }}>
+          <Button variant="contained" color="primary" onClick={handleDraftingContinue} style={{ marginTop: '1rem', borderRadius: "100px", boxShadow: "none" ,background: "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" }}>
+            Continue
+          </Button>
+      </div>}
       <Divider style={{ margin: '2rem 0' }} />
-      <Typography variant="h5">Target Country</Typography>
+      <Typography variant="h5" style={{ fontWeight: "bold"}} 
+      onClick={() => { if (!draftingOpen) { setCountriesOpen(!countriesOpen) } if(contactOpen) {setContactOpen(false)}}}>
+      Target Country
+      <ExpandMoreIcon style={{ transform: countriesOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} /></Typography>
       {countriesOpen && (
         <div style={{ padding: '1rem 0' }}>
           {/* Country Selection Buttons */}
@@ -280,10 +320,12 @@ export default function Inbox() {
           </Typography>
           <Button
             style={{
-              background: country.includes("India") ? "#68BDFD" : "#F8FCFF",
+              background: country.includes("India") ? "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" : "#F8FCFF",
               color: country.includes("India") ? "white" : "#BFBFBF",
               width: "15%",
               marginRight: "2%",
+              boxShadow: "none",
+              borderRadius: "100px",
               height: "60px",
               textTransform: "none",
             }}
@@ -307,10 +349,12 @@ export default function Inbox() {
           </Button>
           <Button
             style={{
-              background: country.includes("United States") ? "#68BDFD" : "#F8FCFF",
+              background: country.includes("United States") ? "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" : "#F8FCFF",
               color: country.includes("United States") ? "white" : "#BFBFBF",
               width: "18%",
               marginRight: "2%",
+              boxShadow: "none",
+              borderRadius: "100px",
               height: "60px",
               textTransform: "none",
             }}
@@ -334,28 +378,36 @@ export default function Inbox() {
             &nbsp;&nbsp;United States <br />&nbsp;&nbsp;&#40;&#36;900&#41;
           </Button>
           {/* Add other country buttons similarly */}
-          <Button variant="contained" color="primary" onClick={handleCountriesContinue} style={{ marginTop: '1rem' }}>
-            Continue
-          </Button>
+          
         </div>
       )}
-
+      {countriesOpen && <div style={{
+        textAlign: "center"
+      }}>
+        <Button variant="contained" color="primary" onClick={handleCountriesContinue} style={{ marginTop: '1rem',  borderRadius: "100px", boxShadow: "none" ,background: "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" }}>
+            Continue
+          </Button>
+      </div>}
       <Divider style={{ margin: '2rem 0' }} />
-      <Typography variant="h5">Summary</Typography>
+      <Typography variant="h5" style={{
+        fontWeight: "bold"
+      }}>Summary</Typography>
       { contactOpen && <div style={{ padding: '1rem 0' }}>
           {/* Your content for the 'Contact' section */}
           <ShoppingCart priceList={shoppingList} detailsList={summary} total={totalBill.reduce((a,b)=> a+b,0)} service="Response To FER/ Office Action"/>
-          <Button variant="contained" onClick={() => handleSubmit()} style={{ marginTop: '0.5rem', backgroundColor: "#00B69B" }}>
-            Submit
-        </Button>
+          
         </div>
         }
-
+        { contactOpen && isFormValid () && <div style={{textAlign: "center" }}>
+        <Button variant="contained" onClick={() => handleSubmit()} style={{ marginTop: '0.5rem',  borderRadius: "100px", boxShadow: "none" ,background: "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" }}>
+            Submit
+        </Button>
+        </div>}
 
     </Container>
     </Paper>
     </div>
-
+    <OkDialogueBox success={success} serviceValue={"Patent Drafting"} />
     </>
   );
 };

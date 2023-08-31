@@ -66,6 +66,7 @@ export default function Inbox() {
   const [targetLanguage, setTargetLanguage] = useState("");
   const [additionalInfo,setAdditionalInfo]=useState("")
   const [patentInfo, setPatentInfo] = useState("");
+  const [success, setSuccess] = useState("");
   const [commGoals, setCommGoals] = useState("");
   const [compLandscape, setCompLandscape] = useState("");
   const [techDescription, setTechDescription] = useState("");
@@ -101,8 +102,7 @@ export default function Inbox() {
       patentInfo &&
       commGoals &&
       compLandscape &&
-      techDescription &&
-      country
+      techDescription
     );
   };
 
@@ -146,14 +146,42 @@ if (!isFormValid()) {
 
 
   const handleDraftingContinue = () => {
-    setDraftingOpen(false);
-    setCountriesOpen(true);
+    if(isFormValid()) {
+      setDraftingOpen(false);
+      setCountriesOpen(true);
+
+      setSummary([
+        {
+          title: "Patent Information",
+          text: patentInfo,
+        },
+        {
+          title: "Domain",
+          text: domain,
+        },
+        {
+          title: "Commercialization Goals",
+          text: commGoals,
+        },
+        {
+          title: "Competitive Landscape",
+          text: compLandscape,
+        },
+        {
+          title: "Technology Description",
+          text: techDescription,
+        },
+  
+      ]);
+    } else {
+      setSuccess(false);
+    }
   };
 
 
-
   const handleCountriesContinue = () => {
-    setCountriesOpen(false);
+    if(country.length != 0) {
+      setCountriesOpen(false);
     setContactOpen(true);
 
     setSummary([
@@ -190,6 +218,15 @@ if (!isFormValid()) {
       
     }
     setList(newList)
+
+    } else {
+      console.log("Yes");
+      setContactOpen(false);
+      setSuccess(false);
+    }
+    
+
+    
   };
 
 
@@ -223,7 +260,7 @@ if (!isFormValid()) {
   color="white"
   style={{ width: '100%', maxWidth: '1200px', margin: '550%' }}></BannerCard>
 
-      <Typography variant="h5" onClick={() => setDraftingOpen(!draftingOpen)} style={{ cursor: 'pointer' }}>
+      <Typography variant="h5" onClick={() => {setDraftingOpen(!draftingOpen); if(contactOpen) {setContactOpen(false)}}} style={{ cursor: 'pointer', fontWeight: "bold", marginLeft: "25px" }}>
       Patent Licensing and Commercialization Services
      <ExpandMoreIcon style={{ transform: draftingOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
       </Typography>
@@ -262,7 +299,8 @@ if (!isFormValid()) {
               fullWidth
               id="name"
               name="name"
-              label="Share details of the patented technology."
+              value={patentInfo}
+              label={ !patentInfo && "Share details of the patented technology."}
               autoComplete="name"
               InputProps={{
                 style: { borderRadius: 8 },
@@ -292,7 +330,8 @@ if (!isFormValid()) {
               fullWidth
               id="name"
               name="name"
-              label="Discuss your specific goals and objectives for licensing and commercializing your patented technology."
+              value={commGoals}
+              label={ !commGoals && "Discuss your specific goals and objectives for licensing and commercializing your patented technology."}
               autoComplete="name"
               InputProps={{
                 style: { borderRadius: 8 },
@@ -322,7 +361,8 @@ if (!isFormValid()) {
               fullWidth
               id="name"
               name="name"
-              label="Provide information about existing competitors or companies operating in the same or related fields."
+              value={compLandscape}
+              label={ !compLandscape && "Provide information about existing competitors or companies operating in the same or related fields."}
               autoComplete="name"
               InputProps={{
                 style: { borderRadius: 8 },
@@ -352,7 +392,8 @@ if (!isFormValid()) {
               fullWidth
               id="name"
               name="name"
-              label="Give a comprehensive description of the patented technology."
+              value={techDescription}
+              label={ !techDescription && "Give a comprehensive description of the patented technology."}
               autoComplete="name"
               InputProps={{
                 style: { borderRadius: 8 },
@@ -360,13 +401,22 @@ if (!isFormValid()) {
               onChange={handleTechDescription} // Provide the onChange event handler
             />
           </Card>
-          <Button variant="contained" color="primary" onClick={handleDraftingContinue} style={{ marginTop: '1rem' }}>
-            Continue
-          </Button>
         </div>
       )}
+
+      {draftingOpen && <div style={{
+        textAlign: "center"
+      }}>
+          <Button variant="contained" color="primary" onClick={handleDraftingContinue} style={{ marginTop: '1rem', borderRadius: "100px", boxShadow: "none" ,background: "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" }}>
+            Continue
+          </Button>
+      </div>}
+
       <Divider style={{ margin: '2rem 0' }} />
-      <Typography variant="h5">Target Country</Typography>
+      <Typography variant="h5" style={{ fontWeight: "bold", marginLeft: "25px"}} 
+      onClick={() => { if (!draftingOpen) { setCountriesOpen(!countriesOpen); if(contactOpen) {setContactOpen(false)} }}}>
+      Target Country
+      <ExpandMoreIcon style={{ transform: countriesOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} /></Typography>
       {countriesOpen && (
         <div style={{ padding: '1rem 0' }}>
           {/* Country Selection Buttons */}
@@ -375,6 +425,7 @@ if (!isFormValid()) {
             sx={{
               fontSize: 18,
               fontWeight: 500,
+              ml: "28px",
               mb: "10px",
             }}
           >
@@ -382,10 +433,13 @@ if (!isFormValid()) {
           </Typography>
           <Button
             style={{
-              background: country.includes("India") ? "#68BDFD" : "#F8FCFF",
+              background: country.includes("India") ? "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" : "#F8FCFF",
               color: country.includes("India") ? "white" : "#BFBFBF",
               width: "15%",
               marginRight: "2%",
+              marginLeft: "25px",
+              boxShadow: "none",
+              borderRadius: "100px",
               height: "60px",
               textTransform: "none",
             }}
@@ -409,10 +463,12 @@ if (!isFormValid()) {
           </Button>
           <Button
             style={{
-              background: country.includes("United States") ? "#68BDFD" : "#F8FCFF",
+              background: country.includes("United States") ? "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" : "#F8FCFF",
               color: country.includes("United States") ? "white" : "#BFBFBF",
               width: "18%",
               marginRight: "2%",
+              boxShadow: "none",
+              borderRadius: "100px",
               height: "60px",
               textTransform: "none",
             }}
@@ -435,29 +491,37 @@ if (!isFormValid()) {
             />
             &nbsp;&nbsp;United States <br />&nbsp;&nbsp;&#40;&#36;900&#41;
           </Button>
-          {/* Add other country buttons similarly */}
-          <Button variant="contained" color="primary" onClick={handleCountriesContinue} style={{ marginTop: '1rem' }}>
-            Continue
-          </Button>
         </div>
       )}
+      {countriesOpen && <div style={{
+        textAlign: "center"
+      }}>
+        <Button variant="contained" color="primary" onClick={handleCountriesContinue} style={{ marginTop: '1rem',  borderRadius: "100px", boxShadow: "none" ,background: "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" }}>
+            Continue
+          </Button>
+      </div>}
 
       <Divider style={{ margin: '2rem 0' }} />
-      <Typography variant="h5">Summary</Typography>
-      { contactOpen && <div style={{ padding: '1rem 0' }}>
+      <Typography variant="h5" style={{
+        fontWeight: "bold",
+        marginLeft: "25px"
+      }}>Summary</Typography>
+      { contactOpen && <div style={{ padding: '0.5rem 0' }}>
           {/* Your content for the 'Contact' section */}
           <ShoppingCart priceList={shoppingList} detailsList={summary} total={totalBill.reduce((a,b)=> a+b,0)}service="Patent Licensing and Commercialization Services"/>
-          <Button variant="contained" onClick={() => handleSubmit()} style={{ marginTop: '0.5rem', backgroundColor: "#00B69B" }}>
-            Submit
-        </Button>
         </div>
         }
+        { contactOpen && isFormValid () && <div style={{textAlign: "center" }}>
+        <Button variant="contained" onClick={() => handleSubmit()} style={{ marginTop: '0.5rem',  borderRadius: "100px", boxShadow: "none" ,background: "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" }}>
+            Submit
+        </Button>
+        </div>}
 
 
     </Container>
     </Paper>
     </div>
-
+    <OkDialogueBox success={success} serviceValue={"Patent Drafting"} />
     </>
   );
 };

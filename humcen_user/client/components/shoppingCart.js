@@ -30,7 +30,7 @@ const ShoppingCart = ({priceList, detailsList, service, total}) => {
           as="h3"
           sx={{
             fontSize: 18,
-            fontWeight: 500,
+            fontWeight: "bold",
             textAlign: "center",
             mb: "25px",
           }}
