@@ -29,19 +29,19 @@ const Profile = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      axios
-        .get("http://localhost:3000/api/user/img", {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then((response) => {
-          const  imageUrl  = response.data;
-          setProfileImg(imageUrl);
-        })
-        .catch((error) => {
-          console.error("Error fetching profile image:", error);
-        });
+      // axios
+      //   .get("http://localhost:3000/api/user/img", {
+      //     headers: {
+      //       Authorization: token,
+      //     },
+      //   })
+      //   .then((response) => {
+      //     const  imageUrl  = response.data;
+      //     setProfileImg(imageUrl);
+      //   })
+      //   .catch((error) => {
+      //     console.error("Error fetching profile image:", error);
+      //   });
         axios
         .get("http://localhost:3000/api/user/name", {
           headers: {
@@ -80,7 +80,7 @@ const Profile = () => {
           className="ml-2"
         >
             <Avatar
-            src={profileImg}
+            src= "images/Default_pfp.jpg"
             alt={userName}
             sx={{ width: 40, height: 40 }}
           />
@@ -126,10 +126,10 @@ const Profile = () => {
         className="for-dark-top-navList"
       >
         <MenuItem>
-          <Avatar src={profileImg} className="mr-1" />
+          <Avatar src= "images/Default_pfp.jpg" className="mr-1" />
           <Box>
           <Link
-            href="/"
+            href="/settings"
             fontSize="13px"
             color="inherit"
             underline="none"
