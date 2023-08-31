@@ -23,19 +23,17 @@ export default function SelectBulk({ domain, onDomainChange }) {
             label="Domain"
             onChange={handleChange}
           >
-            <MenuItem value={"Biochemistry"}>Biochemistry</MenuItem>
-            <MenuItem value={"Biotechnology"}>Biotechnology</MenuItem>
-            <MenuItem value={"Biomedical Engineering"}>Biomedical Engineering</MenuItem>
-            <MenuItem value={"Chemistry"}>Chemistry</MenuItem>
-            <MenuItem value={"Civil Engineering"}>Civil Engineering</MenuItem>
-            <MenuItem value={"Computer & IT Engineering"}>Computer & IT Engineering</MenuItem>
-            <MenuItem value={"Electrical & Electronics"}>Electrical & Electronics</MenuItem>
-            <MenuItem value={"Mechanical"}>Mechanical</MenuItem>
-            <MenuItem value={"Metallurgical"}>Metallurgical</MenuItem>
-            <MenuItem value={"Physics"}>Physics</MenuItem>
-            <MenuItem value={"Polymer"}>Polymer</MenuItem>
-            <MenuItem value={"Textile"}>Textile</MenuItem>
-            <MenuItem value={"Others"}>Others</MenuItem>
+            <MenuItem value={"Patent Drafting"}>Patent Drafting</MenuItem>
+            <MenuItem value={"Patent Filing"}>Patent Filing</MenuItem>
+            <MenuItem value={"Patent Search"}>Patent Search</MenuItem>
+            <MenuItem value={"Response to FER/Office Action"}>Response to FER/Office Action</MenuItem>
+            <MenuItem value={"Freedom To Operate Search"}>Freedom to Patent Landscape</MenuItem>
+            <MenuItem value={"Freedom to Patent Landscape"}>Computer & IT Engineering</MenuItem>
+            <MenuItem value={'Freedom to Patent Portfolio Analysis'}>Freedom to Patent Portfolio Analysis</MenuItem>
+            <MenuItem value={"Patent Translation Service"}>Patent Translation Service</MenuItem>
+            <MenuItem value={"Patent Illustration"}>Patent Illustration</MenuItem>
+            <MenuItem value={"Patent Watch"}>Patent Watch</MenuItem>
+            <MenuItem value={"Patent Licensing and Commercialization Services"}>Patent Licensing and Commercialization Services</MenuItem>
           </Select>
         </FormControl>
      

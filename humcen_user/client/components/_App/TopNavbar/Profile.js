@@ -41,7 +41,7 @@ const Profile = () => {
       //   })
       //   .catch((error) => {
       //     console.error("Error fetching profile image:", error);
-      //   });
+      //   });              
         axios
         .get("http://localhost:3000/api/user/name", {
           headers: {
