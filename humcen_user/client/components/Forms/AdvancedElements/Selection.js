@@ -6,8 +6,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
-
-export default function DefaultSelect({ domain, onDomainChange }) {
+export default function SelectBulk({ domain, onDomainChange }) {
   const handleChange = (event) => {
     const value = event.target.value;
     onDomainChange(value);
@@ -16,7 +15,7 @@ export default function DefaultSelect({ domain, onDomainChange }) {
   return (
     <>
         <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Domain</InputLabel>
+          <InputLabel id="demo-simple-select-label">Selection</InputLabel>
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
