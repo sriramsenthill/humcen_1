@@ -223,7 +223,7 @@ function RecentOrders() {
                     fontWeight: 'bold',
                     width: "150px",
                     padding: "15px 10px",
-                    textAlign: "center",
+                    textAlign: "left",
                   }}>
               Service
               </TableCell>
@@ -304,7 +304,7 @@ function RecentOrders() {
                       borderBottom: "1px solid #F7FAFF",
                       padding: "8px 10px",
                       fontSize: "13px",
-                      textAlign: "center",
+                      textAlign: "left",
                     }}>
                     {row.service}
                     </TableCell>
@@ -366,7 +366,7 @@ function RecentOrders() {
                       <Link href={`onGoingPatents/${row.og_id}`} passHref>
                       <Button
                     sx={{
-                      background: "#01ACF6",
+                      background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
                       color: "white",
                       borderRadius: "100px",
                       width: "100%",

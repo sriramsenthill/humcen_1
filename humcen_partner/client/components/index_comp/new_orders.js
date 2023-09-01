@@ -233,7 +233,7 @@ if (exceeded.length !== 0) {
                   <Link href={`onGoingPatents/${order._id.job_no}`} passHref>
                       <Button
                     sx={{
-                      background: "#01ACF6",
+                      background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
                       color: "white",
                       borderRadius: "100px",
                       width: "100%",

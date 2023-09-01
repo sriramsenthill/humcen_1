@@ -42,19 +42,19 @@ const Profile = () => {
         .catch((error) => {
           console.error("Error fetching partner name:", error);
         });
-      axios
-        .get("http://localhost:3000/api/partner/img", {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then((response) => {
-          const  partnerAvatarData  = response.data;
-          setPartnerAvatar(partnerAvatarData);
-        })
-        .catch((error) => {
-          console.error("Error fetching partner name:", error);
-        });
+      // axios
+      //   .get("http://localhost:3000/api/partner/img", {
+      //     headers: {
+      //       Authorization: token,
+      //     },
+      //   })
+      //   .then((response) => {
+      //     const  partnerAvatarData  = response.data;
+      //     setPartnerAvatar(partnerAvatarData);
+      //   })
+      //   .catch((error) => {
+      //     console.error("Error fetching partner name:", error);
+      //   });
     }
   }, []);
 
@@ -78,7 +78,7 @@ const Profile = () => {
           className="ml-2"
         >
           <Avatar
-            src={partnerAvatar}
+            src="images/Default_pfp.jpg"
             alt={partnerName}
             sx={{ width: 40, height: 40 }}
           />
@@ -123,10 +123,10 @@ const Profile = () => {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         className="for-dark-top-navList"
       >
-      <Link href="/" style={{textDecoration:"none"}}>
+      <Link href="/settings" style={{textDecoration:"none"}}>
         <MenuItem>
         
-          <Avatar src={partnerAvatar} className="mr-1" />
+          <Avatar src="images/Default_pfp.jpg" className="mr-1" />
           <Box>
             <Typography sx={{ fontSize: "11px", color: "#757FEF" }}>
               Partner

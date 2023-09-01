@@ -44,8 +44,8 @@ const RevenuStatus = () => {
       type: "gradient",
       gradient: {
         type: "vertical",
-        shadeIntensity: 0.5,
-        gradientToColors: ["#00ACF6", "#02E1B9"], // optional, if not defined - uses the shades of same color in series
+        shadeIntensity: 1,
+        gradientToColors: ["#02E1B9", "#00ACF6"], // optional, if not defined - uses the shades of same color in series
         inverseColors: true,
         opacityFrom: 0.9,
         opacityTo: 0.3,
