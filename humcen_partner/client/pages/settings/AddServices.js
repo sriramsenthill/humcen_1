@@ -182,7 +182,7 @@ export default function Profile() {
             textAlign: "center",
             paddingRight:"200px",
             }}>
-        Known Fields</Typography>
+        Added Services</Typography>
       <div style={{
         paddingLeft: "70px",
         paddingBottom: "30px",

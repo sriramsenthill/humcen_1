@@ -321,7 +321,7 @@ console.log(id);
               textAlign: "left",
               width: "200px",
             }}>
-              <h3 className={styles.emailheading}>Upload Your Work</h3>
+              <h3 className={styles.emailheading}>Upload your Completed Work</h3>
             </li>
             <li style={{
               position: "relative",
@@ -348,7 +348,7 @@ console.log(id);
       </Card>
       { upload && isAccepted && (<Button
             sx={{
-              background: "#27AE60",
+              background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
               position: "relative",
               bottom: "10%",
               left: "40%",
@@ -359,7 +359,7 @@ console.log(id);
               height: "88%",
               textTransform: "none",
               "&:hover": {
-                background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
+                background: "#00002B",
               },
               }}
               onClick={handleSubmit}

@@ -331,7 +331,7 @@ const DynamicPage = () => {
                 { !isBulkJob ? (<td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px", }}>
                 <Button
                       sx={{
-                        background: noFile ?  "#D3D3D3" : "#27AE60", 
+                        background: noFile ?  "#D3D3D3" :  "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)", 
                         color: "white",
                         borderRadius: "100px",
                         width: "100%",
@@ -339,7 +339,7 @@ const DynamicPage = () => {
                         height: "88%",
                         textTransform: "none",
                         "&:hover": {
-                          background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
+                          background: "#00002B",
                         },
                       }}
                       onClick={()=>onClickDownload(job.og_id)}

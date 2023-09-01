@@ -39,7 +39,7 @@ const ModernCard = ({ title, description, imageSrc, }) => {
   
   return (
     <Card style={cardStyle}>
-      <img src={imageSrc} alt={title} style={imageStyle} />
+      <img src='/images/patent_img/bg.png' alt={title} style={imageStyle} />
       <div style={titleStyle}>
       <Typography variant="h5" color="common.white" gutterBottom style={{ fontWeight: 'bold', fontFamily: 'Inter, sans-serif' }}>
           {title}

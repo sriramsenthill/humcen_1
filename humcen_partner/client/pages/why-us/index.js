@@ -6,81 +6,6 @@ import Grid from "@mui/material/Grid";
 import withAuth from "@/components/withAuth";
 import ModernCard from "@/components/ModernCard";
 
-const serviceList = [
-  {
-    image: "/images/patent_img/11.jpg",
-    title: "Patent Consultation",
-    desc: "Maximize the value of your invention with expert Patent Consultation from Us - Get Started Now!",
-    link: "../patent-services/consultationform",
-  },
-  {
-    image: "/images/patent_img/2.jpg",
-    title: "Patent Drafting",
-    desc: "Transform your ideas into strong patents with our expert Patent Drafting service",
-    link: "/patent-services/drafting-form",
-  },
-  {
-    image: "/images/patent_img/3.jpg",
-    title: "Patent Filing",
-    desc: "Secure your innovative ideas with our hassle-free patent filing service. Let us handle the complexities of the patent application process",
-    link: "/patent-services/filing-form",
-  },
-  {
-    image: "/images/patent_img/1.jpg",
-    title: "Patent Search",
-    desc: "Uncover the potential of your invention with our in-depth Patent Search service.",
-    link: "/patent-services/search_form",
-  },
-  {
-    image: "/images/patent_img/4.jpg",
-    title: "Response to FER/Office Action",
-    desc: "Amplify your chances of patent grant with our expert Response to FER service.",
-    link: "/patent-services/response_to_fer_form",
-  },
-  {
-    image: "/images/patent_img/6.jpg",
-    title: "Freedom To Operate Search",
-    desc: "Avoid potential legal roadblocks and minimize risks with our thorough FTO Search service.",
-    link: "/patent-services/freedom_to_operate_form",
-  },
-  {
-    image: "/images/patent_img/7.jpg",
-    title: "Freedom to Patent Landscape",
-    desc: "Make informed business decisions with our Insightful Patent Landscape analysis.",
-    link: "/patent-services/patent_landscape_form",
-  },
-  {
-    image: "/images/patent_img/8.jpg",
-    title: "Freedom to Patent Portfolio Analysis",
-    desc: "Maximize the value of your IP assets with our comprehensive Patent Portfolio Analysis service.",
-    link: "/patent-services/patent_portfolio_analysis_form",
-  },
-  {
-    image: "/images/patent_img/9.jpg",
-    title: "Patent Translation Service",
-    desc: "Bridge the language gap and expand your patent's global reach with our precise Patent Translation Service.",
-    link: "/patent-services/patent_translation_service_form",
-  },
-  {
-    image: "/images/patent_img/10.jpg",
-    title: "Patent Illustration",
-    desc: "Bring your invention to life with our high-quality Patent illustration service.",
-    link: "/patent-services/patent_illustrations_form",
-  },
-  {
-    image: "/images/patent_img/5.jpg",
-    title: "Patent Watch",
-    desc: "Stay informed and protect your IP with our proactive Patent Watch service.",
-    link: "/patent-services/patent_watch_form",
-  },
-  {
-    image: "/images/patent_img/12.jpg",
-    title: "Patent Licensing and Commercialization Services",
-    desc: "Unlocking the value of your patents and leveraging innovations for revenue generation and market success.",
-    link: "/patent-services/design_patent_form",
-  },
-];
-
 
 const Projects = () => {
   return (
@@ -96,40 +21,29 @@ const Projects = () => {
         </ul>
       </div>
       <h1 className={styles.heading}>Why Us?</h1>
-      <h2 style={{ marginTop: 20 }}>
-        Unlock unparalleled opportunities as an IP professional by joining our
-        IP marketplace.
+      <h2 style={{ marginTop: 18 }}>
+      Global Collaborative Excellence
       </h2>
+      <p style={{ fontSize: 15, textAlign:"justify", color:"grey" }}>At HumCen.io, we've curated a platform designed exclusively for intellectual property professionals like you. As a rapidly expanding hub, we bring together skilled individuals from diverse corners of the globe, fostering an environment of cross-border collaboration that's unparalleled in the industry. By joining us, you'll be part of an elite community that thrives on sharing insights, expertise, and innovative ideas, ultimately shaping the future of intellectual property. This is your opportunity to be a catalyst for change, leveraging your unique skills and experiences while working alongside fellow experts on an international scale.</p>
       <div>
-        <p style={{ fontSize: 15 }}>
-          Experience direct access to a global demand, enjoy higher earnings
-          potential, and embrace the freedom of a flexible work mode.
-          <br />
-          Connect, collaborate, and thrive in a vibrant community of like-minded
-          experts. Join us today and elevate your career in the world of
-          intellectual property.
+      <h2 style={{ marginTop: 18 }}>
+      Seize Remote Work Opportunities
+      </h2>
+        <p style={{ fontSize: 15, textAlign:"justify", color:"grey"}}>
+        Embrace the new era of work with HumCen.io. We understand that your expertise shouldn't be limited by geographical boundaries or traditional office spaces. With our platform, you can embrace the freedom of remote work, opening doors to a vast array of projects and collaborations that transcend physical limitations. Imagine working on cutting-edge projects for clients located in different parts of the world, all from the comfort of your chosen workspace. This is your chance to redefine work-life balance, take charge of your schedule, and explore opportunities that align perfectly with your professional aspirations.
         </p>
       </div>
+      <div>
+      <h2 style={{ marginTop: 18 }}>
+      Amplify Your Earnings and Impact
+            </h2>
+        <p style={{ fontSize: 15, textAlign:"justify", color:"grey"}}>
+        HumCen.io isn't just a platform; it's a pathway to amplified success. By becoming a valued IP partner, you're not only gaining access to a network of like-minded professionals, but you're also tapping into a world of increased earnings potential. As cross-border collaborations flourish and your reach expands, so do the possibilities to elevate your income. Moreover, your contributions will have a lasting impact, helping businesses and individuals safeguard their intellectual property rights while driving innovation forward. Join us at HumCen.io to not only grow your career but to also leave an indelible mark on the global intellectual property landscape.          </p>
+      </div>
+      <h2 style={{ marginTop: 18 }}>
+      Join us today and unlock a world of possibilities in the realm of intellectual property. Your expertise deserves a platform that matches your ambition. Embrace the future with HumCen.io and let's shape the world of IP together.      </h2>
       <br></br>
-      <div className={styles.pageTitle}>
-        <h1>Our Services</h1>
-      </div> 
-      <br></br>
-      <Grid
-    container
-    rowSpacing={1}
-    columnSpacing={{ xs: 1, sm: 1, md: 1, lg: 1, xl: 2 }}
-  >
-      {serviceList.map((service, index) => (
-        <ModernCard
-          key={index}
-          title={service.title}
-          description={service.desc} // Use "desc" instead of "description"
-          imageSrc={service.image}
-          link={service.link}
-        />
-      ))}
-      </Grid>
+     
       </div>
     </>
   );

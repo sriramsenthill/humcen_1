@@ -154,7 +154,7 @@ const Invoice = ({ jobdata }) => {
                 >
                   <Button
                     sx={{
-                      background: "#00ACF6",
+                      background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",
                       color: "white",
                       borderRadius: "100px",
                       width: "95%",

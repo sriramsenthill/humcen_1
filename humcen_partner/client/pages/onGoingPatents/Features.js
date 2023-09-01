@@ -84,7 +84,7 @@ export default function Features() {
             mb: "10px",
           }}
         >
-          Patent Program Oversight
+Progress Oversight
         </Typography>
 
         <Box sx={{ width: "100%" }}>
