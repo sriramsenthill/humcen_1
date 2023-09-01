@@ -212,11 +212,13 @@ console.log(job)
     console.log(access);
     try {
       const response = await axios.get(`http://localhost:3000/api/admin/job_files/${jobId}`);
-      console.log("hEY " + response.data);
+      console.log(response.data.fileName);
       
       const fileData = response.data.fileData;
       const fileName = response.data.fileName;
       const fileMIME = response.data.fileMIME;
+
+      console.log(fileData)
       const zip = new JSZip();
 
       for(let totalFiles=0; totalFiles < fileData.length; totalFiles++) {

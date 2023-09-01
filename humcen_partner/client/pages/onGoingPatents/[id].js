@@ -82,6 +82,7 @@ const DynamicPage = () => {
         const noFileInputServices = ['Patent Licensing and Commercialization Services', "Patent Watch", "Freedom to Patent Landscape" ];
         const response = await api.get(`partner/jobs/${id}`);
         const specificJob = response.data;
+        setJob(specificJob);
         setService(specificJob.service);
         setBulkJob(specificJob.bulk);
         setBulkTitle(specificJob.job_title);

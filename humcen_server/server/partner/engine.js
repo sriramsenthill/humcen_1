@@ -1500,7 +1500,7 @@ const addJobFiles = async (req, res) => {
       sendEmail(findAdmin.email, subject, text, tableData,attachments);
     
 
-  } catch {
+  } catch(err) {
     console.error("Error in Updating Job Files", err);
   }
 

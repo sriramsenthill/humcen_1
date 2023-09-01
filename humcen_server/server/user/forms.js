@@ -1722,7 +1722,7 @@ const newVersionPatentDrafting = async(req, res) => {
     console.log(req.body.countries);
     for(let totalCountries = 0; totalCountries < req.body.countries.length; totalCountries++) {
       console.log("Finding for " + req.body.countries[totalCountries]);
-      const findPartner = await Partner.findOne({
+      let findPartner = await Partner.findOne({
         is_free: true,
         ["known_fields.Patent Drafting"]: true,
         in_progress_jobs: { $lt: 5 },                       // Finding Availability of Partner for each and every chosen Country
@@ -1950,7 +1950,7 @@ const newVersionPatentFiling = async(req, res) => {
     let partnerName, partnerID, mapID, filingData, newFilingNo;
     for(let totalCountries = 0; totalCountries < req.body.countries.length; totalCountries++) {
       console.log("Finding for " + req.body.countries[totalCountries]);
-      const findPartner = await Partner.findOne({
+      let findPartner = await Partner.findOne({
         is_free: true,
         ["known_fields.Patent Filing"]: true,
         in_progress_jobs: { $lt: 5 },                       // Finding Availability of Partner for each and every chosen Country
@@ -2175,7 +2175,7 @@ const newVersionPatentSearch = async(req, res) => {
     let partnerName, partnerID, mapID, searchData, newSearchNo;
     for(let totalCountries = 0; totalCountries < req.body.countries.length; totalCountries++) {
       console.log("Finding for " + req.body.countries[totalCountries]);
-      const findPartner = await Partner.findOne({
+      let findPartner = await Partner.findOne({
         is_free: true,
         ["known_fields.Patent Search"]: true,
         in_progress_jobs: { $lt: 5 },                       // Finding Availability of Partner for each and every chosen Country
@@ -2373,7 +2373,7 @@ const newVersionFER = async(req, res) => {
     let partnerName, partnerID, mapID, ferData, newFERNo;
     for(let totalCountries = 0; totalCountries < req.body.countries.length; totalCountries++) {
       console.log("Finding for " + req.body.countries[totalCountries]);
-      const findPartner = await Partner.findOne({
+      let findPartner = await Partner.findOne({
         is_free: true,
         ["known_fields.Response to FER Office Action"]: true,
         in_progress_jobs: { $lt: 5 },                       // Finding Availability of Partner for each and every chosen Country
@@ -2590,7 +2590,7 @@ const newVersionFTO = async(req, res) => {
     let partnerName, partnerID, mapID, ftoData, newFTONo;
     for(let totalCountries = 0; totalCountries < req.body.countries.length; totalCountries++) {
       console.log("Finding for " + req.body.countries[totalCountries]);
-      const findPartner = await Partner.findOne({
+      let findPartner = await Partner.findOne({
         is_free: true,
         ["known_fields.Freedom To Operate"]: true,
         in_progress_jobs: { $lt: 5 },                       // Finding Availability of Partner for each and every chosen Country
@@ -2805,7 +2805,7 @@ const newVersionLandscape = async(req, res) => {
     let partnerName, partnerID, mapID, landscapeData, newLandscapeNo;
     for(let totalCountries = 0; totalCountries < req.body.countries.length; totalCountries++) {
       console.log("Finding for " + req.body.countries[totalCountries]);
-      const findPartner = await Partner.findOne({
+      let findPartner = await Partner.findOne({
         is_free: true,
         ["known_fields.Freedom to Patent Landscape"]: true,
         in_progress_jobs: { $lt: 5 },                       // Finding Availability of Partner for each and every chosen Country
@@ -2990,7 +2990,7 @@ const newVersionPortfolioAnalysis = async(req, res) => {
     let partnerName, partnerID, mapID, portfolioData, newPortfolioNo;
     for(let totalCountries = 0; totalCountries < req.body.countries.length; totalCountries++) {
       console.log("Finding for " + req.body.countries[totalCountries]);
-      const findPartner = await Partner.findOne({
+      let findPartner = await Partner.findOne({
         is_free: true,
         ["known_fields.Freedom to Patent Portfolio Analysis"]: true,
         in_progress_jobs: { $lt: 5 },                       // Finding Availability of Partner for each and every chosen Country
@@ -3193,7 +3193,7 @@ const newVersionTranslation = async(req, res) => {
     let partnerName, partnerID, mapID, translationData, newTranslationNo;
     for(let totalCountries = 0; totalCountries < req.body.countries.length; totalCountries++) {
       console.log("Finding for " + req.body.countries[totalCountries]);
-      const findPartner = await Partner.findOne({
+      let findPartner = await Partner.findOne({
         is_free: true,
         ["known_fields.Patent Translation Services"]: true,
         in_progress_jobs: { $lt: 5 },                       // Finding Availability of Partner for each and every chosen Country
@@ -3398,7 +3398,7 @@ const newVersionIllustration = async(req, res) => {
     let partnerName, partnerID, mapID, illustrationData, newIllustrationNo;
     for(let totalCountries = 0; totalCountries < req.body.countries.length; totalCountries++) {
       console.log("Finding for " + req.body.countries[totalCountries]);
-      const findPartner = await Partner.findOne({
+      let findPartner = await Partner.findOne({
         is_free: true,
         ["known_fields.Patent Illustration"]: true,
         in_progress_jobs: { $lt: 5 },                       // Finding Availability of Partner for each and every chosen Country
@@ -3600,7 +3600,7 @@ const newVersionWatch = async(req, res) => {
     let partnerName, partnerID, mapID, watchData, newWatchNo;
     for(let totalCountries = 0; totalCountries < req.body.countries.length; totalCountries++) {
       console.log("Finding for " + req.body.countries[totalCountries]);
-      const findPartner = await Partner.findOne({
+      let findPartner = await Partner.findOne({
         is_free: true,
         ["known_fields.Patent Watch"]: true,
         in_progress_jobs: { $lt: 5 },                       // Finding Availability of Partner for each and every chosen Country
@@ -3790,7 +3790,7 @@ const newVersionLicense = async(req, res) => {
     let partnerName, partnerID, mapID, licenseData, newLicenseNo;
     for(let totalCountries = 0; totalCountries < req.body.countries.length; totalCountries++) {
       console.log("Finding for " + req.body.countries[totalCountries]);
-      const findPartner = await Partner.findOne({
+      let findPartner = await Partner.findOne({
         is_free: true,
         ["known_fields.Patent Licensing and Commercialization Services"]: true,
         in_progress_jobs: { $lt: 5 },                       // Finding Availability of Partner for each and every chosen Country

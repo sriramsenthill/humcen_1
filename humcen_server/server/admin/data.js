@@ -170,11 +170,11 @@ const getJobFiles = async (req, res) => {
         }
 
         const { base64, name, type } = details;
+        console.log(name);
         fileDataList.push(base64);
         fileNameList.push("Partner_Work_File_" + (totalFiles+1) + '.' + name.split(".")[1]) ;
         fileMIMEList.push(type);
       }
-
       res.json({ fileData: fileDataList, fileName: fileNameList, fileMIME: fileMIMEList });
     }
   } catch(err) {

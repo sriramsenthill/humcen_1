@@ -71,7 +71,7 @@ const JobDetails = ({services, jobNo}) => {
     const [personalInfo, setPersonalInfo] = useState([]);
     const [isEmpty, setEmpty ] = useState(false);
     const [isAccepted, setAccepted] = useState(false); // To show up the Submit button if and only if the Partner accepts the Job
-
+    const [uploaded, setUploaded] = useState("");
 
     const getFiles = (files) => {
     setFiles(files);
@@ -99,7 +99,7 @@ const JobDetails = ({services, jobNo}) => {
         const response = await api.put(
           'partner/job-files',
           {
-            job_no: job,
+            job_no: id,
             service: service,
             country: country,
             partnerID: partID,
@@ -176,6 +176,20 @@ console.log(id);
     const token = localStorage.getItem("token");
     if (token) {
         setJobNum(id);
+
+        api.get(`partner/jobs/${id}`, {
+          headers: {
+            Authorization: token,
+          },
+        }).then((response) => {
+          const partnerUploadDate = response.data.date_activity[4];
+          console.log(partnerUploadDate);
+          if(partnerUploadDate === "") {
+            setShowUpload(true);
+          }
+        }) 
+
+
         api
           .get(`${services}/${id}`, {
             headers: {
@@ -183,6 +197,7 @@ console.log(id);
             },
           })
           .then((response) => { 
+            console.log(response.data);
             setPersonalInfo(Object.entries(response.data).map(([key, value]) => ({
               title: key,
               text: value,
@@ -200,7 +215,7 @@ console.log(id);
             },
           })
           .then((response) => { 
-              console.log("Hey" + response.data);
+              console.log("Hey" , response.data);
               const partnerInfo = response.data;
               setPartID(partnerInfo.partnerID);
               setJob(jobNo);
@@ -221,7 +236,7 @@ console.log(id);
           .then((response) => { 
             console.log(response.data);
             setStatus(response.data.verification);
-            if (Object.keys(response.data.job_files).length > 0) {
+            if (response.data.job_files.length > 0) {
               setShowUpload(false);
             }
             if(response.data.decided === true && response.data.access_provided === false) {
