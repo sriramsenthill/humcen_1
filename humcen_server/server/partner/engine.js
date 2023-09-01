@@ -100,7 +100,7 @@ const getPartnerJobOrders = async (req, res) => {
     // Fetch the job orders using the retrieved IDs
     const jobOrders = await JobOrder.find({
       "_id.job_no": { $in: jobOrderIds },
-    });
+    }).sort({"_id.job_no": -1});
     // console.log("jobOrders:", jobOrders); // Check the fetched job orders
     // Remove the _id field from each object in copyJobs
     const copyJobs = JSON.parse(JSON.stringify(jobOrders));
@@ -176,7 +176,7 @@ const acceptJobOrder = async (req, res) => {
     res.json({ message: "Job order accepted successfully" });
 
     await AllNotifications.sendToUser(Number(userID), "Work  " + jobId+" has been assigned to Partner named " + partner.first_name + " " + partner.last_name + " Successfully.");
-    await AllNotifications.sendToPartner(Number(partner.userID), "Job Order of ID " + jobID + "is accepted and now, You can work on the Job without any hindrances.");
+    await AllNotifications.sendToPartner(Number(partner.userID), "Job Order of ID " + jobId + "is accepted and now, You can work on the Job without any hindrances.");
     await AllNotifications.sendToAdmin("Partner ID " + partner.userID + " has accepted the Job ID " + jobId);
 
   } catch (error) {

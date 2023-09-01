@@ -70,7 +70,7 @@ const getJobOrders = async (req, res) => {
   try {
     let jobLists = [];
     const userId = req.userId;
-    const jobOrders = await JobOrder.find({ userID: userId });
+    const jobOrders = await JobOrder.find({ userID: userId }).sort({"_id.job_no": 1});
     const copyJobs = JSON.parse(JSON.stringify(jobOrders));
 
 // Remove the _id field from each object in copyJobs
@@ -1735,6 +1735,16 @@ const newVersionPatentDrafting = async(req, res) => {
         throw new Error("No customer found for the given user ID");
       }
       
+      draftingData = {                                         // Creating a new Drafting Document for saving Details
+        country: req.body.countries[totalCountries],
+        budget: req.body.bills[totalCountries],
+        job_title: req.body.title,
+        domain: req.body.domain,
+        keywords: req.body.keywords,
+        userID: userId,
+        service_specific_files: req.body.service_specific_files, 
+      }
+
       if (!findPartner) {
         partnerName = "";
         partnerID = "";                                   // If there's no availability of Partner
@@ -1751,15 +1761,7 @@ const newVersionPatentDrafting = async(req, res) => {
         console.log("Yes");
         // Changes
         mapID = newUnassignedDraftingNo;
-      draftingData = {                                         // Creating a new Drafting Document for saving Details
-        country: req.body.countries[totalCountries],
-        budget: req.body.bills[totalCountries],
-        job_title: req.body.title,
-        domain: req.body.domain,
-        keywords: req.body.keywords,
-        userID: userId,
-        service_specific_files: req.body.service_specific_files, 
-      }
+      
   
         stepsInitial = 2;
         const newDraftingData = draftingData;
@@ -1788,8 +1790,7 @@ const newVersionPatentDrafting = async(req, res) => {
       ? latestDraftingOrder._id.job_no + 1
       : 1000;
          // Changes 
-      console.log(newDraftingNo);
-      draftingData._id = { job_no: newDraftingNo };
+
       const startDate = new Date();
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
@@ -1802,8 +1803,8 @@ const newVersionPatentDrafting = async(req, res) => {
         service: "Patent Drafting",
         userID: userId,
         unassignedID: !findPartner && mapID,
-        partnerID: partnerID,
-        partnerName: partnerName, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+        partnerID: findPartner ? findPartner.userID : "",
+        partnerName: findPartner ? findPartner.first_name : "", // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
         customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
         country: req.body.countries[totalCountries],
         start_date: startDate,
@@ -1827,6 +1828,7 @@ const newVersionPatentDrafting = async(req, res) => {
         partnerName = findPartner.first_name;
         partnerID = findPartner.userID;
         console.log("Partner Found");
+        console.log(findPartner);
         stepsInitial = 3;
         // Save the draftingData in the Drafting collection
         const draftingOrder = new Drafting(draftingData);                       // Creating a new Drafting Document
@@ -1834,7 +1836,8 @@ const newVersionPatentDrafting = async(req, res) => {
         // Ensure findPartner and findCustomer are not null before accessing their properties
         draftingOrder.partnerName = findPartner.first_name; // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
         draftingOrder.customerName = findCustomer.first_name;// Assuming the customer's name is stored in the 'customerName' field of the Customer collection
-    
+  
+
         const savedDrafting = await draftingOrder.save();
     
         // Update partner and customer jobs lists
@@ -1959,6 +1962,14 @@ const newVersionPatentFiling = async(req, res) => {
         // Handle the case when no customer is found
         throw new Error("No customer found for the given user ID");
       }
+      filingData = {                                         // Creating a new Drafting Document for saving Details
+        country: req.body.countries[totalCountries],
+        budget: req.body.bills[totalCountries],
+        job_title: req.body.title,
+        domain: req.body.domain,
+        userID: userId,
+        service_specific_files: req.body.service_specific_files, 
+      }
       
       if (!findPartner) {
         partnerName = "";
@@ -1976,14 +1987,7 @@ const newVersionPatentFiling = async(req, res) => {
         console.log("Yes");
         // Changes
         mapID = newUnassignedFilingNo;
-      filingData = {                                         // Creating a new Drafting Document for saving Details
-        country: req.body.countries[totalCountries],
-        budget: req.body.bills[totalCountries],
-        job_title: req.body.title,
-        domain: req.body.domain,
-        userID: userId,
-        service_specific_files: req.body.service_specific_files, 
-      }
+      
   
         stepsInitial = 2;
         const newFilingData = filingData;
@@ -2013,7 +2017,7 @@ const newVersionPatentFiling = async(req, res) => {
       : 1000;
          // Changes 
       console.log(newFilingNo);
-      filingData._id = { job_no: newFilingNo };
+
       const startDate = new Date();
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
@@ -2026,8 +2030,8 @@ const newVersionPatentFiling = async(req, res) => {
         service: "Patent Filing",
         userID: userId,
         unassignedID: !findPartner && mapID,
-        partnerID: partnerID,
-        partnerName: partnerName, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+        partnerID: findPartner ? findPartner.userID : "",
+        partnerName: findPartner ? findPartner.first_name : "",// Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
         customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
         country: req.body.countries[totalCountries],
         start_date: startDate,
@@ -2183,7 +2187,15 @@ const newVersionPatentSearch = async(req, res) => {
         // Handle the case when no customer is found
         throw new Error("No customer found for the given user ID");
       }
-      
+      searchData = {                                         // Creating a new Drafting Document for saving Details
+        country: req.body.countries[totalCountries],
+        budget: req.body.bills[totalCountries],
+        invention_description: req.body.invention_description,
+        keywords: req.body.keywords,
+        field: req.body.domain,
+        userID: userId,
+        technical_diagram: req.body.technical_diagram, 
+      }
       if (!findPartner) {
         partnerName = "";
         partnerID = "";                                   // If there's no availability of Partner
@@ -2200,15 +2212,7 @@ const newVersionPatentSearch = async(req, res) => {
         console.log("Yes");
         // Changes
         mapID = newUnassignedSearchNo;
-      searchData = {                                         // Creating a new Drafting Document for saving Details
-        country: req.body.countries[totalCountries],
-        budget: req.body.bills[totalCountries],
-        invention_description: req.body.invention_description,
-        keywords: req.body.keywords,
-        field: req.body.domain,
-        userID: userId,
-        technical_diagram: req.body.technical_diagram, 
-      }
+      
   
         stepsInitial = 2;
         const newSearchData = searchData;
@@ -2238,7 +2242,7 @@ const newVersionPatentSearch = async(req, res) => {
       : 1000;
          // Changes 
       console.log(newSearchNo);
-      searchData._id = { job_no: newSearchNo };
+
       const startDate = new Date();
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
@@ -2251,8 +2255,8 @@ const newVersionPatentSearch = async(req, res) => {
         service: "Patent Search",
         userID: userId,
         unassignedID: !findPartner && mapID,
-        partnerID: partnerID,
-        partnerName: partnerName, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+        partnerID: findPartner ? findPartner.userID : "",
+        partnerName: findPartner ? findPartner.first_name : "", // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
         customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
         country: req.body.countries[totalCountries],
         start_date: startDate,
@@ -2382,6 +2386,15 @@ const newVersionFER = async(req, res) => {
         throw new Error("No customer found for the given user ID");
       }
       
+      ferData = {                                         // Creating a new Drafting Document for saving Details
+        country: req.body.countries[totalCountries],
+        budget: req.body.bills[totalCountries],
+        response_strategy: req.body.response_strategy,
+        field: req.body.field,
+        userID: userId,
+        fer: req.body.fer,
+        complete_specifications: req.body.complete_specifications,
+      }
       if (!findPartner) {
         partnerName = "";
         partnerID = "";                                   // If there's no availability of Partner
@@ -2398,15 +2411,7 @@ const newVersionFER = async(req, res) => {
         console.log("Yes");
         // Changes
         mapID = newUnassignedFERNo;
-      ferData = {                                         // Creating a new Drafting Document for saving Details
-        country: req.body.countries[totalCountries],
-        budget: req.body.bills[totalCountries],
-        response_strategy: req.body.response_strategy,
-        field: req.body.field,
-        userID: userId,
-        fer: req.body.fer,
-        complete_specifications: req.body.complete_specifications,
-      }
+      
   
         stepsInitial = 2;
         const newFERData = ferData;
@@ -2436,7 +2441,7 @@ const newVersionFER = async(req, res) => {
       : 1000;
          // Changes 
       console.log(newFERNo);
-      ferData._id = { job_no: newFERNo };
+
       const startDate = new Date();
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
@@ -2449,8 +2454,8 @@ const newVersionFER = async(req, res) => {
         service: "Response to FER Office Action",
         userID: userId,
         unassignedID: !findPartner && mapID,
-        partnerID: partnerID,
-        partnerName: partnerName, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+        partnerID: findPartner ? findPartner.userID : "",
+        partnerName: findPartner ? findPartner.first_name : "",// Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
         customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
         country: req.body.countries[totalCountries],
         start_date: startDate,
@@ -2597,6 +2602,15 @@ const newVersionFTO = async(req, res) => {
         // Handle the case when no customer is found
         throw new Error("No customer found for the given user ID");
       }
+      ftoData = {                                         // Creating a new Drafting Document for saving Details
+        country: req.body.countries[totalCountries],
+        budget: req.body.bills[totalCountries],
+        keywords: req.body.keywords,
+        field: req.body.field,
+        userID: userId,
+        invention_description: req.body.invention_description,
+        patent_application_details: req.body.patent_application_details,
+      }
       
       if (!findPartner) {
         partnerName = "";
@@ -2614,15 +2628,7 @@ const newVersionFTO = async(req, res) => {
         console.log("Yes");
         // Changes
         mapID = newUnassignedFTONo;
-      ftoData = {                                         // Creating a new Drafting Document for saving Details
-        country: req.body.countries[totalCountries],
-        budget: req.body.bills[totalCountries],
-        keywords: req.body.keywords,
-        field: req.body.field,
-        userID: userId,
-        invention_description: req.body.invention_description,
-        patent_application_details: req.body.patent_application_details,
-      }
+      
   
         stepsInitial = 2;
         const newFTOData = ftoData;
@@ -2652,7 +2658,7 @@ const newVersionFTO = async(req, res) => {
       : 1000;
          // Changes 
       console.log(newFTONo);
-      ftoData._id = { job_no: newFTONo };
+
       const startDate = new Date();
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
@@ -2665,8 +2671,8 @@ const newVersionFTO = async(req, res) => {
         service: "Freedom To Operate",
         userID: userId,
         unassignedID: !findPartner && mapID,
-        partnerID: partnerID,
-        partnerName: partnerName, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+        partnerID: findPartner ? findPartner.userID : "",
+        partnerName: findPartner ? findPartner.first_name : "", // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
         customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
         country: req.body.countries[totalCountries],
         start_date: startDate,
@@ -2811,6 +2817,15 @@ const newVersionLandscape = async(req, res) => {
         // Handle the case when no customer is found
         throw new Error("No customer found for the given user ID");
       }
+      landscapeData = {                                         // Creating a new Drafting Document for saving Details
+        country: req.body.countries[totalCountries],
+        budget: req.body.bills[totalCountries],
+        keywords: req.body.keywords,
+        field: req.body.field,
+        userID: userId,
+        technology_description: req.body.technology_description,
+        competitor_information: req.body.competitor_information,
+      }
       
       if (!findPartner) {
         partnerName = "";
@@ -2828,15 +2843,7 @@ const newVersionLandscape = async(req, res) => {
         console.log("Yes");
         // Changes
         mapID = newUnassignedLandscapeNo;
-      landscapeData = {                                         // Creating a new Drafting Document for saving Details
-        country: req.body.countries[totalCountries],
-        budget: req.body.bills[totalCountries],
-        keywords: req.body.keywords,
-        field: req.body.field,
-        userID: userId,
-        technology_description: req.body.technology_description,
-        competitor_information: req.body.competitor_information,
-      }
+      
   
         stepsInitial = 2;
         const newLandscapeData = landscapeData;
@@ -2866,7 +2873,7 @@ const newVersionLandscape = async(req, res) => {
       : 1000;
          // Changes 
       console.log(newLandscapeNo);
-      landscapeData._id = { job_no: newLandscapeNo };
+
       const startDate = new Date();
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
@@ -2879,8 +2886,8 @@ const newVersionLandscape = async(req, res) => {
         service: "Freedom to Patent Landscape",
         userID: userId,
         unassignedID: !findPartner && mapID,
-        partnerID: partnerID,
-        partnerName: partnerName, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+        partnerID: findPartner ? findPartner.userID : "",
+        partnerName: findPartner ? findPartner.first_name : "", // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
         customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
         country: req.body.countries[totalCountries],
         start_date: startDate,
@@ -2995,7 +3002,15 @@ const newVersionPortfolioAnalysis = async(req, res) => {
         // Handle the case when no customer is found
         throw new Error("No customer found for the given user ID");
       }
-      
+      portfolioData = {                                         // Creating a new Drafting Document for saving Details
+        country: req.body.countries[totalCountries],
+        budget: req.body.bills[totalCountries],
+        field: req.body.field,
+        userID: userId,
+        business_objectives: req.body.business_objectives,
+        market_and_industry_information: req.body.market_and_industry_information,
+        service_specific_files: req.body.service_specific_files,
+      }
       if (!findPartner) {
         partnerName = "";
         partnerID = "";                                   // If there's no availability of Partner
@@ -3012,15 +3027,7 @@ const newVersionPortfolioAnalysis = async(req, res) => {
         console.log("Yes");
         // Changes
         mapID = newUnassignedPortfolioNo;
-      portfolioData = {                                         // Creating a new Drafting Document for saving Details
-        country: req.body.countries[totalCountries],
-        budget: req.body.bills[totalCountries],
-        field: req.body.field,
-        userID: userId,
-        business_objectives: req.body.business_objectives,
-        market_and_industry_information: req.body.market_and_industry_information,
-        service_specific_files: req.body.service_specific_files,
-      }
+      
   
         stepsInitial = 2;
         const newPortfolioData = portfolioData;
@@ -3050,7 +3057,7 @@ const newVersionPortfolioAnalysis = async(req, res) => {
       : 1000;
          // Changes 
       console.log(newPortfolioNo);
-      portfolioData._id = { job_no: newPortfolioNo };
+
       const startDate = new Date();
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
@@ -3063,8 +3070,8 @@ const newVersionPortfolioAnalysis = async(req, res) => {
         service: "Freedom to Patent Portfolio Analysis",
         userID: userId,
         unassignedID: !findPartner && mapID,
-        partnerID: partnerID,
-        partnerName: partnerName, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+        partnerID: findPartner ? findPartner.userID : "",
+        partnerName: findPartner ? findPartner.first_name : "", // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
         customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
         country: req.body.countries[totalCountries],
         start_date: startDate,
@@ -3198,6 +3205,16 @@ const newVersionTranslation = async(req, res) => {
         // Handle the case when no customer is found
         throw new Error("No customer found for the given user ID");
       }
+      translationData = {                                         // Creating a new Drafting Document for saving Details
+        country: req.body.countries[totalCountries],
+        budget: req.body.bills[totalCountries],
+        field: req.body.field,
+        userID: userId,
+        source_language: req.body.source_language,
+        target_language: req.body.target_language,
+        additional_instructions: req.body.additional_instructions,
+        document_details: req.body.document_details
+      }
       
       if (!findPartner) {
         partnerName = "";
@@ -3215,16 +3232,7 @@ const newVersionTranslation = async(req, res) => {
         console.log("Yes");
         // Changes
         mapID = newUnassignedTranslationNo;
-      translationData = {                                         // Creating a new Drafting Document for saving Details
-        country: req.body.countries[totalCountries],
-        budget: req.body.bills[totalCountries],
-        field: req.body.field,
-        userID: userId,
-        source_language: req.body.source_language,
-        target_language: req.body.target_language,
-        additional_instructions: req.body.additional_instructions,
-        document_details: req.body.document_details
-      }
+      
   
         stepsInitial = 2;
         const newTranslationData = translationData;
@@ -3254,7 +3262,7 @@ const newVersionTranslation = async(req, res) => {
       : 1000;
          // Changes 
       console.log(newTranslationNo);
-      translationData._id = { job_no: newTranslationNo };
+
       const startDate = new Date();
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
@@ -3267,8 +3275,8 @@ const newVersionTranslation = async(req, res) => {
         service: "Patent Translation Services",
         userID: userId,
         unassignedID: !findPartner && mapID,
-        partnerID: partnerID,
-        partnerName: partnerName, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+        partnerID: findPartner ? findPartner.userID : "",
+        partnerName: findPartner ? findPartner.first_name : "", // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
         customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
         country: req.body.countries[totalCountries],
         start_date: startDate,
@@ -3402,7 +3410,16 @@ const newVersionIllustration = async(req, res) => {
         // Handle the case when no customer is found
         throw new Error("No customer found for the given user ID");
       }
-      
+      illustrationData = {                                         // Creating a new Drafting Document for saving Details
+        country: req.body.countries[totalCountries],
+        budget: req.body.bills[totalCountries],
+        field: req.body.field,
+        userID: userId,
+        patent_specifications: req.body.patent_specifications,
+        drawing_requirements: req.body.drawing_requirements,
+        preferred_style: req.body.preferred_style,
+      }
+  
       if (!findPartner) {
         partnerName = "";
         partnerID = "";                                   // If there's no availability of Partner
@@ -3419,15 +3436,6 @@ const newVersionIllustration = async(req, res) => {
         console.log("Yes");
         // Changes
         mapID = newUnassignedIllustrationNo;
-      illustrationData = {                                         // Creating a new Drafting Document for saving Details
-        country: req.body.countries[totalCountries],
-        budget: req.body.bills[totalCountries],
-        field: req.body.field,
-        userID: userId,
-        patent_specifications: req.body.patent_specifications,
-        drawing_requirements: req.body.drawing_requirements,
-        preferred_style: req.body.preferred_style,
-      }
   
         stepsInitial = 2;
         const newIllustrationData = illustrationData;
@@ -3457,7 +3465,7 @@ const newVersionIllustration = async(req, res) => {
       : 1000;
          // Changes 
       console.log(newIllustrationNo);
-      illustrationData._id = { job_no: newIllustrationNo };
+
       const startDate = new Date();
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
@@ -3470,8 +3478,8 @@ const newVersionIllustration = async(req, res) => {
         service: "Patent Illustration",
         userID: userId,
         unassignedID: !findPartner && mapID,
-        partnerID: partnerID,
-        partnerName: partnerName, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+        partnerID: findPartner ? findPartner.userID : "",
+        partnerName: findPartner ? findPartner.first_name : "", // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
         customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
         country: req.body.countries[totalCountries],
         start_date: startDate,
@@ -3604,6 +3612,17 @@ const newVersionWatch = async(req, res) => {
         // Handle the case when no customer is found
         throw new Error("No customer found for the given user ID");
       }
+      watchData = {                                         // Creating a new Drafting Document for saving Details
+        country: req.body.countries[totalCountries],
+        budget: req.body.bills[totalCountries],
+        field: req.body.field,
+        userID: userId,
+        competitor_information: req.body.competitor_information,
+        geographic_scope: req.body.geographic_scope,
+        industry_focus: req.body.industry_focus,
+        keywords: req.body.keywords,
+        monitoring_duration: req.body.monitoring_duration,
+      }
       
       if (!findPartner) {
         partnerName = "";
@@ -3621,17 +3640,7 @@ const newVersionWatch = async(req, res) => {
         console.log("Yes");
         // Changes
         mapID = newUnassignedWatchNo;
-      watchData = {                                         // Creating a new Drafting Document for saving Details
-        country: req.body.countries[totalCountries],
-        budget: req.body.bills[totalCountries],
-        field: req.body.field,
-        userID: userId,
-        competitor_information: req.body.competitor_information,
-        geographic_scope: req.body.geographic_scope,
-        industry_focus: req.body.industry_focus,
-        keywords: req.body.keywords,
-        monitoring_duration: req.body.monitoring_duration,
-      }
+      
   
         stepsInitial = 2;
         const newWatchData = watchData;
@@ -3661,7 +3670,7 @@ const newVersionWatch = async(req, res) => {
       : 1000;
          // Changes 
       console.log(newWatchNo);
-      watchData._id = { job_no: newWatchNo };
+
       const startDate = new Date();
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
@@ -3674,8 +3683,8 @@ const newVersionWatch = async(req, res) => {
         service: "Patent Watch",
         userID: userId,
         unassignedID: !findPartner && mapID,
-        partnerID: partnerID,
-        partnerName: partnerName, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+        partnerID: findPartner ? findPartner.userID : "",
+        partnerName: findPartner ? findPartner.first_name : "", // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
         customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
         country: req.body.countries[totalCountries],
         start_date: startDate,
@@ -3793,6 +3802,17 @@ const newVersionLicense = async(req, res) => {
         // Handle the case when no customer is found
         throw new Error("No customer found for the given user ID");
       }
+      licenseData = {                                         // Creating a new Drafting Document for saving Details
+        country: req.body.countries[totalCountries],
+        budget: req.body.bills[totalCountries],
+        field: req.body.field,
+        userID: userId,
+        commercialization_goals: req.body.commercialization_goals,
+        competitive_landscape: req.body.competitive_landscape,
+        patent_information: req.body.patent_information,
+        technology_description: req.body.technology_description,
+      }
+  
       
       if (!findPartner) {
         partnerName = "";
@@ -3810,16 +3830,6 @@ const newVersionLicense = async(req, res) => {
         console.log("Yes");
         // Changes
         mapID = newUnassignedLicenseNo;
-      licenseData = {                                         // Creating a new Drafting Document for saving Details
-        country: req.body.countries[totalCountries],
-        budget: req.body.bills[totalCountries],
-        field: req.body.field,
-        userID: userId,
-        commercialization_goals: req.body.commercialization_goals,
-        competitive_landscape: req.body.competitive_landscape,
-        patent_information: req.body.patent_information,
-        technology_description: req.body.technology_description,
-      }
   
         stepsInitial = 2;
         const newLicenseData = licenseData;
@@ -3849,7 +3859,7 @@ const newVersionLicense = async(req, res) => {
       : 1000;
          // Changes 
       console.log(newLicenseNo);
-      licenseData._id = { job_no: newLicenseNo };
+
       const startDate = new Date();
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
@@ -3862,8 +3872,8 @@ const newVersionLicense = async(req, res) => {
         service: "Patent Licensing and Commercialization Services",
         userID: userId,
         unassignedID: !findPartner && mapID,
-        partnerID: partnerID,
-        partnerName: partnerName, // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
+        partnerID: findPartner ? findPartner.userID : "",
+        partnerName: findPartner ? findPartner.first_name : "", // Assuming the partner's full name is stored in the 'full_name' field of the Partner collection
         customerName: findCustomer.first_name, // Assuming the customer's name is stored in the 'customerName' field of the Customer collection
         country: req.body.countries[totalCountries],
         start_date: startDate,

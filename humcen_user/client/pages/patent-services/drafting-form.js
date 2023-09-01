@@ -81,7 +81,7 @@ const IndexPage = () => {
   }
     console.log(infoDocument);
     try {
-      const response = await api.post("patent_drafting", infoDocument);
+      const response = await api.post("/patent_drafting", infoDocument);
     } catch(error) {
       console.error("Error in submitting the Patent Drafting Form : " + error);
     }

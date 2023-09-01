@@ -53,12 +53,9 @@ const ProductDetails = () => {
   const [countriesOpen, setCountriesOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const [summary, setSummary] = useState([]);
-  const [country, setCountry] = useState([]); // Add country state
-  const [totalBill, setBill] = useState([]); // Bill amount state
+  const [country, setCountry] = useState(""); // Add country state
+   // Bill amount state
 
-  const handleTitleChange = (event) => {
-    setTitle(event.target.value);
-  };
 
   const handleQuantity = (event) => {
     setQuantity(event.target.value);
@@ -68,35 +65,21 @@ const ProductDetails = () => {
     setDomain(value);
   };
 
-  const handleDetailsFileChange = (file) => {
-    setFiles(file);
-  }
 
   const handleSubmit = async() => {
     setSuccess(true);
     const infoDocument = {
-      title: title,
       domain: domain,
-      countries: country,
-      bills: totalBill,
-      keywords: keywords,
-      service_specific_files: {
-        invention_details: detailsFile
-    }
+      quantity: quantity,
+      country: country
   }
     console.log(infoDocument);
-    try {
-      const response = await api.post("patent_drafting", infoDocument);
-    } catch(error) {
-      console.error("Error in submitting the Patent Drafting Form : " + error);
-    }
        
-
     console.log("Submitted!");
   }
 
   const handleDraftingContinue = () => {
-    if(domain != "" && quantity != [] && detailsFile != []) {
+    if(domain != "" && quantity != "") {
       setDraftingOpen(false);
       setCountriesOpen(true);
     } else {
@@ -182,15 +165,41 @@ const ProductDetails = () => {
 
       {draftingOpen && (
         <div style={{ padding: '1rem 0', }}>
+        <Typography
+            as="h3"
+            sx={{
+              fontSize: 18,
+              fontWeight: 500,
+              mb: "1rem",
+            }}
+          >
+            Select the Domain
+          </Typography>
           <SelectBulk domain={domain} onDomainChange={handleDomainChange}/>
+          <Typography
+            as="h3"
+            sx={{
+              fontSize: 18,
+              fontWeight: 500,
+              mt: "2rem",
+              mb: "1rem",
+            }}
+          >
+            Select the Quantity
+          </Typography>
           <TextField
             label="Quantity"
             variant="outlined"
             type= "number"
+            InputProps={{
+              inputProps: {
+                min: 1,
+              }
+            }}
             fullWidth
             value={quantity}
             onChange={handleQuantity}
-            style={{ marginBottom: '2rem', marginTop: "2rem" }}
+            style={{ marginBottom: '2rem' }}
           />
             {/* <Typography
                 as="h3"
@@ -235,7 +244,7 @@ const ProductDetails = () => {
           </Typography>
           <Button
             style={{                                  // 68BDFD
-              background: country.includes("India") ? "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" : "#F8FCFF",
+              background: country === "India" ? "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" : "#F8FCFF",
               color: country.includes("India") ? "white" : "#BFBFBF",
               width: "15%",
               marginRight: "2%",
@@ -245,22 +254,14 @@ const ProductDetails = () => {
               textTransform: "none",
             }}
             onClick={() => {
-              if(!country.includes("India")) {
-                setCountry(country => [...country, "India"]);
-                setBill([...totalBill, 625]);
-              } else {
-                setCountry(country.filter(nation => nation != "India"));
-                setBill(totalBill.filter(bill => bill != 625));
-              }
-              console.log(country);
-              console.log(totalBill);
+              setCountry("India")
             }}
           >
             <img
               src="https://hatscripts.github.io/circle-flags/flags/in.svg"
               width="24"
             />
-            &nbsp;&nbsp;India <br />&nbsp;&nbsp;&#40;&#36;625&#41;
+            &nbsp;&nbsp;India
           </Button>
           <Button
             style={{                                            // 68BDFD
@@ -290,7 +291,7 @@ const ProductDetails = () => {
               src="https://hatscripts.github.io/circle-flags/flags/us.svg"
               width="24"
             />
-            &nbsp;&nbsp;United States <br />&nbsp;&nbsp;&#40;&#36;900&#41;
+            &nbsp;&nbsp;United States
           </Button>
           {/* Add other country buttons similarly */}
           
@@ -305,14 +306,14 @@ const ProductDetails = () => {
       </div> }
 
       <Divider style={{ margin: '2rem 0' }} />
-
-     
-   
+    
+      <div style={{
+        textAlign: "center",
+      }}>
         <Button variant="contained" onClick={() => handleSubmit()} style={{ marginTop: '0.25rem', borderRadius: "100px" , boxShadow: "none",background: "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" }}>
             Submit
         </Button>
-    
-
+      </div>
 
     </Container>
     </Paper>

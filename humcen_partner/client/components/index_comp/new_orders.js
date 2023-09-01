@@ -64,7 +64,7 @@ const NewOrder = () => {
         filteredOrders.forEach((order) => {
           const shown = {}; 
           if(((now - new Date(order.start_date).getTime())/1000) > 10800) { // 10800 Seconds = 3 Hours
-            timeList.push(order._id.job_no);
+            timeList.push(order.og_id);
             customers.push(order.userID);
             setPartnerID(order.partnerID);
             time.push(((now - new Date(order.start_date).getTime())/1000));
@@ -75,7 +75,7 @@ const NewOrder = () => {
         setExcJobs(timeList);
         setUsers(customers);
         setIdle(time);
-        setJobOrders(filteredOrders.filter((order) => !timeList.includes(order._id.job_no)));
+        setJobOrders(filteredOrders.filter((order) => !timeList.includes(order.og_id)));
         console.log(jobOrders.length);
       } catch (error) {
         console.error('Error fetching job orders:', error);
@@ -204,7 +204,7 @@ if (exceeded.length !== 0) {
                           background: "linear-gradient(90deg, #FF0000 0%, #FF6347 100%)",
                         },                        
                       }}
-                      onClick={() => {window.location.reload(true); handleRejectJob(order._id.job_no, order.service, order.country)}}
+                      onClick={() => {handleRejectJob(order.og_id, order.service, order.country); window.location.reload(true); }}
                     >
                       Deny
                     </Button>
@@ -224,13 +224,13 @@ if (exceeded.length !== 0) {
                           background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
                         },
                       }}
-                      onClick={() => handleAcceptJob(order._id.job_no)}
+                      onClick={() => handleAcceptJob(order.og_id)}
                     >
                       Accept
                     </Button>
                   </td>
                   <td style={{textAlign:"center", fontSize: "13.5px", }}>
-                  <Link href={`onGoingPatents/${order._id.job_no}`} passHref>
+                  <Link href={`onGoingPatents/${order.og_id}`} passHref>
                       <Button
                     sx={{
                       background: "linear-gradient(270deg, #02E1B9 0%, #00ACF6 100%)",

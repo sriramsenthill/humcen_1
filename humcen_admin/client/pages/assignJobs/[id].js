@@ -191,6 +191,7 @@ const DynamicPage = () =>{
     };
   }, [id, Service]);
   
+  console.log(job);
 
   if (!job) {
     return <div>No job found with the provided job number.</div>;
