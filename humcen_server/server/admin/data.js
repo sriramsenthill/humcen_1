@@ -2685,7 +2685,7 @@ const getCSVData = async (req, res) => {
 
 const getBulkOrderFilesDetails = async(req, res) => {
   try {
-    const bulkFilesDetails = await BulkOrderFiles.find({}).select("_id user_ID message");
+    const bulkFilesDetails = await BulkOrderFiles.find({})
     if(!bulkFilesDetails) {
       console.log("No Bulk Order Files found.");
     } else {
@@ -2702,12 +2702,20 @@ const getParticularBulkOrderFileDetails = async(req, res) => {
   try {
     const thatFile = req.params.fileNo;
 
-    const thatBulkOrderFile = await BulkOrderFiles.findOne({"_id.job_no": Number(thatFile)}).select("_id user_ID message");
+    const thatBulkOrderFile = await BulkOrderFiles.findOne({"_id.job_no": Number(thatFile)});
+    
+
     if(!thatBulkOrderFile) {
       console.log("No Bulk Order Files found for ID " + thatFile);
     } else {
-      console.log("Sending the details of that Particular Bulk Order File...");
-      res.json(thatBulkOrderFile);
+      const findCustomer = await Customer.findOne({userID: thatBulkOrderFile.user_ID});
+      if(!findCustomer) {
+        console.log("No Customer Found for User ID " + thatBulkOrderFile.user_ID);
+      } else {
+        const bulkOrderRequestDetails = {order: thatBulkOrderFile, email: findCustomer.email} ;
+        console.log("Sending the details of that Particular Bulk Order File...");
+        res.json(bulkOrderRequestDetails);
+      }
     }
   } catch(error) {
     console.error("Error in getting the Bulk Order File Details : " + error);

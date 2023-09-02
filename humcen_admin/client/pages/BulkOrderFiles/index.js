@@ -11,12 +11,12 @@ const BulkOrderFiles = () => {
     <>
       {/* Page title */}
       <div className={styles.pageTitle}>
-        <h1>Bulk Order Files</h1>
+        <h1>Bulk Order Push</h1>
         <ul>
           <li>
             <Link href="/">Dashboard</Link>
           </li>
-          <li>Bulk Order Files</li>
+          <li>Bulk Order Push</li>
         </ul>
       </div>
     <RecentBulkOrdersFiles />

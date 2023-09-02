@@ -52,14 +52,14 @@ export const SidebarData = [
     iconOpened: <KeyboardArrowDownIcon />,
   },
   {
-    title: "Bulk Orders",
+    title: "Bulk Order Assign",
     path: "/BulkOrders/",
     icon: <LayersIcon/>,
     iconClosed: <KeyboardArrowRightIcon />,
     iconOpened: <KeyboardArrowDownIcon />,
   },
   {
-    title: "Bulk Order Files",
+    title: "Bulk Order Requests",
     path: "/BulkOrderFiles/",
     icon: <LayersIcon/>,
     iconClosed: <KeyboardArrowRightIcon />,

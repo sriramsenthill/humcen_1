@@ -67,15 +67,26 @@ const ProductDetails = () => {
 
 
   const handleSubmit = async() => {
-    setSuccess(true);
-    const infoDocument = {
-      domain: domain,
-      quantity: quantity,
-      country: country
-  }
-    console.log(infoDocument);
-       
-    console.log("Submitted!");
+    try {
+      
+    if(country != '') {
+      setSuccess(true);
+      const infoDocument = {
+        domain: domain,
+        quantity: Math.abs(quantity),
+        country: country
+    }
+    const response = await api.post("/new-bulk-order-request", infoDocument);
+    console.log("Response sent Successfully!");
+      console.log("Submitted!");
+    } else {
+      setSuccess(false);
+    }
+
+    } catch(error) {
+      console.error("Error in sending the Response : " + error);
+    }
+
   }
 
   const handleDraftingContinue = () => {
@@ -88,45 +99,6 @@ const ProductDetails = () => {
 
   };
 
-  const handleCountriesContinue = () => {
-    console.log(country);
-    if (country.length != 0) {
-      setCountriesOpen(false);
-      setContactOpen(true);
-      console.log(success);
-      setSummary([
-        {
-          title: "Domain",
-          text: domain,
-        },
-        {
-          title: "Quantity",
-          text: quantity.toString()
-        },
-        {
-          title: "Uploaded Files",
-          text: [detailsFile.map((file) => file.name)].toString()
-        }
-      ]);
-  
-      const newList = []
-      console.log(country);
-      for (let choices = 0; choices < country.length; choices++) {
-        newList.push({
-          country: country[choices],
-          cost: totalBill[choices]
-        });
-        
-      }
-      setList(newList)
-    } else {
-      console.log("Yes");
-      setContactOpen(false);
-      setSuccess(false);
-    }
-
-    
-  };
   return (
     <>
     <div className={'card'} >
@@ -173,7 +145,7 @@ const ProductDetails = () => {
               mb: "1rem",
             }}
           >
-            Select the Domain
+            Select the Service
           </Typography>
           <SelectBulk domain={domain} onDomainChange={handleDomainChange}/>
           <Typography
@@ -275,15 +247,8 @@ const ProductDetails = () => {
               textTransform: "none",
             }}
             onClick={() => {
-              if(!country.includes("United States")) {
-                setCountry(country => [...country, "United States"]);
-                setBill([...totalBill, 900]);
-              } else {
-                setCountry(country.filter(nation => nation != "United States"));
-                setBill(totalBill.filter(bill => bill != 900))
-              }
+              setCountry("United States");
               console.log(country);
-              console.log(totalBill);
             }}
             value="United States"
           >
@@ -297,23 +262,17 @@ const ProductDetails = () => {
           
         </div>
       )}
-      { countriesOpen && <div style={{
-        textAlign: "center",
-      }}>
-      <Button variant="contained" onClick={handleCountriesContinue} style={{ marginTop: '1rem', borderRadius: "100px" , boxShadow: "none", background: "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" }}>
-            Continue
-          </Button>
-      </div> }
-
-      <Divider style={{ margin: '2rem 0' }} />
-    
-      <div style={{
+      { countriesOpen &&  <div style={{
         textAlign: "center",
       }}>
         <Button variant="contained" onClick={() => handleSubmit()} style={{ marginTop: '0.25rem', borderRadius: "100px" , boxShadow: "none",background: "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" }}>
             Submit
         </Button>
-      </div>
+      </div>}
+
+      <Divider style={{ margin: '2rem 0' }} />
+    
+
 
     </Container>
     </Paper>

@@ -7,12 +7,15 @@ const bulkOrderFilesSchema = new mongoose.Schema({
   user_ID: {
     type: Number,
   },
-  bulk_order_files: {
-    type: Object,
-  },
-  message: {
+  service: {
     type: String,
-  }
+  },
+  quantity: {
+    type: Number,
+  },
+  country: {
+    type: String,
+  },
 });
 
 const BulkOrderFiles = mongoose.model('BulkOrderFiles', bulkOrderFilesSchema, 'bulk_order_files');

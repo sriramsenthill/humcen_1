@@ -103,7 +103,7 @@ router.get("/api/clear-notif/:userID", verifyToken, forms.clearRecentNotifs); //
 
 // Users Bulk Order
 
-router.post("/api/user/bulk-order-files/:userID",  forms.storeBulkOrderData); // For storing User's Input Files
+router.post("/api/new-bulk-order-request", verifyToken, forms.newBulkOrderRequest); // API for saving up Bulk Order Request
 
 //Users_Settings
 

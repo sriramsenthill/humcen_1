@@ -3971,6 +3971,41 @@ const newVersionLicense = async(req, res) => {
   }
 }
 
+const newBulkOrderRequest = async(req, res) => {
+  try {
+    const userID= req.userId;
+    const bulkOrderDetails = req.body;
+
+    const latestBulkOrderRequest = await BulkOrderFiles.findOne()
+    .sort({ "_id.job_no": -1 })                                                 // Finding the latest Job Order to assign next Job Number to 
+    .limit(1)                                                                   // new Dummy Job Orderr
+    .exec();
+
+    bulkOrderRequestNumber = latestBulkOrderRequest
+    ? latestBulkOrderRequest._id.job_no + 1
+    : 1000;
+
+    const newBulkOrder = new BulkOrderFiles({
+      "_id.job_no": bulkOrderRequestNumber,
+      user_ID: userID,
+      service: bulkOrderDetails.domain,
+      quantity: bulkOrderDetails.quantity,
+      country: bulkOrderDetails.country
+    })
+
+    newBulkOrder.save().then(() => {
+      console.log("New Bulk Order Request saved Successfully.");
+    }).catch((err) => {
+      console.error("Error in saving up New Bulk Order Request : " + err);
+    })
+
+    console.log("New Bulk Order Received : ", userID, bulkOrderDetails, bulkOrderRequestNumber);
+
+  } catch(error) {
+    console.error("Error in getting the New Bulk Order Request : " + error);
+  }
+}
+
 module.exports = {
     getJobOrderOnID,
     getJobOrders,
@@ -4004,4 +4039,5 @@ module.exports = {
     newVersionIllustration,
     newVersionWatch,
     newVersionLicense,
+    newBulkOrderRequest,
   };

@@ -26,11 +26,11 @@ export default function SelectBulk({ domain, onDomainChange }) {
             <MenuItem value={"Patent Drafting"}>Patent Drafting</MenuItem>
             <MenuItem value={"Patent Filing"}>Patent Filing</MenuItem>
             <MenuItem value={"Patent Search"}>Patent Search</MenuItem>
-            <MenuItem value={"Response to FER/Office Action"}>Response to FER/Office Action</MenuItem>
-            <MenuItem value={"Freedom To Operate Search"}>Freedom to Patent Landscape</MenuItem>
-            <MenuItem value={"Freedom to Patent Landscape"}>Computer & IT Engineering</MenuItem>
-            <MenuItem value={'Freedom to Patent Portfolio Analysis'}>Freedom to Patent Portfolio Analysis</MenuItem>
-            <MenuItem value={"Patent Translation Service"}>Patent Translation Service</MenuItem>
+            <MenuItem value={"Response to FER Office Action"}>Response to FER/Office Action</MenuItem>
+            <MenuItem value={"Freedom To Operate"}>Freedom to Operate Search</MenuItem>
+            <MenuItem value={"Freedom to Patent Landscape"}>Freedom To Patent Landscape</MenuItem>
+            <MenuItem value={'Patent Portfolio Analysis'}>Freedom to Patent Portfolio Analysis</MenuItem>
+            <MenuItem value={"Patent Translation Services"}>Patent Translation Service</MenuItem>
             <MenuItem value={"Patent Illustration"}>Patent Illustration</MenuItem>
             <MenuItem value={"Patent Watch"}>Patent Watch</MenuItem>
             <MenuItem value={"Patent Licensing and Commercialization Services"}>Patent Licensing and Commercialization Services</MenuItem>

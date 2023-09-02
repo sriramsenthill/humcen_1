@@ -213,7 +213,7 @@ function RecentBulkOrdersFiles() {
                     width: "100px",
                     textAlign: "center",
                   }}>
-                File No
+                Bulk Order
                 </TableCell>
                 <TableCell sx={{
                     borderBottom: "1px solid #F7FAFF",
@@ -223,7 +223,27 @@ function RecentBulkOrdersFiles() {
                     width: "250px",
                     textAlign: "center",
                   }}>
-                Description
+                Service
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "250px",
+                    textAlign: "center",
+                  }}>
+                Quantity
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "250px",
+                    textAlign: "center",
+                  }}>
+                Country
                 </TableCell>
                 <TableCell sx={{
                     borderBottom: "1px solid #F7FAFF",
@@ -260,21 +280,37 @@ function RecentBulkOrdersFiles() {
                       padding: "8px 10px",
                       fontSize: "13px",
                       textAlign: "center",
-                    }}>{row.message}</TableCell>
+                    }}>{row.service}</TableCell>
+                    <TableCell sx={{
+                      width: 250,
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.quantity}</TableCell>
+                    <TableCell sx={{
+                      width: 250,
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.country}</TableCell>
     
                   
                   <TableCell>
+                  <div style={{
+                    textAlign: "center",
+                  }}>
                   <Link href={`onGoingBulkOrderFiles/${row._id.job_no}`} passHref>
                     <Button
                       sx={{
                         background: "#27AE60",
-                        position: "relative",
-                        left: "30%", 
                         color: "white",
                         borderRadius: "100px",
-                        width: "40%",
+                        width: "60%",
                         height: "88%",
-                        textAlign: "center",
                         textTransform: "none",
                         "&:hover": {
                           background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
@@ -284,6 +320,7 @@ function RecentBulkOrdersFiles() {
                       Go to Details
                     </Button>
                     </Link>
+                    </div>
                     </TableCell>
                   </TableRow>
                 ))}

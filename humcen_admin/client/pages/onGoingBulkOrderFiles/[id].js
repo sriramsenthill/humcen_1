@@ -100,6 +100,7 @@ const DynamicPage = () => {
   const [customer, setCustomer] = useState("");
   const [color, setColor] = useState(false);
   const [Files, setFiles] = useState([]);
+  const [email, setEmail] = useState("");
   const [Title, setTitle] = useState("");
 
   useEffect(() => {
@@ -109,10 +110,8 @@ const DynamicPage = () => {
         const specificJob = response.data;
         console.log(response.data);
         if (specificJob) {
-          setJob(specificJob);
-          setCustomer(specificJob.user_ID);
-          setJobID(id);
-          setTitle(specificJob.message);
+          setJob(specificJob.order);
+          setEmail(specificJob.email)
         } else {
           console.log("No job found with the provided job number:", id);
           setJob(null);
@@ -278,22 +277,24 @@ const DynamicPage = () => {
           <li>
             <Link href="/">Dashboard</Link>
           </li>
-          <li>Ongoing Patents</li>
-          <li>Delivery status</li>
+          <li>
+          <Link href="/BulkOrderFiles/">Ongoing Bulk Order Request</Link>
+          </li>
+          <li>Order status</li>
         </ul>
       </div>
-      <h1>Bulk Order Files</h1>
+      <h1>Bulk Order Request</h1>
       <Card
         sx={{
           boxShadow: "none",
           borderRadius: "10px",
-          p: "25px",
+          p: "15px",
           mb: "15px",
         }}
       >
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6} md={6}>
-            <h1>Details</h1>
+            <h1>Bulk Order Request</h1>
           </Grid>
           <Grid
             item
@@ -304,7 +305,7 @@ const DynamicPage = () => {
             textAlign="right"
           >
             <h2>
-              <span className={styles.label1}>File No : </span>
+              <span className={styles.label1}>Bulk Order : </span>
               {id}
             </h2>
           </Grid>
@@ -323,34 +324,24 @@ const DynamicPage = () => {
                     Order ID
                 </td>
                 <td className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
-                    Description
+                    Service
                 </td>
                 <td className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
-                    User Files
+                    Quantity
+                </td>
+                <td className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
+                    Country
+                </td>
+                <td className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
+                    Customer Email ID
                 </td>
               </tr>
               <tr>
-                <td style={{ padding: "10px", textAlign:"center", fontWeight: "bold", fontSize: "13.5px",  }}>{jobID}</td>
-                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{Title}</td>
-                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px", }}>
-                <Button
-                      sx={{
-                        backgroundColor: Files.length !== 0 ? "#27AE60" : "#D3D3D3"    , // approval ? "#27AE60" : "#D3D3D3"  
-                        color: "white",
-                        borderRadius: "100px",
-                        width: "120px",
-                        height: "88%",
-                        textTransform: "none",
-                        "&:hover": {
-                          background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
-                        },
-                      }}
-                      disabled={Files.length === 0}
-                      onClick={() => onClickDownload(Files, jobID)}
-                    >
-                      Download now
-                    </Button>
-                    </td>
+                <td style={{ padding: "10px", textAlign:"center", fontWeight: "bold", fontSize: "13.5px",  }}>{job._id.job_no}</td>
+                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{job.service}</td>
+                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{job.quantity}</td>
+                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{job.country}</td>
+                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{email}</td>
               </tr>
               <tr>
                 <td style={{ padding: "10px" }}></td>
