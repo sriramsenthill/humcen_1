@@ -26,7 +26,6 @@ const Profile = () => {
   const [userName, setUserName] = useState("");
   const open = Boolean(anchorEl);
 
-  useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       // axios

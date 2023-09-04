@@ -61,6 +61,8 @@ const MyPage = () => {
         columnSpacing={{ xs: 1, sm: 1, md: 1, lg: 1, xl: 2 }}
       >
         {services.map((service, index) => (
+              <Grid item xs={12} md={6} lg={4} xl={4}>
+
           <ModernCard
             key={index}
             title={service.title}
@@ -68,6 +70,8 @@ const MyPage = () => {
             imageSrc={service.image}
             link={service.link}
           />
+          </Grid>
+
         ))}
         <AddCard
             key="Add"
