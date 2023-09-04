@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { ArrowBack } from "@mui/icons-material";
 import BulkOrderAssignPage from "@/components/BulkOrderAssignPage";
 import {Checkbox} from "@mui/material";
 import Link from "next/link";
@@ -192,6 +193,10 @@ function RecentBulkOrders() {
       setSelected([value]);
       setCoded([codedValue]);
     }
+  }
+
+  const handleEdit = () => {
+    setAssignModal(false);
   }
 
   const handleAssignClick = ( newJobIds ,jobs) => {
@@ -409,7 +414,41 @@ function RecentBulkOrders() {
         
       </Box>
     </Card> }
-   { openModal && <BulkOrderAssignPage detailsList={assignDetails}/> }
+   { openModal && <>
+    <Card
+        sx={{
+          boxShadow: "none",
+          borderRadius: "10px",
+          p: "25px",
+          mb: "15px",
+        }}
+      >
+
+   <div>
+    <div style={{
+    textAlign: "left",
+    width: "40px",
+   }}>
+    <IconButton aria-label="go_back" onClick={() => { handleEdit()}}>
+       <ArrowBack />
+      </IconButton>
+    </div>
+    <div style={{
+      textAlign: "center",
+    }}>
+    <Typography sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "25px",
+                    textAlign: "center",
+                    fontWeight: "bold",
+                    paddingBottom: "2rem",
+         }}>Assign Bulk Orders</Typography>
+    </div>
+   </div>
+
+   <BulkOrderAssignPage detailsList={assignDetails} oldJobIDs={selected}/> 
+   </Card>
+   </>}
     </>
   );
 }

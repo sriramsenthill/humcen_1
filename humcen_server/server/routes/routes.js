@@ -188,6 +188,7 @@ router.get("/api/that-bulk-order-file/:fileNo", data.getParticularBulkOrderFileD
 
 router.get("/api/only-that-bulk-order-file/:fileNo", data.getOnlyTheParticularBulkOrderFile); // This one fetches only files from Bulk Order Files schema
 
+router.get("/api/bulk-assign-details/:bulkLists", verifyAdmin, data.getBulkOrderAssignTabDetails); // Bulk Order details for Bulk Assign
 
 // ADMIN SETTINGS
 router.get("/api/admin/settings", verifyAdmin, adminSettings.getAdminProfileSettings); // For fetching Admin's Profile Settings

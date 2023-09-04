@@ -2739,6 +2739,55 @@ const getOnlyTheParticularBulkOrderFile = async(req, res) => {
 
 }
 
+const getBulkOrderAssignTabDetails = async(req, res) => {
+  try {
+    const bulkIDs = req.params.bulkLists.split(",").map(elem => Number(elem)); // Getting the Bulk Order IDs
+    let userEmails = []
+    let countries = [];
+    let services = [];
+
+    for(let totalSelected = 0; totalSelected < bulkIDs.length; totalSelected++ ) {
+      // Finding the User who requested it to get their emails
+      let thatBulkOrder = await BulkOrder.findOne({"_id.job_no": bulkIDs[totalSelected]});
+      if(!thatBulkOrder) { 
+        // If the Bulk Order doesn't exist
+
+        console.log("No Bulk Order Found for that ID ");
+      } else if(thatBulkOrder) { 
+        // If the Bulk Order exists
+
+        let customerID = thatBulkOrder.user_ID;
+        let thatService = thatBulkOrder.bulk_order_service;
+        let thatCountry = thatBulkOrder.country;
+
+        services.push(thatService);
+        countries.push(thatCountry);
+        // Finding the Customer
+        let thatCustomer = await Customer.findOne({userID: Number(customerID)});
+        if(!thatCustomer) {
+          // If no Customer is found
+          console.log("Customer ID " + customerID + " not found.");
+        } else if(thatCustomer) {
+          // Finding and adding the Email to be sent as Response
+          let email = thatCustomer.email;
+          userEmails.push(email);
+        }
+      }
+    }
+
+    const finalJSON = {
+      emails: userEmails,
+      bulkServices: services,
+      bulkCountries: countries,
+    }
+    console.log(bulkIDs);
+    res.json(finalJSON);
+  } catch(error) {
+    console.error("Error in sending Bulk Order Assign Details : " + error);
+  }
+
+}
+
 
 module.exports = {
   getUsers,
@@ -2773,4 +2822,5 @@ module.exports = {
   getBulkOrderFilesDetails,
   getParticularBulkOrderFileDetails,
   getOnlyTheParticularBulkOrderFile,
+  getBulkOrderAssignTabDetails,
 };
