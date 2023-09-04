@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import BulkOrderAssignPage from "@/components/BulkOrderAssignPage";
+import {Checkbox} from "@mui/material";
 import Link from "next/link";
 import {
   Box,
@@ -169,7 +171,52 @@ function RecentBulkOrders() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [count, setCount] = useState(0);
+  const [openModal, setAssignModal] = useState(false);
+  const [assignDetails, setDetails] = useState([]);
+  const [codedID, setCoded] = useState([]);
+  const [selected, setSelected] = useState([]);
   const [rows, setRows] = useState([]);
+
+  const handleSelection = (value, codedValue) => {
+    if(selected.length > 0 && codedID.length > 0) {
+      if(selected.includes(value)) {
+        const updatedList = selected.filter( elem => elem != value );
+        const updatedCoded = codedID.filter( elem => elem != codedValue );
+        setSelected(updatedList);
+        setCoded(updatedCoded);
+      } else {
+        setSelected([...selected, value]);
+        setCoded([...codedID, codedValue]);
+      }
+    } else {
+      setSelected([value]);
+      setCoded([codedValue]);
+    }
+  }
+
+  const handleAssignClick = ( newJobIds ,jobs) => {
+    setAssignModal(true);
+    const fromJob = jobs.indexOf(Math.min(...jobs));
+    const toJob = jobs.indexOf(Math.max(...jobs));
+    setDetails([{
+      title: "Jobs",
+      text: newJobIds[fromJob]+" to "+newJobIds[toJob],
+    }, {
+      title: "Total Jobs",
+      text: newJobIds.length,
+    }, {
+      title: "Country",
+      text: "India",
+    }, {
+      title: "Service",
+      text: "Patent",
+    }, {
+      title: "User Emails",
+      text: "abc@gmail.com"
+    },
+  ])
+
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -193,10 +240,12 @@ function RecentBulkOrders() {
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, count - page * rowsPerPage);
 
-    const sortedData = rows.sort((a, b) => parseInt(b.og_id) - parseInt(a.og_id));
+  const sortedData = rows.sort((a, b) => parseInt(b.og_id) - parseInt(a.og_id));
+
 
   return (
-    <Card>
+    <>
+    { !openModal && <Card>
       <Box sx={{ p: 2 }}>
         <TableContainer component={Paper} sx={{
             boxShadow: "none",
@@ -204,7 +253,16 @@ function RecentBulkOrders() {
           <Table aria-label="custom pagination table" className="dark-table">
             <TableHead sx={{ background: "#F7FAFF" }}>
               <TableRow>
-              
+              <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>
+                Select Jobs
+                </TableCell>
                 <TableCell sx={{
                     borderBottom: "1px solid #F7FAFF",
                     fontSize: "13.5px",
@@ -235,7 +293,7 @@ function RecentBulkOrders() {
                   }}>
                 Job Title
                 </TableCell>
-                <TableCell sx={{
+                {/* <TableCell sx={{
                     borderBottom: "1px solid #F7FAFF",
                     fontSize: "13.5px",
                     fontWeight: 'bold',
@@ -244,7 +302,7 @@ function RecentBulkOrders() {
                     textAlign: "center",
                   }}>
                 Assign Jobs
-                </TableCell>
+                </TableCell> */}
                 
               </TableRow>
             </TableHead>
@@ -252,13 +310,30 @@ function RecentBulkOrders() {
               {sortedData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
-                  <TableRow key={row._id.userID}>
+                  <TableRow key={row.og_id}>
+                  <TableCell sx={{
+                      width: 100,
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      textAlign: "center",
+                    }}>                                                       
+                      <Checkbox value={row.og_id} 
+                      onChange={() => handleSelection(row.og_id, row._id.job_no)}
+                      checked={selected.includes(row.og_id)}
+                      sx={{
+                        color: "#5B5B98",
+                        "&.Mui-checked": {
+                          color: "#7DE5ED"
+                        },
+                      }}/>
+                    </TableCell>
                     <TableCell sx={{
                       width: 100,
                       fontWeight: "bold",
                       borderBottom: "1px solid #F7FAFF",
                       padding: "8px 10px",
-                      fontSize: "13px",
+                      fontSize: "15px",
                       textAlign: "center",
                     }}>
                     {row._id.job_no}
@@ -268,7 +343,7 @@ function RecentBulkOrders() {
                       fontWeight: "bold",
                       borderBottom: "1px solid #F7FAFF",
                       padding: "8px 10px",
-                      fontSize: "13px",
+                      fontSize: "15px",
                       textAlign: "center",
                     }}>{row.bulk_order_service}</TableCell>
                     <TableCell sx={{
@@ -276,13 +351,13 @@ function RecentBulkOrders() {
                       fontWeight: "bold",
                       borderBottom: "1px solid #F7FAFF",
                       padding: "8px 10px",
-                      fontSize: "13px",
+                      fontSize: "15px",
                       textAlign: "center",
                     }}>{row.bulk_order_title}</TableCell>
     
                   
-                  <TableCell>
-                  <Link href={`onGoingBulkOrders/${row.og_id}`} passHref>
+                   {/* <TableCell>
+                   <Link href={`onGoingBulkOrders/${row.og_id}`} passHref>
                     <Button
                       sx={{
                         background: "#27AE60",
@@ -302,7 +377,7 @@ function RecentBulkOrders() {
                       Assign
                     </Button>
                     </Link>
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 ))}
                 {emptyRows > 0 && (
@@ -326,8 +401,16 @@ function RecentBulkOrders() {
             </TableFooter>
           </Table>
         </TableContainer>
+        { selected.length > 0 && <div style={{textAlign: "center", marginTop: "2rem", marginBottom: "2rem"}}>
+              <Button onClick={() => {handleAssignClick(codedID , selected);}} variant="contained"  style={{ marginTop: '0.25rem', borderRadius: "100px" , boxShadow: "none",background: "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)"}}>
+                Assign
+              </Button>
+            </div> }
+        
       </Box>
-    </Card>
+    </Card> }
+   { openModal && <BulkOrderAssignPage detailsList={assignDetails}/> }
+    </>
   );
 }
 

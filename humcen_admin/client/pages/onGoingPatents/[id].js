@@ -510,7 +510,7 @@ console.log(job)
                           background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
                         },
                       }} // onUserAccess(job._id.job_no)
-                      onClick={()=> {  window.location.reload(true); onUserAccess(job._id.job_no,job)}}
+                      onClick={()=> { onUserAccess(job.og_id,job); window.location.reload(true); }}
                     >
                       Accept the Work
                     </Button>
@@ -564,7 +564,7 @@ console.log(job)
           </TextAreaBox>
           </DialogContent>
         <DialogActions>
-          <ColorButton style={{width:"150px"}} sx={{ width: "15%" }} onClick={()=> {window.location.reload(true); onPartnerNotif(jobID, reasons)}}>
+          <ColorButton style={{width:"150px"}} sx={{ width: "15%" }} onClick={()=> { onPartnerNotif(job.og_id, reasons); window.location.reload(true); }}>
             Submit
           </ColorButton>
         </DialogActions>
