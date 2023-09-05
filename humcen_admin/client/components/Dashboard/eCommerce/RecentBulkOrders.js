@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { ArrowBack } from "@mui/icons-material";
+import { ArrowBack, Check } from "@mui/icons-material";
 import BulkOrderAssignPage from "@/components/BulkOrderAssignPage";
 import {Checkbox} from "@mui/material";
 import Link from "next/link";
@@ -172,11 +172,16 @@ function RecentBulkOrders() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [count, setCount] = useState(0);
+  const [availablePartners, setAvailablePartners] = useState([]);
   const [openModal, setAssignModal] = useState(false);
+  const [allClicked, setAllClicked] = useState(false);
   const [assignDetails, setDetails] = useState([]);
   const [codedID, setCoded] = useState([]);
   const [selected, setSelected] = useState([]);
   const [rows, setRows] = useState([]);
+  const [showSelectAll, setSelectAll] = useState(false);
+  const [completeDetails, setCompleteDetails] = useState({});
+
 
   const handleSelection = (value, codedValue) => {
     if(selected.length > 0 && codedID.length > 0) {
@@ -199,27 +204,32 @@ function RecentBulkOrders() {
     setAssignModal(false);
   }
 
-  const handleAssignClick = ( newJobIds ,jobs) => {
+  const handleAssignClick = async( newJobIds ,jobs) => {
+    console.log(jobs, newJobIds);
     setAssignModal(true);
+    console.log(completeDetails);
     const fromJob = jobs.indexOf(Math.min(...jobs));
     const toJob = jobs.indexOf(Math.max(...jobs));
-    setDetails([{
-      title: "Jobs",
-      text: newJobIds[fromJob]+" to "+newJobIds[toJob],
-    }, {
-      title: "Total Jobs",
-      text: newJobIds.length,
-    }, {
-      title: "Country",
-      text: "India",
-    }, {
-      title: "Service",
-      text: "Patent",
-    }, {
-      title: "User Emails",
-      text: "abc@gmail.com"
-    },
-  ])
+    if(completeDetails) {
+      setDetails([{
+        title: "Jobs",
+        text: newJobIds[fromJob]+" to "+newJobIds[toJob],
+      }, {
+        title: "Total Jobs",
+        text: newJobIds.length,
+      }, {
+        title: "Service",
+        text:  completeDetails.services.join(", ") ,
+      },{
+        title: "Country",
+        text:  completeDetails.countries.join(", ") ,
+      }, {
+        title: "User Emails",
+        text: completeDetails.emails.join(", "),
+      },
+    ])
+
+    }
 
   }
 
@@ -231,12 +241,69 @@ function RecentBulkOrders() {
       setRows(data.copyJobs);
     };
 
+    const getReqDetails = async(selected) => {
+      const response = await api.get(`bulk-assign-details/${selected}`);
+      if(response.data) {
+        const serviceAndPartner = [];
+        const uniqueEmails = response.data.emails.filter((value, index, array) => array.indexOf(value) === index);
+        const uniqueServices = response.data.bulkServices.filter((value, index, array) => array.indexOf(value) === index);
+        const uniqueCountries = response.data.bulkCountries.filter((value, index, array) => array.indexOf(value) === index);
+        console.log(uniqueEmails, uniqueServices, uniqueCountries);
+  
+        const detailsObject = {
+          emails: uniqueEmails,
+          countries: uniqueCountries,
+          services: uniqueServices
+        }
+        setCompleteDetails(detailsObject);
+        console.log(detailsObject);
+
+        uniqueServices.forEach((service) => {
+          serviceAndPartner.push({
+            title: service,
+            text: service
+          })
+        })
+    
+          setAvailablePartners(serviceAndPartner);
+      }
+    }
+    const execDetails = async() => {
+      if(selected.length > 0) {
+        await getReqDetails(selected);
+       }
+  
+    }
+
     fetchData();
-  }, []);
+    execDetails();
+
+
+    
+
+  }, [selected]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
+
+  const handleSelectAll = () => {
+    console.log(page);
+    let availableIDs = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((elem) => elem.og_id);
+    let availableCodedIDs = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((elem) => elem._id.job_no);
+    let newSelections = selected.concat(availableIDs);
+    let newCodedSelections = codedID.concat(availableCodedIDs);
+    setSelected(newSelections.filter((value, index, array) => array.indexOf(value) === index));
+    setCoded(newCodedSelections.filter((value, index, array) => array.indexOf(value) === index))
+    console.log(newSelections, newCodedSelections);
+    if(selected.some(job=> availableIDs.includes(job))) {
+      setSelected(selected.filter((elem) => !availableIDs.includes(elem)));
+      setCoded(codedID.filter((elem) => !availableCodedIDs.includes(elem)));
+      console.log(selected, codedID);
+    }
+
+
+  }
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
@@ -246,7 +313,6 @@ function RecentBulkOrders() {
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, count - page * rowsPerPage);
 
   const sortedData = rows.sort((a, b) => parseInt(b.og_id) - parseInt(a.og_id));
-
 
   return (
     <>
@@ -265,8 +331,16 @@ function RecentBulkOrders() {
                     padding: "15px 10px",
                     width: "100px",
                     textAlign: "center",
-                  }}>
-                Select Jobs
+                  }}
+                  onMouseEnter={() => setSelectAll(true)}
+                  onMouseLeave={() => setSelectAll(false)}
+                  >
+               { showSelectAll ? (
+                <IconButton aria-label="select_all"  onClick={() => handleSelectAll()}>
+                  <Check />
+                </IconButton>) : (<>Select Jobs</> )}   
+                
+
                 </TableCell>
                 <TableCell sx={{
                     borderBottom: "1px solid #F7FAFF",
@@ -406,7 +480,7 @@ function RecentBulkOrders() {
             </TableFooter>
           </Table>
         </TableContainer>
-        { selected.length > 0 && <div style={{textAlign: "center", marginTop: "2rem", marginBottom: "2rem"}}>
+        { selected.length > 0 &&  <div style={{textAlign: "center", marginTop: "2rem", marginBottom: "2rem"}}>
               <Button onClick={() => {handleAssignClick(codedID , selected);}} variant="contained"  style={{ marginTop: '0.25rem', borderRadius: "100px" , boxShadow: "none",background: "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)"}}>
                 Assign
               </Button>
@@ -446,7 +520,7 @@ function RecentBulkOrders() {
     </div>
    </div>
 
-   <BulkOrderAssignPage detailsList={assignDetails} oldJobIDs={selected}/> 
+   <BulkOrderAssignPage detailsList={assignDetails}/> 
    </Card>
    </>}
     </>
