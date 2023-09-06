@@ -60,25 +60,28 @@ const getUnassignedJobOrders = async (req, res) => {
     // Assuming you have a MongoDB model named "JobOrder"
     const unassignedJobOrders = await Unassigned.find({ }).select("domain country _id status customerName budget service");
     let jobLists = [];
-    const copyJobs = JSON.parse(JSON.stringify(unassignedJobOrders));
+    if(unassignedJobOrders.length > 0) {
 
-// Remove the _id field from each object in copyJobs
-copyJobs.forEach((job) => {
-  delete job._id.job_no;
-});
-    unassignedJobOrders.forEach((job) => {
-      jobLists.push(job._id.job_no);
-    })
+      const copyJobs = JSON.parse(JSON.stringify(unassignedJobOrders));
 
-    const fakeIDs = await renderJobNumbers(jobLists);
-    const cleanedArray = fakeIDs.map(item => item.replace(/'/g, '').trim());
-    
-    for(let jobs=0; jobs<copyJobs.length; jobs++) {
-      copyJobs[jobs].og_id = jobLists[jobs]
-      copyJobs[jobs]._id.job_no = cleanedArray[jobs]
+      // Remove the _id field from each object in copyJobs
+      copyJobs.forEach((job) => {
+        delete job._id.job_no;
+      });
+          unassignedJobOrders.forEach((job) => {
+            jobLists.push(job._id.job_no);
+          })
+      
+          const fakeIDs = await renderJobNumbers(jobLists);
+          const cleanedArray = fakeIDs.map(item => item.replace(/'/g, '').trim());
+          
+          for(let jobs=0; jobs<copyJobs.length; jobs++) {
+            copyJobs[jobs].og_id = jobLists[jobs]
+            copyJobs[jobs]._id.job_no = cleanedArray[jobs]
+          }
+          console.log(copyJobs);
+          res.send( copyJobs );
     }
-    console.log(copyJobs);
-    res.send( copyJobs );
   } catch (error) {
     console.error("Error fetching unassigned job orders:", error);
     res.status(500).json({ error: "Internal Server Error" });
