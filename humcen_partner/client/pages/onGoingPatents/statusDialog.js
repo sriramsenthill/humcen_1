@@ -96,7 +96,7 @@ export default function StatusDialogueBox(){
 
 
     const handleOk = () => {
-        window.location.href = window.location.href;
+        window.location.reload(true);
       };
     
 

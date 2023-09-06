@@ -190,7 +190,9 @@ router.get("/api/only-that-bulk-order-file/:fileNo", data.getOnlyTheParticularBu
 
 router.get("/api/bulk-assign-details/:bulkLists", verifyAdmin, data.getBulkOrderAssignTabDetails); // Bulk Order details for Bulk Assign
 
-router.get("/api/find-partners/bulk-orders/:bulkOrders", verifyAdmin, data.getBulkOrderAssignPartners); // Finding Partner details for Bulk Assign
+router.get("/api/find-partners/bulk-orders/:service/:country/:bulkOrders", verifyAdmin, data.getBulkOrderAssignPartners); // Finding Partner details for Bulk Assign
+
+router.post("/api/bulk-orders/assign/:partnerID/:bulkIDs", verifyAdmin, data.assignBulkOrdersToPartners) // Sending Assign Results for Partner Assign
 
 // ADMIN SETTINGS
 router.get("/api/admin/settings", verifyAdmin, adminSettings.getAdminProfileSettings); // For fetching Admin's Profile Settings

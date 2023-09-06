@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import axios from "axios";
 import { ArrowBack, Check } from "@mui/icons-material";
 import BulkOrderAssignPage from "@/components/BulkOrderAssignPage";
@@ -172,9 +172,8 @@ function RecentBulkOrders() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [count, setCount] = useState(0);
-  const [availablePartners, setAvailablePartners] = useState([]);
+  const [country, setCountry] = useState([]);
   const [openModal, setAssignModal] = useState(false);
-  const [allClicked, setAllClicked] = useState(false);
   const [assignDetails, setDetails] = useState([]);
   const [codedID, setCoded] = useState([]);
   const [selected, setSelected] = useState([]);
@@ -184,24 +183,29 @@ function RecentBulkOrders() {
   const [completeDetails, setCompleteDetails] = useState({});
 
 
-  const handleSelection = (value, codedValue, service) => {
-    if(selected.length > 0 && codedID.length > 0) {
+  const handleSelection = (value, codedValue, service, countries) => {
+    if(selected.length > 0) {
       if(selected.includes(value)) {
         const updatedList = selected.filter( elem => elem != value );
         const updatedCoded = codedID.filter( elem => elem != codedValue );
         const updatedServices = allServices.filter( elem => elem != service );
+        const updatedCountry = country.filter( elem => elem != countries );
+
         setSelected(updatedList);
         setCoded(updatedCoded);
         setThoseServices(updatedServices);
+        setCountry(updatedCountry);
       } else {
         setSelected([...selected, value]);
         setCoded([...codedID, codedValue]);
-        setThoseServices([...allServices, service])
+        setThoseServices([...allServices, service]);
+        setCountry([...country, countries]);
       }
     } else {
       setSelected([value]);
       setThoseServices([service]);
       setCoded([codedValue]);
+      setCountry([countries]);
     }
   }
 
@@ -226,17 +230,10 @@ function RecentBulkOrders() {
       setCompleteDetails(detailsObject);
       console.log(detailsObject);
 
-      uniqueServices.forEach((service) => {
-        serviceAndPartner.push({
-          title: service,
-          text: service
-        })
-      })
-        setAvailablePartners(serviceAndPartner);
     }
   }
 
-  const handleAssignClick = async( newJobIds ,jobs, allServices) => {
+  const handleAssignClick = async( newJobIds ,jobs, allServices, country) => {
     console.log(jobs, newJobIds);
     setAssignModal(true);
     console.log(completeDetails);
@@ -254,7 +251,7 @@ function RecentBulkOrders() {
         text:  allServices ,
       },{
         title: "Country",
-        text:  completeDetails.countries.join(", ") ,
+        text:  country ,
       }, {
         title: "User Emails",
         text: completeDetails.emails.join(", "),
@@ -298,18 +295,26 @@ function RecentBulkOrders() {
     let availableIDs = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((elem) => elem.og_id);
     let availableCodedIDs = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((elem) => elem._id.job_no);
     let availableServices = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((elem) => elem.bulk_order_service);
+    let availableCountries = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((elem) => elem.country);
+
     let newSelections = selected.concat(availableIDs);
     let newCodedSelections = codedID.concat(availableCodedIDs);
     let newCodedServices = allServices.concat(availableServices);
+    let newCodedCountries = country.concat(availableCountries);
+
     setSelected(newSelections.filter((value, index, array) => array.indexOf(value) === index));
     setCoded(newCodedSelections.filter((value, index, array) => array.indexOf(value) === index))
     setThoseServices(newCodedServices.filter((value, index, array) => array.indexOf(value) === index))
-    console.log(newSelections, newCodedSelections, newCodedServices);
+    setCountry(newCodedCountries.filter((value, index, array) => array.indexOf(value) === index))
+
+    console.log(newSelections, newCodedSelections, newCodedServices, newCodedCountries);
+
     if(selected.some(job=> availableIDs.includes(job))) {
       setSelected(selected.filter((elem) => !availableIDs.includes(elem)));
       setCoded(codedID.filter((elem) => !availableCodedIDs.includes(elem)));
       setThoseServices(allServices.filter((elem) => !availableServices.includes(elem)));
-      console.log(selected, codedID, allServices);
+      setCountry(country.filter((elem) => !availableCountries.includes(elem)));
+      console.log(selected, codedID, allServices, country);
     }
 
 
@@ -428,7 +433,7 @@ function RecentBulkOrders() {
                       textAlign: "center",
                     }}>                                                       
                       <Checkbox value={row.og_id} 
-                      onChange={() => handleSelection(row.og_id, row._id.job_no, row.bulk_order_service)}
+                      onChange={() => handleSelection(row.og_id, row._id.job_no, row.bulk_order_service, row.country)}
                       checked={selected.includes(row.og_id)}
                       sx={{
                         color: "#5B5B98",
@@ -527,7 +532,7 @@ function RecentBulkOrders() {
           </Table>
         </TableContainer>
         { selected.length > 0 && allServices.filter((value, index, array) => array.indexOf(value) === index).length === 1 && <div style={{textAlign: "center", marginTop: "2rem", marginBottom: "2rem"}}>
-              <Button onClick={() => {handleAssignClick(codedID , selected, allServices.filter((value, index, array) => array.indexOf(value) === index));}} variant="contained"  style={{ marginTop: '0.25rem', borderRadius: "100px" , boxShadow: "none",background: "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)"}}>
+              <Button onClick={() => {handleAssignClick(codedID , selected, allServices.filter((value, index, array) => array.indexOf(value) === index), country.filter((value, index, array) => array.indexOf(value) === index));}} variant="contained"  style={{ marginTop: '0.25rem', borderRadius: "100px" , boxShadow: "none",background: "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)"}}>
                 Assign
               </Button>
             </div> }
@@ -566,7 +571,7 @@ function RecentBulkOrders() {
     </div>
    </div>
    {console.log(selected)}
-   <BulkOrderAssignPage detailsList={assignDetails} jobLists={selected} services={allServices}/> 
+   <BulkOrderAssignPage detailsList={assignDetails} jobLists={selected} services={allServices} countries={country}/> 
    </Card>
    </>}
     </>

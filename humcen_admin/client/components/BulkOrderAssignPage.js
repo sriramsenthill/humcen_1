@@ -1,14 +1,11 @@
-
 import {Grid, IconButton, Item} from "@mui/material";
 import Card from "@mui/material/Card";
 import { useState, useEffect } from "react";
+import { Button } from "@material-ui/core";
 import { Box, Typography } from "@mui/material";
 import Table from "@mui/material/Table";
 import axios from "axios";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
+import PartnerSelect from "./PartnerDropDown";
 
 
 
@@ -25,15 +22,32 @@ api.interceptors.request.use((config) => {
 });
 
 
-const BulkOrderAssignPage = ({detailsList, jobLists, services}) => {
+const BulkOrderAssignPage = ({detailsList, jobLists, services, countries}) => {
   const [allJobs, setJobs] = useState(jobLists);
+  const [allPartners, setPartners] = useState([]);
+  const [chosenPartner, setChosenPartner] = useState("");
+ 
+  const handlePartnerChange = (value) => {
+    setChosenPartner(value);
+    console.log(value);
+  }
+
+  const handleBulkAssigns = async(partnerID, allJobs) => {
+    try {
+      const sendPartnerData = await api.post(`bulk-orders/assign/${partnerID}/${allJobs}`)
+      console.log("Assign Details Sent Successfully");
+    } catch(error) {
+        console.error("Error in sending Bulk Order Details for Assign : " + error);
+    }
+
+  }
 
   useEffect(() => {
     const fetchPartners = async(allJobs) => {
       try {
-        const partners = await api.get(`find-partners/bulk-orders/${allJobs}`);
+        const partners = await api.get(`find-partners/bulk-orders/${services}/${countries}/${allJobs}`);
         if(partners.data) {
-          console.log(partners.data);
+          setPartners(partners.data);
         }
 
       } catch(error) {
@@ -89,7 +103,41 @@ const BulkOrderAssignPage = ({detailsList, jobLists, services}) => {
                     paddingBottom: "2rem",
          }}>Partner Selection</Typography>
   </div> 
+  <Grid container>
+      <Grid item xs={6} sm={6} md={6} lg={6} xl={6}>
+      <Typography sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "18px",
+                    textAlign: {
+                     "xs" : "left",
+                     "sm" : "center"
+                    },
+                    fontWeight: "bold",
+                    paddingTop: "10px",
+                  }}>Select the Partner</Typography>
+      </Grid>
+      <Grid item xs={6} sm={6} md={6} lg={6} xl={6}>
+      <Typography sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    textAlign: {
+                     "xs" : "right",
+                     "sm" : "center"
+                    },
+                    fontSize: "15px",
+                    paddingBottom: "20px",
+                  }} >
+                  <PartnerSelect partner={chosenPartner} onPartnerChange={handlePartnerChange} availablePartners={allPartners} />
 
+                  </Typography>
+      </Grid>
+    </Grid>
+   { chosenPartner != "" && <div style={{
+      textAlign: "center"
+    }}>
+      <Button onClick={() => handleBulkAssigns(chosenPartner, allJobs)} variant="contained"  style={{ marginTop: '0.25rem', borderRadius: "100px" , boxShadow: "none", color: "white" ,background: "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)"}}>
+        Assign Jobs
+      </Button>
+    </div> }
     </>
   );
 };

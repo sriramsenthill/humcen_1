@@ -2793,32 +2793,171 @@ const getBulkOrderAssignTabDetails = async(req, res) => {
 const getBulkOrderAssignPartners = async(req, res) => {
   try {
     let partnerAssignData = []
-    let partnerNames = [];
-    let partnerIDs = [];
     const selectedBulkOrders = req.params.bulkOrders.split(",").map((elem) => Number(elem));
+    const orderService = req.params.service;
+    const orderCountry = req.params.country;
 
-    console.log("Selected ", selectedBulkOrders);
+    const findPartner = await Partner.find({[`known_fields.${orderService}`]: true, country: orderCountry});
+    if(!findPartner) {
+      console.log("No Partners found or available for Job.");
+    } else {
+      findPartner.forEach((partner) => {
+        partnerAssignData.push({
+          name: partner.first_name + " " + partner.last_name,
+          uid: partner.userID
+        })
+      })
 
-    for(totalOrders=0; totalOrders < selectedBulkOrders.length; totalOrders++) {
-      let thoseBulkOrders = await BulkOrder.findOne({"_id.job_no": selectedBulkOrders[totalOrders]});
-      if(!thoseBulkOrders) {
-        console.log("No Bulk Order found for that ID");
+      res.json(partnerAssignData);
+    }
+
+  } catch(error) {
+    console.error("Error in sending Partners details as response : " + error);
+  }
+}
+
+const assignBulkOrdersToPartners = async(req, res) => {
+  try {
+    const thoseBulkOrders = req.params.bulkIDs.split(",").map((elem) => Number(elem));
+    const partnerUID = req.params.partnerID;
+    let userIDLists = [];
+    let countries = [];
+    let services = [];
+    let jobOrdersID = [];
+    let files = [];
+    let titles = [];
+    let findPartner, findCustomer;
+
+    // Finding the Customer through Bulk Orders
+    for(let totalOrders=0; totalOrders < thoseBulkOrders.length; totalOrders++) {
+      let bulkOrders = await BulkOrder.findOne({"_id.job_no": thoseBulkOrders[totalOrders]});
+      if(!bulkOrders) {
+        console.log("No Bulk Orders found for that ID.");
       } else {
-        let orderService = thoseBulkOrders.bulk_order_service;
-        let orderCountry = thoseBulkOrders.country;
-        let findPartner = await Partner.find({["known_fields."+orderService]: true, country: orderCountry});
-        if(!findPartner) {
-          console.log("No Partner Found");
-        } else {
-          partnerNames.push(findPartner.first_name + " " + findPartner.last_name);
-          partnerIDs.push(findPartner.userID);
-        }
+        userIDLists.push(bulkOrders.user_ID);
+        countries.push(bulkOrders.country);
+        services.push(bulkOrders.bulk_order_service);
+        files.push(bulkOrders.bulk_order_files);
+        titles.push(bulkOrders.bulk_order_title);
       }
     }
 
-    console.log(partnerNames.filter((value, index, array) => array.indexOf(value) === index));
+    const user = userIDLists.filter((value, index, array) => array.indexOf(value) === index);
+    
+    if(user.length === 1) {
+      findCustomer = await Customer.findOne({userID: user[0]});
+      if(!findCustomer) {
+        console.log("No Customer found for that ID");
+      } else {
+        let customerName = findCustomer.first_name;
+
+        findPartner = await Partner.findOne({userID: Number(partnerUID)});
+        if(!findPartner) {
+          console.log("No Partner Found.");
+        }
+
+        for(let totalOrders=0; totalOrders < thoseBulkOrders.length; totalOrders++) {
+      
+
+          // Creating a New Job Order
+    let latestJobOrder = await JobOrder.findOne()
+    .sort({ "_id.job_no": -1 })
+    .limit(1)
+    .exec();
+
+    let newJobNo = latestJobOrder
+    ? latestJobOrder._id.job_no + 1
+    : 1000;
+
+    let startDate = new Date();
+    let endDate = new Date();
+    endDate.setDate(endDate.getDate() + 7);
+
+    let options = { year: 'numeric', month: 'long', day: 'numeric' };
+    let formattedDate = new Date().toLocaleDateString(undefined, options);
+
+    let newBulkJob = {
+      "_id.job_no": newJobNo,
+      service: services[totalOrders],
+      country: countries[totalOrders],
+      start_date: startDate,
+      end_date: endDate,
+      budget: "To be Assigned",
+      status: "In Progress",
+      userID: user[0],
+      customerName: customerName,
+      partnerID: findPartner ? findPartner.userID : "",
+      partnerName: findPartner ? findPartner.first_name : "",
+      steps_done: 2, 
+      steps_done_user: 3,
+      steps_done_activity: 4,
+      date_partner: [formattedDate, formattedDate, " ", " "], 
+      date_user: [formattedDate, formattedDate, formattedDate, " ", " ", " "],
+      date_activity: [formattedDate, formattedDate, formattedDate, formattedDate, " ", " ", " ", " ", " ", " "],
+      Accepted: true,
+      bulk: true,
+      job_title: titles[totalOrders],
+      prev_id: thoseBulkOrders[totalOrders],
+      job_desc: "To be Assigned",
+    }
+
+    jobOrdersID.push(newJobNo);
+
+    let newOrder = new JobOrder(newBulkJob).save().then(() => {
+      console.log("Bulk Order sent as Job Order successfully.");
+    }).catch((error) => {
+      console.error("Error in Creating the Job Order from Bulk Order : " +error)
+    });
+
+        
+    // Clearing out that particular Bulk Order from Admin sight.
+    let findThatBulkOrder = await BulkOrder.findOne({"_id.job_no": thoseBulkOrders[totalOrders]});
+    if(!findThatBulkOrder) {
+      console.log("No Bulk Order found for ID " + orderID);
+    } else {
+        findThatBulkOrder.Assigned = true;
+        findThatBulkOrder.save().then(() => {
+        console.log("Bulk Order Updated Successfully.");
+        }).catch((error) => {
+        console.error("Error in assigning the Bulk Order to Partner: " + error);
+      })
+     }
+        
+
+        }
+
+      }
+    }
+
+    findPartner.in_progress_jobs = findPartner.in_progress_jobs + thoseBulkOrders.length;
+    findPartner.is_free = false;
+
+    jobOrdersID.forEach((job) => {
+      findPartner.jobs.push(job);
+      findCustomer.jobs.push(job);
+    })
+
+    findPartner.save().then(() => {
+      console.log("Bulk Order Job Successfully Assigned to ID " + findPartner.userID);
+    }).catch((error) => {
+      console.error("Error in Assigning Job to the Partner : " + error);
+    });
+
+    findCustomer.save().then(() => {
+      console.log("Job added to the Customer Schema successfully");
+    }).catch((error) => {
+      console.error("Error in adding Job to the Customer Schema.")
+    });
+
+
+    await AllNotifications.sendToAdmin( thoseBulkOrders.length + " Bulk Orders successfully assigned to Partner ID " + partnerUID + " successfully");
+    await AllNotifications.sendToPartner(Number(partnerUID), "You were assigned " + thoseBulkOrders.length + " Bulk Orders by Admin" );
+    await AllNotifications.sendToUser(Number(user[0]), thoseBulkOrders.length+" of your Bulk Orders has been assigned to a Partner successfully");
+
+    console.log(thoseBulkOrders, partnerUID);
+
   } catch(error) {
-    console.error("Error in sending Partners details as response : " + error);
+    console.error("Error in assigning Bulk Orders to Partners : " + error);
   }
 }
 
@@ -2858,4 +2997,5 @@ module.exports = {
   getOnlyTheParticularBulkOrderFile,
   getBulkOrderAssignTabDetails,
   getBulkOrderAssignPartners,
+  assignBulkOrdersToPartners
 };
