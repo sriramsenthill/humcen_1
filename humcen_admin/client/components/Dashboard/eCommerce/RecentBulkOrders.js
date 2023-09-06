@@ -179,23 +179,28 @@ function RecentBulkOrders() {
   const [codedID, setCoded] = useState([]);
   const [selected, setSelected] = useState([]);
   const [rows, setRows] = useState([]);
+  const [allServices, setThoseServices] = useState([]);
   const [showSelectAll, setSelectAll] = useState(false);
   const [completeDetails, setCompleteDetails] = useState({});
 
 
-  const handleSelection = (value, codedValue) => {
+  const handleSelection = (value, codedValue, service) => {
     if(selected.length > 0 && codedID.length > 0) {
       if(selected.includes(value)) {
         const updatedList = selected.filter( elem => elem != value );
         const updatedCoded = codedID.filter( elem => elem != codedValue );
+        const updatedServices = allServices.filter( elem => elem != service );
         setSelected(updatedList);
         setCoded(updatedCoded);
+        setThoseServices(updatedServices);
       } else {
         setSelected([...selected, value]);
         setCoded([...codedID, codedValue]);
+        setThoseServices([...allServices, service])
       }
     } else {
       setSelected([value]);
+      setThoseServices([service]);
       setCoded([codedValue]);
     }
   }
@@ -204,7 +209,34 @@ function RecentBulkOrders() {
     setAssignModal(false);
   }
 
-  const handleAssignClick = async( newJobIds ,jobs) => {
+  const getReqDetails = async(selected) => {
+    const response = await api.get(`bulk-assign-details/${selected}`);
+    if(response.data) {
+      const serviceAndPartner = [];
+      const uniqueEmails = response.data.emails.filter((value, index, array) => array.indexOf(value) === index);
+      const uniqueServices = response.data.bulkServices.filter((value, index, array) => array.indexOf(value) === index);
+      const uniqueCountries = response.data.bulkCountries.filter((value, index, array) => array.indexOf(value) === index);
+      console.log(uniqueEmails, uniqueServices, uniqueCountries);
+
+      const detailsObject = {
+        emails: uniqueEmails,
+        countries: uniqueCountries,
+        services: uniqueServices
+      }
+      setCompleteDetails(detailsObject);
+      console.log(detailsObject);
+
+      uniqueServices.forEach((service) => {
+        serviceAndPartner.push({
+          title: service,
+          text: service
+        })
+      })
+        setAvailablePartners(serviceAndPartner);
+    }
+  }
+
+  const handleAssignClick = async( newJobIds ,jobs, allServices) => {
     console.log(jobs, newJobIds);
     setAssignModal(true);
     console.log(completeDetails);
@@ -219,7 +251,7 @@ function RecentBulkOrders() {
         text: newJobIds.length,
       }, {
         title: "Service",
-        text:  completeDetails.services.join(", ") ,
+        text:  allServices ,
       },{
         title: "Country",
         text:  completeDetails.countries.join(", ") ,
@@ -227,8 +259,8 @@ function RecentBulkOrders() {
         title: "User Emails",
         text: completeDetails.emails.join(", "),
       },
-    ])
-
+    ])  
+    setSelected(jobs);
     }
 
   }
@@ -241,33 +273,7 @@ function RecentBulkOrders() {
       setRows(data.copyJobs);
     };
 
-    const getReqDetails = async(selected) => {
-      const response = await api.get(`bulk-assign-details/${selected}`);
-      if(response.data) {
-        const serviceAndPartner = [];
-        const uniqueEmails = response.data.emails.filter((value, index, array) => array.indexOf(value) === index);
-        const uniqueServices = response.data.bulkServices.filter((value, index, array) => array.indexOf(value) === index);
-        const uniqueCountries = response.data.bulkCountries.filter((value, index, array) => array.indexOf(value) === index);
-        console.log(uniqueEmails, uniqueServices, uniqueCountries);
-  
-        const detailsObject = {
-          emails: uniqueEmails,
-          countries: uniqueCountries,
-          services: uniqueServices
-        }
-        setCompleteDetails(detailsObject);
-        console.log(detailsObject);
 
-        uniqueServices.forEach((service) => {
-          serviceAndPartner.push({
-            title: service,
-            text: service
-          })
-        })
-    
-          setAvailablePartners(serviceAndPartner);
-      }
-    }
     const execDetails = async() => {
       if(selected.length > 0) {
         await getReqDetails(selected);
@@ -291,15 +297,19 @@ function RecentBulkOrders() {
     console.log(page);
     let availableIDs = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((elem) => elem.og_id);
     let availableCodedIDs = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((elem) => elem._id.job_no);
+    let availableServices = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((elem) => elem.bulk_order_service);
     let newSelections = selected.concat(availableIDs);
     let newCodedSelections = codedID.concat(availableCodedIDs);
+    let newCodedServices = allServices.concat(availableServices);
     setSelected(newSelections.filter((value, index, array) => array.indexOf(value) === index));
     setCoded(newCodedSelections.filter((value, index, array) => array.indexOf(value) === index))
-    console.log(newSelections, newCodedSelections);
+    setThoseServices(newCodedServices.filter((value, index, array) => array.indexOf(value) === index))
+    console.log(newSelections, newCodedSelections, newCodedServices);
     if(selected.some(job=> availableIDs.includes(job))) {
       setSelected(selected.filter((elem) => !availableIDs.includes(elem)));
       setCoded(codedID.filter((elem) => !availableCodedIDs.includes(elem)));
-      console.log(selected, codedID);
+      setThoseServices(allServices.filter((elem) => !availableServices.includes(elem)));
+      console.log(selected, codedID, allServices);
     }
 
 
@@ -329,7 +339,7 @@ function RecentBulkOrders() {
                     fontSize: "13.5px",
                     fontWeight: 'bold',
                     padding: "15px 10px",
-                    width: "100px",
+                    width: "120px",
                     textAlign: "center",
                   }}
                   onMouseEnter={() => setSelectAll(true)}
@@ -372,6 +382,26 @@ function RecentBulkOrders() {
                   }}>
                 Job Title
                 </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>
+                Country
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "100px",
+                    textAlign: "center",
+                  }}>
+                Customer ID
+                </TableCell>
                 {/* <TableCell sx={{
                     borderBottom: "1px solid #F7FAFF",
                     fontSize: "13.5px",
@@ -398,7 +428,7 @@ function RecentBulkOrders() {
                       textAlign: "center",
                     }}>                                                       
                       <Checkbox value={row.og_id} 
-                      onChange={() => handleSelection(row.og_id, row._id.job_no)}
+                      onChange={() => handleSelection(row.og_id, row._id.job_no, row.bulk_order_service)}
                       checked={selected.includes(row.og_id)}
                       sx={{
                         color: "#5B5B98",
@@ -408,7 +438,7 @@ function RecentBulkOrders() {
                       }}/>
                     </TableCell>
                     <TableCell sx={{
-                      width: 100,
+                      width: 170,
                       fontWeight: "bold",
                       borderBottom: "1px solid #F7FAFF",
                       padding: "8px 10px",
@@ -418,7 +448,7 @@ function RecentBulkOrders() {
                     {row._id.job_no}
                     </TableCell>
                     <TableCell sx={{
-                      width: 250,
+                      width: 350,
                       fontWeight: "bold",
                       borderBottom: "1px solid #F7FAFF",
                       padding: "8px 10px",
@@ -426,13 +456,29 @@ function RecentBulkOrders() {
                       textAlign: "center",
                     }}>{row.bulk_order_service}</TableCell>
                     <TableCell sx={{
-                      width: 250,
+                      width: 350,
                       fontWeight: "bold",
                       borderBottom: "1px solid #F7FAFF",
                       padding: "8px 10px",
                       fontSize: "15px",
                       textAlign: "center",
                     }}>{row.bulk_order_title}</TableCell>
+                    <TableCell sx={{
+                      width: 250,
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "15px",
+                      textAlign: "center",
+                    }}>{row.country}</TableCell>
+                    <TableCell sx={{
+                      width: 150,
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "15px",
+                      textAlign: "center",
+                    }}>{row.user_ID}</TableCell>
     
                   
                    {/* <TableCell>
@@ -480,15 +526,15 @@ function RecentBulkOrders() {
             </TableFooter>
           </Table>
         </TableContainer>
-        { selected.length > 0 &&  <div style={{textAlign: "center", marginTop: "2rem", marginBottom: "2rem"}}>
-              <Button onClick={() => {handleAssignClick(codedID , selected);}} variant="contained"  style={{ marginTop: '0.25rem', borderRadius: "100px" , boxShadow: "none",background: "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)"}}>
+        { selected.length > 0 && allServices.filter((value, index, array) => array.indexOf(value) === index).length === 1 && <div style={{textAlign: "center", marginTop: "2rem", marginBottom: "2rem"}}>
+              <Button onClick={() => {handleAssignClick(codedID , selected, allServices.filter((value, index, array) => array.indexOf(value) === index));}} variant="contained"  style={{ marginTop: '0.25rem', borderRadius: "100px" , boxShadow: "none",background: "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)"}}>
                 Assign
               </Button>
             </div> }
         
       </Box>
     </Card> }
-   { openModal && <>
+   { openModal && completeDetails && <>
     <Card
         sx={{
           boxShadow: "none",
@@ -519,8 +565,8 @@ function RecentBulkOrders() {
          }}>Assign Bulk Orders</Typography>
     </div>
    </div>
-
-   <BulkOrderAssignPage detailsList={assignDetails}/> 
+   {console.log(selected)}
+   <BulkOrderAssignPage detailsList={assignDetails} jobLists={selected} services={allServices}/> 
    </Card>
    </>}
     </>

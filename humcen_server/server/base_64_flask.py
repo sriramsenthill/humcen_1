@@ -11,7 +11,7 @@ def process_base64_csv(data):
         decoded_csv_bytes = base64.b64decode(data)
         csv_buffer = BytesIO(decoded_csv_bytes)
         csv_data = pd.read_csv(csv_buffer)
-        result = {'Job_ID': csv_data['Job_ID'].tolist(), 'Job_Title': csv_data['Job_Title'].tolist(), 'Service': csv_data['Service'].tolist()}
+        result = {'Job_ID': csv_data['Job_ID'].tolist(), 'Job_Title': csv_data['Job_Title'].tolist()}
         print(json.dumps(result))  # Serialize dictionary as JSON
 
 

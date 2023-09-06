@@ -2606,11 +2606,10 @@ const createBulkOrders = async(req, res) => {
   try {
     const automatedJobs = req.body.bulkJobs;
     const automatedTitles = req.body.bulkTitles;
-    const automatedServices = req.body.bulkServices;
     const automatedFiles = req.body.bulkFiles;
     const thatBulkOrderFileID = req.body.fileNumber;
 
-    const findThatBulkOrder = await BulkOrderFiles.findOne({"_id.job_no": Number(thatBulkOrderFileID)});
+    const findThatBulkOrder = await BulkOrderFiles.findOne({"_id.job_no": thatBulkOrderFileID});
     if(!findThatBulkOrder) {
       console.log("No Bulk Order file present for File ID " + thatBulkOrderFileID);
     } 
@@ -2631,7 +2630,8 @@ const createBulkOrders = async(req, res) => {
       const newBulkOrder = new BulkOrder({
         "_id.job_no": newBulkOrderNo + orders,
         user_ID: Number(thatCustomer),
-        bulk_order_service: automatedServices[orders],
+        bulk_order_service: findThatBulkOrder.service,
+        country: findThatBulkOrder.country,
         bulk_order_title: automatedTitles[orders],
         bulk_order_files: automatedFiles[orders],
         })
@@ -2674,8 +2674,7 @@ const getCSVData = async (req, res) => {
       })
       res.json({fileDirectory: jobs, 
                 bulkOrderID: result[0].Job_ID, 
-                bulkOrderTitle: result[0].Job_Title,
-                bulkOrderService: result[0].Service});
+                bulkOrderTitle: result[0].Job_Title});
     });
   } catch (error) {
     console.error('Error:', error);
@@ -2788,6 +2787,38 @@ const getBulkOrderAssignTabDetails = async(req, res) => {
 
 }
 
+const getBulkOrderAssignPartners = async(req, res) => {
+  try {
+    let partnerAssignData = []
+    let partnerNames = [];
+    let partnerIDs = [];
+    const selectedBulkOrders = req.params.bulkOrders.split(",").map((elem) => Number(elem));
+
+    console.log("Selected ", selectedBulkOrders);
+
+    for(totalOrders=0; totalOrders < selectedBulkOrders.length; totalOrders++) {
+      let thoseBulkOrders = await BulkOrder.findOne({"_id.job_no": selectedBulkOrders[totalOrders]});
+      if(!thoseBulkOrders) {
+        console.log("No Bulk Order found for that ID");
+      } else {
+        let orderService = thoseBulkOrders.bulk_order_service;
+        let orderCountry = thoseBulkOrders.country;
+        let findPartner = await Partner.find({["known_fields."+orderService]: true, country: orderCountry});
+        if(!findPartner) {
+          console.log("No Partner Found");
+        } else {
+          partnerNames.push(findPartner.first_name + " " + findPartner.last_name);
+          partnerIDs.push(findPartner.userID);
+        }
+      }
+    }
+
+    console.log(partnerNames.filter((value, index, array) => array.indexOf(value) === index));
+  } catch(error) {
+    console.error("Error in sending Partners details as response : " + error);
+  }
+}
+
 
 module.exports = {
   getUsers,
@@ -2823,4 +2854,5 @@ module.exports = {
   getParticularBulkOrderFileDetails,
   getOnlyTheParticularBulkOrderFile,
   getBulkOrderAssignTabDetails,
+  getBulkOrderAssignPartners,
 };

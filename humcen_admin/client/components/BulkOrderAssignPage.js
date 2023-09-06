@@ -1,6 +1,7 @@
 
 import {Grid, IconButton, Item} from "@mui/material";
 import Card from "@mui/material/Card";
+import { useState, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
 import Table from "@mui/material/Table";
 import axios from "axios";
@@ -9,7 +10,6 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
-import PartnerDropDown from "./PartnerDropDown";
 
 
 const api = axios.create({
@@ -25,12 +25,29 @@ api.interceptors.request.use((config) => {
 });
 
 
-const BulkOrderAssignPage = ({detailsList}) => {
+const BulkOrderAssignPage = ({detailsList, jobLists, services}) => {
+  const [allJobs, setJobs] = useState(jobLists);
+
+  useEffect(() => {
+    const fetchPartners = async(allJobs) => {
+      try {
+        const partners = await api.get(`find-partners/bulk-orders/${allJobs}`);
+        if(partners.data) {
+          console.log(partners.data);
+        }
+
+      } catch(error) {
+        console.error("Error in Fetching Partners : " + error);
+      }
+    }
+
+    fetchPartners(allJobs);
+
+
+  }, [allJobs])
+
   return (
     <>
-
-
-      
     {
   detailsList.map((detail, index) => (
     <Grid container>
@@ -71,8 +88,7 @@ const BulkOrderAssignPage = ({detailsList}) => {
                     fontWeight: "bold",
                     paddingBottom: "2rem",
          }}>Partner Selection</Typography>
-  </div>
-
+  </div> 
 
     </>
   );

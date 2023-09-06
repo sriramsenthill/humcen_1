@@ -142,7 +142,7 @@ const Generator = () => {
     console.log(bulkOrderFiles);
     console.log(fileNo);
 
-    const createBulkOrders = async(jobs, titles, services, files, fileNo) => {
+    const createBulkOrders = async(jobs, titles, files, fileNo) => {
       console.log("Process has started");
       if(jobs.length > 0) {
         setSuccess(true);
@@ -150,7 +150,6 @@ const Generator = () => {
       const response = await api.post(`admin/create-bulk-orders/`, {
         bulkJobs: jobs,
         bulkTitles: titles,
-        bulkServices: services,
         bulkFiles: files,
         fileNumber: fileNo
       }).then(() => {
@@ -168,7 +167,6 @@ const Generator = () => {
         // Assuming the server sends 'data' field in response
         console.log(response.data);
         setThat(response.data.fileDirectory);
-        setBulkOrderServices(response.data.bulkOrderService);
         setBulkOrderTitle(response.data.bulkOrderTitle);
         setBulkOrderJobs(response.data.fileDirectory);
       } catch (error) {
@@ -268,7 +266,7 @@ const Generator = () => {
 
           }
           setBulkOrderFiles(extractedData);
-          await createBulkOrders(bulkOrderJobs, bulkOrderTitle, bulkOrderServices, extractedData, fileNo);
+          await createBulkOrders(bulkOrderJobs, bulkOrderTitle, extractedData, fileNo);
         } catch (error) {
           console.error('Error extracting subfiles:', error);
         }
@@ -305,7 +303,7 @@ const Generator = () => {
                           background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
                         },
                       }}
-                onClick={handleBulkOrder}
+                onClick={() => handleBulkOrder()}
               >
                 Submit File
               </Button>}
