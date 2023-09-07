@@ -49,7 +49,7 @@ const ColorButton = styled(Button)(({ theme }) => ({
 
  
 
-export default function DialogBox({title, description}){
+export default function DialogBox({title, description, waitMessage}){
    
     const router = useRouter();
     const handleOk = () => {
@@ -69,9 +69,9 @@ export default function DialogBox({title, description}){
         <h1 style={{textAlign:"center",fontWeight:"600",fontSize:"22px",fontFamily:'Inter',color:"#00002B"}}>{title}</h1>
         <p style={{textAlign:"center",fontWeight:"500",fontSize:"15px",fontFamily:'Inter',color:"#8C8E8F"}}>{description}</p>
       </DialogContent>
-      <DialogActions>
+      { waitMessage && <DialogActions>
         <ColorButton onClick={handleOk} style={{width:"120px",height:"40px",fontFamily:'Inter'}}>Done</ColorButton>
-      </DialogActions>
+      </DialogActions> }
       </CenteredDialogActions>
 
 </WhiteDialog>

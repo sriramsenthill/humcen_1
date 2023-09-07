@@ -308,7 +308,7 @@ const Generator = () => {
                 Submit File
               </Button>}
             </div>
-  {success &&  <DialogBox title={"Success"} description={"Bulk Orders generated Successfully."}/>
+  {success &&  <DialogBox title={"Success"} description={"Bulk Orders generated Successfully."} waitMessage={true}/>
     }
         </Card>
       );

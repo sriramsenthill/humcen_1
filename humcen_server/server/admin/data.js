@@ -2956,6 +2956,8 @@ const assignBulkOrdersToPartners = async(req, res) => {
 
     console.log(thoseBulkOrders, partnerUID);
 
+    res.status(200).send({message: "Successfully Created"});
+
   } catch(error) {
     console.error("Error in assigning Bulk Orders to Partners : " + error);
   }

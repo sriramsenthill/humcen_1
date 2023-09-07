@@ -5,6 +5,7 @@ import { Button } from "@material-ui/core";
 import { Box, Typography } from "@mui/material";
 import Table from "@mui/material/Table";
 import axios from "axios";
+import DialogBox from "./Dialog";
 import PartnerSelect from "./PartnerDropDown";
 
 
@@ -25,6 +26,8 @@ api.interceptors.request.use((config) => {
 const BulkOrderAssignPage = ({detailsList, jobLists, services, countries}) => {
   const [allJobs, setJobs] = useState(jobLists);
   const [allPartners, setPartners] = useState([]);
+  const [success, setOpenSuccess] = useState(false);
+  const [clicked, setClicked] = useState(false);
   const [chosenPartner, setChosenPartner] = useState("");
  
   const handlePartnerChange = (value) => {
@@ -34,8 +37,15 @@ const BulkOrderAssignPage = ({detailsList, jobLists, services, countries}) => {
 
   const handleBulkAssigns = async(partnerID, allJobs) => {
     try {
+      setClicked(true);
       const sendPartnerData = await api.post(`bulk-orders/assign/${partnerID}/${allJobs}`)
+      
       console.log("Assign Details Sent Successfully");
+      if(sendPartnerData.status === 200) {
+        setClicked(false);
+        setOpenSuccess(true);
+      }
+
     } catch(error) {
         console.error("Error in sending Bulk Order Details for Assign : " + error);
     }
@@ -138,6 +148,10 @@ const BulkOrderAssignPage = ({detailsList, jobLists, services, countries}) => {
         Assign Jobs
       </Button>
     </div> }
+    {clicked &&  <DialogBox title={"Processing"} description={"We're processing your Request. Please Wait for some time. Thank You!"} waitMessage={false}/>
+    }
+    {success &&  <DialogBox title={"Success"} description={allJobs.length +  " Bulk Orders assigned to " + chosenPartner + " Successfully."} waitMessage={true}/>
+    }
     </>
   );
 };

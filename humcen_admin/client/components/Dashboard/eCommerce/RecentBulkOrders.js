@@ -188,18 +188,15 @@ function RecentBulkOrders() {
       if(selected.includes(value)) {
         const updatedList = selected.filter( elem => elem != value );
         const updatedCoded = codedID.filter( elem => elem != codedValue );
-        const updatedServices = allServices.filter( elem => elem != service );
-        const updatedCountry = country.filter( elem => elem != countries );
+
 
         setSelected(updatedList);
         setCoded(updatedCoded);
-        setThoseServices(updatedServices);
-        setCountry(updatedCountry);
+
       } else {
         setSelected([...selected, value]);
         setCoded([...codedID, codedValue]);
-        setThoseServices([...allServices, service]);
-        setCountry([...country, countries]);
+
       }
     } else {
       setSelected([value]);
@@ -312,8 +309,6 @@ function RecentBulkOrders() {
     if(selected.some(job=> availableIDs.includes(job))) {
       setSelected(selected.filter((elem) => !availableIDs.includes(elem)));
       setCoded(codedID.filter((elem) => !availableCodedIDs.includes(elem)));
-      setThoseServices(allServices.filter((elem) => !availableServices.includes(elem)));
-      setCountry(country.filter((elem) => !availableCountries.includes(elem)));
       console.log(selected, codedID, allServices, country);
     }
 
@@ -536,7 +531,7 @@ function RecentBulkOrders() {
                 Assign
               </Button>
             </div> }
-        
+        {console.log(selected, allServices.filter((value, index, array) => array.indexOf(value) === index).length === 1, allServices)}
       </Box>
     </Card> }
    { openModal && completeDetails && <>
