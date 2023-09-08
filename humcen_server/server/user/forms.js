@@ -71,25 +71,30 @@ const getJobOrders = async (req, res) => {
     let jobLists = [];
     const userId = req.userId;
     const jobOrders = await JobOrder.find({ userID: userId }).sort({"_id.job_no": 1});
+
+    if(jobOrders.length > 0) {
+        
     const copyJobs = JSON.parse(JSON.stringify(jobOrders));
 
-// Remove the _id field from each object in copyJobs
-copyJobs.forEach((job) => {
-  delete job._id.job_no;
-});
-    jobOrders.forEach((job) => {
-      jobLists.push(job._id.job_no);
-    })
-
-    const fakeIDs = await renderJobNumbers(jobLists);
-    const cleanedArray = fakeIDs.map(item => item.replace(/'/g, '').trim());
+    // Remove the _id field from each object in copyJobs
+    copyJobs.forEach((job) => {
+      delete job._id.job_no;
+    });
+        jobOrders.forEach((job) => {
+          jobLists.push(job._id.job_no);
+        })
     
-    for(let jobs=0; jobs<copyJobs.length; jobs++) {
-      copyJobs[jobs].og_id = jobLists[jobs]
-      copyJobs[jobs]._id.job_no = cleanedArray[jobs]
+        const fakeIDs = await renderJobNumbers(jobLists);
+        const cleanedArray = fakeIDs.map(item => item.replace(/'/g, '').trim());
+        
+        for(let jobs=0; jobs<copyJobs.length; jobs++) {
+          copyJobs[jobs].og_id = jobLists[jobs]
+          copyJobs[jobs]._id.job_no = cleanedArray[jobs]
+        }
+        console.log(copyJobs);
+        res.json({ copyJobs });
     }
-    console.log(copyJobs);
-    res.json({ copyJobs });
+
   } catch (error) {
     console.error("Error fetching job orders:", error);
     res.status(500).json({ error: "Internal Server Error" });

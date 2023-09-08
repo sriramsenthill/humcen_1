@@ -103,22 +103,26 @@ const getPartnerJobOrders = async (req, res) => {
     }).sort({"_id.job_no": -1});
     // console.log("jobOrders:", jobOrders); // Check the fetched job orders
     // Remove the _id field from each object in copyJobs
+    if(jobOrders.length > 0) {
+        
     const copyJobs = JSON.parse(JSON.stringify(jobOrders));
-copyJobs.forEach((job) => {
-  delete job._id.job_no;
-});
-    jobOrders.forEach((job) => {
-      jobLists.push(job._id.job_no);
-    })
-
-    const fakeIDs = await renderJobNumbers(jobLists);
-    const cleanedArray = fakeIDs.map(item => item.replace(/'/g, '').trim());
+    copyJobs.forEach((job) => {
+      delete job._id.job_no;
+    });
+        jobOrders.forEach((job) => {
+          jobLists.push(job._id.job_no);
+        })
     
-    for(let jobs=0; jobs<copyJobs.length; jobs++) {
-      copyJobs[jobs].og_id = jobLists[jobs]
-      copyJobs[jobs]._id.job_no = cleanedArray[jobs]
+        const fakeIDs = await renderJobNumbers(jobLists);
+        const cleanedArray = fakeIDs.map(item => item.replace(/'/g, '').trim());
+        
+        for(let jobs=0; jobs<copyJobs.length; jobs++) {
+          copyJobs[jobs].og_id = jobLists[jobs]
+          copyJobs[jobs]._id.job_no = cleanedArray[jobs]
+        }
+        res.json( copyJobs );
     }
-    res.json( copyJobs );
+
 
   } catch (error) {
     console.error("Error fetching job orders:", error);
