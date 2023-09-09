@@ -326,7 +326,7 @@ function RecentBulkOrders() {
 
   return (
     <>
-    { !openModal && <Card>
+    { !openModal && sortedData.length > 0 && <Card>
       <Box sx={{ p: 2 }}>
         <TableContainer component={Paper} sx={{
             boxShadow: "none",
@@ -569,6 +569,24 @@ function RecentBulkOrders() {
    <BulkOrderAssignPage detailsList={assignDetails} jobLists={selected} services={allServices} countries={country}/> 
    </Card>
    </>}
+   {sortedData.length > 0 && <div style={{
+        textAlign: "center",
+        background: "white",
+        pt: "2rem",
+        pb: "2rem",
+      }}>
+        <Typography
+            as="h1"
+            sx={{
+              fontSize: 18,
+              fontWeight: 500,
+              pb: "2rem",
+              pt: "2rem"
+            }}
+          >
+            No Bulk Orders generated recently.
+          </Typography>
+      </div>}
     </>
   );
 }

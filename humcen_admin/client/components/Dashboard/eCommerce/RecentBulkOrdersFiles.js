@@ -49,24 +49,25 @@ function getStatusColor(status) {
     return ( {
       background: "rgba(255, 255, 0, 0.1)", /* Yellow background with reduced opacity */
       borderRadius: "4px",
-      fontWeight: "bold",
+      fontWeight: "bolder",
       color: "#ffbc2b", /* You can define your yellow color variable */
       padding: "5px 13px",
       display: "inline-block",
     });
      // Set the color to yellow for "in progress" status
-  } else if (status === "Completed") {
+  } else if (status === "Yes") {
     return ({
       background: "rgba(0, 182, 155, 0.1)",
       borderRadius: "4px",
       color: "#00b69b",
-      fontWeight: "bold",
+      fontWeight: "bolder",
       padding: "5px 13px",
       display: "inline-block",
   })  // Set the color to green for "completed" status
-  } else if (status === "Pending") {
+  } else if (status === "No") {
     return ({
       background: "rgba(238,54,140,.1)",
+      fontWeight: "bolder",
       borderRadius: "4px",
       color: "#ee368c",
       padding: "5px 13px",
@@ -196,9 +197,10 @@ function RecentBulkOrdersFiles() {
     const sortedData = rows.sort((a, b) => parseInt(b._id.job_no) - parseInt(a._id.job_no));
 
   return (
-    <Card>
-      <Box sx={{ p: 2 }}>
-        <TableContainer component={Paper} sx={{
+    <>
+    { sortedData.length > 0 ? (<Card>
+     <Box sx={{ p: 2 }}>
+     <TableContainer component={Paper} sx={{
             boxShadow: "none",
           }}>
           <Table aria-label="custom pagination table" className="dark-table">
@@ -244,6 +246,16 @@ function RecentBulkOrdersFiles() {
                     textAlign: "center",
                   }}>
                 Country
+                </TableCell>
+                <TableCell sx={{
+                    borderBottom: "1px solid #F7FAFF",
+                    fontSize: "13.5px",
+                    fontWeight: 'bold',
+                    padding: "15px 10px",
+                    width: "250px",
+                    textAlign: "center",
+                  }}>
+                Orders Generated
                 </TableCell>
                 <TableCell sx={{
                     borderBottom: "1px solid #F7FAFF",
@@ -297,7 +309,14 @@ function RecentBulkOrdersFiles() {
                       fontSize: "13px",
                       textAlign: "center",
                     }}>{row.country}</TableCell>
-    
+                    <TableCell sx={{
+                      width: 250,
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #F7FAFF",
+                      padding: "8px 10px",
+                      fontSize: "13px",
+                      textAlign: "center",
+                    }}>{row.generated ? (<Typography style={getStatusColor("Yes")}>Yes</Typography>) : (<Typography style={getStatusColor("No")}>No</Typography>)}</TableCell>
                   
                   <TableCell>
                   <div style={{
@@ -309,7 +328,7 @@ function RecentBulkOrdersFiles() {
                         background: "#27AE60",
                         color: "white",
                         borderRadius: "100px",
-                        width: "60%",
+                        width: "80%",
                         height: "88%",
                         textTransform: "none",
                         "&:hover": {
@@ -346,7 +365,25 @@ function RecentBulkOrdersFiles() {
           </Table>
         </TableContainer>
       </Box>
-    </Card>
+    </Card>) : (<div style={{
+        textAlign: "center",
+        background: "white",
+        pt: "2rem",
+        pb: "2rem",
+      }}>
+        <Typography
+            as="h1"
+            sx={{
+              fontSize: 18,
+              fontWeight: 500,
+              pb: "2rem",
+              pt: "2rem"
+            }}
+          >
+            No records of Bulk Order Requests.
+          </Typography>
+      </div>) }
+      </>
   );
 }
 

@@ -105,6 +105,11 @@ router.get("/api/clear-notif/:userID", verifyToken, forms.clearRecentNotifs); //
 
 router.post("/api/new-bulk-order-request", verifyToken, forms.newBulkOrderRequest); // API for saving up Bulk Order Request
 
+router.post("/api/bulk-order/upload-files", verifyToken, forms.uploadBulkOrderFiles); // API to get User Files uploaded for Bulk Order Generation
+
+router.get("/api/bulk-order/check-request", verifyToken, forms.checkBulkOrderRequest); // API to check whether User had given a Bulk Order Request
+
+
 //Users_Settings
 
 router.get("/api/user/img", verifyToken, userSettings.getCustomerProfileImage);

@@ -11,7 +11,7 @@ const BulkOrderFiles = () => {
     <>
       {/* Page title */}
       <div className={styles.pageTitle}>
-        <h1>Bulk Order Push</h1>
+        <h1>Bulk Order Requests</h1>
         <ul>
           <li>
             <Link href="/">Dashboard</Link>

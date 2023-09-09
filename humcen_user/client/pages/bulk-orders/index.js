@@ -1,7 +1,7 @@
 import BulkOrderComponent from "./BulkOrderComponent"
 import styles from "@/styles/PageTitle.module.css";
 import withAuth from "@/components/withAuth";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import axios from 'axios';
 import OkDialogueBox from "pages/patent-services/dialoguebox";
@@ -55,6 +55,25 @@ const ProductDetails = () => {
   const [summary, setSummary] = useState([]);
   const [country, setCountry] = useState(""); // Add country state
    // Bill amount state
+
+   const [uploadAccess, setUploadAccess] = useState(false);
+
+   useEffect(() => {
+     const checkRequestBeforeUpload = async() => {
+       try {
+         const checkResponse = await api.get("bulk-order/check-request");
+         if(checkResponse.status === 200) {
+           console.log("Response received Successfully");
+           setUploadAccess(checkResponse.data.user);
+         }
+
+       } catch(error) {
+           console.error("Error in receiving Check Results : " + error);
+       }        
+     }
+   
+     checkRequestBeforeUpload();
+   }, [])
 
 
   const handleQuantity = (event) => {
@@ -114,13 +133,21 @@ const ProductDetails = () => {
       <h1 className={styles.heading}>Bulk Orders</h1>
       </div>
       <>
+      {uploadAccess && <div style={{textAlign: "center", background: "white"}}><Typography
+            as="h1"
+            sx={{
+              fontSize: 18,
+              fontWeight: 500,
+              pb: "2rem",
+              pt: "2rem"
+            }}
+          >
+            Wait for the Pending Request to be Completed. Thank You.
+          </Typography></div>}
       <div style={{ margin: '0 1rem' }}>
-        <Paper elevation={3} style={{ borderRadius: '16px', padding: '1rem', margin: '1rem 0' }}>
+      { !uploadAccess && <Paper elevation={3} style={{ borderRadius: '16px', padding: '1rem', margin: '1rem 0' }}>
           {/* Banner */}
-
-
-
-    <Container maxWidth="md" style={{ marginTop: '2rem' }}>
+ <Container maxWidth="md" style={{ marginTop: '2rem' }}>
       <Head>
         <title>Bulk Order</title>
       </Head>
@@ -275,7 +302,7 @@ const ProductDetails = () => {
 
 
     </Container>
-    </Paper>
+    </Paper>}
     </div>
     <OkDialogueBox success={success} serviceValue={"Patent Drafting"} />
     </>

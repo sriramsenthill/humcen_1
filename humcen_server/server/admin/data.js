@@ -2617,6 +2617,12 @@ const createBulkOrders = async(req, res) => {
       console.log("No Bulk Order file present for File ID " + thatBulkOrderFileID);
     } 
     const thatCustomer = findThatBulkOrder.user_ID;
+    findThatBulkOrder.generated = true;
+    findThatBulkOrder.save().then(() => {
+      console.log("Bulk Order Generation Status Updated Successfully.");
+    }).catch((error) => {
+      console.errorr("Error in Updating Bulk Order Generation Status.");
+    })
 
     console.log("Bulk Orders Received. Please wait for sometime.");
     const newBulkOrders = [];
@@ -2714,7 +2720,7 @@ const getParticularBulkOrderFileDetails = async(req, res) => {
       if(!findCustomer) {
         console.log("No Customer Found for User ID " + thatBulkOrderFile.user_ID);
       } else {
-        const bulkOrderRequestDetails = {order: thatBulkOrderFile, email: findCustomer.email} ;
+        const bulkOrderRequestDetails = {order: thatBulkOrderFile, email: findCustomer.email, generate: thatBulkOrderFile.generated} ;
         console.log("Sending the details of that Particular Bulk Order File...");
         res.json(bulkOrderRequestDetails);
       }
@@ -2728,7 +2734,7 @@ const getOnlyTheParticularBulkOrderFile = async(req, res) => {
   try {
     const thatFile = req.params.fileNo;
 
-    const thatBulkOrderFile = await BulkOrderFiles.findOne({"_id.job_no": Number(thatFile)}).select("_id bulk_order_files");
+    const thatBulkOrderFile = await BulkOrderFiles.findOne({"_id.job_no": Number(thatFile)}).select("_id user_files");
     if(!thatBulkOrderFile) {
       console.log("No Bulk Order Files found for ID " + thatFile);
     } else {

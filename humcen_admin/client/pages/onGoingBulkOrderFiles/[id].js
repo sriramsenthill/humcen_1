@@ -102,6 +102,7 @@ const DynamicPage = () => {
   const [Files, setFiles] = useState([]);
   const [email, setEmail] = useState("");
   const [Title, setTitle] = useState("");
+  const [generateAccess, setGenerateAccess] = useState(true);
 
   useEffect(() => {
     const fetchJobData = async () => {
@@ -111,7 +112,8 @@ const DynamicPage = () => {
         console.log(response.data);
         if (specificJob) {
           setJob(specificJob.order);
-          setEmail(specificJob.email)
+          setEmail(specificJob.email);
+          setGenerateAccess(specificJob.generate);
         } else {
           console.log("No job found with the provided job number:", id);
           setJob(null);
@@ -125,7 +127,7 @@ const DynamicPage = () => {
     const fetchOnlyFiles = async () => {
         try {
             const response = await api.get(`only-that-bulk-order-file/${id}`);
-            const specificFile = response.data.bulk_order_files;
+            const specificFile = response.data.user_files;
             if(specificFile) {
                 setFiles(specificFile);
             }
@@ -167,7 +169,7 @@ const DynamicPage = () => {
 
   }, [jobID]);
 
-  console.log(Files);
+  console.log(generateAccess);
   
   if (!job) {
     return <div>No job found with the provided job number.</div>;
@@ -267,7 +269,7 @@ const DynamicPage = () => {
 
   // Format the start_date
 
-
+console.log(generateAccess);
   return (
     <>
       <div className={'card'}>
@@ -335,6 +337,9 @@ const DynamicPage = () => {
                 <td className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
                     Customer Email ID
                 </td>
+                <td className={styles.label} style={{ padding: "10px", fontWeight: "bold", textAlign: "center", fontSize: "16px", }}>
+                    User Files
+                </td>
               </tr>
               <tr>
                 <td style={{ padding: "10px", textAlign:"center", fontWeight: "bold", fontSize: "13.5px",  }}>{job._id.job_no}</td>
@@ -342,6 +347,27 @@ const DynamicPage = () => {
                 <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{job.quantity}</td>
                 <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{job.country}</td>
                 <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{email}</td>
+                <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>
+                { Files ?  (<Button
+                  sx={{
+                        background: "#27AE60", 
+                        color: "white",
+                        borderRadius: "100px",
+                        fontWeight: 500,
+                        width: "80%",
+                        height: "88%",
+                        textTransform: "none",
+                        "&:hover": {
+                          background: "linear-gradient(90deg, #5F9EA0 0%, #7FFFD4 100%)",
+                        },
+                      }}
+                onClick={() => { onClickDownload(Files, job._id.job_no)}}
+              >
+                Download File
+              </Button>) : (
+                  <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>Not Uploaded Yet</td>
+                ) }
+                </td>
               </tr>
               <tr>
                 <td style={{ padding: "10px" }}></td>
@@ -352,8 +378,9 @@ const DynamicPage = () => {
             </tbody>
           </table>
         </Grid>
-</Card>
-<Generator />
+</Card>{ !generateAccess &&
+  <Generator />
+}
       </div>
     </>
   );

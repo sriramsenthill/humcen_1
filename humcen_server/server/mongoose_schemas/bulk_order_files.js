@@ -16,6 +16,13 @@ const bulkOrderFilesSchema = new mongoose.Schema({
   country: {
     type: String,
   },
+  generated: {
+    type: Boolean,
+    default: false,
+  },
+  user_files: {
+    type: Object,
+  }
 });
 
 const BulkOrderFiles = mongoose.model('BulkOrderFiles', bulkOrderFilesSchema, 'bulk_order_files');

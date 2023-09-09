@@ -4011,6 +4011,51 @@ const newBulkOrderRequest = async(req, res) => {
   }
 }
 
+const uploadBulkOrderFiles = async(req, res) => {
+  try {
+    const user = req.userId;
+    const files = req.body.uploadFiles;
+    const findBulkOrder = await BulkOrderFiles.findOne({user_ID: user, generated: false});
+    if(!findBulkOrder) {
+      console.log("No Bulk Order Request Found");
+    } else {
+      console.log(findBulkOrder);
+
+      findBulkOrder.user_files = files;
+      findBulkOrder.save().then(() => {
+        console.log("User Files saved Successfully.");
+      }).catch((error) => {
+        console.log("Error in saving User Files to the Database : " + error);
+      })
+    }
+
+    res.status(200).send({message: "Received Successfully"});
+    console.log(user);
+  } catch(error) {
+    console.error("Error in Uploading Bulk Order Files : " + error);
+  }
+}
+
+const checkBulkOrderRequest = async(req, res) => {
+  try {
+    const user = req.userId;
+    console.log(user);
+    let allowUpload;
+
+    // Checking Bulk Order Requests
+    const allBulkOrders = await BulkOrderFiles.findOne({user_ID: user, generated: false});
+    if(!allBulkOrders || allBulkOrders.user_files.length > 0) {
+      allowUpload = false;
+    } else {
+      allowUpload = true;
+    }
+
+    res.json({user: allowUpload});
+  } catch(error) {
+    console.error("Error in Checking Bulk Order Request : " + error);
+  }
+}
+
 module.exports = {
     getJobOrderOnID,
     getJobOrders,
@@ -4045,4 +4090,6 @@ module.exports = {
     newVersionWatch,
     newVersionLicense,
     newBulkOrderRequest,
+    uploadBulkOrderFiles,
+    checkBulkOrderRequest,
   };
