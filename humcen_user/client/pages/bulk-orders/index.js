@@ -133,7 +133,7 @@ const ProductDetails = () => {
       <h1 className={styles.heading}>Bulk Orders</h1>
       </div>
       <>
-      {uploadAccess && <div style={{textAlign: "center", background: "white"}}><Typography
+      { !uploadAccess && <div style={{textAlign: "center", background: "white"}}><Typography
             as="h1"
             sx={{
               fontSize: 18,
@@ -145,7 +145,7 @@ const ProductDetails = () => {
             Wait for the Pending Request to be Completed. Thank You.
           </Typography></div>}
       <div style={{ margin: '0 1rem' }}>
-      { !uploadAccess && <Paper elevation={3} style={{ borderRadius: '16px', padding: '1rem', margin: '1rem 0' }}>
+      { uploadAccess && <Paper elevation={3} style={{ borderRadius: '16px', padding: '1rem', margin: '1rem 0' }}>
           {/* Banner */}
  <Container maxWidth="md" style={{ marginTop: '2rem' }}>
       <Head>

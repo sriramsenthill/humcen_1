@@ -4045,9 +4045,9 @@ const checkBulkOrderRequest = async(req, res) => {
     // Checking Bulk Order Requests
     const allBulkOrders = await BulkOrderFiles.findOne({user_ID: user, generated: false});
     if(!allBulkOrders || allBulkOrders.user_files.length > 0) {
-      allowUpload = false;
-    } else {
       allowUpload = true;
+    } else {
+      allowUpload = false;
     }
 
     res.json({user: allowUpload});

@@ -151,7 +151,7 @@ const DynamicPage = () => {
         const response = await api.get(`bulk-order-file/${jobID}`);
         const stringResponse = JSON.stringify(response.data);
         const objResponse = JSON.parse(stringResponse);
-        setFiles(objResponse.bulk_order_files);
+        setFiles(objResponse.user_files);
         setColor(true);
 
       } catch (error) {
@@ -169,7 +169,7 @@ const DynamicPage = () => {
 
   }, [jobID]);
 
-  console.log(generateAccess);
+  console.log(Files);
   
   if (!job) {
     return <div>No job found with the provided job number.</div>;
@@ -348,7 +348,7 @@ console.log(generateAccess);
                 <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{job.country}</td>
                 <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>{email}</td>
                 <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>
-                { Files ?  (<Button
+                { Files.length > 0 ?  (<Button
                   sx={{
                         background: "#27AE60", 
                         color: "white",
@@ -365,7 +365,7 @@ console.log(generateAccess);
               >
                 Download File
               </Button>) : (
-                  <td style={{ padding: "10px", textAlign:"center", fontSize: "13.5px",  }}>Not Uploaded Yet</td>
+                  <>Not Uploaded Yet</>
                 ) }
                 </td>
               </tr>

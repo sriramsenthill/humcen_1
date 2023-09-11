@@ -92,7 +92,7 @@ const Projects = () => {
       By adhering to this dual-upload system, our platform can efficiently associate the correct documents with their corresponding invention details, ensuring a smooth and organized submission process. This approach helps us provide you with the best possible service and ensures that your inventions are handled with precision and care. <br/> <br/>
 
       </p>
-      { !uploadAccess && <Typography
+      { uploadAccess && <Typography
                 as="h4"
                 sx={{
                   fontSize: 18,
@@ -104,7 +104,7 @@ const Projects = () => {
               >
                 Please give a new <Link href="/bulk-orders/" style={{color: "#7DE5ED"}}>Bulk Order Request</Link> for Processing.
               </Typography>}
-     { uploadAccess && <Typography
+     { !uploadAccess && <Typography
                 as="h3"
                 sx={{
                   fontSize: 18,
@@ -116,9 +116,9 @@ const Projects = () => {
                 Upload Here
               </Typography> }
               {/* <DottedCard> */}
-           { uploadAccess && <CustomDropZone files={detailsFile} onFileChange={handleDetailsFileChange} />    }  
+           { !uploadAccess && <CustomDropZone files={detailsFile} onFileChange={handleDetailsFileChange} />    }  
       </div>
-     { uploadAccess && detailsFile.length === 2 && totalTypes.includes("application/x-zip-compressed") && totalTypes.includes("text/csv") && <div style={{
+     { !uploadAccess && detailsFile.length === 2 && totalTypes.includes("application/x-zip-compressed") && totalTypes.includes("text/csv") && <div style={{
         marginTop: "1.5rem",
         textAlign: "center",
       }}>
