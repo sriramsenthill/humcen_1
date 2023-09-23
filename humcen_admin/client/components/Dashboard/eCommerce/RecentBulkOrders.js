@@ -189,6 +189,19 @@ function RecentBulkOrders() {
         const updatedList = selected.filter( elem => elem != value );
         const updatedCoded = codedID.filter( elem => elem != codedValue );
 
+        const indexOfElementToRemove = allServices.indexOf(service);
+
+// Check if the element exists in the array before removing it
+if (indexOfElementToRemove !== -1) {
+  // Remove one instance of the selected element using the spread operator and filter
+  const updatedElements = [
+    ...allServices.slice(0, indexOfElementToRemove),
+    ...allServices.slice(indexOfElementToRemove + 1)
+  
+  ];
+  setThoseServices(updatedElements);
+}
+        
 
         setSelected(updatedList);
         setCoded(updatedCoded);
@@ -196,6 +209,7 @@ function RecentBulkOrders() {
       } else {
         setSelected([...selected, value]);
         setCoded([...codedID, codedValue]);
+        setThoseServices([...allServices, service])
 
       }
     } else {
@@ -289,6 +303,7 @@ function RecentBulkOrders() {
 
   const handleSelectAll = () => {
     console.log(page);
+    
     let availableIDs = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((elem) => elem.og_id);
     let availableCodedIDs = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((elem) => elem._id.job_no);
     let availableServices = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((elem) => elem.bulk_order_service);
@@ -301,7 +316,7 @@ function RecentBulkOrders() {
 
     setSelected(newSelections.filter((value, index, array) => array.indexOf(value) === index));
     setCoded(newCodedSelections.filter((value, index, array) => array.indexOf(value) === index))
-    setThoseServices(newCodedServices.filter((value, index, array) => array.indexOf(value) === index))
+    setThoseServices(newCodedServices)
     setCountry(newCodedCountries.filter((value, index, array) => array.indexOf(value) === index))
 
     console.log(newSelections, newCodedSelections, newCodedServices, newCodedCountries);
@@ -309,11 +324,14 @@ function RecentBulkOrders() {
     if(selected.some(job=> availableIDs.includes(job))) {
       setSelected(selected.filter((elem) => !availableIDs.includes(elem)));
       setCoded(codedID.filter((elem) => !availableCodedIDs.includes(elem)));
+      setThoseServices(allServices.filter((elem) => !availableServices.includes(elem)));
       console.log(selected, codedID, allServices, country);
     }
 
 
   }
+
+  console.log(allServices);
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
@@ -526,6 +544,7 @@ function RecentBulkOrders() {
             </TableFooter>
           </Table>
         </TableContainer>
+        {console.log(allServices.filter((value, index, array) => array.indexOf(value) === index).length, selected.length)}
         { selected.length > 0 && allServices.filter((value, index, array) => array.indexOf(value) === index).length === 1 && <div style={{textAlign: "center", marginTop: "2rem", marginBottom: "2rem"}}>
               <Button onClick={() => {handleAssignClick(codedID , selected, allServices.filter((value, index, array) => array.indexOf(value) === index), country.filter((value, index, array) => array.indexOf(value) === index));}} variant="contained"  style={{ marginTop: '0.25rem', borderRadius: "100px" , boxShadow: "none",background: "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)"}}>
                 Assign
@@ -569,7 +588,7 @@ function RecentBulkOrders() {
    <BulkOrderAssignPage detailsList={assignDetails} jobLists={selected} services={allServices} countries={country}/> 
    </Card>
    </>}
-   {sortedData.length > 0 && <div style={{
+   {sortedData.length === 0 && <div style={{
         textAlign: "center",
         background: "white",
         pt: "2rem",

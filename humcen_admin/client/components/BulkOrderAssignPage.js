@@ -70,6 +70,8 @@ const BulkOrderAssignPage = ({detailsList, jobLists, services, countries}) => {
 
   }, [allJobs])
 
+  console.log(allPartners);
+
   return (
     <>
     {
@@ -136,8 +138,11 @@ const BulkOrderAssignPage = ({detailsList, jobLists, services, countries}) => {
                     fontSize: "15px",
                     paddingBottom: "20px",
                   }} >
-                  <PartnerSelect partner={chosenPartner} onPartnerChange={handlePartnerChange} availablePartners={allPartners} />
 
+                  { allPartners.length > 0 ? (<PartnerSelect partner={chosenPartner} onPartnerChange={handlePartnerChange} availablePartners={allPartners} />) : (
+                    <>No Partners Available</>
+                  ) 
+                  }
                   </Typography>
       </Grid>
     </Grid>

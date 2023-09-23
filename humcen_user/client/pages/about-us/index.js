@@ -104,7 +104,7 @@ const Projects = () => {
           <li>
             <Link href="/">Dashboard</Link>
           </li>
-          <li>Why Us</li>
+          <li>About Us</li>
         </ul>
       </div>
       <h1 className={styles.heading}>About Us</h1>
