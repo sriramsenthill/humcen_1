@@ -139,6 +139,7 @@ const PartnerSchema = new mongoose.Schema({
   },
   is_free: {
     type: Boolean,
+    default: true,
   },
   in_progress_jobs: {
     type: Number,

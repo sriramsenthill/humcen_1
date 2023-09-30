@@ -1879,6 +1879,8 @@ const assignTask = async(req, res) => {
     }
       
   }
+  res.status(200).send({message: "Received Successfully"});
+
 
 }
 
@@ -2263,6 +2265,7 @@ try {
   await AllNotifications.sendToAdmin("Job ID " + jobID +  " has been cross-assigned from Partner ID " + previousPartner +" to Partner ID " + newlyAssignedPartner +" successfully");
   await AllNotifications.sendToPartner(Number(previousPartner), "Assigned Job of ID " + jobID + " has been assigned to a new Partner. Thank You!");
   await AllNotifications.sendToPartner(Number(newlyAssignedPartner), "You have been cross-assigned the Job of ID " + jobID + " by Admin successfully.");
+
 
 } catch(error) {
   console.error("Error in performing Cross Assign to the Partner : " + error);

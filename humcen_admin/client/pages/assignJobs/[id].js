@@ -9,6 +9,7 @@ import withAuth from "@/components/withAuth";
 import { Typography } from "@mui/material";
 import { Button, Checkbox, FormControl, InputLabel, MenuItem, Select,FormControlLabel } from "@mui/material";
 import axios from "axios";
+import DialogBox from "../../components/Dialog";
 import JSZip from "jszip";
 import { styled } from "@mui/system";
 import { headers } from "next.config";
@@ -133,6 +134,8 @@ const DynamicPage = () =>{
   const [noFile, setFile] = useState(true);
   const [getCountry, setCountry] = useState("");
   const [clicked, setClicked] = useState(false); 
+  const [assignClicked, setAssignClicked] = useState(false);
+  const [assignSuccess, setAssignSuccess] = useState(false);
   const [partners, setPartners] = useState(false);
   const [dataList, setDataList] = useState([]);
   const [nameList, setNameList] = useState([]);
@@ -234,13 +237,16 @@ const DynamicPage = () =>{
   const handleSubmit = async() => {
     console.log(selectedPartner);
     try {
+      setAssignClicked(true);
       const assignResponse = await api.post("/assign", {
         uaJobID: job.og_id,
         partID: selectedPartner,
         service: job.service,
-      }).then((response) => {
-        console.log("Successfully sent to the API endpoint: " + response.data);
       })
+      if(assignResponse.status === 200) {
+        setAssignClicked(false);
+        setAssignSuccess(true);
+      }
 
     } catch(error) {
         console.error("Error in Assigning Task : " + error);
@@ -502,6 +508,10 @@ const DynamicPage = () =>{
       </Card>
    
       </div>
+      {assignClicked &&  <DialogBox title={"Processing"} description={"We're processing your Request. Please Wait for some time. Thank You!"} waitMessage={false}/>
+    }
+    {assignSuccess &&  <DialogBox title={"Success"} description={ "Job ID " + job._id.job_no +  " assigned to Partner ID " + selectedPartner + " Successfully."} waitMessage={true}/>
+    }
     </>
   );
           }

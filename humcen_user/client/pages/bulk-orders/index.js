@@ -172,19 +172,17 @@ const ProductDetails = () => {
   showStatus={false}
   showIndicators={true}
   dynamicHeight={false}
-  style={{ maxWidth: "400px", margin: "0 auto" }}
+  style={{ maxWidth: "md", margin: "0 auto"}}
 >
   {carouselImages.map((image, index) => (
     <div
       key={index}
       style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+        textAlign: "center",
         borderRadius: "20px",
         overflow: "hidden",
         cursor: "pointer",
-        height: "300px", // Set a fixed height for the carousel items
+        height: "100%", // Set a fixed height for the carousel items
       }}
       onClick={() => handleClick(image.link)}
     >
@@ -192,9 +190,9 @@ const ProductDetails = () => {
         src={image.src}
         alt={image.alt}
         style={{
-          maxWidth: "100%", // Ensure the image scales within its container
+          maxWidth: "70%", // Ensure the image scales within its container
           maxHeight: "100%", // Maintain the aspect ratio of the image
-          borderRadius: "20px",
+          borderRadius: "20px"
         }}
       />
     </div>
