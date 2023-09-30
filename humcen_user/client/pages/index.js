@@ -63,26 +63,20 @@ const eCommerce = () => {
 
   const carouselImages = [
     {
-      src: "/images/b1.jpeg",
+      src: "/images/User 1.jpg",
       alt: "image1",
       link: "https://www.youtube.com/watch?v=49HTIoCccDY",
     },
     {
-      src: "https://www.hdwallpapers.in/download/pink_gradient-HD.jpg",
+      src: "/images/User 2.jpg",
       alt: "image2",
       link: "https://store.google.com/in/magazine/compare_nest_speakers_displays?pli=1&hl=en-GB",
     },
     {
-      src: "https://wallpaperaccess.com/full/1092649.jpg",
+      src: "/images/User 3.jpg",
       alt: "image3",
       link: "https://www.amazon.in/amazonprime",
     },
-    {
-      src: "https://i.redd.it/9kflyzws5ch61.png",
-      alt: "image4",
-      link: "https://en.wikipedia.org/wiki/Microsoft",
-    },
-    // Add more image paths as needed
   ];
 
   const handleClick = (link) => {
