@@ -92,17 +92,17 @@ function eCommerce() {
 
   const carouselImages = [
     {
-      src: "/images/Business 1.jpg",
+      src: "/images/partner1.jpg",
       alt: "image1",
       link: "https://www.youtube.com/watch?v=49HTIoCccDY",
     },
     {
-      src: "/images/Business 2.jpg",
+      src: "/images/partner2.jpg",
       alt: "image2",
       link: "https://store.google.com/in/magazine/compare_nest_speakers_displays?pli=1&hl=en-GB",
     },
     {
-      src: "/images/Business 3.jpg",
+      src: "/images/partner3.jpg",
       alt: "image3",
       link: "https://www.amazon.in/amazonprime",
     },
