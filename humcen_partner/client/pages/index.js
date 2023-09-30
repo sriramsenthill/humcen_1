@@ -1,7 +1,10 @@
 import React from "react";
 import {useState, useEffect} from "react";
 import Grid from "@mui/material/Grid";
+import { Card } from "@mui/material";
 import Link from "next/link";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { Carousel } from "react-responsive-carousel";
 import styles from "@/styles/PageTitle.module.css";
  import cardStyle from "@/styles/nc.module.css";
 import Performance from "@/components/Dashboard/eCommerce/Performance";
@@ -87,6 +90,28 @@ function eCommerce() {
     setAnchorEl(event.currentTarget);
   };
 
+  const carouselImages = [
+    {
+      src: "/images/Business 1.jpg",
+      alt: "image1",
+      link: "https://www.youtube.com/watch?v=49HTIoCccDY",
+    },
+    {
+      src: "/images/Business 2.jpg",
+      alt: "image2",
+      link: "https://store.google.com/in/magazine/compare_nest_speakers_displays?pli=1&hl=en-GB",
+    },
+    {
+      src: "/images/Business 3.jpg",
+      alt: "image3",
+      link: "https://www.amazon.in/amazonprime",
+    },
+  ];
+
+  const handleCarClick = (link) => {
+    window.open(link, "_blank");
+  };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -117,6 +142,50 @@ function eCommerce() {
       </div>
     </div>:
   <>
+  <Card
+            sx={{
+              boxShadow: "0px 4px 13px rgba(0, 0, 0, 0.1)",
+              borderRadius: "20px",
+              marginBottom:"20px" 
+            }}>
+        <Carousel
+  autoPlay={true}
+  infiniteLoop={true}
+  interval={3000}
+  showArrows={false}
+  showThumbs={false}
+  showStatus={false}
+  showIndicators={true}
+  dynamicHeight={false}
+  style={{ maxWidth: "400px", margin: "0 auto" }}
+>
+  {carouselImages.map((image, index) => (
+    <div
+      key={index}
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: "20px",
+        overflow: "hidden",
+        cursor: "pointer",
+        height: "300px", // Set a fixed height for the carousel items
+      }}
+      onClick={() => handleCarClick(image.link)}
+    >
+      <img
+        src={image.src}
+        alt={image.alt}
+        style={{
+          maxWidth: "100%", // Ensure the image scales within its container
+          maxHeight: "100%", // Maintain the aspect ratio of the image
+          borderRadius: "20px",
+        }}
+      />
+    </div>
+                ))}
+              </Carousel>
+              </Card>
       <NewOrder />
       <RecentOrders />
       <Grid

@@ -247,7 +247,7 @@ const IndexPage = () => {
       <ExpandMoreIcon style={{ transform: countriesOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
       </Typography>
       {countriesOpen && (
-        <div style={{ padding: '1rem 0' }}>
+        <div style={{ padding: '1rem 0', textAlign: "center" }}>
           {/* Country Selection Buttons */}
           <Typography
             as="h3"
@@ -318,8 +318,252 @@ const IndexPage = () => {
             />
             &nbsp;&nbsp;United States <br />&nbsp;&nbsp;&#40;&#36;900&#41;
           </Button>
+          <Button
+            style={{                                            // 68BDFD
+              background: country.includes("China") ? "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" : "#F8FCFF",
+              color: country.includes("China") ? "white" : "#BFBFBF",
+              width: "18%",
+              boxShadow: "none",
+              borderRadius: "100px",
+              marginRight: "2%",
+              height: "60px",
+              textTransform: "none",
+            }}
+            onClick={() => {
+              if(!country.includes("China")) {
+                setCountry(country => [...country, "China"]);
+                setBill([...totalBill, 900]);
+              } else {
+                setCountry(country.filter(nation => nation != "China"));
+                setBill(totalBill.filter(bill => bill != 900))
+              }
+              console.log(country);
+              console.log(totalBill);
+            }}
+            value="China"
+          >
+            <img
+              src="https://hatscripts.github.io/circle-flags/flags/cn.svg"
+              width="24"
+            />
+            &nbsp;&nbsp;China <br />&nbsp;&nbsp;&#40;&#36;700&#41;
+          </Button>
+          <Button
+            style={{                                            // 68BDFD
+              background: country.includes("UAE") ? "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" : "#F8FCFF",
+              color: country.includes("UAE") ? "white" : "#BFBFBF",
+              width: "18%",
+              boxShadow: "none",
+              borderRadius: "100px",
+              marginRight: "2%",
+              height: "60px",
+              textTransform: "none",
+            }}
+            onClick={() => {
+              if(!country.includes("UAE")) {
+                setCountry(country => [...country, "UAE"]);
+                setBill([...totalBill, 900]);
+              } else {
+                setCountry(country.filter(nation => nation != "UAE"));
+                setBill(totalBill.filter(bill => bill != 900))
+              }
+              console.log(country);
+              console.log(totalBill);
+            }}
+            value="UAE"
+          >
+            <img
+              src="https://hatscripts.github.io/circle-flags/flags/ae.svg"
+              width="24"
+            />
+            &nbsp;&nbsp;UAE <br />&nbsp;&nbsp;&#40;&#36;1000&#41;
+          </Button>
           {/* Add other country buttons similarly */}
-          
+          <Button
+            style={{                                            // 68BDFD
+              background: country.includes("Australia") ? "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" : "#F8FCFF",
+              color: country.includes("Australia") ? "white" : "#BFBFBF",
+              width: "18%",
+              boxShadow: "none",
+              borderRadius: "100px",
+              marginRight: "2%",
+              height: "60px",
+              textTransform: "none",
+            }}
+            onClick={() => {
+              if(!country.includes("Australia")) {
+                setCountry(country => [...country, "Australia"]);
+                setBill([...totalBill, 900]);
+              } else {
+                setCountry(country.filter(nation => nation != "Australia"));
+                setBill(totalBill.filter(bill => bill != 900))
+              }
+              console.log(country);
+              console.log(totalBill);
+            }}
+            value="Australia"
+          >
+            <img
+              src="https://hatscripts.github.io/circle-flags/flags/au.svg"
+              width="24"
+            />
+            &nbsp;&nbsp;Australia <br />&nbsp;&nbsp;&#40;&#36;750&#41;
+          </Button>
+          <Button
+            style={{                                            // 68BDFD
+              background: country.includes("Germany") ? "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" : "#F8FCFF",
+              color: country.includes("Germany") ? "white" : "#BFBFBF",
+              width: "18%",
+              boxShadow: "none",
+              borderRadius: "100px",
+              marginRight: "2%",
+              marginTop: "1rem",
+              height: "60px",
+              textTransform: "none",
+            }}
+            onClick={() => {
+              if(!country.includes("Germany")) {
+                setCountry(country => [...country, "Germany"]);
+                setBill([...totalBill, 900]);
+              } else {
+                setCountry(country.filter(nation => nation != "Germany"));
+                setBill(totalBill.filter(bill => bill != 900))
+              }
+              console.log(country);
+              console.log(totalBill);
+            }}
+            value="Germany"
+          >
+            <img
+              src="https://hatscripts.github.io/circle-flags/flags/de.svg"
+              width="24"
+            />
+            &nbsp;&nbsp;Germany <br />&nbsp;&nbsp;&#40;&#36;800&#41;
+          </Button>
+          <Button
+            style={{                                            // 68BDFD
+              background: country.includes("UK") ? "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" : "#F8FCFF",
+              color: country.includes("UK") ? "white" : "#BFBFBF",
+              width: "18%",
+              boxShadow: "none",
+              borderRadius: "100px",
+              marginRight: "2%",
+              marginTop: "1rem",
+              height: "60px",
+              textTransform: "none",
+            }}
+            onClick={() => {
+              if(!country.includes("UK")) {
+                setCountry(country => [...country, "UK"]);
+                setBill([...totalBill, 900]);
+              } else {
+                setCountry(country.filter(nation => nation != "UK"));
+                setBill(totalBill.filter(bill => bill != 900))
+              }
+              console.log(country);
+              console.log(totalBill);
+            }}
+            value="UK"
+          >
+            <img
+              src="https://hatscripts.github.io/circle-flags/flags/gb.svg"
+              width="24"
+            />
+            &nbsp;&nbsp;UK <br />&nbsp;&nbsp;&#40;&#36;950&#41;
+          </Button>
+          <Button
+            style={{                                            // 68BDFD
+              background: country.includes("Spain") ? "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" : "#F8FCFF",
+              color: country.includes("Spain") ? "white" : "#BFBFBF",
+              width: "18%",
+              boxShadow: "none",
+              borderRadius: "100px",
+              marginRight: "2%",
+              marginTop: "1rem",
+              height: "60px",
+              textTransform: "none",
+            }}
+            onClick={() => {
+              if(!country.includes("Spain")) {
+                setCountry(country => [...country, "Spain"]);
+                setBill([...totalBill, 900]);
+              } else {
+                setCountry(country.filter(nation => nation != "Spain"));
+                setBill(totalBill.filter(bill => bill != 900))
+              }
+              console.log(country);
+              console.log(totalBill);
+            }}
+            value="Spain"
+          >
+            <img
+              src="https://hatscripts.github.io/circle-flags/flags/es.svg"
+              width="24"
+            />
+            &nbsp;&nbsp;Spain <br />&nbsp;&nbsp;&#40;&#36;650&#41;
+          </Button>
+          <Button
+            style={{                                            // 68BDFD
+              background: country.includes("France") ? "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" : "#F8FCFF",
+              color: country.includes("France") ? "white" : "#BFBFBF",
+              width: "18%",
+              boxShadow: "none",
+              borderRadius: "100px",
+              marginRight: "2%",
+              marginTop: "1rem",
+              height: "60px",
+              textTransform: "none",
+            }}
+            onClick={() => {
+              if(!country.includes("France")) {
+                setCountry(country => [...country, "France"]);
+                setBill([...totalBill, 900]);
+              } else {
+                setCountry(country.filter(nation => nation != "France"));
+                setBill(totalBill.filter(bill => bill != 900))
+              }
+              console.log(country);
+              console.log(totalBill);
+            }}
+            value="France"
+          >
+            <img
+              src="https://hatscripts.github.io/circle-flags/flags/fr.svg"
+              width="24"
+            />
+            &nbsp;&nbsp;France <br />&nbsp;&nbsp;&#40;&#36;1100&#41;
+          </Button>
+          <Button
+            style={{                                            // 68BDFD
+              background: country.includes("Italy") ? "linear-gradient(90deg, rgba(0, 172, 246, 0.8) 0%, rgba(2, 225, 185, 0.79) 91.25%)" : "#F8FCFF",
+              color: country.includes("Italy") ? "white" : "#BFBFBF",
+              width: "18%",
+              boxShadow: "none",
+              borderRadius: "100px",
+              marginRight: "2%",
+              marginTop: "1rem",
+              height: "60px",
+              textTransform: "none",
+            }}
+            onClick={() => {
+              if(!country.includes("Italy")) {
+                setCountry(country => [...country, "Italy"]);
+                setBill([...totalBill, 900]);
+              } else {
+                setCountry(country.filter(nation => nation != "Italy"));
+                setBill(totalBill.filter(bill => bill != 900))
+              }
+              console.log(country);
+              console.log(totalBill);
+            }}
+            value="Italy"
+          >
+            <img
+              src="https://hatscripts.github.io/circle-flags/flags/it.svg"
+              width="24"
+            />
+            &nbsp;&nbsp;Italy <br />&nbsp;&nbsp;&#40;&#36;875&#41;
+          </Button>
         </div>
       )}
       { countriesOpen && <div style={{
