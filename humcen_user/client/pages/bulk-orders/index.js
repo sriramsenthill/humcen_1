@@ -157,12 +157,6 @@ const ProductDetails = () => {
       <h1 className={styles.heading}>Bulk Orders</h1>
       </div>
       <>
-      <Card
-            sx={{
-              boxShadow: "0px 4px 13px rgba(0, 0, 0, 0.1)",
-              borderRadius: "20px",
-              marginBottom:"20px" 
-            }}>
         <Carousel
   autoPlay={true}
   infiniteLoop={true}
@@ -198,7 +192,6 @@ const ProductDetails = () => {
     </div>
                 ))}
               </Carousel>
-              </Card>
       { !uploadAccess && <div style={{textAlign: "center", background: "white"}}><Typography
             as="h1"
             sx={{
@@ -217,11 +210,11 @@ const ProductDetails = () => {
       <Head>
         <title>Bulk Order</title>
       </Head>
-      <BannerCard
+      {/* <BannerCard
   title="Bulk Order"
   imageSrc="/images/banner_img/bg.png"
   color="white"
-  style={{ width: '100%', maxWidth: '1200px', margin: '550%' }}></BannerCard>
+  style={{ width: '100%', maxWidth: '1200px', margin: '550%' }}></BannerCard> */}
 
       <Typography variant="h5" onClick={() => setDraftingOpen(!draftingOpen)} style={{ cursor: 'pointer', fontWeight: "bold" }}>
         Details
