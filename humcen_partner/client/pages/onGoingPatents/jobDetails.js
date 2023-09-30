@@ -186,8 +186,6 @@ console.log(id);
           console.log(partnerUploadDate);
           if(partnerUploadDate === "") {
             setShowUpload(true);
-          } else {
-            setShowUpload(false);
           }
         }) 
 
