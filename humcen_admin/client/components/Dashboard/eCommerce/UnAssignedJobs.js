@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import Link from "next/link";
 import {
   Box,
@@ -75,6 +76,21 @@ const StyledRating = styled(Rating)({
   },
 });
 
+const api = axios.create({
+  baseURL: "http://localhost:3000/api",
+});
+
+
+// Add an interceptor to include the token in the request headers
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers['Authorization'] = token;
+  }
+  return config;
+});
+
+
 function RecentPartner(props) {
   const { count, page, rowsPerPage, onPageChange } = props;
   const theme = useTheme();
@@ -146,8 +162,8 @@ RecentPartner.propTypes = {
 
 async function fetchPartnerData() {
   try {
-    const response = await fetch("http://localhost:3000/api/admin/Unassigned");
-    const responseData = await response.json();
+    const response = await api.get("admin/Unassigned");
+    const responseData = await response.data;
     console.log(responseData);
     return responseData;
   } catch (error) {

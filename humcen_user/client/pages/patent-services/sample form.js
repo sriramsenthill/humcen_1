@@ -17,7 +17,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import OkDialogueBox from "./dialoguebox";
 const api = axios.create({
-  baseURL: "http://localhost:3000/api",
+  baseURL: "http://humcenserver-env-working.eba-pigzynpf.us-east-1.elasticbeanstalk.com/api",
 });
 
 api.interceptors.request.use((config) => {

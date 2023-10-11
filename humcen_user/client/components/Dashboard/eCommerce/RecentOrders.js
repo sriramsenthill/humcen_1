@@ -135,7 +135,7 @@ RecentOrder.propTypes = {
 
 // Create an Axios instance
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: 'http://humcenserver-env-working.eba-pigzynpf.us-east-1.elasticbeanstalk.com/api',
 });
 
 // Add an interceptor to include the token in the request headers

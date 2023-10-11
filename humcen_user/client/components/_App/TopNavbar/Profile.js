@@ -30,7 +30,7 @@ const Profile = () => {
     const token = localStorage.getItem("token");
     if (token) {
       // axios
-      //   .get("http://localhost:3000/api/user/img", {
+      //   .get("http://humcenserver-env-working.eba-pigzynpf.us-east-1.elasticbeanstalk.com/api/user/img", {
       //     headers: {
       //       Authorization: token,
       //     },
@@ -43,7 +43,7 @@ const Profile = () => {
       //     console.error("Error fetching profile image:", error);
       //   });              
         axios
-        .get("http://localhost:3000/api/user/name", {
+        .get("http://humcenserver-env-working.eba-pigzynpf.us-east-1.elasticbeanstalk.com/api/user/name", {
           headers: {
             Authorization: token,
           },

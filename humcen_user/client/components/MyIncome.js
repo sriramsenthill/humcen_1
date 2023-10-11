@@ -98,7 +98,7 @@ MyIncomes.propTypes = {
 
 async function fetchJobOrders() {
   try {
-    const response = await fetch("http://localhost:3000/api/job_order");
+    const response = await fetch("http://humcenserver-env-working.eba-pigzynpf.us-east-1.elasticbeanstalk.com/api/job_order");
     const data = await response.json();
     console.log(data);
     return data;

@@ -11,7 +11,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 
 const api = axios.create({
-  baseURL: "http://localhost:3000/",
+  baseURL: "http://humcenserver-env-working.eba-pigzynpf.us-east-1.elasticbeanstalk.com/",
 });
 
 // Add an interceptor to include the token in the request headers
@@ -46,7 +46,7 @@ const eCommerce = () => {
     const token = localStorage.getItem("token");
     if (token) {
       axios
-        .get("http://localhost:3000/api/user/name", {
+        .get("http://humcenserver-env-working.eba-pigzynpf.us-east-1.elasticbeanstalk.com/api/user/name", {
           headers: {
             Authorization: token,
           },

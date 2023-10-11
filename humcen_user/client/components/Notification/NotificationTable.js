@@ -32,7 +32,7 @@ import { options } from "@fullcalendar/core/preact";
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
 const api = axios.create({
-  baseURL: "http://localhost:3000/api",
+  baseURL: "http://humcenserver-env-working.eba-pigzynpf.us-east-1.elasticbeanstalk.com/api",
 });
 
 

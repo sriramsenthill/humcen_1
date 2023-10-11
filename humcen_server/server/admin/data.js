@@ -38,7 +38,7 @@ const getUsers = async (req, res) => {
 const getCustomers = async (req, res) => {
   try {
     const users = await Customer.find({});
-    res.send(users);
+    res.json(users);
   } catch (error) {
     console.error("Error fetching users:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -48,7 +48,7 @@ const getCustomers = async (req, res) => {
 const getPartners = async (req, res) => {
   try {
     const partners = await Partner.find({});
-    res.send(partners);
+    res.json(partners);
   } catch (error) {
     console.error("Error fetching partners:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -80,7 +80,7 @@ const getUnassignedJobOrders = async (req, res) => {
             copyJobs[jobs]._id.job_no = cleanedArray[jobs]
           }
           console.log(copyJobs);
-          res.send( copyJobs );
+          res.json( copyJobs );
     }
   } catch (error) {
     console.error("Error fetching unassigned job orders:", error);
@@ -114,7 +114,7 @@ const getAdmins = async (req, res) => {
   try {
     const admins = await Admin.find({});
     console.log(admins);
-    res.send(admins);
+    res.json(admins);
   } catch (error) {
     console.error("Error fetching admins:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -143,7 +143,7 @@ copyJobs.forEach((job) => {
       copyJobs[jobs]._id.job_no = cleanedArray[jobs]
     }
     console.log(copyJobs);
-    res.send( copyJobs );
+    res.json( copyJobs );
   } catch (error) {
     console.error("Error fetching job orders:", error);
     res.status(500).json({ error: "Internal Server Error" });

@@ -98,7 +98,7 @@ export default function Profile() {
     const token = localStorage.getItem("token");
     if (token) {
       axios
-        .get("http://localhost:3000/api/user/settings", {
+        .get("http://humcenserver-env-working.eba-pigzynpf.us-east-1.elasticbeanstalk.com/api/user/settings", {
           headers: {
             Authorization: token,
           },
@@ -350,7 +350,7 @@ export default function Profile() {
                 if (editMode) {
                   setEditMode(false);
                   const token = localStorage.getItem("token");
-                  axios.put('http://localhost:3000/api/user/pref-settings',{data:{
+                  axios.put('http://humcenserver-env-working.eba-pigzynpf.us-east-1.elasticbeanstalk.com/api/user/pref-settings',{data:{
                   userID: UID,
                   mails: essentialEmails,
                   order_updates: orderUpdates,

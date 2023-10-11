@@ -18,7 +18,7 @@ const withAuth = (WrappedComponent) => {
           }
 
           // Verify the token with the backend
-          const response = await axios.get('http://localhost:3000/api/verify-token', {
+          const response = await axios.get('http://humcenserver-env-working.eba-pigzynpf.us-east-1.elasticbeanstalk.com/api/verify-token', {
             headers: { Authorization: token },
           });
 

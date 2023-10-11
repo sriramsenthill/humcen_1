@@ -35,7 +35,7 @@ const SignUpForm = () => {
     event.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:3000/api/customer", {
+      const response = await fetch("http://humcenserver-env-working.eba-pigzynpf.us-east-1.elasticbeanstalk.com/api/customer", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

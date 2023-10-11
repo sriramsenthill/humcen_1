@@ -10,7 +10,7 @@ import StepLabel from "@mui/material/StepLabel";
 
 // Create an Axios instance
 const api = axios.create({
-  baseURL: "http://localhost:3000/api",
+  baseURL: "http://humcenserver-env-working.eba-pigzynpf.us-east-1.elasticbeanstalk.com/api",
 });
 
 

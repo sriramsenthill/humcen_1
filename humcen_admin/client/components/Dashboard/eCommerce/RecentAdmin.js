@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Box,
   Typography,
@@ -90,10 +91,25 @@ RecentAdmin.propTypes = {
   onPageChange: PropTypes.func.isRequired,
 };
 
+const api = axios.create({
+  baseURL: "http://localhost:3000/api",
+});
+
+
+// Add an interceptor to include the token in the request headers
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers['Authorization'] = token;
+  }
+  return config;
+});
+
+
 async function fetchAdminData() {
   try {
-    const response = await fetch("http://localhost:3000/api/admin/admin");
-    const data = await response.json();
+    const response = await api.get("admin/admin");
+    const data = await response.data;
     console.log(data);
     return data;
   } catch (error) {

@@ -21,7 +21,7 @@ const SignInForm = () => {
     if (token) {
       // Token found, verify it on the server
       axios
-        .post("http://localhost:3000/api/auth/verifyToken", { token })
+        .post("http://humcenserver-env-working.eba-pigzynpf.us-east-1.elasticbeanstalk.com/api/auth/verifyToken", { token })
         .then((response) => {
           // Token is valid, redirect to homepage
           router.push("/");
@@ -42,7 +42,7 @@ const SignInForm = () => {
     const userpassword = data.get("password");
 
     try {
-      const response = await axios.post("http://localhost:3000/api/auth/signin", {
+      const response = await axios.post("http://humcenserver-env-working.eba-pigzynpf.us-east-1.elasticbeanstalk.com/api/auth/signin", {
         email: useremail,
         password: userpassword,
       });

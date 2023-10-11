@@ -135,63 +135,63 @@ router.get("/api/verify-token", verifyToken, user_auth.verifyTokenMiddleware);
 router.get("/", verifyToken, user_auth.getCustomerData);
 
 //ADMIN DATA
-router.get("/api/admin/user", data.getUsers);
+router.get("/api/admin/user", verifyAdmin,data.getUsers);
 
-router.get("/api/admin/partner", data.getPartners);
+router.get("/api/admin/partner",verifyAdmin ,data.getPartners);
 
-router.get("/api/admin/customer",data.getCustomers);
+router.get("/api/admin/customer", verifyAdmin ,data.getCustomers);
 
-router.get("/api/admin/admin", data.getAdmins);
+router.get("/api/admin/admin", verifyAdmin,data.getAdmins);
 
-router.get("/api/admin/job_order", data.getJobOrders);
+router.get("/api/admin/job_order", verifyAdmin ,data.getJobOrders);
 
-router.get("/api/admin/job_files/:jobID", data.getJobFiles);  // For getting 
+router.get("/api/admin/job_files/:jobID", verifyAdmin, data.getJobFiles);  // For getting 
 
-router.put("/api/admin/job_files_details/:jobID", data.updateJobFilesDetails); // For giving File access to the User, if Admin accepts Partner's Work, otherwise Admin deletes it
+router.put("/api/admin/job_files_details/:jobID", verifyAdmin ,data.updateJobFilesDetails); // For giving File access to the User, if Admin accepts Partner's Work, otherwise Admin deletes it
 
-router.get("/api/admin/job_files_details/:jobID", data.getJobFilesDetails); // For getting Partner's Work from Admin Side
+router.get("/api/admin/job_files_details/:jobID", verifyAdmin ,data.getJobFilesDetails); // For getting Partner's Work from Admin Side
 
-router.get("/api/admin/job_order/:jobID", data.getJobOrderById); // For getting Job Details from Admin Side
+router.get("/api/admin/job_order/:jobID", verifyAdmin ,data.getJobOrderById); // For getting Job Details from Admin Side
 
 // ADMIN UNASSIGNED JOBS
-router.get("/api/admin/Unassigned",data.getUnassignedJobOrders);
+router.get("/api/admin/Unassigned", verifyAdmin ,data.getUnassignedJobOrders);
 
-router.get("/api/Unassigned/:jobID", data.getUnassignedJobById); // For getting Job Details from Admin Side
+router.get("/api/Unassigned/:jobID", verifyAdmin , data.getUnassignedJobById); // For getting Job Details from Admin Side
 
-router.get("/api/Unassigned/only-details/:jobID", data.getUnassignedJobDetailsById); // Getting only the Necessary Details
+router.get("/api/Unassigned/only-details/:jobID", verifyAdmin , data.getUnassignedJobDetailsById); // Getting only the Necessary Details
 
-router.get("/api/find-partner/:services/:country", data.getPartnersData); // Fetching out Available Partners to assign the Task
+router.get("/api/find-partner/:services/:country", verifyAdmin ,data.getPartnersData); // Fetching out Available Partners to assign the Task
 
-router.post("/api/assign", data.assignTask); // To manually assign Task to a Partner
+router.post("/api/assign", verifyAdmin ,data.assignTask); // To manually assign Task to a Partner
 
-router.get("/api/admin/user_files/:services/:id", data.getUnassignedJobFilesForAdmin); // To fetch Unassigned User Files for Admin
+router.get("/api/admin/user_files/:services/:id", verifyAdmin ,data.getUnassignedJobFilesForAdmin); // To fetch Unassigned User Files for Admin
 
-router.get("/api/cross-assign/find-partner/:services/:country/:partID", data.getPartnersDataForCrossAssign); // Fetching out Available Partners to Cross Assign the Task
+router.get("/api/cross-assign/find-partner/:services/:country/:partID",verifyAdmin , data.getPartnersDataForCrossAssign); // Fetching out Available Partners to Cross Assign the Task
 
-router.post("/api/cross_assign", data.crossAssignTask); // To manually assign Task to a Partner
+router.post("/api/cross_assign", verifyAdmin ,data.crossAssignTask); // To manually assign Task to a Partner
 
-router.get("/api/admin/user_files/:services/:id", data.getUnassignedJobFilesForAdmin); // To fetch Unassigned User Files for Admin
+router.get("/api/admin/user_files/:services/:id", verifyAdmin ,data.getUnassignedJobFilesForAdmin); // To fetch Unassigned User Files for Admin
 
 // ADMIN BULK ORDERS
-router.get("/api/process-base64-csv/:base", data.getCSVData); // Get CSV data through Python script
+router.get("/api/process-base64-csv/:base", verifyAdmin , data.getCSVData); // Get CSV data through Python script
 
-router.post("/api/admin/create-bulk-orders",  data.createBulkOrders); // Create Bulk Orders
+router.post("/api/admin/create-bulk-orders",  verifyAdmin ,data.createBulkOrders); // Create Bulk Orders
 
-router.get("/api/get-bulk-orders",  data.getAllBulkOrders); // For Fetching Bulk Orders for Admin
+router.get("/api/get-bulk-orders",  verifyAdmin ,data.getAllBulkOrders); // For Fetching Bulk Orders for Admin
 
-router.get("/api/bulk-order/:id",  data.getBulkOrderById); // Getting details of that particular Bulk Order
+router.get("/api/bulk-order/:id",  verifyAdmin ,data.getBulkOrderById); // Getting details of that particular Bulk Order
 
-router.get("/api/bulk-order-file/:id", data.getBulkOrderFileById); // Getting details of that particular Bulk Order
+router.get("/api/bulk-order-file/:id", verifyAdmin ,data.getBulkOrderFileById); // Getting details of that particular Bulk Order
 
-router.get("/api/admin/bulk-order/partner/:service/:country", data.getPartnersForBulkOrder); // Getting Partner's Details according to the service chosen by Admin
+router.get("/api/admin/bulk-order/partner/:service/:country", verifyAdmin ,data.getPartnersForBulkOrder); // Getting Partner's Details according to the service chosen by Admin
 
-router.post("/api/admin/bulk-order/assign/:id", data.assignBulkOrder); // API for Assigning Bulk Order Task to the Partner
+router.post("/api/admin/bulk-order/assign/:id", verifyAdmin ,data.assignBulkOrder); // API for Assigning Bulk Order Task to the Partner
 
-router.get("/api/bulk-order-files", data.getBulkOrderFilesDetails); // Get details of User uploaded Bulk Order Files
+router.get("/api/bulk-order-files", verifyAdmin ,data.getBulkOrderFilesDetails); // Get details of User uploaded Bulk Order Files
 
-router.get("/api/that-bulk-order-file/:fileNo", data.getParticularBulkOrderFileDetails); // This one fetches details from Bulk Order Files schema
+router.get("/api/that-bulk-order-file/:fileNo", verifyAdmin ,data.getParticularBulkOrderFileDetails); // This one fetches details from Bulk Order Files schema
 
-router.get("/api/only-that-bulk-order-file/:fileNo", data.getOnlyTheParticularBulkOrderFile); // This one fetches only files from Bulk Order Files schema
+router.get("/api/only-that-bulk-order-file/:fileNo", verifyAdmin , data.getOnlyTheParticularBulkOrderFile); // This one fetches only files from Bulk Order Files schema
 
 router.get("/api/bulk-assign-details/:bulkLists", verifyAdmin, data.getBulkOrderAssignTabDetails); // Bulk Order details for Bulk Assign
 
@@ -210,10 +210,10 @@ router.put("/api/admin/applicant-settings", verifyAdmin, adminSettings.updateAdm
 
 router.put("/api/admin/pref-settings", verifyAdmin, adminSettings.updateAdminEmailNotifDetails) // For Updating Admin's Email Notification Settings
 
-router.put("/api/admin/password", verifyPartner, adminSettings.updateAdminPassword); // For Updating Admin's Password
+router.put("/api/admin/password", verifyAdmin, adminSettings.updateAdminPassword); // For Updating Admin's Password
 
 //ADMIN_NOTIFICATIONS
-router.get("/api/admin/get-notifs", data.getAdminNotification) // Get Notifications for Admin
+router.get("/api/admin/get-notifs", verifyAdmin ,data.getAdminNotification) // Get Notifications for Admin
 
 router.put("/api/admin/seen-notif/:notifId", verifyAdmin, data.notificationAdminSeen); // Make the notification, a visited one
 
@@ -284,5 +284,5 @@ router.get("/api/partner/sort-notif/:userID/:days", verifyPartner, engine.sortPa
 router.get("/api/partner/clear-notif/:userID", verifyPartner, engine.clearRecentPartnerNotifs); // Clearing out the Recent Notifications
 
 
-router.post("/api/find-partner", data.getPartnersData);
+router.post("/api/find-partner", verifyAdmin ,data.getPartnersData);
 module.exports = router;
