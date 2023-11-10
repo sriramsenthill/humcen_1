@@ -1941,7 +1941,7 @@ const newVersionPatentDrafting = async(req, res) => {
     } 
   
     }
-    res.status(200);
+    res.status(200).end();
      }
      catch(error) {
       console.error("Error in saving up the Patent Drafting Form : " + error);
@@ -2167,7 +2167,7 @@ const newVersionPatentFiling = async(req, res) => {
             } 
   
     }
-    res.status(200);
+    res.status(200).end();
      }
      catch(error) {
       console.error("Error in saving up the Patent Filing Form : " + error);
@@ -2365,7 +2365,7 @@ const newVersionPatentSearch = async(req, res) => {
             } 
   
     }
-    res.status(200);
+    res.status(200).end();
      }
      catch(error) {
       console.error("Error in saving up the Patent Search Form : " + error);
@@ -2581,7 +2581,7 @@ const newVersionFER = async(req, res) => {
             } 
   
     }
-    res.status(200);
+    res.status(200).end();
      }
      catch(error) {
       console.error("Error in saving up the Response to FER Office Action Form : " + error);
@@ -2797,7 +2797,7 @@ const newVersionFTO = async(req, res) => {
             } 
   
     }
-    res.status(200);
+    res.status(200).end();
      }
      catch(error) {
       console.error("Error in saving up the Freedom To Patent Landscape Form : " + error);
@@ -2981,7 +2981,7 @@ const newVersionLandscape = async(req, res) => {
   } 
   
     }
-    res.status(200);
+    res.status(200).end();
      }
      catch(error) {
       console.error("Error in saving up the Freedom To Patent Landscape Form : " + error);
@@ -3182,7 +3182,7 @@ const newVersionPortfolioAnalysis = async(req, res) => {
     } 
   
     }
-    res.status(200);
+    res.status(200).end();
      } 
     }
      catch(error) {
@@ -3387,7 +3387,7 @@ const newVersionTranslation = async(req, res) => {
     } 
   
     }
-    res.status(200);
+    res.status(200).end();
      } 
     }
      catch(error) {
@@ -3589,7 +3589,7 @@ const newVersionIllustration = async(req, res) => {
  } 
   
     }
-    res.status(200);
+    res.status(200).end();
      } 
     }
      catch(error) {
@@ -3779,7 +3779,7 @@ const newVersionWatch = async(req, res) => {
 
   
     }
-    res.status(200);
+    res.status(200).end();
      } 
     }
      catch(error) {
@@ -3968,7 +3968,7 @@ const newVersionLicense = async(req, res) => {
 
   
     }
-    res.status(200);
+    res.status(200).end();
      } 
     }
      catch(error) {

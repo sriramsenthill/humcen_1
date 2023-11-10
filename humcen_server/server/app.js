@@ -9,11 +9,18 @@ const router = require("./routes/routes"); // Replace "your_router_file" with th
 
 const app = express();
 
+
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(cors({
+  origin: 'https://www.humcen.tech', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization'],
+  credentials: true
+}));
 
 app.use(express.json());
-app.use(cors());
+
 const port = process.env.PORT || 3000;
 
 // Connect to your MongoDB database
@@ -38,6 +45,9 @@ app.use(router);
 
 // Start the server
 
-app.listen(port, () => {
+const serv = app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+serv.keepAliveTimeout = 61 * 1000;
+serv.headersTimeout = 65 * 1000;
